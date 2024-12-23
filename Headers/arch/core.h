@@ -1,6 +1,9 @@
 #pragma once
 #include <pch.h>
 #include "arch_headers.h"
+
+
+
 class Core {
 	
 public:
@@ -16,7 +19,20 @@ public:
 
 	void Stop();
 	void Cleanup();
+	
+
+
+
+
+public:
+
+	// static void AddSystem(System* newSys);
+
+	template <typename T>
+	static std::enable_if_t<std::is_base_of_v<System, T>, void> RegisterSystem() {
+		m_systemInstances.push_back(&T::GetInstance());
+	}
 
 private:
-	std::vector<System> m_systemInstances;
+	static std::vector<System*> m_systemInstances;
 };

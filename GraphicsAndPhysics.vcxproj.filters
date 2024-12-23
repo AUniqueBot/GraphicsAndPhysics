@@ -16,14 +16,41 @@
     <Filter Include="Header Files\gfx">
       <UniqueIdentifier>{5b99b75e-7b94-443c-b964-d6da895afc99}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\gfx">
-      <UniqueIdentifier>{2e9a2e0a-9c0c-4b2f-b99b-1e18122253b4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\input">
-      <UniqueIdentifier>{05d3a68e-bcef-4f5e-9ec3-e8fb94aaf5ed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\input">
       <UniqueIdentifier>{3e86f1ea-5d95-4c07-80d1-99adbf14d4e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch">
+      <UniqueIdentifier>{025f787a-5351-4d8b-9b22-3ad061f39e10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\components">
+      <UniqueIdentifier>{4409c556-8643-4a4b-bf92-dc301d9f0a82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\common">
+      <UniqueIdentifier>{d7692e68-6b54-4ff1-bd85-bb554bf14068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\systems">
+      <UniqueIdentifier>{5b30b1a2-2a7d-4a46-b6e7-1aca2147ef79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\resources">
+      <UniqueIdentifier>{9d9de95d-ca19-4ba0-a01c-38c82bebf856}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch">
+      <UniqueIdentifier>{a6b7a631-d467-4d55-883c-b5169ad78161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch\components">
+      <UniqueIdentifier>{ba401b34-9e5f-47d0-901c-a5bd560e221a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common">
+      <UniqueIdentifier>{03506312-af2c-4b73-9cb8-f684c1473a78}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\gfx">
+      <UniqueIdentifier>{2e9a2e0a-9c0c-4b2f-b99b-1e18122253b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\common\input">
+      <UniqueIdentifier>{05d3a68e-bcef-4f5e-9ec3-e8fb94aaf5ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\arch\systerms">
+      <UniqueIdentifier>{20fd3dda-0ba2-453a-bf07-8c9564fb9556}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,13 +58,22 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\common\graphics\gfx_glfwCustomCallbackFunctions.cpp">
-      <Filter>Source Files\gfx</Filter>
+      <Filter>Source Files\common\gfx</Filter>
     </ClCompile>
     <ClCompile Include="Source\common\input\input_processInput.cpp">
-      <Filter>Source Files\input</Filter>
+      <Filter>Source Files\common\input</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\arch\components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\components\comp_transform.cpp">
+      <Filter>Source Files\arch\components</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_transform.cpp">
+      <Filter>Source Files\arch\systerms</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\systems\core.cpp">
+      <Filter>Source Files\arch</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -53,50 +89,53 @@
     <ClInclude Include="Headers\input\input_processInput.h">
       <Filter>Header Files\input</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\core.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\common\singleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\common\system.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\arch_headers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\common\entity.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\common\component.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\components\componentList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\components\comp_transform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\components\comp_rigidbody.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\components\comp_meshrenderer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_scene.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_prefab.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_mesh.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\arch</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_audiobank.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\arch\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh.h">
+      <Filter>Header Files\arch\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_prefab.h">
+      <Filter>Header Files\arch\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_scene.h">
+      <Filter>Header Files\arch\resources</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\arch\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\common\singleton.h">
+      <Filter>Header Files\arch\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\common\component.h">
+      <Filter>Header Files\arch\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\common\system.h">
+      <Filter>Header Files\arch\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_transform.h">
+      <Filter>Header Files\arch\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\components\comp_meshrenderer.h">
+      <Filter>Header Files\arch\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\components\comp_rigidbody.h">
+      <Filter>Header Files\arch\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\components\comp_transform.h">
+      <Filter>Header Files\arch\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\components\componentList.h">
+      <Filter>Header Files\arch\components</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core.h">
+      <Filter>Header Files\arch</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\common\entity.h">
+      <Filter>Header Files\arch\common</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

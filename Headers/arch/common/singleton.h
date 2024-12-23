@@ -11,8 +11,10 @@ public:
 	~Singleton()					= default;
 	Singleton(const Singleton<T>&)	= delete;
 
-	T& GetInstance() { return m_instance; };
+	static T& GetInstance() { static T s_instance;  return s_instance; };
+
+protected:
 
 private:
-	static T m_instance;
+
 };

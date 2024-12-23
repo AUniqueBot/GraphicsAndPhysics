@@ -1,6 +1,8 @@
 
 #include <pch.h>
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
+#include <arch/core.h>
+
 
 
 float vertexArray[]{
@@ -46,6 +48,9 @@ const char* fragSrc =
 int main() {
 
 
+	Core c;
+
+	c.Init();
 
 	// - GLFW Initialisation ------------------------------------------------------
 	glfwInit();
@@ -170,6 +175,8 @@ int main() {
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
 
+		c.Update();
+
 		// clear colour
 		glClear(GL_COLOR_BUFFER_BIT);
 		// - stencil
@@ -198,8 +205,13 @@ int main() {
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);
 		glfwPollEvents();
+		
+	
 	}
 
+
+	c.Stop();
+	c.Cleanup();
 
 	glfwTerminate();
 
