@@ -75,6 +75,9 @@
     <ClCompile Include="Headers\arch\systems\core.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
+    <ClCompile Include="Headers\arch\ecs\ecs_sparsemap.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -136,6 +139,9 @@
     </ClInclude>
     <ClInclude Include="Headers\arch\common\entity.h">
       <Filter>Header Files\arch\common</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\ecs\ecs_sparsemapDEF.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

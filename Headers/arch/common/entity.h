@@ -2,14 +2,17 @@
 #include <bitset>
 #include <arch/components/componentList.h>
 #include <chrono>
+#include <math.h>
+
+
 
 class EntityID;
-const EntityID C_INVALID { 0x000000 };
+const unsigned ENTITYID_INVALID { 0x000000 };
 
 
 namespace ch = std::chrono;
 
-
+// hashing.
 template<>
 struct std::hash<ch::system_clock::time_point> {
 	std::size_t operator()(ch::system_clock::time_point const& d) const noexcept {
@@ -27,6 +30,26 @@ struct std::hash<ch::file_clock::time_point> {
 static std::hash<std::string> s_StrHash{};
 static std::hash<ch::time_point<ch::system_clock>> s_TpHash	{};
 static std::hash<ch::time_point<ch::file_clock>> s_FpHash	{};
+
+// ----------------------------------------------------------------------
+
+class EntityID {
+public:
+	EntityID() : m_id{ static_cast<unsigned long>(s_TpHash(ch::system_clock::now())) } {};
+	EntityID(unsigned long _id) : m_id{ _id } {};
+	EntityID(const EntityID&) = default;
+
+	bool operator<(const EntityID& other) { return m_id < other.m_id; }
+	bool operator>(const EntityID& other) { return m_id > other.m_id; }
+	bool operator==(const EntityID& other) { return m_id == other.m_id; }
+
+	inline bool IsValid() const { return m_id != ENTITYID_INVALID; };
+
+private:
+	unsigned long m_id{};
+};
+
+
 // ----------------------------------------------------------------------
 
 class Entity {
@@ -44,17 +67,4 @@ private:
 };
 
 
-// ----------------------------------------------------------------------
-
-class EntityID {
-public:
-	EntityID() : m_id{ s_TpHash(ch::system_clock::now()) } {};
-	EntityID(unsigned long _id) : m_id { _id } {};
-	EntityID(const EntityID&) = default;
-
-	inline bool IsValid() const { return m_id != 0; };
-
-private:
-	unsigned long m_id {};
-};
 

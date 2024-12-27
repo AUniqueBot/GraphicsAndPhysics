@@ -1,5 +1,7 @@
 #pragma once
 #include <arch/common/singleton.h>
+#include <arch/common/entity.h>
+
 
 class System {
 public:
@@ -19,5 +21,6 @@ public:
 
 
 	// --- 
+private:
 	
 };

@@ -174,7 +174,7 @@ int main() {
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
-
+		
 		c.Update();
 
 		// clear colour

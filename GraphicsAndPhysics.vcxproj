@@ -167,6 +167,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Headers\arch\ecs\ecs_sparsemap.h" />
     <ClCompile Include="Headers\arch\systems\core.cpp" />
     <ClCompile Include="Source\arch\systems\sys_transform.cpp" />
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp" />
@@ -187,6 +188,7 @@
     <ClInclude Include="Headers\arch\components\comp_rigidbody.h" />
     <ClInclude Include="Headers\arch\components\comp_transform.h" />
     <ClInclude Include="Headers\arch\core.h" />
+    <ClInclude Include="Headers\arch\ecs\ecs_sparsemapDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />

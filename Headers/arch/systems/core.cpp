@@ -12,9 +12,6 @@ void Core::Init() {
 	RegisterSystem<TransformSystem>();
 
 
-
-
-
 	// initialise here.
 	for (System* s : m_systemInstances) {
 		s->Init();
