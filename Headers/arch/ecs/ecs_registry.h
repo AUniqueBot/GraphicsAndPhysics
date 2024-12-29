@@ -28,9 +28,11 @@ class ComponentPool : public IComponentPool {
 	SparseSet<EntityID, T> m_compPool;
 
 public:
+
+	///! @brief get the data of the component pool.
+	///! @return 
 	SparseSet<EntityID, T>& Data();
 	const SparseSet<EntityID, T>& Data() const;
-
 };
 
 // ------------------------------------------------------------------------------------
