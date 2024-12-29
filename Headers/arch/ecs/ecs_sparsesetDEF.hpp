@@ -1,9 +1,9 @@
 #pragma once
-#include <arch/ecs/ecs_sparsemap.h>
+#include <arch/ecs/ecs_sparseset.h>
 
 
 template <typename IDType, typename T>
-bool SparseMap<IDType, T>::Add(T&& _newItem, IDType _id) {
+bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_entityToIdx.contains(_id)) return false;
@@ -19,7 +19,7 @@ bool SparseMap<IDType, T>::Add(T&& _newItem, IDType _id) {
 }
 
 template <typename IDType, typename T>
-bool SparseMap<IDType, T>::Remove(IDType _id){
+bool SparseSet<IDType, T>::Remove(IDType _id){
 	
 	// find if this key exists
 	if (!m_entityToIdx.contains(_id)) return false;
@@ -49,7 +49,7 @@ bool SparseMap<IDType, T>::Remove(IDType _id){
 }
 
 template <typename IDType, typename T>
-std::optional<T&> SparseMap<IDType, T>::operator[](IDType _entityID) {
+std::optional<T&> SparseSet<IDType, T>::operator[](IDType _entityID) {
 	if (m_entityToIdx.contains(_entityID)) {
 		return m_typeContainer[m_entityToIdx[_entityID]];
 	}
@@ -57,7 +57,7 @@ std::optional<T&> SparseMap<IDType, T>::operator[](IDType _entityID) {
 }
 
 template <typename IDType, typename T>
-inline std::optional<T&> SparseMap<IDType, T>::At(IDType _entityID) {
+inline std::optional<T&> SparseSet<IDType, T>::At(IDType _entityID) {
 	if (m_entityToIdx.contains(_entityID)) {
 		return m_typeContainer[m_entityToIdx[_entityID]];
 	}
@@ -65,7 +65,7 @@ inline std::optional<T&> SparseMap<IDType, T>::At(IDType _entityID) {
 }
 
 template <typename IDType, typename T>
-inline std::optional<const T&> SparseMap<IDType, T>::At(IDType _entityID) const {
+inline std::optional<const T&> SparseSet<IDType, T>::At(IDType _entityID) const {
 	if (m_entityToIdx.contains(_entityID)) {
 		return m_typeContainer[m_entityToIdx[_entityID]];
 	}

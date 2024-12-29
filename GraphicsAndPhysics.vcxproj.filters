@@ -75,7 +75,7 @@
     <ClCompile Include="Headers\arch\systems\core.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\ecs\ecs_sparsemap.h">
+    <ClCompile Include="Headers\arch\ecs\ecs_sparseset.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,7 +140,13 @@
     <ClInclude Include="Headers\arch\common\entity.h">
       <Filter>Header Files\arch\common</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\ecs\ecs_sparsemapDEF.hpp">
+    <ClInclude Include="Headers\arch\ecs\ecs_sparsesetDEF.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\ecs\ecs_registry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

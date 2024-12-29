@@ -35,7 +35,7 @@ static std::hash<ch::time_point<ch::file_clock>> s_FpHash	{};
 
 class EntityID {
 public:
-	EntityID() : m_id{ static_cast<unsigned long>(s_TpHash(ch::system_clock::now())) } {};
+	EntityID() : m_id { static_cast<unsigned long>(s_TpHash(ch::system_clock::now())) } {};
 	EntityID(unsigned long _id) : m_id{ _id } {};
 	EntityID(const EntityID&) = default;
 
