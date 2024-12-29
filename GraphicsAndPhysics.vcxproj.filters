@@ -52,6 +52,12 @@
     <Filter Include="Source Files\arch\systerms">
       <UniqueIdentifier>{20fd3dda-0ba2-453a-bf07-8c9564fb9556}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\arch\ecs">
+      <UniqueIdentifier>{86f9b3f7-09f8-4d2a-82d5-e5357fe0b57d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\arch\datatypes">
+      <UniqueIdentifier>{42b09a18-8dc8-4340-836e-20d5a7f1c102}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -75,8 +81,8 @@
     <ClCompile Include="Headers\arch\systems\core.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\ecs\ecs_sparseset.h">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Headers\arch\datatypes\type_sparseset.h">
+      <Filter>Header Files\arch\datatypes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -140,14 +146,14 @@
     <ClInclude Include="Headers\arch\common\entity.h">
       <Filter>Header Files\arch\common</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\ecs\ecs_sparsesetDEF.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\arch\ecs</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\arch\ecs</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp">
+      <Filter>Header Files\arch\datatypes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

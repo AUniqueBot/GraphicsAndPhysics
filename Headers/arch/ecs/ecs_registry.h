@@ -3,8 +3,10 @@
 
 
 #include <unordered_map>
+#include <arch/datatypes/type_sparseset.h>
+#include <arch/common/entity.h>
+
 #include <arch/components/componentList.h>
-#include <arch/ecs/ecs_sparseset.h>
 #include <arch/common/component.h>
 
 #include <typeindex>

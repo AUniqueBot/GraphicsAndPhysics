@@ -7,8 +7,6 @@
 #include <pch.h>
 #include <unordered_map>
 
-#include <arch/common/entity.h>
-
 
 template <typename IDType, typename T>
 class SparseSet {
@@ -54,14 +52,14 @@ private:
 
 	//! @brief this container maps ids to an entity.
 	// KEY = Index, VALUE = EntityID 
-	std::vector<IDType> m_idxToEntity;
+	std::vector<IDType> m_idxToValue;
 
 	//! @brief this container maps entities to ids.
 	//! KEY = EntityID, VALUE = Index
-	std::unordered_map<IDType, int> m_entityToIdx;
+	std::unordered_map<IDType, int> m_valueToIdx;
 
 
 };
 
 
-#include <arch/ecs/ecs_sparsesetDEF.hpp>
+#include <arch/datatypes/type_sparsesetDEF.hpp>
