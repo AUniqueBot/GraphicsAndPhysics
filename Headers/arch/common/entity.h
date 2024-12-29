@@ -7,7 +7,6 @@
 
 
 class EntityID;
-const unsigned ENTITYID_INVALID { 0x000000 };
 
 
 namespace ch = std::chrono;
@@ -38,6 +37,8 @@ public:
 	EntityID() : m_id { static_cast<unsigned long>(s_TpHash(ch::system_clock::now())) } {};
 	EntityID(unsigned long _id) : m_id{ _id } {};
 	EntityID(const EntityID&) = default;
+	EntityID& operator=(const EntityID&) = default;
+
 
 	bool operator<(const EntityID& other) { return m_id < other.m_id; }
 	bool operator>(const EntityID& other) { return m_id > other.m_id; }
@@ -45,9 +46,26 @@ public:
 
 	inline bool IsValid() const { return m_id != ENTITYID_INVALID; };
 
+	unsigned long GetID() const { return m_id; }
+
+
 private:
+	static constexpr unsigned long ENTITYID_INVALID = 0; // Define invalid ID
+
 	unsigned long m_id{};
 };
+
+
+
+namespace std {
+	template <>
+	struct hash<EntityID> {
+		std::size_t operator()(const EntityID& id) const noexcept {
+			return std::hash<unsigned long>()(id.GetID());
+		}
+	};
+}
+
 
 
 // ----------------------------------------------------------------------

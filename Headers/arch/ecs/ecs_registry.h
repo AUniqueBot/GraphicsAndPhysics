@@ -38,6 +38,11 @@ public:
 // ------------------------------------------------------------------------------------
 class EntityRegistry {
 
+
+public:
+
+	EntityRegistry() = default;
+
 	// component registration.
 	template <typename T>
 	void RegisterType();

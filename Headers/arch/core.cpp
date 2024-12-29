@@ -1,16 +1,15 @@
 #include <pch.h>
 #include <arch/core.h>
 
-#include <arch/systems/sys_transform.h>
+#include <arch/systems/sys_headers.h>
+#include <arch/components/comp_headers.h>
 
 
 
 std::vector<System*> Core::m_systemInstances{};
 
 void Core::Init() {
-
-	RegisterSystem<TransformSystem>();
-
+	RegisterComponents();
 
 	// initialise here.
 	for (System* s : m_systemInstances) {
@@ -44,3 +43,14 @@ void Core::Cleanup() {
 }
 
 
+void Core::RegisterComponents() {
+	// register components
+
+	m_registry.RegisterType<Transform>();
+
+
+
+
+	RegisterSystem<TransformSystem>();
+	RegisterSystem<RenderSystem>();
+}

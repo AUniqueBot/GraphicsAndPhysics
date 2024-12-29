@@ -6,6 +6,5 @@ void TransformSystem::Start() {
 }
 
 void TransformSystem::Update() {
-
-	std::cout << "fuck" << std::endl;
+	std::cout << typeid(TransformSystem).name() << ": Update" << std::endl;
 }

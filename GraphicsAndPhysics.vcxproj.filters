@@ -78,7 +78,7 @@
     <ClCompile Include="Source\arch\systems\sys_transform.cpp">
       <Filter>Source Files\arch\systerms</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\systems\core.cpp">
+    <ClCompile Include="Headers\arch\core.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h">
@@ -154,6 +154,15 @@
     </ClInclude>
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp">
       <Filter>Header Files\arch\datatypes</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render.h">
+      <Filter>Header Files\arch\systems</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_headers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\components\comp_headers.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

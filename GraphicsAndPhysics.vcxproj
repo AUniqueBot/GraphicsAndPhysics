@@ -168,7 +168,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h" />
-    <ClCompile Include="Headers\arch\systems\core.cpp" />
+    <ClCompile Include="Headers\arch\core.cpp" />
     <ClCompile Include="Source\arch\systems\sys_transform.cpp" />
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp" />
     <ClCompile Include="Source\arch\components\comp_transform.cpp" />
@@ -184,6 +184,7 @@
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
     <ClInclude Include="Headers\arch\components\componentList.h" />
+    <ClInclude Include="Headers\arch\components\comp_headers.h" />
     <ClInclude Include="Headers\arch\components\comp_meshrenderer.h" />
     <ClInclude Include="Headers\arch\components\comp_rigidbody.h" />
     <ClInclude Include="Headers\arch\components\comp_transform.h" />
@@ -191,6 +192,8 @@
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
+    <ClInclude Include="Headers\arch\systems\sys_headers.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />

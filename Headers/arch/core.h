@@ -1,7 +1,7 @@
 #pragma once
 #include <pch.h>
 #include "arch_headers.h"
-
+#include <arch/ecs/ecs_registry.h>
 
 
 class Core {
@@ -26,6 +26,8 @@ public:
 
 public:
 
+	
+
 	// static void AddSystem(System* newSys);
 
 	template <typename T>
@@ -34,5 +36,8 @@ public:
 	}
 
 private:
+	void RegisterComponents();
+	EntityRegistry m_registry;
 	static std::vector<System*> m_systemInstances;
+
 };

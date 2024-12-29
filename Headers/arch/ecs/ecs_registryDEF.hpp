@@ -2,6 +2,10 @@
 #include <arch/ecs/ecs_registry.h>
 
 
+
+
+
+
 template <typename T>
 void EntityRegistry::RegisterType() {
 	// create a sparse set of type T
@@ -48,3 +52,6 @@ const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 
 
 // ======================================================================================
+
+
+
