@@ -7,10 +7,12 @@
 
 
 std::vector<System*> Core::m_systemInstances{};
+EntityRegistry Core::m_registry{};
+
 
 void Core::Init() {
 	RegisterComponents();
-
+	RegisterSystems();
 	// initialise here.
 	for (System* s : m_systemInstances) {
 		s->Init();
@@ -18,10 +20,13 @@ void Core::Init() {
 }
 
 void Core::Start() {
+
 }
 
 void Core::PreUpdate() {
-
+	for (auto s : m_systemInstances) {
+		s->PreUpdate();
+	}
 }
 
 void Core::Update() {
@@ -44,13 +49,16 @@ void Core::Cleanup() {
 
 
 void Core::RegisterComponents() {
-	// register components
+
 
 	m_registry.RegisterType<Transform>();
+	m_registry.RegisterType<RigidBody>();
 
 
 
+}
 
+void Core::RegisterSystems() {
 	RegisterSystem<TransformSystem>();
 	RegisterSystem<RenderSystem>();
 }

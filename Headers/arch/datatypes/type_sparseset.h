@@ -1,11 +1,16 @@
 /*
 	@brief contains the sparsemap type - a data type that allows you to lookup <T> based on <IDType>.
 */
-
 #pragma once
 
 #include <pch.h>
 #include <unordered_map>
+
+
+#ifndef TYPE_SPARSESET
+#define TYPE_SPARSESET
+
+
 
 
 template <typename IDType, typename T>
@@ -80,6 +85,6 @@ private:
 
 
 };
-
-
 #include <arch/datatypes/type_sparsesetDEF.hpp>
+
+#endif

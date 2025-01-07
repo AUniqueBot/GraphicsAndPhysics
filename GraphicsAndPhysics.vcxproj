@@ -188,6 +188,7 @@
     <ClInclude Include="Headers\arch\components\comp_meshrenderer.h" />
     <ClInclude Include="Headers\arch\components\comp_rigidbody.h" />
     <ClInclude Include="Headers\arch\components\comp_transform.h" />
+    <ClInclude Include="Headers\arch\components\comp_collider.h" />
     <ClInclude Include="Headers\arch\core.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />

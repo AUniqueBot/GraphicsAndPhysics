@@ -37,7 +37,8 @@ public:
 
 private:
 	void RegisterComponents();
-	EntityRegistry m_registry;
+	void RegisterSystems();
+	static EntityRegistry m_registry;
 	static std::vector<System*> m_systemInstances;
 
 };

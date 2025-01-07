@@ -1,4 +1,5 @@
 #pragma once
+
 #include <bitset>
 #include <arch/components/componentList.h>
 #include <chrono>
@@ -7,7 +8,7 @@
 
 
 class EntityID;
-
+class EntityRegistry;
 
 namespace ch = std::chrono;
 
@@ -56,7 +57,7 @@ private:
 };
 
 
-
+// make EntityID hashable.
 namespace std {
 	template <>
 	struct hash<EntityID> {
@@ -77,9 +78,17 @@ public:
 	EntityID GetID() const		{ return m_id; };
 	bool IsValid() const { return m_id.IsValid(); };
 
-	// needs an ID to refer to.
+
+	template <typename T>
+	void AddComponent() {};
+	template <typename T>
+	void RemoveComponent() {};
+
 private:
-	EntityID m_id				{ 0 };
+
+
+	EntityRegistry* m_registry					{};
+	EntityID m_id								{ 0 };
 	std::bitset<ComponentType::COUNT> m_flags;
 
 };

@@ -12,6 +12,7 @@
 #include <typeindex>
 
 
+
 // component pool class
 // ------------------------------------------------------------------------------------
 // base class to utilise polymorphism
@@ -33,6 +34,10 @@ public:
 	///! @return 
 	SparseSet<EntityID, T>& Data();
 	const SparseSet<EntityID, T>& Data() const;
+
+
+	bool Add(EntityID _addTo);
+	bool Remove(EntityID _removeFrom);
 };
 
 // ------------------------------------------------------------------------------------
@@ -52,6 +57,25 @@ public:
 
 	template <typename T>
 	const std::optional<ComponentPool<T>&> GetComponentPool() const;
+
+
+	
+	// component handling.
+
+	///! @brief adds specified component to the entity given.
+	///! @tparam T: Component Type
+	///! @param _addTo: entity id to add a component to
+	///! @return true if successful.
+	template <typename T>
+	bool AddComponent(EntityID _addTo);
+
+
+	///! @brief removes specified component from the entity given.
+	///! @tparam T: Component Type
+	///! @param _removeFrom: entity id to remove component from 
+	///! @return true if successful.
+	template <typename T>
+	bool RemoveComponent(EntityID _removeFrom);
 
 private:
 

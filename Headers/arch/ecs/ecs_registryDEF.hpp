@@ -3,9 +3,6 @@
 
 
 
-
-
-
 template <typename T>
 void EntityRegistry::RegisterType() {
 	// create a sparse set of type T
@@ -37,6 +34,29 @@ const std::optional<ComponentPool<T>&> EntityRegistry::GetComponentPool() const 
 
 
 
+
+template <typename T>
+bool EntityRegistry::AddComponent(EntityID _addTo) {
+	auto val = GetComponentPool<T>();
+	if (!val.has_value()) {
+		std::cerr << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T) << "\" undefined.";
+		return false;
+	}
+	ComponentPool<T>& compPool = val.value();
+	return compPool.Add(_addTo);
+}
+template <typename T>
+bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
+	auto val = GetComponentPool<T>();
+	if (!val.has_value()) {
+		std::cerr << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T) << "\" undefined.";
+		return false;
+	}
+	ComponentPool<T>& compPool = val.value();
+	return compPool.Remove(_removeFrom);
+}
+
+
 // ======================================================================================
 
 template <typename T>
@@ -47,6 +67,16 @@ SparseSet<EntityID, T>& ComponentPool<T>::Data() {
 template <typename T>
 const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 	return m_compPool;
+}
+
+template<typename T>
+inline bool ComponentPool<T>::Add(EntityID _addTo) {
+	return m_compPool.Add(_addTo);
+}
+
+template<typename T>
+inline bool ComponentPool<T>::Remove(EntityID _removeFrom) {
+	return m_compPool.Remove(_removeFrom);
 }
 
 
