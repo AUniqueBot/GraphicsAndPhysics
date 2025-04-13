@@ -84,6 +84,12 @@
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h">
       <Filter>Header Files\arch\datatypes</Filter>
     </ClCompile>
+    <ClCompile Include="Headers\arch\systems\sys_render.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="res_shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -169,6 +175,9 @@
     </ClInclude>
     <ClInclude Include="Headers\arch\components\comp_collider.h">
       <Filter>Header Files\arch\components</Filter>
+    </ClInclude>
+    <ClInclude Include="res_shader.h">
+      <Filter>Header Files\arch\resources</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

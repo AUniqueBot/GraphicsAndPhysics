@@ -20,7 +20,9 @@ void Core::Init() {
 }
 
 void Core::Start() {
-
+	for (System* s : m_systemInstances) {
+		s->Init();
+	}
 }
 
 void Core::PreUpdate() {
@@ -42,20 +44,21 @@ void Core::PostUpdate() {
 }
 
 void Core::Stop() {
+	for (auto s : m_systemInstances) {
+		s->Stop();
+	}
 }
 
 void Core::Cleanup() {
+	for (auto s : m_systemInstances) {
+		s->Cleanup();
+	}
 }
 
 
 void Core::RegisterComponents() {
-
-
 	m_registry.RegisterType<Transform>();
 	m_registry.RegisterType<RigidBody>();
-
-
-
 }
 
 void Core::RegisterSystems() {

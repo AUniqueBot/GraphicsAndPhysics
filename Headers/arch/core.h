@@ -21,9 +21,6 @@ public:
 	void Cleanup();
 	
 
-
-
-
 public:
 
 	

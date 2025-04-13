@@ -3,53 +3,65 @@
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
 
+// image testing.
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 
-float vertexArray[]{
-	0.5f, 0.5f, 0.0f, // top right
-	0.5f, -0.5f, 0.0f, // bottom right
-	-0.5f, -0.5f, 0.0f, // bottom left
-	-0.5f, 0.5f, 0.0f // top left
+// these are coordinates in normalised window space 
+float vertexArray[] = {
+	// positions // colors // texture coords
+	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,			// top right
+	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// bottom right
+	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,		// bottom left
+	-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f			// top left
 };
 
-float texCoords[] = {
-	1.0f, 1.0f, // lower-left corner
-	1.0f, 0.0f, // lower-right corner
-	0.0f, 0.0f, // top-center corner
-	0.0f, 1.0f // top-center corner
-};
 
-
+// this index specifies triangles based on vertex index (0, 1, 3 & 1, 2, 3 are separate triangles)
 unsigned int indices[] = { // note that we start from 0!
 	0, 1, 3, // first triangle
 	1, 2, 3 // second triangle
 };
 
-const char* vtxSrc = 
+const char* vtxSrc =
 "#version 330 core\n"
 "layout (location = 0) in vec3 aPos;\n"
-"uniform float offset;\n"
-"out vec4 vtxPos;"
+"layout (location = 1) in vec3 aCol;\n"
+"layout (location = 2) in vec2 aUv;\n"
+"out vec4 vtxPos;\n"
+"out vec3 aColour;\n"
+"out vec2 oUv;\n"
+"uniform float x_offset;\n"
+"uniform float y_offset;\n"
 "void main() {\n"
-"	gl_Position = vec4(aPos.x + offset, aPos.y, aPos.z, 1.0);\n"
-"	vtxPos = gl_Position;\n"
+"	gl_Position = vec4(aPos.x + x_offset, aPos.y + y_offset, aPos.z, 1.0);\n"
+"	aColour = aCol;\n"
+"	oUv = aUv;\n"
 "}\0";
 
 // source code for fragment shader
 const char* fragSrc =
 "#version 330 core\n"
-"out vec4 FragColor;\n"
 "in vec4 vtxPos;\n"
+"in vec3 aColour;\n"
+"in vec2 oUv;\n"
+"out vec4 FragColor;\n"
+"uniform sampler2D tex;\n"
 "void main() {\n"
-"	FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-"	FragColor = vtxPos;\n"
+"	FragColor = texture(tex, oUv) * vec4(aColour, 1.0);\n"
 "}\0";
+
+
+
+
+
+
 
 int main() {
 
 
 	Core c;
-
 	c.Init();
 
 	// - GLFW Initialisation ------------------------------------------------------
@@ -91,6 +103,15 @@ int main() {
 	 glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
 
 
+	 /*
+		For reference
+			- VBO = What the vertex data is
+			- VAO = How to interpret a single vertex
+			- EBO = Which vertices to use to make geometry
+	 */
+
+
+
 	 // creation of VBOs and VAOs
 	 unsigned VBO					{};		// 
 	 unsigned VAO					{};		// 
@@ -102,15 +123,48 @@ int main() {
 
 	 glGenVertexArrays(1, &VAO);
 	 glBindVertexArray(VAO);
-	 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	 glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(0)); // Pos
 	 glEnableVertexAttribArray(0);
+	 glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(3 * sizeof(float)));	// Col
+	 glEnableVertexAttribArray(1);
+	 glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(6 * sizeof(float))); // UV
+	 glEnableVertexAttribArray(2);
 
 	 glGenBuffers(1, &EBO);
 
 	 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	 glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+	 // - image loading --------------
+		 unsigned int texture;
+		 glGenTextures(1, &texture);
+		 glBindTexture(GL_TEXTURE_2D, texture);
+
+		 // set the texture wrapping/filtering options (on currently bound texture)
+		 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		 // load and generate the texture
+		 int width, height, nrChannels;
+		 unsigned char* data = stbi_load("Assets/Images/container.jpg ", &width, &height,
+			 &nrChannels, 0);
+		 if (data)
+		 {
+			 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
+				 GL_UNSIGNED_BYTE, data);
+			 glGenerateMipmap(GL_TEXTURE_2D);
+			 std::cout << "Load OK" << std::endl;
+		 }
+		 else
+		 {
+			 std::cout << "Failed to load texture" << std::endl;
+		 }
+		stbi_image_free(data);
+
+
 	 // use the shader program here.
 
 	#pragma region // - shader compilation ---------
@@ -170,7 +224,7 @@ int main() {
 
 
 	 // set to wireframe
-	 glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+	 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
@@ -183,8 +237,15 @@ int main() {
 		// - depth
 		// - colour
 
-		int uniformLoc = glGetUniformLocation(prg, "offset");
-		glUniform1f(uniformLoc, 0.5);
+
+		// this specifies the uniform, "offset" in the shader to be 0.5
+		// it returns an int (name) as the location specifier for the shader.
+		// if it doesn't exist probably -1?
+		int uniformLoc{}; 
+		uniformLoc = glGetUniformLocation(prg, "x_offset");
+		glUniform1f(uniformLoc, -0.2);
+		uniformLoc = glGetUniformLocation(prg, "y_offset");
+		glUniform1f(uniformLoc, 0.2);
 
 		// input keys.
 		GLFW_KEY_W;
@@ -197,7 +258,8 @@ int main() {
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
 		glUseProgram(prg);
-		glBindVertexArray(VAO);
+		glBindTexture(GL_TEXTURE_2D, texture);
+		glBindVertexArray(VAO);	
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);

@@ -5,13 +5,13 @@
 
 class TransformSystem final : public System, public Singleton<TransformSystem> {
 public:
-	void Init()		override { std::cout << "TRS::Init" << std::endl; };
+	void Init()		override { std::cout << typeid(TransformSystem).name() << ": Init" << std::endl; };
 
 
 	void Start()	override;
 	void Update()	override;
-	void Stop()		override {std::cout << "TRS::Stop" << std::endl; };
-	void Cleanup()	override {std::cout << "TRS::Cleanup" << std::endl; };
+	void Stop()		override {std::cout << typeid(TransformSystem).name() << ":Stop" << std::endl; };
+	void Cleanup()	override {std::cout << typeid(TransformSystem).name() << ":Cleanup" << std::endl; };
 private:
 
 
