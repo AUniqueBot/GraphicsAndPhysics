@@ -47,9 +47,13 @@ const char* fragSrc =
 "in vec3 aColour;\n"
 "in vec2 oUv;\n"
 "out vec4 FragColor;\n"
-"uniform sampler2D tex;\n"
+
+"uniform sampler2D tex1;\n"
+"uniform sampler2D tex2;\n"
+
 "void main() {\n"
-"	FragColor = texture(tex, oUv) * vec4(aColour, 1.0);\n"
+// "	FragColor = mix(texture(tex1, TexCoord), texture(tex2, TexCoord), 0.2);\n"
+"	FragColor = mix(texture(tex2, oUv), texture(tex1, oUv), 0.2); \n"
 "}\0";
 
 
@@ -137,9 +141,10 @@ int main() {
 
 
 	 // - image loading --------------
-		 unsigned int texture;
-		 glGenTextures(1, &texture);
-		 glBindTexture(GL_TEXTURE_2D, texture);
+		 unsigned int texture1;
+		 unsigned int texture2;
+		 glGenTextures(1, &texture1);
+		 glBindTexture(GL_TEXTURE_2D, texture1);
 
 		 // set the texture wrapping/filtering options (on currently bound texture)
 		 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
@@ -149,21 +154,46 @@ int main() {
 
 		 // load and generate the texture
 		 int width, height, nrChannels;
-		 unsigned char* data = stbi_load("Assets/Images/container.jpg ", &width, &height,
+		 unsigned char* data = stbi_load("Assets/Images/awesomeface.png", &width, &height,
 			 &nrChannels, 0);
 		 if (data)
 		 {
-			 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,
-				 GL_UNSIGNED_BYTE, data);
+			 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA,GL_UNSIGNED_BYTE, data);
 			 glGenerateMipmap(GL_TEXTURE_2D);
-			 std::cout << "Load OK" << std::endl;
+			 std::cout << "awesomeface.jpg: Load OK" << std::endl;
 		 }
 		 else
 		 {
-			 std::cout << "Failed to load texture" << std::endl;
+			 std::cout << "awesomeface.jpg: Failed to load texture" << std::endl;
 		 }
 		stbi_image_free(data);
+		
 
+
+		glGenTextures(1, &texture2);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
+
+		// set the texture wrapping/filtering options (on currently bound texture)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		data = stbi_load("Assets/Images/container.jpg", &width, &height,
+			&nrChannels, 0);
+		if (data)
+		{
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB,GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+			std::cout << "container.png: Load OK" << std::endl;
+		}
+		else
+		{
+			std::cout << "container.png: Failed to load texture" << std::endl;
+		}
+
+		stbi_image_free(data);
 
 	 // use the shader program here.
 
@@ -204,6 +234,10 @@ int main() {
 	 }
 
 
+
+
+
+
 	 // creation and compiling the shader
 	 unsigned prg = glCreateProgram();
 	 glAttachShader(prg, vtxShader);
@@ -222,6 +256,11 @@ int main() {
 	 glDeleteShader(fragShader);
 	#pragma endregion
 
+	 // tex binding.
+	 // uses program, not the specific shader.
+	 glUseProgram(prg);
+	 glUniform1i(glGetUniformLocation(prg, "tex1"), 0);
+	 glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
 
 	 // set to wireframe
 	 glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
@@ -253,16 +292,21 @@ int main() {
 		GLFW_KEY_A;
 		GLFW_KEY_D;
 
-		// handle input here.
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 
-		glUseProgram(prg);
-		glBindTexture(GL_TEXTURE_2D, texture);
+
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, texture1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, texture2);
+
+		
 		glBindVertexArray(VAO);	
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
 		
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);

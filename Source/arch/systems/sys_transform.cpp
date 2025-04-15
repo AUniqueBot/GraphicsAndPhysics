@@ -7,5 +7,5 @@ void TransformSystem::Start() {
 }
 
 void TransformSystem::Update() {
-	std::cout << typeid(TransformSystem).name() << ": Update" << std::endl;
+	// std::cout << typeid(TransformSystem).name() << ": Update" << std::endl;
 }

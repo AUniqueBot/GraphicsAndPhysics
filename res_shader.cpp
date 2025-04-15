@@ -4,3 +4,16 @@
 void Shader::Load(std::string _vertexShader, std::string _fragShader) {
 	// bwoah
 }
+
+void Shader::Compile() {
+	// bwoah
+
+}
+
+void Shader::Load()
+{
+}
+
+void Shader::Unload()
+{
+}

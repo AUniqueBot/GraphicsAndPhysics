@@ -4,6 +4,10 @@
 
 // Some other todos - make a shader editor! How hard can it be? :')
 
+void RenderSystem::Init() {
+	std::cout << typeid(RenderSystem).name() << "::Init" << std::endl; 
+}
+
 void RenderSystem::PreUpdate() {
 	// clear the buffer.
 
@@ -11,7 +15,7 @@ void RenderSystem::PreUpdate() {
 }
 
 void RenderSystem::Update() {
-	std::cout << typeid(RenderSystem).name() << "::Update" << std::endl; 
+	// std::cout << typeid(RenderSystem).name() << "::Update" << std::endl; 
 
 	// rasterise all renderables 
 

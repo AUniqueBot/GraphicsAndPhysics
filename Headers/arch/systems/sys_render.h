@@ -4,7 +4,7 @@
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
-	void Init()		override { std::cout << typeid(RenderSystem).name() <<"::Init" << std::endl; };
+	void Init()		override;
 
 
 	void Start()	override { std::cout << typeid(RenderSystem).name() << "::Start" << std::endl;};
