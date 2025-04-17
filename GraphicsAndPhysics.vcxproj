@@ -170,13 +170,13 @@
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h" />
     <ClCompile Include="Headers\arch\core.cpp" />
     <ClCompile Include="Headers\arch\systems\sys_render.cpp" />
-    <ClCompile Include="res_shader.cpp" />
     <ClCompile Include="Source\arch\systems\sys_transform.cpp" />
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp" />
     <ClCompile Include="Source\arch\components\comp_transform.cpp" />
     <ClCompile Include="Source\common\graphics\gfx_glfwCustomCallbackFunctions.cpp" />
     <ClCompile Include="Source\common\input\input_processInput.cpp" />
     <ClCompile Include="Source\main.cpp" />
+    <ClCompile Include="Source\res\res_shader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\arch_headers.h" />
@@ -196,6 +196,7 @@
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
+    <ClInclude Include="Headers\arch\resources\res_shader.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_render.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
@@ -207,7 +208,15 @@
     <ClInclude Include="Headers\graphics\gfx_glfwCustomCallbackFunctions.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
-    <ClInclude Include="res_shader.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\flatShader.frag" />
+    <None Include="Assets\Shaders\vertexShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Images\awesomeface.png" />
+    <Image Include="Assets\Images\container.jpg" />
+    <Image Include="Assets\Images\TestImage.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

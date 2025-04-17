@@ -58,6 +58,9 @@
     <Filter Include="Header Files\arch\datatypes">
       <UniqueIdentifier>{42b09a18-8dc8-4340-836e-20d5a7f1c102}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\arch\resources">
+      <UniqueIdentifier>{9ac06af6-2309-4daa-9de3-9d561a2f16e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp">
@@ -85,9 +88,9 @@
       <Filter>Header Files\arch\datatypes</Filter>
     </ClCompile>
     <ClCompile Include="Headers\arch\systems\sys_render.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\arch\systerms</Filter>
     </ClCompile>
-    <ClCompile Include="res_shader.cpp">
+    <ClCompile Include="Source\res\res_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,8 +179,23 @@
     <ClInclude Include="Headers\arch\components\comp_collider.h">
       <Filter>Header Files\arch\components</Filter>
     </ClInclude>
-    <ClInclude Include="res_shader.h">
-      <Filter>Header Files\arch\resources</Filter>
+    <ClInclude Include="Headers\arch\resources\res_shader.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\flatShader.frag" />
+    <None Include="Assets\Shaders\vertexShader.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\Images\TestImage.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Images\container.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Assets\Images\awesomeface.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

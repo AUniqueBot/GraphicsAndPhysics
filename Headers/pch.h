@@ -19,6 +19,7 @@
 
 // - glfw lib -----------
 #include <graphics/gfx_dependencies.h>
+#include <util/util_math.h>
 
 
 

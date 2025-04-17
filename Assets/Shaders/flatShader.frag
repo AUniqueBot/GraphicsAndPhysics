@@ -15,8 +15,12 @@ uniform sampler2D tex2;
 void main() {
 	// FragColor = mix(texture(tex1, TexCoord), texture(tex2, TexCoord), 0.2);
 	FragColor = color;
-	if (useTex1){
-		FragColor = mix(texture(tex2, oUv), texture(tex1, vec2(1 - oUv.x, oUv.y)), 0.2) * vec4(oUv, 1, 1);
-	}
 
+
+	FragColor = mix(texture(tex2, oUv), texture(tex1, vec2(1 - oUv.x, oUv.y)), 0.2) * vec4(oUv, 1, 1);
+	// in the future there will be normal and specular maps.
+
+	// trying to use the traditional specular lighting model
+
+	
 }

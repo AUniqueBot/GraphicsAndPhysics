@@ -25,64 +25,74 @@ unsigned int indices[] = { // note that we start from 0!
 };
 
 
-unsigned int texture1 {};
-unsigned int texture2 {};
+enum IMAGE_CLAMP_BEHAVIOUR {
+	REPEAT,
+	MIRROR_REPEAT,
+	TO_EDGE,
+	TO_BORDER
+};
+
+enum FILTER_TYPE {
+	LINEAR,
+	NEAREST
+};
 
 
-void LoadImages() {
-	glGenTextures(1, &texture1);
-	glBindTexture(GL_TEXTURE_2D, texture1);
+unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType) {
+	// TODO - Retrofit this function to save as a class for asset management.
+
+	unsigned id{};
+	glGenTextures(1, &id);
+	glBindTexture(GL_TEXTURE_2D, id);
 
 	// set the texture wrapping/filtering options (on currently bound texture)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	GLenum hwrap{};
+	GLenum vwrap{};
+	for (int i{}; i < 2; ++i) {
+		GLenum* setting = (i == 0) ? &hwrap : &vwrap;
+		IMAGE_CLAMP_BEHAVIOUR* specifier = (i == 0) ? &_horizontal : &_vertical;
+
+		switch (*specifier) {
+		case IMAGE_CLAMP_BEHAVIOUR::REPEAT:
+			*setting = GL_REPEAT;
+			break;
+		case IMAGE_CLAMP_BEHAVIOUR::MIRROR_REPEAT:
+			*setting = GL_MIRRORED_REPEAT;
+			break;
+		case IMAGE_CLAMP_BEHAVIOUR::TO_EDGE:
+			*setting = GL_CLAMP_TO_EDGE;
+			break;
+		case IMAGE_CLAMP_BEHAVIOUR::TO_BORDER:
+			*setting = GL_CLAMP_TO_BORDER;
+			break;
+		}
+
+		
+	}
+	GLint filter = _fType == FILTER_TYPE::LINEAR ? GL_LINEAR : GL_NEAREST;
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, hwrap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, vwrap);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 	// load and generate the texture
 	int width, height, nrChannels;
 
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load("Assets/Images/awesomeface.png", &width, &height,
-		&nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		std::cout << "awesomeface.jpg: Load OK" << std::endl;
+	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+	GLint format = _hasAlpha ? GL_RGBA : GL_RGB;
+
+	if (!data) {
+		std::cout << path << ": Failed to load texture" << std::endl;
+		stbi_image_free(data);
+		return id;
 	}
-	else
-	{
-		std::cout << "awesomeface.jpg: Failed to load texture" << std::endl;
-	}
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	glGenerateMipmap(GL_TEXTURE_2D);
+	std::cout << path << ": Load OK" << std::endl;
 	stbi_image_free(data);
 
-
-
-	glGenTextures(1, &texture2);
-	glBindTexture(GL_TEXTURE_2D, texture2);
-
-
-	// set the texture wrapping/filtering options (on currently bound texture)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	stbi_set_flip_vertically_on_load(true);
-	data = stbi_load("Assets/Images/container.jpg", &width, &height,
-		&nrChannels, 0);
-	if (data)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		std::cout << "container.png: Load OK" << std::endl;
-	}
-	else
-	{
-		std::cout << "container.png: Failed to load texture" << std::endl;
-	}
-
-	stbi_image_free(data);
+	return id;
 }
 
 
@@ -93,6 +103,10 @@ std::string GetRawText(std::string _pathToFile) {
 	toRet << ifs.rdbuf();
 	return toRet.str();
 }
+
+
+
+
 
 
 int main() {
@@ -107,11 +121,11 @@ int main() {
 	// setting up opengl version (opengl 3.3)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	
+
 	// tbh mate, idk what this does.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	
+
 
 	// create a window
 	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "Window Name", nullptr, nullptr);
@@ -133,9 +147,12 @@ int main() {
 		glfwTerminate();
 		return -1;
 	}
+	unsigned int tex1{}, tex2{};
 
+	// LoadImages(tex1, tex2);
+	tex1 = LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
+	tex2 = LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
 
-	LoadImages();
 	// - set up functions ------------
 
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
@@ -150,9 +167,9 @@ int main() {
 
 
 	// creation of VBOs and VAOs
-	unsigned VBO					{};		// 
-	unsigned VAO					{};		// 
-	unsigned EBO					{};		//
+	unsigned VBO{};		// 
+	unsigned VAO{};		// 
+	unsigned EBO{};		//
 
 	// specifying the vertex buffer data
 	glGenBuffers(1, &VBO);					// VBO Gets assigned an ID of sorts
@@ -161,13 +178,13 @@ int main() {
 
 
 	// specifying vertex architecture
-	glGenVertexArrays(1, &VAO); 
+	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(0)); // Pos
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0)); // Pos
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(3 * sizeof(float)));	// Col
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));	// Col
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float),(void*)(6 * sizeof(float))); // UV
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
 	glEnableVertexAttribArray(2);
 
 	// specifying which vertices make a face
@@ -178,86 +195,88 @@ int main() {
 
 
 
-		// use the shader program here.
+	// use the shader program here.
 
-	#pragma region // - shader compilation ---------
-		// - shader compilation ---------
-		// ----------------------------------------------------------------------------
-		int vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
+#pragma region // - shader compilation ---------
+	// - shader compilation ---------
+	// ----------------------------------------------------------------------------
+	int vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
 
-		std::string srcS{};
-		const char* src{};
+	std::string srcS{};
+	const char* src{};
 
-		srcS = GetRawText("Assets/Shaders/vertexShader.vert");
-		src = srcS.c_str();
-		glShaderSource(vtxShader, 1, &src, NULL);
-		glCompileShader(vtxShader);
+	srcS = GetRawText("Assets/Shaders/vertexShader.vert");
+	src = srcS.c_str();
+	glShaderSource(vtxShader, 1, &src, NULL);
+	glCompileShader(vtxShader);
 
-		// a class for a shader would be a good idea?
+	// a class for a shader would be a good idea?
 
-		// warning check
-		// status of thing
-		int glStatus{};
-		glGetShaderiv(vtxShader, GL_COMPILE_STATUS, &glStatus);
-		if (glStatus == GL_FALSE) {
-			char log[512];
-			glGetShaderInfoLog(vtxShader, 512, NULL, log);
+	// warning check
+	// status of thing
+	int glStatus{};
+	glGetShaderiv(vtxShader, GL_COMPILE_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(vtxShader, 512, NULL, log);
 
-			std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
+		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
 
-		}
+	}
 
-		// fragment shader
-		int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-
-		srcS = GetRawText("Assets/Shaders/flatShader.frag");
-		src = srcS.c_str();
+	// fragment shader
+	int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 
-		glShaderSource(fragShader, 1, &src, NULL);
-		glCompileShader(fragShader);
-
-		glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
-		if (glStatus == GL_FALSE) {
-			char log[512];
-			glGetShaderInfoLog(fragShader, 512, NULL, log);
-
-			std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-		}
+	srcS = GetRawText("Assets/Shaders/flatShader.frag");
+	src = srcS.c_str();
 
 
+	glShaderSource(fragShader, 1, &src, NULL);
+	glCompileShader(fragShader);
 
-		// creation and compiling the shader
-		unsigned prg = glCreateProgram();
-		glAttachShader(prg, vtxShader);
-		glAttachShader(prg, fragShader);
-		glLinkProgram(prg);
+	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(fragShader, 512, NULL, log);
 
-		glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
-		if (glStatus == GL_FALSE) {
-			char log[512];
-			glGetShaderInfoLog(fragShader, 512, NULL, log);
+		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
+	}
 
-			std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-		}
 
-		glDeleteShader(vtxShader);
-		glDeleteShader(fragShader);
-	#pragma endregion
 
-		// tex binding.
-		// select the current shader, and apply the shader.
-		glUseProgram(prg); // uses program, not the specific shader.
-		glUniform1i(glGetUniformLocation(prg, "tex1"), 0);
-		glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
+	// creation and compiling the shader
+	unsigned prg = glCreateProgram();
+	glAttachShader(prg, vtxShader);
+	glAttachShader(prg, fragShader);
+	glLinkProgram(prg);
 
-		// set to wireframe
-		glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(fragShader, 512, NULL, log);
+
+		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
+	}
+
+	glDeleteShader(vtxShader);
+	glDeleteShader(fragShader);
+#pragma endregion
+
+	// tex binding.
+	// select the current shader, and apply the shader.
+	glUseProgram(prg); // uses program, not the specific shader.
+	glUniform1i(glGetUniformLocation(prg, "tex1"), 0);
+	glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
+
+	
+
+	// set to wireframe
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
-		
+
 		c.Update();
 
 		// clear colour
@@ -270,11 +289,18 @@ int main() {
 		// this specifies the uniform, "offset" in the shader to be 0.5
 		// it returns an int (name) as the location specifier for the shader.
 		// if it doesn't exist probably -1?
-		int uniformLoc{}; 
+		int uniformLoc{};
 		uniformLoc = glGetUniformLocation(prg, "x_offset");
 		glUniform1f(uniformLoc, -0.2);
 		uniformLoc = glGetUniformLocation(prg, "y_offset");
 		glUniform1f(uniformLoc, 0.2);
+		uniformLoc = glGetUniformLocation(prg, "color");
+		
+		uniformLoc = glGetUniformLocation(prg, "useTex1");
+
+		uniformLoc = glGetUniformLocation(prg, "useTex2");
+
+
 
 		// input keys.
 		GLFW_KEY_W;
@@ -286,23 +312,23 @@ int main() {
 
 		// activating textures
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture1);
+		glBindTexture(GL_TEXTURE_2D, tex1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, texture2);
+		glBindTexture(GL_TEXTURE_2D, tex2);
 
-		
-		glBindVertexArray(VAO);	
+
+		glBindVertexArray(VAO);
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		glBindVertexArray(0);
 		//glDrawArrays(GL_TRIANGLES, 0, 3);
 
-
 		
+
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);
 		glfwPollEvents();
-		
-	
+
+
 	}
 
 
