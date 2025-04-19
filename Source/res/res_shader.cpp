@@ -6,14 +6,14 @@ void Shader::Load(std::string _vertexShader, std::string _fragShader) {
 }
 
 void Shader::Compile() {
-	// bwoah
+	
+	
 
+	// delete shaders.
 }
 
-void Shader::Load()
-{
+void Shader::Load() {
 }
 
-void Shader::Unload()
-{
+void Shader::Unload() {
 }

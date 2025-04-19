@@ -132,8 +132,8 @@ int main() {
 	glfwInit();
 
 	// setting up opengl version (opengl 3.3)
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
 	// tbh mate, idk what this does.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -191,6 +191,7 @@ int main() {
 
 
 	// specifying vertex architecture
+	// VAO specification.
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0)); // Pos
@@ -234,7 +235,6 @@ int main() {
 		glGetShaderInfoLog(vtxShader, 512, NULL, log);
 
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
-
 	}
 
 	// fragment shader
@@ -245,8 +245,8 @@ int main() {
 	src = srcS.c_str();
 
 
-	glShaderSource(fragShader, 1, &src, NULL);
-	glCompileShader(fragShader);
+	glShaderSource(fragShader, 1, &src, NULL); // load shader source
+	glCompileShader(fragShader); // compile the shaders.
 
 	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
 	if (glStatus == GL_FALSE) {
@@ -260,8 +260,8 @@ int main() {
 
 	// creation and compiling the shader
 	unsigned prg = glCreateProgram();
-	glAttachShader(prg, vtxShader);
 	glAttachShader(prg, fragShader);
+	glAttachShader(prg, vtxShader);
 	glLinkProgram(prg);
 
 	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);

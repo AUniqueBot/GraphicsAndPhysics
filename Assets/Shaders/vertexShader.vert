@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 
 // for now, start with the basics and only focus on position.
 // this describes how the vertex data is like -> [VEC3 : Pos] [VEC3 : Col] [VEC2 : UV]

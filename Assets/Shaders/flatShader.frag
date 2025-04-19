@@ -1,4 +1,4 @@
-#version 330 core
+#version 460 core
 in vec4 vtxPos;
 in vec3 aColour;
 in vec2 oUv;
