@@ -10,11 +10,19 @@
 
 // these are coordinates in normalised window space 
 float vertexArray[] = {
+	//set 1
 	// positions // colors // texture coords
 	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,			// top right
 	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// bottom right
 	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,		// bottom left
 	-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f			// top left
+	,
+
+	// set 2
+	0.0f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,			// top right
+	0.0f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// bottom right
+	0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,		// bottom left
+	0.0f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f			// top left
 };
 
 
@@ -22,6 +30,11 @@ float vertexArray[] = {
 unsigned int indices[] = { // note that we start from 0!
 	0, 1, 3, // first triangle
 	1, 2, 3 // second triangle
+	,
+
+
+	4, 5, 7,
+	5, 6, 7
 };
 
 
@@ -270,17 +283,32 @@ int main() {
 	glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
 
 	
+	// transforms
+
+
+
 
 	// set to wireframe
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glEnable(GL_DEPTH_TEST);
+
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
 
 		c.Update();
 
+		glm::mat4 objMat{ 1 };
+		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, 0.25f, 0.f));
+		glm::mat4 rot = glm::scale(objMat, glm::vec3(0.5f, 1.0f, 0.2f));
+		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime(), glm::normalize(glm::vec3(0.f, 1.f, 1.f)));
+
+		objMat = pos * rot * scl;
+
+
+
 		// clear colour
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// - stencil
 		// - depth
 		// - colour
@@ -290,16 +318,9 @@ int main() {
 		// it returns an int (name) as the location specifier for the shader.
 		// if it doesn't exist probably -1?
 		int uniformLoc{};
-		uniformLoc = glGetUniformLocation(prg, "x_offset");
-		glUniform1f(uniformLoc, -0.2);
-		uniformLoc = glGetUniformLocation(prg, "y_offset");
-		glUniform1f(uniformLoc, 0.2);
-		uniformLoc = glGetUniformLocation(prg, "color");
-		
-		uniformLoc = glGetUniformLocation(prg, "useTex1");
-
-		uniformLoc = glGetUniformLocation(prg, "useTex2");
-
+		uniformLoc = glGetUniformLocation(prg, "trs");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
+	
 
 
 		// input keys.
@@ -317,12 +338,36 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, tex2);
 
 
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
-		//glDrawArrays(GL_TRIANGLES, 0, 3);
+
+
+		// possible
+		/*
+			for (auto& vbo : ListOfObjs) {
+				glBindVertexArray(vbo.vao);
+				glDrawElements(GL_TRIANGLES, vbo.VtxCount, GL_UNSIGNED_INT, 0);
+			}
+			// to unbind
+			glBindVertexArray(0);
+
+
+
+			// maybe.
+
+
+			// alternatively, everything in 1 shader is connected in 1 ebo, vao, vbo.
+
+			
+
+		*/
 
 		
+		glBindVertexArray(VAO);
+		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * sizeof(int)));
+		
+		// unbind vertices.
+		glBindVertexArray(0);
+
 
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);
