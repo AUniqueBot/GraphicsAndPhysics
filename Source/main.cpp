@@ -3,9 +3,10 @@
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
 
-// image testing.
+
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
 
 
 // these are coordinates in normalised window space 
@@ -160,12 +161,12 @@ int main() {
 		glfwTerminate();
 		return -1;
 	}
-	unsigned int tex1{}, tex2{};
+	unsigned int tex1{}, tex2{}, tex3{};
 
 	// LoadImages(tex1, tex2);
 	tex1 = LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
 	tex2 = LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
-
+	tex3 = LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
 	// - set up functions ------------
 
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
@@ -335,7 +336,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, tex1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, tex2);
+		glBindTexture(GL_TEXTURE_2D, tex3);
 
 
 

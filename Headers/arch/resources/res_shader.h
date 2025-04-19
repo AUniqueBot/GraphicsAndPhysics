@@ -1,3 +1,5 @@
+#pragma once
+#include <pch.h>
 #include <arch/core.h>
 
 class ShaderProgram {
