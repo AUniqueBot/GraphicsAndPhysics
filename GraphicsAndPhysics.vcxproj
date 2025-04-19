@@ -177,6 +177,7 @@
     <ClCompile Include="Source\common\input\input_processInput.cpp" />
     <ClCompile Include="Source\main.cpp" />
     <ClCompile Include="Source\res\res_shader.cpp" />
+    <ClCompile Include="Source\res\res_texture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\arch_headers.h" />
@@ -197,6 +198,7 @@
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_render.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />

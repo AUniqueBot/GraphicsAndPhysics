@@ -1,6 +1,6 @@
 #include <arch/core.h>
 
-class Shader {
+class ShaderProgram {
 public:
 	enum SHADERTYPE {
 		VERTEX,
@@ -9,7 +9,8 @@ public:
 		GEOMETRY,
 		TESELLATION_CONTROL,
 		TESSELATION_EVALUATION,
-		COMPUTE
+		COMPUTE,
+		_COUNT
 	};
 
 public:
@@ -18,10 +19,19 @@ public:
 
 	void Load();
 	void Unload();
+
+
+
+private:
+	static void LogCompileStatus(int _statusCode, int _shaderID);
+	bool PreCompileCheck();
+
 private:
 	int m_shaderID { 0 };
 	std::unordered_map<std::string, GLint> m_uniformMap;
-	
+	std::unordered_map<SHADERTYPE, std::filesystem::path> m_shaderMap{}; // map of paths, not the src.
 
+	std::bitset<_COUNT> m_shaderLoadStatus;
 
 };
+

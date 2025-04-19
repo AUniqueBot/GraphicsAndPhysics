@@ -91,7 +91,10 @@
       <Filter>Source Files\arch\systerms</Filter>
     </ClCompile>
     <ClCompile Include="Source\res\res_shader.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\arch\resources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_texture.cpp">
+      <Filter>Source Files\arch\resources</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +170,6 @@
     <ClInclude Include="Headers\arch\systems\sys_render.h">
       <Filter>Header Files\arch\systems</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\systems\sys_headers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\components\comp_headers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -180,6 +180,12 @@
       <Filter>Header Files\arch\components</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_shader.h">
+      <Filter>Header Files\arch\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_texture.h">
+      <Filter>Header Files\arch\resources</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_headers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
