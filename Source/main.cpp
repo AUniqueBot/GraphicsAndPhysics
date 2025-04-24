@@ -142,7 +142,7 @@ int main() {
 
 
 	// create a window
-	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "Window Name", nullptr, nullptr);
+	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
 
 	// failed to create window
 	if (!mainWindow) {
@@ -167,7 +167,12 @@ int main() {
 	tex1 = LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
 	tex2 = LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
 	tex3 = LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
+	// TODOs - Test out the texture class here and 
+	
 	// - set up functions ------------
+
+
+
 
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
 
@@ -280,7 +285,7 @@ int main() {
 	// tex binding.
 	// select the current shader, and apply the shader.
 	glUseProgram(prg); // uses program, not the specific shader.
-	glUniform1i(glGetUniformLocation(prg, "tex1"), 0);
+	glUniform1i(glGetUniformLocation(prg, "tex1"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
 	glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
 
 	
@@ -336,7 +341,7 @@ int main() {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, tex1);
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, tex3);
+		glBindTexture(GL_TEXTURE_2D, tex2);
 
 
 

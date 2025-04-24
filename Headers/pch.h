@@ -12,6 +12,7 @@
 #include <vector>
 #include <queue>
 #include <map>
+#include <unordered_map>
 #include <set>
 #include <algorithm>
 
@@ -20,7 +21,6 @@
 // - glfw lib -----------
 #include <graphics/gfx_dependencies.h>
 #include <util/util_math.h>
-
 
 
 #endif
