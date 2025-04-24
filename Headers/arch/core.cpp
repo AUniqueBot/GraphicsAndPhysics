@@ -13,6 +13,10 @@ EntityRegistry Core::m_registry{};
 void Core::Init() {
 	RegisterComponents();
 	RegisterSystems();
+
+	// test out this stuff.
+	m_registry.PrintDebugInfo();
+
 	// initialise here.
 	for (System* s : m_systemInstances) {
 		s->Init();

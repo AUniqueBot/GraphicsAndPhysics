@@ -99,6 +99,9 @@
     <ClCompile Include="Source\res\res_resourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\ecs\ecs_registry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">

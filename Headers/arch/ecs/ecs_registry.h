@@ -17,9 +17,10 @@
 // component pool class
 // ------------------------------------------------------------------------------------
 // base class to utilise polymorphism
-struct IComponentPool {
+class IComponentPool {
+public:
 	~IComponentPool() = default;
-
+	virtual size_t size() const { return 3; }
 };
 
 
@@ -39,6 +40,8 @@ public:
 
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
+
+	size_t size() const override { return m_compPool.size(); };
 };
 
 // ------------------------------------------------------------------------------------
@@ -70,7 +73,7 @@ public:
 			func();
 	}
 
-
+	void PrintDebugInfo() const;
 
 	template <typename T>
 	std::optional<ComponentPool<T>&> GetComponentPool();

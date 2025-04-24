@@ -68,6 +68,9 @@ public:
 	auto end()							{ return m_typeContainer.end(); }
 	auto end() const					{ return m_typeContainer.end(); }
 
+
+	size_t size() const					{ return m_typeContainer.size(); }
+
 private:
 	std::vector<T> m_typeContainer;
 	

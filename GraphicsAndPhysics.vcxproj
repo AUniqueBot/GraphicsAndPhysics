@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h" />
     <ClCompile Include="Headers\arch\core.cpp" />
+    <ClCompile Include="Source\arch\ecs\ecs_registry.cpp" />
     <ClCompile Include="Headers\arch\systems\sys_render.cpp" />
     <ClCompile Include="Source\arch\systems\sys_transform.cpp" />
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp" />
