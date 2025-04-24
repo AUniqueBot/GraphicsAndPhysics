@@ -33,6 +33,10 @@ public:
 	void LocalTransformMtx(glm::mat4 _newMtx);
 	void LocalWorldMtx(glm::mat4 _newMtx);
 
+
+	static void Register() { std::cout << typeid(Transform).name() << ":Register override" << std::endl; }
+
+
 private:
 	glm::vec3 m_pos		{};
 	glm::quat m_rot		{};

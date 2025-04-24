@@ -3,11 +3,8 @@
 
 
 
-template <typename T>
-void EntityRegistry::RegisterType() {
-	// create a sparse set of type T
-	m_componentPool[typeid(T)] = std::make_shared<ComponentPool<T>>();
-}
+
+
 
 template <typename T>
 std::optional<ComponentPool<T>&> EntityRegistry::GetComponentPool() {

@@ -1,17 +1,18 @@
+
 #pragma once
 #include <pch.h>
 
-
-#include <unordered_map>
 #include <arch/datatypes/type_sparseset.h>
 #include <arch/common/entity.h>
 
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
 
+#include <entt/entt.hpp>
+
 #include <typeindex>
 
-
+#define TEMPLATE_BASECOMPONENT template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true> 
 
 // component pool class
 // ------------------------------------------------------------------------------------
@@ -48,9 +49,28 @@ public:
 
 	EntityRegistry() = default;
 
-	// component registration.
-	template <typename T>
-	void RegisterType();
+	
+	///! @brief registers a component for use.
+	///! @tparam T: Component
+	///! @note since the registration of components happens here and it filters out non-components, only this function has a component check
+	TEMPLATE_BASECOMPONENT
+	void RegisterType() {
+		// create a sparse set of type T
+		CompType currentComponent{ typeid(T) };
+		m_componentPool[currentComponent] = std::make_shared<ComponentPool<T>>();
+		m_compRegisterFunctions[currentComponent] = T::Register;
+
+
+		std::cout << __FUNCSIG__ << ": registering component: " << currentComponent.name() << std::endl;
+
+	}
+
+	void RegisterComponentsForSerialisation() {
+		for (auto& [UNUSED, func] : m_compRegisterFunctions)
+			func();
+	}
+
+
 
 	template <typename T>
 	std::optional<ComponentPool<T>&> GetComponentPool();
@@ -82,12 +102,11 @@ private:
 	using CompType = std::type_index;
 
 	std::vector<EntityID> m_entityList;
-	
+	std::unordered_map<CompType, std::function<void()>> m_compRegisterFunctions;
 	std::unordered_map<CompType, std::shared_ptr<IComponentPool>> m_componentPool;
 
 
 };
-
 
 
 

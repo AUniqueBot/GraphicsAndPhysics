@@ -59,6 +59,10 @@ void Core::Cleanup() {
 void Core::RegisterComponents() {
 	m_registry.RegisterType<Transform>();
 	m_registry.RegisterType<RigidBody>();
+
+
+	// register all types here.
+	m_registry.RegisterComponentsForSerialisation();
 }
 
 void Core::RegisterSystems() {

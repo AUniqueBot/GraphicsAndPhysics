@@ -14,7 +14,7 @@ public:
 	ComponentType GetComponentID() const		{ return m_type; }
 	
 	// serialization function
-	static void Register() {};
+	static void Register() { std::cout << typeid(Component).name() << ":Register Generic" << std::endl; };
 private:
 	ComponentType m_type						{ __INVALID };
 

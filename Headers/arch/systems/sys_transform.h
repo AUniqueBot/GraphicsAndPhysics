@@ -12,6 +12,8 @@ public:
 	void Update()	override;
 	void Stop()		override {std::cout << typeid(TransformSystem).name() << ":Stop" << std::endl; };
 	void Cleanup()	override {std::cout << typeid(TransformSystem).name() << ":Cleanup" << std::endl; };
+
+	
 private:
 
 
