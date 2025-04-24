@@ -213,6 +213,8 @@
     <ClInclude Include="Headers\graphics\gfx_glfwCustomCallbackFunctions.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
+    <ClInclude Include="Headers\util\util_math.h" />
+    <ClInclude Include="Headers\util\util_serialisation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\flatShader.frag" />
