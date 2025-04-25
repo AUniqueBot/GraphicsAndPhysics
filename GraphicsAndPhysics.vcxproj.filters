@@ -87,7 +87,7 @@
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h">
       <Filter>Header Files\arch\datatypes</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\systems\sys_render.cpp">
+    <ClCompile Include="Source\arch\systems\sys_render.cpp">
       <Filter>Source Files\arch\systerms</Filter>
     </ClCompile>
     <ClCompile Include="Source\res\res_shader.cpp">
@@ -204,6 +204,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\util\util_serialisation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern\inc\entt\entity\entity.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

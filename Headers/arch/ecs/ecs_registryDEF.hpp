@@ -7,25 +7,23 @@
 
 
 template <typename T>
-std::optional<ComponentPool<T>&> EntityRegistry::GetComponentPool() {
+std::optional<std::reference_wrapper<ComponentPool<T>>> EntityRegistry::GetComponentPool() {
 	auto itr = m_componentPool.find(typeid(T));
-	if (itr != m_componentPool.end()) return *std::static_pointer_cast<ComponentPool<T>>(itr->second);
+	if (itr != m_componentPool.end())
+		return std::ref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
 
-	// error log here.
 	std::cerr << "Non registered type called: " << typeid(T).name() << std::endl;
-
 	return std::nullopt;
 }
 
 
 template <typename T>
-const std::optional<ComponentPool<T>&> EntityRegistry::GetComponentPool() const {
+std::optional<std::reference_wrapper<const ComponentPool<T>>> EntityRegistry::GetComponentPool() const {
 	auto itr = m_componentPool.find(typeid(T));
-	if (itr != m_componentPool.end()) return *std::static_pointer_cast<ComponentPool<T>>(itr->second);
+	if (itr != m_componentPool.end())
+		return std::cref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
 
-	// error log here.
 	std::cerr << "Non registered type called: " << typeid(T).name() << std::endl;
-
 	return std::nullopt;
 }
 
@@ -39,7 +37,7 @@ bool EntityRegistry::AddComponent(EntityID _addTo) {
 		std::cerr << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T) << "\" undefined.";
 		return false;
 	}
-	ComponentPool<T>& compPool = val.value();
+	auto compPool = val.value().get();
 	return compPool.Add(_addTo);
 }
 template <typename T>
@@ -49,7 +47,7 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 		std::cerr << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T) << "\" undefined.";
 		return false;
 	}
-	ComponentPool<T>& compPool = val.value();
+	auto compPool = val.value().get();
 	return compPool.Remove(_removeFrom);
 }
 
@@ -75,7 +73,6 @@ template<typename T>
 inline bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 	return m_compPool.Remove(_removeFrom);
 }
-
 
 
 // ======================================================================================

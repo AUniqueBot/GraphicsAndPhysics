@@ -129,6 +129,8 @@ int main() {
 	Core c;
 	c.Init();
 
+	
+
 	// - GLFW Initialisation ------------------------------------------------------
 	glfwInit();
 

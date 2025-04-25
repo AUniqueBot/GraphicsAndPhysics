@@ -1,4 +1,3 @@
-
 #pragma once
 #include <pch.h>
 
@@ -14,12 +13,17 @@
 
 #define TEMPLATE_BASECOMPONENT template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true> 
 
+
+class Entity;
+class EntityID;
+
 // component pool class
 // ------------------------------------------------------------------------------------
-// base class to utilise polymorphism
+// base class to utilise polymorphism, pure virtual class.
 class IComponentPool {
 public:
-	~IComponentPool() = default;
+	IComponentPool() = default;
+	virtual ~IComponentPool() = default;// pure virtual.
 	virtual size_t size() const { return 3; }
 };
 
@@ -31,7 +35,8 @@ class ComponentPool : public IComponentPool {
 	SparseSet<EntityID, T> m_compPool;
 
 public:
-
+	ComponentPool() {};
+	~ComponentPool() override { };
 	///! @brief get the data of the component pool.
 	///! @return 
 	SparseSet<EntityID, T>& Data();
@@ -42,6 +47,7 @@ public:
 	bool Remove(EntityID _removeFrom);
 
 	size_t size() const override { return m_compPool.size(); };
+
 };
 
 // ------------------------------------------------------------------------------------
@@ -51,7 +57,7 @@ class EntityRegistry {
 public:
 
 	EntityRegistry() = default;
-
+	~EntityRegistry();
 	
 	///! @brief registers a component for use.
 	///! @tparam T: Component
@@ -76,10 +82,10 @@ public:
 	void PrintDebugInfo() const;
 
 	template <typename T>
-	std::optional<ComponentPool<T>&> GetComponentPool();
+	std::optional<std::reference_wrapper<ComponentPool<T>>> GetComponentPool();
 
 	template <typename T>
-	const std::optional<ComponentPool<T>&> GetComponentPool() const;
+	std::optional<std::reference_wrapper<const ComponentPool<T>>> GetComponentPool() const;
 
 
 	
@@ -100,11 +106,21 @@ public:
 	template <typename T>
 	bool RemoveComponent(EntityID _removeFrom);
 
+
+	// creates an entity.
+	std::optional<std::reference_wrapper<Entity>> Instantiate();
+
+
+
 private:
 
-	using CompType = std::type_index;
+	void Clear();
 
-	std::vector<EntityID> m_entityList;
+	
+	SparseSet<EntityID, Entity> m_entityList;
+
+private:
+	using CompType = std::type_index;
 	std::unordered_map<CompType, std::function<void()>> m_compRegisterFunctions;
 	std::unordered_map<CompType, std::shared_ptr<IComponentPool>> m_componentPool;
 

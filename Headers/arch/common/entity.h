@@ -4,13 +4,13 @@
 #include <arch/components/componentList.h>
 #include <chrono>
 #include <math.h>
-#include <entt/entt.hpp>m
-
 
 class EntityID;
 class EntityRegistry;
 
 namespace ch = std::chrono;
+
+
 
 // hashing.
 template<>
@@ -41,14 +41,17 @@ public:
 	EntityID& operator=(const EntityID&) = default;
 
 
-	bool operator<(const EntityID& other) { return m_id < other.m_id; }
-	bool operator>(const EntityID& other) { return m_id > other.m_id; }
-	bool operator==(const EntityID& other) { return m_id == other.m_id; }
+	bool operator<(const EntityID& other)	const { return m_id < other.m_id; }
+	bool operator>(const EntityID& other)	const { return m_id > other.m_id; }
+	bool operator==(const EntityID& other)	const { return m_id == other.m_id; }
+	bool operator==(unsigned long other)	const { return m_id == other; }
 
-	inline bool IsValid() const { return m_id != ENTITYID_INVALID; };
+	inline bool IsValid() const				{ return m_id != ENTITYID_INVALID; };
 
-	unsigned long GetID() const { return m_id; }
+	unsigned long GetID() const				{ return m_id; }
 
+
+	// cut up the id, first bit should be an active bit.
 
 private:
 	static constexpr unsigned long ENTITYID_INVALID = 0; // Define invalid ID
@@ -70,25 +73,38 @@ namespace std {
 
 
 // ----------------------------------------------------------------------
-
+class EntityRegistry;
 class Entity {
 
 public:
+	Entity(EntityRegistry* _registry) : m_registry{ _registry }	{};
+	~Entity()													{ m_registry = nullptr; };
+
+	EntityID GetID() const										{ return m_id; };
+	bool IsValid() const										{ return m_id.IsValid(); };
+
 	
-	EntityID GetID() const		{ return m_id; };
-	bool IsValid() const { return m_id.IsValid(); };
+	template <typename T>
+	void AddComponent() {
+		if (m_registry == nullptr) return;
+		// add bitset.
+		// m_registry->AddComponent(m_id);
+	}
+	template <typename T>
+	void RemoveComponent(){
+		if (m_registry == nullptr) return;
+		// add bitset.
+		// m_registry->RemoveComponent(m_id);
+	};
 
 
-	template <typename T>
-	void AddComponent() {};
-	template <typename T>
-	void RemoveComponent() {};
+	EntityRegistry* GetRegistry()								{ return m_registry; };
+	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
 private:
 
-
-	EntityRegistry* m_registry					{};
-	EntityID m_id								{ 0 };
+	EntityRegistry* m_registry									{};
+	EntityID m_id												{};
 	std::bitset<ComponentType::COUNT> m_flags;
 
 };

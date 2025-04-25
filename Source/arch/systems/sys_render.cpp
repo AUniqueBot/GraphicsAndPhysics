@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "sys_render.h"
+#include <pch.h>
+#include <arch/systems/sys_render.h>
 
 
 // Some other todos - make a shader editor! How hard can it be? :')

@@ -18,6 +18,10 @@ class SparseSet {
 
 
 public:
+	SparseSet() = default;
+	~SparseSet() = default;
+
+
 	///! @brief adds [_newItem] paired to a specific ID
 	///! @param _newItem: the data paired to the id
 	///! @param _id: identifier
@@ -44,17 +48,17 @@ public:
 	///! @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist
-	std::optional<T&> operator[](IDType _entityID);
+	std::optional<std::reference_wrapper<T>> operator[](IDType _entityID);
 	
 	/// @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist
-	std::optional<T&> At(IDType _entityID);
+	std::optional<std::reference_wrapper<T>> At(IDType _entityID);
 
 	/// @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist. const enabled.
-	std::optional<const T&> At(IDType _entityID) const;
+	std::optional<std::reference_wrapper<const T>>  At(IDType _entityID) const;
 
 	// functions to enable for range loop functionality
 	
@@ -71,7 +75,12 @@ public:
 
 	size_t size() const					{ return m_typeContainer.size(); }
 
+
+	void clear()						{ m_typeContainer.clear(); m_idxToValue.clear(); m_valueToIdx.clear(); }
+
+
 private:
+	// the container containing the type's data.
 	std::vector<T> m_typeContainer;
 	
 

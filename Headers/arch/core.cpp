@@ -15,7 +15,11 @@ void Core::Init() {
 	RegisterSystems();
 
 	// test out this stuff.
+	m_registry.Instantiate();
 	m_registry.PrintDebugInfo();
+
+
+	
 
 	// initialise here.
 	for (System* s : m_systemInstances) {
@@ -57,6 +61,8 @@ void Core::Cleanup() {
 	for (auto s : m_systemInstances) {
 		s->Cleanup();
 	}
+
+
 }
 
 
