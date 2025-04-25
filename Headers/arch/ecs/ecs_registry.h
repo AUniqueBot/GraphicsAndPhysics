@@ -2,20 +2,19 @@
 #include <pch.h>
 
 #include <arch/datatypes/type_sparseset.h>
-#include <arch/common/entity.h>
 
+#include <arch/common/entity.h>
+#include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
 
-#include <entt/entt.hpp>
-
 #include <typeindex>
+#include <functional>
 
 #define TEMPLATE_BASECOMPONENT template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true> 
 
 
-class Entity;
-class EntityID;
+
 
 // component pool class
 // ------------------------------------------------------------------------------------
@@ -53,6 +52,8 @@ public:
 // ------------------------------------------------------------------------------------
 class EntityRegistry {
 
+	friend class Entity;
+	friend class EntityID;
 
 public:
 
@@ -126,6 +127,10 @@ private:
 
 
 };
+
+
+
+
 
 
 

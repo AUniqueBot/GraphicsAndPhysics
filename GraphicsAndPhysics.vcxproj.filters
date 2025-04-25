@@ -206,7 +206,7 @@
     <ClInclude Include="Headers\util\util_serialisation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Extern\inc\entt\entity\entity.hpp">
+    <ClInclude Include="Headers\arch\common\entityid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

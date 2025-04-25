@@ -15,9 +15,9 @@ void Core::Init() {
 	RegisterSystems();
 
 	// test out this stuff.
-	m_registry.Instantiate();
+	auto obj = m_registry.Instantiate().value();
+	obj.get().AddComponent<Transform>();
 	m_registry.PrintDebugInfo();
-
 
 	
 
@@ -44,8 +44,6 @@ void Core::Update() {
 	for (auto s : m_systemInstances) {
 		s->Update();
 	}
-	
-
 }
 
 void Core::PostUpdate() {

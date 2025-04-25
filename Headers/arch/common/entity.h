@@ -1,79 +1,11 @@
 #pragma once
-
+// #include <arch/ecs/ecs_registry.h>
 #include <bitset>
+#include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
-#include <chrono>
-#include <math.h>
-
-class EntityID;
-class EntityRegistry;
-
-namespace ch = std::chrono;
 
 
-
-// hashing.
-template<>
-struct std::hash<ch::system_clock::time_point> {
-	std::size_t operator()(ch::system_clock::time_point const& d) const noexcept {
-		return d.time_since_epoch().count();
-	}
-};
-
-template<>
-struct std::hash<ch::file_clock::time_point> {
-	std::size_t operator()(ch::file_clock::time_point const& d) const noexcept {
-		return d.time_since_epoch().count();
-	}
-};
-
-static std::hash<std::string> s_StrHash{};
-static std::hash<ch::time_point<ch::system_clock>> s_TpHash	{};
-static std::hash<ch::time_point<ch::file_clock>> s_FpHash	{};
-
-// ----------------------------------------------------------------------
-
-class EntityID {
-public:
-	EntityID() : m_id { static_cast<unsigned long>(s_TpHash(ch::system_clock::now())) } {};
-	EntityID(unsigned long _id) : m_id{ _id } {};
-	EntityID(const EntityID&) = default;
-	EntityID& operator=(const EntityID&) = default;
-
-
-	bool operator<(const EntityID& other)	const { return m_id < other.m_id; }
-	bool operator>(const EntityID& other)	const { return m_id > other.m_id; }
-	bool operator==(const EntityID& other)	const { return m_id == other.m_id; }
-	bool operator==(unsigned long other)	const { return m_id == other; }
-
-	inline bool IsValid() const				{ return m_id != ENTITYID_INVALID; };
-
-	unsigned long GetID() const				{ return m_id; }
-
-
-	// cut up the id, first bit should be an active bit.
-
-private:
-	static constexpr unsigned long ENTITYID_INVALID = 0; // Define invalid ID
-	
-	unsigned long m_id{};
-};
-
-
-// make EntityID hashable.
-namespace std {
-	template <>
-	struct hash<EntityID> {
-		std::size_t operator()(const EntityID& id) const noexcept {
-			return std::hash<unsigned long>()(id.GetID());
-		}
-	};
-}
-
-
-
-// ----------------------------------------------------------------------
-class EntityRegistry;
+class EntityRegistry; // fwd declaration.
 class Entity {
 
 public:
@@ -84,21 +16,19 @@ public:
 	bool IsValid() const										{ return m_id.IsValid(); };
 
 	
-	template <typename T>
+	template <typename ComponentType>
 	void AddComponent() {
-		if (m_registry == nullptr) return;
-		// add bitset.
-		// m_registry->AddComponent(m_id);
+		if (!m_registry) return;
+		m_registry->AddComponent<ComponentType>(m_id);
 	}
-	template <typename T>
-	void RemoveComponent(){
-		if (m_registry == nullptr) return;
-		// add bitset.
-		// m_registry->RemoveComponent(m_id);
-	};
+
+	template <typename Component>
+	void RemoveComponent() {
+
+	}
 
 
-	EntityRegistry* GetRegistry()								{ return m_registry; };
+	EntityRegistry* GetRegistry()								{ return m_registry; }
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
 private:
@@ -108,6 +38,4 @@ private:
 	std::bitset<ComponentType::COUNT> m_flags;
 
 };
-
-
 
