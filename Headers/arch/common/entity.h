@@ -22,7 +22,7 @@ public:
 	void AddComponent();
 
 	template <typename T>
-	void RemoveComponent() {}
+	void RemoveComponent();
 
 
 	EntityRegistry* GetRegistry()								{ return m_registry; }

@@ -81,7 +81,7 @@ public:
 
 private:
 	// the container containing the type's data.
-	std::vector<T> m_typeContainer;
+	std::deque<T> m_typeContainer;
 	
 
 private:

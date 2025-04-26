@@ -40,7 +40,7 @@ template <typename T>
 bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	auto val = GetComponentPool<T>();
 	if (!val.has_value()) {
-		std::cout << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T) << "\" undefined.\n";
+		std::cout << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T).name() << "\" undefined.\n";
 		return false;
 	}
 	ComponentPool<T>& compPool = val.value().get();

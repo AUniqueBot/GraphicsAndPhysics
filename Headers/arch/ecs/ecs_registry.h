@@ -119,7 +119,10 @@ public:
 private:
 
 	void Clear();
-	SparseSet<EntityID, Entity> m_entityList;
+
+
+	// map would be a better idea
+	SparseSet<EntityID, Entity> m_entityList; // 
 
 private:
 	using CompType = std::type_index;

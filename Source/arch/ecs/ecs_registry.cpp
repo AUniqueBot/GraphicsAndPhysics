@@ -28,7 +28,11 @@ void EntityRegistry::PrintDebugInfo() const {
 std::optional<std::reference_wrapper<Entity>> EntityRegistry::Instantiate() {
 	Entity newEntt{this};
 	EntityID refID = newEntt.GetID();
-	m_entityList.Add(std::move(newEntt), newEntt.GetID());	
+	m_entityList.Add(std::move(newEntt), refID);
+	// map version.
+	// m_entityList.Add(std::move(newEntt), newEntt.GetID());	
+	// m_entityList.emplace(std::make_pair(refID, std::move(newEntt)));
+	// return m_entityList.at(refID);
 	return m_entityList.At(refID);
 }
 

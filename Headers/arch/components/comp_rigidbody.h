@@ -2,6 +2,11 @@
 
 
 class RigidBody : public Component {
+public:
+	RigidBody() {
+		std::cout << __FUNCSIG__ << std::endl;
+	}
+
 
 private:
 

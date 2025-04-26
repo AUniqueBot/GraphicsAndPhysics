@@ -16,15 +16,31 @@ void Core::Init() {
 
 	// test out this stuff.
 	m_registry.name = "hi";
-	auto& obj1 = m_registry.Instantiate().value().get();
+	
+
+
+	std::reference_wrapper<Entity> obj1R = m_registry.Instantiate().value();
+	std::reference_wrapper<Entity> obj2R = m_registry.Instantiate().value();
+	Entity& obj1 = obj1R.get();
+	Entity& obj2 = obj2R.get();
+
+	// adding and removing
 	obj1.AddComponent<Transform>();
-	obj1.AddComponent<Transform>();
-
-
-	auto obj2 = m_registry.Instantiate().value();
-
+	m_registry.PrintDebugInfo();
+	obj1.RemoveComponent<Transform>();
 	m_registry.PrintDebugInfo();
 
+	// adding extra and to another object
+	obj1.AddComponent<Transform>();
+	m_registry.PrintDebugInfo();
+	obj1.AddComponent<Transform>();
+	m_registry.PrintDebugInfo();
+
+	// TODO - somehow get around this issue.
+	obj2.AddComponent<Transform>();
+	m_registry.PrintDebugInfo();
+	obj2.AddComponent<RigidBody>();
+	m_registry.PrintDebugInfo();
 	
 
 	// initialise here.
