@@ -19,7 +19,7 @@ class SparseSet {
 
 public:
 	SparseSet() = default;
-	~SparseSet() = default;
+	~SparseSet() { clear(); };
 
 
 	///! @brief adds [_newItem] paired to a specific ID

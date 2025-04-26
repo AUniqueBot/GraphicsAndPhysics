@@ -1,7 +1,7 @@
 #pragma once
 #include <pch.h>
 #include "arch_headers.h"
-#include <arch/ecs/ecs_registry.h>
+#include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 
 
 class Core {

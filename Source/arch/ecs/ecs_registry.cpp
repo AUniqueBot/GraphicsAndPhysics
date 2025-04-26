@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <arch/ecs/ecs_registry.h>
+#include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 
 
 EntityRegistry::~EntityRegistry() {
@@ -21,15 +21,14 @@ void EntityRegistry::PrintDebugInfo() const {
 	}
 
 	ss << "\n=============================================================\n";
-	std::cout << ss.str() ;
+	std::cout << ss.str();
 }
 
 
 std::optional<std::reference_wrapper<Entity>> EntityRegistry::Instantiate() {
 	Entity newEntt{this};
 	EntityID refID = newEntt.GetID();
-	m_entityList.Add(std::move(newEntt), newEntt.GetID());
-
+	m_entityList.Add(std::move(newEntt), newEntt.GetID());	
 	return m_entityList.At(refID);
 }
 

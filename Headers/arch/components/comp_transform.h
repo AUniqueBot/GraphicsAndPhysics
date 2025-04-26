@@ -8,7 +8,7 @@
 
 class Transform : public Component {
 public:
-	
+	Transform();
 
 	// --------------------------------------------------
 	void SetPosition(glm::vec3 _pos)	{ m_pos = _pos; };

@@ -1,29 +1,30 @@
+
 #pragma once
+
 #include <pch.h>
 
 #include <arch/datatypes/type_sparseset.h>
-
-#include <arch/common/entity.h>
-#include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
 
 #include <typeindex>
 #include <functional>
 
-#define TEMPLATE_BASECOMPONENT template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true> 
 
+
+class Entity;
+class EntityID;
 
 
 
 // component pool class
 // ------------------------------------------------------------------------------------
-// base class to utilise polymorphism, pure virtual class.
+// base class to utilise polymorphism
 class IComponentPool {
 public:
 	IComponentPool() = default;
-	virtual ~IComponentPool() = default;// pure virtual.
-	virtual size_t size() const { return 3; }
+	virtual ~IComponentPool() = default;
+	virtual size_t size() const { return 3; } // test value 3.
 };
 
 
@@ -47,6 +48,8 @@ public:
 
 	size_t size() const override { return m_compPool.size(); };
 
+	void clear() { m_compPool.clear(); };
+
 };
 
 // ------------------------------------------------------------------------------------
@@ -63,7 +66,7 @@ public:
 	///! @brief registers a component for use.
 	///! @tparam T: Component
 	///! @note since the registration of components happens here and it filters out non-components, only this function has a component check
-	TEMPLATE_BASECOMPONENT
+	template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true>
 	void RegisterType() {
 		// create a sparse set of type T
 		CompType currentComponent{ typeid(T) };
@@ -111,13 +114,11 @@ public:
 	// creates an entity.
 	std::optional<std::reference_wrapper<Entity>> Instantiate();
 
-
+	std::string name;
 
 private:
 
 	void Clear();
-
-	
 	SparseSet<EntityID, Entity> m_entityList;
 
 private:
@@ -127,10 +128,6 @@ private:
 
 
 };
-
-
-
-
 
 
 

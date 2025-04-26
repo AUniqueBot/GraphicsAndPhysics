@@ -5,6 +5,10 @@
 #include <glm/gtc/quaternion.hpp>
 
 
+Transform::Transform() {
+	std::cout << typeid(Transform).name() << "::Component Added" << std::endl;
+}
+
 glm::vec3 Transform::Forward() const
 {
 	return glm::vec3();

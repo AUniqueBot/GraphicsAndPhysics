@@ -6,14 +6,15 @@ template <typename IDType, typename T>
 bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 
 	// checks if there's a value for that entity existing already
-	if (m_valueToIdx.contains(_id)) return false;
-
+	if (m_valueToIdx.contains(_id)) {
+		std::cout << "Attempting to add an item for a registered client." << std::endl;
+		return false;
+	}
 	// add this value 
 	m_valueToIdx[_id] = m_idxToValue.size();
 	m_idxToValue.push_back(_id);
 
 	m_typeContainer.push_back(std::move(_newItem));
-
 
 	return true;
 }

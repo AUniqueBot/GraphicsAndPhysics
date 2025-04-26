@@ -15,8 +15,14 @@ void Core::Init() {
 	RegisterSystems();
 
 	// test out this stuff.
-	auto obj = m_registry.Instantiate().value();
-	obj.get().AddComponent<Transform>();
+	m_registry.name = "hi";
+	auto& obj1 = m_registry.Instantiate().value().get();
+	obj1.AddComponent<Transform>();
+	obj1.AddComponent<Transform>();
+
+
+	auto obj2 = m_registry.Instantiate().value();
+
 	m_registry.PrintDebugInfo();
 
 	

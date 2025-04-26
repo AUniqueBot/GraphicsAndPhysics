@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\common\entityid.cpp" />
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h" />
     <ClCompile Include="Headers\arch\core.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_registry.cpp" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Headers\arch\arch_headers.h" />
     <ClInclude Include="Headers\arch\common\component.h" />
     <ClInclude Include="Headers\arch\common\entity.h" />
+    <ClInclude Include="Headers\arch\common\entityDEF.hpp" />
     <ClInclude Include="Headers\arch\common\entityid.h" />
     <ClInclude Include="Headers\arch\common\resource.h" />
     <ClInclude Include="Headers\arch\common\singleton.h" />
@@ -201,6 +203,7 @@
     <ClInclude Include="Headers\arch\components\comp_transform.h" />
     <ClInclude Include="Headers\arch\components\comp_collider.h" />
     <ClInclude Include="Headers\arch\core.h" />
+    <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
