@@ -9,9 +9,12 @@ Transform::Transform() {
 	std::cout << typeid(Transform).name() << "::Component Added" << std::endl;
 }
 
-glm::vec3 Transform::Forward() const
-{
-	return glm::vec3();
+glm::vec3 Transform::Forward() const {
+	return glm::vec3(0, 0, 1);
+}
+
+glm::vec3 Transform::Up() const {
+	return glm::vec3(0, 1, 0);
 }
 
 glm::mat4 Transform::LocalTransformMtx() const {

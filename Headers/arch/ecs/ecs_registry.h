@@ -46,6 +46,9 @@ public:
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
 
+	std::optional<std::reference_wrapper<T>> Get(EntityID _client);
+	std::optional<std::reference_wrapper<const T>> Get(EntityID _client) const;
+
 	size_t size() const override { return m_compPool.size(); };
 
 	void clear() { m_compPool.clear(); };

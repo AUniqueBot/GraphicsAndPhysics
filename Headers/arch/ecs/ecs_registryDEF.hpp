@@ -1,3 +1,4 @@
+#include "ecs_registry.h"
 #pragma once
 
 template <typename T>
@@ -48,6 +49,8 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 }
 
 
+
+
 // ======================================================================================
 
 template <typename T>
@@ -66,6 +69,7 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 	std::cout << "Adding Component: " << typeid(T).name() << std::endl;
 	std::cout << "Client: " << _addTo << std::endl;
 	bool result = m_compPool.Add(T{}, _addTo);
+	// to initialise.
 	std::cout << (result ? "Good" : "Bad") << std::endl;
 	std::cout << "Comp Pool Size: " << m_compPool.size() << std::endl;
 	std::cout << "[[ ================================================================== ]]" << std::endl;
@@ -75,6 +79,16 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 template<typename T>
 bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 	return m_compPool.Remove(_removeFrom);
+}
+
+template<typename T>
+inline std::optional<std::reference_wrapper<T>> ComponentPool<T>::Get(EntityID _client) {
+	return m_compPool.At(_client);
+}
+
+template<typename T>
+inline std::optional<std::reference_wrapper<const T>> ComponentPool<T>::Get(EntityID _client) const {
+	return m_compPool.At(_client);
 }
 
 

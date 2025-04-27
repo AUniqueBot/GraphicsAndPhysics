@@ -4,6 +4,8 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 
 
+#include <arch/core/core_coordinatesystem.h>
+
 class Core {
 	
 public:
@@ -22,9 +24,6 @@ public:
 	
 
 public:
-
-	
-
 	// static void AddSystem(System* newSys);
 
 	template <typename T>
@@ -32,10 +31,19 @@ public:
 		m_systemInstances.push_back(&T::GetInstance());
 	}
 
+
+
+
 private:
+
 	void RegisterComponents();
 	void RegisterSystems();
+	
+
 	static EntityRegistry m_registry;
 	static std::vector<System*> m_systemInstances;
+
+
+	CoordinateSystem m_coordinateSystem;
 
 };

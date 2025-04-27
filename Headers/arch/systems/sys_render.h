@@ -4,6 +4,8 @@
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
+	
+	// system funcs
 	void Init()		override;
 
 
@@ -14,9 +16,12 @@ public:
 	void Update()	override;
 	void Stop()		override { std::cout << typeid(RenderSystem).name() << "::Stop" << std::endl; };
 	void Cleanup()	override { std::cout << typeid(RenderSystem).name() << "::Cleanup" << std::endl; };
+
+	// coordinate systems
+
 private:
 
-
+	
 
 };
 

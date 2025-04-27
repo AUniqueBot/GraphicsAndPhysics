@@ -8,7 +8,7 @@ public:
 		// Graphics
 		TEXTURE,
 		MATERIAL,
-		MODEL,
+		MESH,
 		// -- WIP --
 		ANIMATION,
 		// Other

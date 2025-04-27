@@ -25,6 +25,12 @@ public:
 	void RemoveComponent();
 
 
+	template <typename T>
+	std::optional<std::reference_wrapper<T>> GetComponent();
+	template <typename T>
+	std::optional<std::reference_wrapper<const T>> GetComponent() const;
+
+
 	EntityRegistry* GetRegistry()								{ return m_registry; }
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 

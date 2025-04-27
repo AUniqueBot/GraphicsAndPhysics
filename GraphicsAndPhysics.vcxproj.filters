@@ -81,7 +81,7 @@
     <ClCompile Include="Source\arch\systems\sys_transform.cpp">
       <Filter>Source Files\arch\systerms</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\core.cpp">
+    <ClCompile Include="Source\arch\core.cpp">
       <Filter>Source Files\arch</Filter>
     </ClCompile>
     <ClCompile Include="Headers\arch\datatypes\type_sparseset.h">
@@ -103,6 +103,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\common\entityid.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\components\comp_camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -133,9 +142,6 @@
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_scene.h">
       <Filter>Header Files\arch\resources</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\common\resource.h">
-      <Filter>Header Files\arch\common</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\singleton.h">
       <Filter>Header Files\arch\common</Filter>
@@ -216,6 +222,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_coordinatesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

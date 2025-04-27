@@ -6,7 +6,7 @@ class Component {
 public:
 
 
-	virtual void Init() {};
+	virtual void Init() { std::cout << typeid(Component).name() << ": Initialised" << std::endl; };
 	virtual void End()	{};
 
 	// not intended to be set outside.
