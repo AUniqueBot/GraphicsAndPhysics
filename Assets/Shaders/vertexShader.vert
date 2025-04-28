@@ -15,9 +15,9 @@ uniform float y_offset;
 
 uniform vec4 camera; // ignore for now
 
-uniform mat4 trs;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 trs;			// object transform matrix
+uniform mat4 view;			// camera's view matrix (pos + rot, inverse)
+uniform mat4 projection;	// 
 
 void main() {
 	// Set the position of the vertex

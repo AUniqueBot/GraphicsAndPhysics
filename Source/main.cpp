@@ -145,7 +145,7 @@ int main() {
 
 	// create a window
 	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
-
+	
 	// failed to create window
 	if (!mainWindow) {
 		std::cout << "Bad GLFW Init.\n";
@@ -316,26 +316,53 @@ int main() {
 		glm::mat4 objMat{ 1 };
 		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, -1.f, 0.f));
 		glm::mat4 rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
-		glm::mat4 scl = glm::rotate(objMat, glm::radians(90.f), glm::normalize(glm::vec3(1.f, 0.f, 0.f)));
+		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians( 25.f), glm::normalize(glm::vec3(1.f, 0.f, 0.f)));
 
+		// glm works in column major first (wtv that means), so the order is reversed.
 		objMat = pos * rot * scl;
 
 
-		// view matrix
+		// view matrix - camera's inverse matrix.
 		glm::mat4 viewMtx	{ 1.f };
-		viewMtx = glm::translate(viewMtx, glm::vec3(0, 0, -3.0f));
+		pos = glm::translate(
+			glm::mat4{ 1.f }, 
+			glm::vec3(0, 0, 3.f)
+		);
+		rot = glm::rotate(
+			glm::mat4		{ 1.f },
+			(float)glm::radians(25.f) * (float)sin(glfwGetTime()),
+			glm::vec3(0.f, 1.f, 0.f)
+		);
+		viewMtx =  pos * rot * glm::mat4{ 1.f };
+		viewMtx = glm::inverse(viewMtx); // camera's position are inversely applied to apply camera view
+
 
 		glm::mat4 projectionMtx{};
 		
 		// projection matrix
 		projectionMtx = glm::perspective(
 			glm::radians(60.f), // vertical fov 
-			16.f/9.f,					// screen aspect ratio
+			16.f/9.f,					// CAMERA aspect ratio
 			0.0001f,					// near clip plane
 			1000.f							// far clip plane.
 		);
 
+		// note - viewport per camera.
+		//
 
+		// to use the orthographic view, use this
+		/*
+			projectionMtx = glm::ortho(
+				0.f,				// min x 
+				1280.f,				// max x
+				0.f,				// min y
+				720.f,				// max y
+				// clip planes
+				0.001f,
+				1000.f
+			);
+		
+		*/
 
 		// clear colour
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -343,6 +370,8 @@ int main() {
 		// - depth
 		// - colour
 
+
+		
 
 		// this specifies the uniform, "offset" in the shader to be 0.5
 		// it returns an int (name) as the location specifier for the shader.
