@@ -16,12 +16,18 @@ uniform float y_offset;
 uniform vec4 camera; // ignore for now
 
 uniform mat4 trs;
+uniform mat4 view;
+uniform mat4 projection;
 
 void main() {
 	// Set the position of the vertex
-	gl_Position = trs * vec4(aPos, 1.0f);
-	// Set the color of the vertex
+	// gl_Position = trs * vec4(aPos, 1.0f);
+
+	gl_Position = projection * view * trs * vec4(aPos, 1.0f);
 	
+
+
+	// Set the color of the vertex
 	aColour = aCol;
 	oUv = aUv; // pass the texture coordinates to the fragment shader
 }

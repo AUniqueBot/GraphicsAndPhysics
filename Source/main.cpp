@@ -267,6 +267,8 @@ int main() {
 
 
 	// creation and compiling the shader
+
+	// can be done in update.
 	unsigned prg = glCreateProgram();
 	glAttachShader(prg, fragShader);
 	glAttachShader(prg, vtxShader);
@@ -280,6 +282,7 @@ int main() {
 		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
+	// deletion can be done after compile.
 	glDeleteShader(vtxShader);
 	glDeleteShader(fragShader);
 #pragma endregion
@@ -293,7 +296,9 @@ int main() {
 	
 	// transforms
 
-
+	// typical conversion is model mtx -> view mtx -> projection mtx
+	// coordinates are transformed 
+	// local -[model]-> world -[view]-> view -[projection]-> clip
 
 
 	// set to wireframe
@@ -306,12 +311,29 @@ int main() {
 
 		c.Update();
 
+
+		// object matrix
 		glm::mat4 objMat{ 1 };
-		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, 0.25f, 0.f));
-		glm::mat4 rot = glm::scale(objMat, glm::vec3(0.5f, 1.0f, 0.2f));
-		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime(), glm::normalize(glm::vec3(0.f, 1.f, 1.f)));
+		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, -1.f, 0.f));
+		glm::mat4 rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
+		glm::mat4 scl = glm::rotate(objMat, glm::radians(90.f), glm::normalize(glm::vec3(1.f, 0.f, 0.f)));
 
 		objMat = pos * rot * scl;
+
+
+		// view matrix
+		glm::mat4 viewMtx	{ 1.f };
+		viewMtx = glm::translate(viewMtx, glm::vec3(0, 0, -3.0f));
+
+		glm::mat4 projectionMtx{};
+		
+		// projection matrix
+		projectionMtx = glm::perspective(
+			glm::radians(60.f), // vertical fov 
+			16.f/9.f,					// screen aspect ratio
+			0.0001f,					// near clip plane
+			1000.f							// far clip plane.
+		);
 
 
 
@@ -328,6 +350,10 @@ int main() {
 		int uniformLoc{};
 		uniformLoc = glGetUniformLocation(prg, "trs");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
+		uniformLoc = glGetUniformLocation(prg, "view");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx));
+		uniformLoc = glGetUniformLocation(prg, "projection");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx));
 	
 
 
