@@ -13,29 +13,82 @@
 float vertexArray[] = {
 	//set 1
 	// positions // colors // texture coords
-	0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,			// top right
-	0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// bottom right
-	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,		// bottom left
-	-0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f			// top left
+	 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,			// top right
+	 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,		// bottom right
+	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,		// bottom left
+	-0.5f,  0.5f, 0.0f, 0.0f, 1.0f			// top left
 	,
 
 	// set 2
-	0.0f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,			// top right
-	0.0f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,		// bottom right
-	0.0f, -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,		// bottom left
-	0.0f,  0.5f, -0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f			// top left
+	0.0f,  0.5f,  0.5f, 1.0f, 1.0f,			// top right
+	0.0f, -0.5f,  0.5f, 1.0f, 0.0f,		// bottom right
+	0.0f, -0.5f, -0.5f, 0.0f, 0.0f,		// bottom left
+	0.0f,  0.5f, -0.5f, 0.0f, 1.0f			// top left
+	,
+
+	// set 3
+	 0.5f, 0.0f,  0.5f, 1.0f, 1.0f,			// top right
+	-0.5f, 0.0f,  0.5f, 1.0f, 0.0f,		// bottom right
+	-0.5f, 0.0f, -0.5f, 0.0f, 0.0f,		// bottom left
+	 0.5f, 0.0f, -0.5f, 0.0f, 1.0f			// top left
 };
 
+
+float cubeVtx[] = {
+	// positions // uv
+
+	// bottom face
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	// top face
+	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	// left face
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	// right face
+	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	 // front face
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+	 // back face
+	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f
+
+};
 
 // this index specifies triangles based on vertex index (0, 1, 3 & 1, 2, 3 are separate triangles)
 unsigned int indices[] = { // note that we start from 0!
 	0, 1, 3, // first triangle
-	1, 2, 3 // second triangle
-	,
-
+	0, 2, 3, // second triangle
 
 	4, 5, 7,
-	5, 6, 7
+	4, 6, 7,
+
+	8, 9, 11,
+	8, 10, 11,
+
+	12, 13, 15,
+	12, 14, 15,
+
+	16, 17, 19,
+	16, 18, 19,
+
+	20, 21, 23,
+	20, 22, 23
 };
 
 
@@ -195,24 +248,44 @@ int main() {
 	// specifying the vertex buffer data
 	glGenBuffers(1, &VBO);					// VBO Gets assigned an ID of sorts
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);	// binding ID to an array buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertexArray), vertexArray, GL_STATIC_DRAW);	// filling array buffer data
+	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVtx), cubeVtx, GL_STATIC_DRAW);	// filling array buffer data
 
 
 	// specifying vertex architecture
 	// VAO specification.
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0)); // Pos
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0)); // Pos
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));	// Col
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))); // UV
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
-	glEnableVertexAttribArray(2);
 
 	// specifying which vertices make a face
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+
+
+
+	unsigned VAOc{};
+	unsigned VBOc{};
+	unsigned EBOc{};
+
+
+
+	//glGenBuffers(1, &VBOc);
+	//glBindBuffer(GL_ARRAY_BUFFER, VBOc);
+	//glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVtx), cubeVtx, GL_STATIC_DRAW);
+
+	//glGenBuffers(1, &VAOc);
+	//glBindVertexArray(VAOc);
+	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0)); // Pos
+	//glEnableVertexAttribArray(0);
+	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // UV
+	//glEnableVertexAttribArray(1);
+
+
 
 
 
@@ -316,7 +389,7 @@ int main() {
 		glm::mat4 objMat{ 1 };
 		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, -1.f, 0.f));
 		glm::mat4 rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
-		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians( 25.f), glm::normalize(glm::vec3(1.f, 0.f, 0.f)));
+		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians( 25.f), glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
 
 		// glm works in column major first (wtv that means), so the order is reversed.
 		objMat = pos * rot * scl;
@@ -349,6 +422,27 @@ int main() {
 
 		// note - viewport per camera.
 		//
+
+		// orthogonal
+		//GLint vp[4]{};
+		//glGetIntegerv(GL_VIEWPORT, vp);
+		//projectionMtx = glm::ortho(
+		//	0.0f, (float)vp[2],
+		//	0.0f, (float)vp[3],
+		//	0.0001f,
+		//	10000.f
+		//);
+
+		// look at mtx - from to and up.
+		const float radius = 10.0f;
+		float camX = sin(glfwGetTime()) * radius;
+		float camZ = cos(glfwGetTime()) * radius;
+		viewMtx = glm::lookAt(
+			glm::vec3(camX, 0.f, camZ),
+			glm::vec3(),
+			glm::vec3(0, 1, 0)
+		);
+
 
 		// to use the orthographic view, use this
 		/*
@@ -425,7 +519,7 @@ int main() {
 
 		
 		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (sizeof(indices)/ sizeof(float)), GL_UNSIGNED_INT, 0);
 		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * sizeof(int)));
 		
 		// unbind vertices.
