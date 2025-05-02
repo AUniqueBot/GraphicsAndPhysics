@@ -7,11 +7,18 @@ class Camera : public Component {
 private:
 
 public:
+
+	
+
+public:
 	
 	// - generic -------------------------------	
-	void Init();
+	void Init() override;
 	void Update();
-	void Terminate();
+	void End() override;
+
+	static void Register() { std::cout << typeid(Camera).name() << ":Register override" << std::endl; }
+
 
 	// - camera handling ------------------------
 	static int ActiveCameraID();
@@ -69,7 +76,9 @@ private:
 	// get window size lol
 	bool m_orthogonalProjection			{ false };
 
+
 	bool m_componentDataDirty			{ true };
+
 
 	glm::mat4 m_projectionMatrix		{};
 };

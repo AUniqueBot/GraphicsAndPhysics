@@ -42,6 +42,9 @@ public:
 	SparseSet<EntityID, T>& Data();
 	const SparseSet<EntityID, T>& Data() const;
 
+	auto begin()	{ return m_compPool.begin(); }
+	auto end()		{ return m_compPool.end(); }
+
 
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
@@ -118,7 +121,6 @@ public:
 	std::optional<std::reference_wrapper<Entity>> Instantiate();
 
 	std::string name;
-
 private:
 
 	void Clear();

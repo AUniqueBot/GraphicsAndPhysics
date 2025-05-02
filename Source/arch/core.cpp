@@ -15,7 +15,7 @@ void Core::Init() {
 	RegisterSystems();
 
 	// test out this stuff.
-	m_registry.name = "hi";
+	m_registry.name = "hi"; // for debugging purposes.
 	
 
 
@@ -26,21 +26,10 @@ void Core::Init() {
 
 	// adding and removing
 	obj1.AddComponent<Transform>();
-	m_registry.PrintDebugInfo();
-	obj1.RemoveComponent<Transform>();
-	m_registry.PrintDebugInfo();
-
-	// adding extra and to another object
-	obj1.AddComponent<Transform>();
-	m_registry.PrintDebugInfo();
-	obj1.AddComponent<Transform>();
-	m_registry.PrintDebugInfo();
-
-	// TODO - somehow get around this issue.
 	obj2.AddComponent<Transform>();
-	m_registry.PrintDebugInfo();
-	obj2.AddComponent<RigidBody>();
-	m_registry.PrintDebugInfo();
+
+	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 1, 2));
+	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, 5));
 	
 
 	// initialise here.
@@ -89,6 +78,7 @@ void Core::Cleanup() {
 void Core::RegisterComponents() {
 	m_registry.RegisterType<Transform>();
 	m_registry.RegisterType<RigidBody>();
+	m_registry.RegisterType<Camera>();
 
 
 	// register all types here.
@@ -98,4 +88,5 @@ void Core::RegisterComponents() {
 void Core::RegisterSystems() {
 	RegisterSystem<TransformSystem>();
 	RegisterSystem<RenderSystem>();
+	
 }

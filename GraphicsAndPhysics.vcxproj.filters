@@ -227,6 +227,9 @@
     <ClInclude Include="Headers\arch\core\core_coordinatesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\util\util_print.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\flatShader.frag" />

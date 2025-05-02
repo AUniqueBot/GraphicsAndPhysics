@@ -173,7 +173,12 @@ std::string GetRawText(std::string _pathToFile) {
 
 
 
-
+struct Light {
+	glm::vec3 lightCol		{ 1.0f, 1.0f, 1.0f };
+	glm::vec3 pos			{ 0, 10.f, 0 };
+	float intensity			{ 1.0f };
+	float falloff			{ 10.f };
+};
 
 
 int main() {
@@ -383,6 +388,9 @@ int main() {
 	while (!glfwWindowShouldClose(mainWindow)) {
 
 		c.Update();
+
+		// colour
+		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
 
 		// object matrix

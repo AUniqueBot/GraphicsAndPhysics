@@ -1,19 +1,36 @@
 #include <pch.h>
 #include <arch/components/comp_camera.h>
+#include <arch/components/comp_transform.h>
+#include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
+
 
 int Camera::m_activeCameraId    {};
 int Camera::m_cameraCount       {};
 
 
 
+// - generic ----------------------------------------------------------
+void Camera::Init() {
+    ++m_cameraCount;
+    // time based stuff
+    m_cameraId = static_cast<int>(s_TpHash(ch::system_clock::now()));
+    UpdateProjectionMatrix();
+    // cannot start until this projection matrix is up and running.
+
+    // camera has 2 matrices to handle
+    // [view/trs] [projection] -[object]-
+}
 
 void Camera::Update() {
-    
     if (m_componentDataDirty) {
         UpdateProjectionMatrix();
         m_componentDataDirty = false;
     }
     
+}
+
+void Camera::End() {
+    --m_cameraCount;
 }
 
 int Camera::ActiveCameraID() {

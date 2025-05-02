@@ -17,6 +17,9 @@ public:
 	EntityID GetID() const										{ return m_id; };
 	bool IsValid() const										{ return m_id.IsValid(); }
 
+	bool Active() const											{ return m_active; }
+	void Active(bool _s)										{ m_active = _s; }
+
 	
 	template <typename T>
 	void AddComponent();
@@ -39,5 +42,6 @@ private:
 	EntityRegistry* m_registry									{};
 	EntityID m_id;
 	std::bitset<ComponentType::COUNT> m_flags;
+	bool m_active												{ true };
 
 };

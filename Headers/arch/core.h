@@ -23,6 +23,10 @@ public:
 	void Cleanup();
 	
 
+
+	static EntityRegistry& Registry()					{ return m_registry; }
+	// static const EntityRegistry& Registry()				{ return m_registry; }
+
 public:
 	// static void AddSystem(System* newSys);
 
