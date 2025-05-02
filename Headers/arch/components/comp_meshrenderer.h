@@ -10,7 +10,7 @@
 
 
 class Material {
-	glm::vec4 m_diffuseColor		{ HexToVec4(0xFFFFFFFF) };
+	glm::vec4 m_diffuseColor		{ HexToVec4(0xcececeff) };
 };
 
 class MeshRenderer : Component {

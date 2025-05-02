@@ -114,6 +114,9 @@
     <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\util\util_convenient_conversions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -228,6 +231,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\util\util_print.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\util\util_convenient_conversions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

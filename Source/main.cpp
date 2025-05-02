@@ -10,27 +10,17 @@
 
 
 // these are coordinates in normalised window space 
-float vertexArray[] = {
-	//set 1
-	// positions // colors // texture coords
-	 0.5f,  0.5f, 0.0f, 1.0f, 1.0f,			// top right
-	 0.5f, -0.5f, 0.0f, 1.0f, 0.0f,		// bottom right
-	-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,		// bottom left
-	-0.5f,  0.5f, 0.0f, 0.0f, 1.0f			// top left
-	,
-
-	// set 2
-	0.0f,  0.5f,  0.5f, 1.0f, 1.0f,			// top right
-	0.0f, -0.5f,  0.5f, 1.0f, 0.0f,		// bottom right
-	0.0f, -0.5f, -0.5f, 0.0f, 0.0f,		// bottom left
-	0.0f,  0.5f, -0.5f, 0.0f, 1.0f			// top left
-	,
-
-	// set 3
-	 0.5f, 0.0f,  0.5f, 1.0f, 1.0f,			// top right
-	-0.5f, 0.0f,  0.5f, 1.0f, 0.0f,		// bottom right
-	-0.5f, 0.0f, -0.5f, 0.0f, 0.0f,		// bottom left
-	 0.5f, 0.0f, -0.5f, 0.0f, 1.0f			// top left
+glm::vec3 cubePos[] = {
+	glm::vec3(0.0f, 0.0f, 0.0f),
+	glm::vec3(2.0f, 5.0f, -15.0f),
+	glm::vec3(-1.5f, -2.2f, -2.5f),
+	glm::vec3(-3.8f, -2.0f, -12.3f),
+	glm::vec3(2.4f, -0.4f, -3.5f),
+	glm::vec3(-1.7f, 3.0f, -7.5f),
+	glm::vec3(1.3f, -2.0f, -2.5f),
+	glm::vec3(1.5f, 2.0f, -2.5f),
+	glm::vec3(1.5f, 0.2f, -1.5f),
+	glm::vec3(-1.3f, 1.0f, -1.5f)
 };
 
 
@@ -389,21 +379,15 @@ int main() {
 
 		c.Update();
 
-		// colour
+
+		// bg colour.
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
-
-		// object matrix
-		glm::mat4 objMat{ 1 };
-		glm::mat4 pos = glm::translate(objMat, glm::vec3(0.f, -1.f, 0.f));
-		glm::mat4 rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
-		glm::mat4 scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians( 25.f), glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
-
-		// glm works in column major first (wtv that means), so the order is reversed.
-		objMat = pos * rot * scl;
+		glm::mat4 pos, rot, scl{1.f};
 
 
-		// view matrix - camera's inverse matrix.
+		// set up the camera
 		glm::mat4 viewMtx	{ 1.f };
 		pos = glm::translate(
 			glm::mat4{ 1.f }, 
@@ -467,33 +451,15 @@ int main() {
 		*/
 
 		// clear colour
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		// - stencil
 		// - depth
 		// - colour
-
-
-		
-
-		// this specifies the uniform, "offset" in the shader to be 0.5
-		// it returns an int (name) as the location specifier for the shader.
-		// if it doesn't exist probably -1?
 		int uniformLoc{};
-		uniformLoc = glGetUniformLocation(prg, "trs");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 		uniformLoc = glGetUniformLocation(prg, "view");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx));
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
 		uniformLoc = glGetUniformLocation(prg, "projection");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx));
-	
-
-
-		// input keys.
-		GLFW_KEY_W;
-		GLFW_KEY_S;
-		GLFW_KEY_A;
-		GLFW_KEY_D;
-
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
 
 
 		// activating textures
@@ -502,34 +468,53 @@ int main() {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, tex2);
 
+		glBindVertexArray(VAO);
+		for (int i{}; i < sizeof(cubePos) / sizeof(glm::vec3); ++i) {
+
+			// object matrix
+			glm::mat4 objMat{ 1 };
+			pos = glm::translate(objMat, cubePos[i]);
+			rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
+			scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians(25.f), glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
+
+			// glm works in column major first (wtv that means), so the order is reversed.
+			objMat = pos * rot * scl;
+
+		
+
+			// this specifies the uniform, "offset" in the shader to be 0.5
+			// it returns an int (name) as the location specifier for the shader.
+			// if it doesn't exist probably -1?
+			uniformLoc = glGetUniformLocation(prg, "trs");
+			glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 
 
 
-		// possible
-		/*
-			for (auto& vbo : ListOfObjs) {
-				glBindVertexArray(vbo.vao);
-				glDrawElements(GL_TRIANGLES, vbo.VtxCount, GL_UNSIGNED_INT, 0);
-			}
-			// to unbind
-			glBindVertexArray(0);
+
+			// possible
+			/*
+				for (auto& vbo : ListOfObjs) {
+					glBindVertexArray(vbo.vao);
+					glDrawElements(GL_TRIANGLES, vbo.VtxCount, GL_UNSIGNED_INT, 0);
+				}
+				// to unbind
+				glBindVertexArray(0);
 
 
 
-			// maybe.
+				// maybe.
 
 
-			// alternatively, everything in 1 shader is connected in 1 ebo, vao, vbo.
+				// alternatively, everything in 1 shader is connected in 1 ebo, vao, vbo.
 
 			
 
-		*/
+			*/
 
 		
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, (sizeof(indices)/ sizeof(float)), GL_UNSIGNED_INT, 0);
-		//glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*)(6 * sizeof(int)));
-		
+			glDrawElements(GL_TRIANGLES, (sizeof(indices)/ sizeof(float)), GL_UNSIGNED_INT, 0);
+		}
+
 		// unbind vertices.
 		glBindVertexArray(0);
 

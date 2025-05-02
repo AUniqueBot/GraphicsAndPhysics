@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp" />
     <ClCompile Include="Source\res\res_mesh.cpp" />
@@ -225,6 +226,7 @@
     <ClInclude Include="Headers\graphics\gfx_glfwCustomCallbackFunctions.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
+    <ClInclude Include="Headers\util\util_convenient_conversions.h" />
     <ClInclude Include="Headers\util\util_math.h" />
     <ClInclude Include="Headers\util\util_print.h" />
     <ClInclude Include="Headers\util\util_serialisation.h" />
