@@ -238,10 +238,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\flatShader.frag" />
-    <None Include="Assets\Shaders\vertexShader.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="Assets\Images\TestImage.png">
       <Filter>Resource Files</Filter>
     </Image>
@@ -251,5 +247,10 @@
     <Image Include="Assets\Images\awesomeface.png">
       <Filter>Resource Files</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\flatShader.frag" />
+    <None Include="Assets\Shaders\phongShader.frag" />
+    <None Include="Assets\Shaders\vertexShader.vert" />
   </ItemGroup>
 </Project>

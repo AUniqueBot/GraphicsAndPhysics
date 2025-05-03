@@ -25,38 +25,38 @@ glm::vec3 cubePos[] = {
 
 
 float cubeVtx[] = {
-	// positions // uv
+	// positions		// normal			// uv
 
 	// bottom face
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
 	// top face
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f,
 	// left face
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 	// right face
-	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
 	 // front face
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
 	 // back face
-	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 1.0f, 1.0f
+	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f
 
 };
 
@@ -161,14 +161,28 @@ std::string GetRawText(std::string _pathToFile) {
 	return toRet.str();
 }
 
+glm::vec3 camFront{0, 0, 1};
+
+void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
+	// camera to control on the y axis - yaw, and x
+	static double yaw		{};
+	static double pitch		{};
 
 
-struct Light {
-	glm::vec3 lightCol		{ 1.0f, 1.0f, 1.0f };
-	glm::vec3 pos			{ 0, 10.f, 0 };
-	float intensity			{ 1.0f };
-	float falloff			{ 10.f };
-};
+	// yaw to control pitch.
+
+
+	pitch = std::clamp(pitch, -89.00, 89.00);
+	
+
+	glm::vec3 direction;
+	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	direction.y = sin(glm::radians(pitch));
+	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	camFront = glm::normalize(direction);
+
+}
+
 
 
 int main() {
@@ -188,7 +202,6 @@ int main() {
 
 	// tbh mate, idk what this does.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
 
 
 	// create a window
@@ -225,6 +238,8 @@ int main() {
 
 
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
+	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPosCallback(mainWindow, MouseCallback);
 
 	/*
 	For reference
@@ -250,38 +265,17 @@ int main() {
 	// VAO specification.
 	glGenVertexArrays(1, &VAO);
 	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(0)); // Pos
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0));					// Pos
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float))); // UV
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // normal
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
+	glEnableVertexAttribArray(2);
 
 	// specifying which vertices make a face
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
-
-
-
-	unsigned VAOc{};
-	unsigned VBOc{};
-	unsigned EBOc{};
-
-
-
-	//glGenBuffers(1, &VBOc);
-	//glBindBuffer(GL_ARRAY_BUFFER, VBOc);
-	//glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVtx), cubeVtx, GL_STATIC_DRAW);
-
-	//glGenBuffers(1, &VAOc);
-	//glBindVertexArray(VAOc);
-	//glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0)); // Pos
-	//glEnableVertexAttribArray(0);
-	//glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // UV
-	//glEnableVertexAttribArray(1);
-
-
-
 
 
 
@@ -317,7 +311,7 @@ int main() {
 	int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
 
 
-	srcS = GetRawText("Assets/Shaders/flatShader.frag");
+	srcS = GetRawText("Assets/Shaders/phongShader.frag");
 	src = srcS.c_str();
 
 
@@ -361,7 +355,12 @@ int main() {
 	glUniform1i(glGetUniformLocation(prg, "tex1"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
 	glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
 
-	
+	// activating textures
+	glActiveTexture(GL_TEXTURE0); // select tex 0
+	glBindTexture(GL_TEXTURE_2D, tex1);
+	glActiveTexture(GL_TEXTURE1); // select tex 1
+	glBindTexture(GL_TEXTURE_2D, tex2);
+
 	// transforms
 
 	// typical conversion is model mtx -> view mtx -> projection mtx
@@ -385,13 +384,17 @@ int main() {
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
 		glm::mat4 pos, rot, scl{1.f};
+		glm::vec3 camPos			{ 0, 0, 3 };
+		glm::vec3 lightPos			{ 10, 10, 10 };
+		glm::vec3 lightCol			{ .96f, .56f, .05f };
+
 
 
 		// set up the camera
 		glm::mat4 viewMtx	{ 1.f };
 		pos = glm::translate(
 			glm::mat4{ 1.f }, 
-			glm::vec3(0, 0, 3.f)
+			camPos
 		);
 		rot = glm::rotate(
 			glm::mat4		{ 1.f },
@@ -426,14 +429,15 @@ int main() {
 		//);
 
 		// look at mtx - from to and up.
-		const float radius = 10.0f;
-		float camX = sin(glfwGetTime()) * radius;
-		float camZ = cos(glfwGetTime()) * radius;
-		viewMtx = glm::lookAt(
-			glm::vec3(camX, 0.f, camZ),
-			glm::vec3(),
-			glm::vec3(0, 1, 0)
-		);
+		//const float radius = 10.0f;
+		//float camX = sin(glfwGetTime()) * radius;
+		//float camZ = cos(glfwGetTime()) * radius;
+		//camPos = glm::vec3(camX, 0.f, camZ);
+		//viewMtx = glm::lookAt(
+		//	camPos,
+		//	glm::vec3(),
+		//	glm::vec3(0, 1, 0)
+		//);
 
 
 		// to use the orthographic view, use this
@@ -460,13 +464,14 @@ int main() {
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
 		uniformLoc = glGetUniformLocation(prg, "projection");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
+		uniformLoc = glGetUniformLocation(prg, "viewPos");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
 
+		uniformLoc = glGetUniformLocation(prg, "lightCol");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
+		uniformLoc = glGetUniformLocation(prg, "lightPos");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightPos));
 
-		// activating textures
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, tex1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, tex2);
 
 		glBindVertexArray(VAO);
 		for (int i{}; i < sizeof(cubePos) / sizeof(glm::vec3); ++i) {
@@ -525,7 +530,6 @@ int main() {
 
 
 	}
-
 
 	c.Stop();
 	c.Cleanup();

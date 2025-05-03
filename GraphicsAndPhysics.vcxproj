@@ -232,13 +232,20 @@
     <ClInclude Include="Headers\util\util_serialisation.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\flatShader.frag" />
-    <None Include="Assets\Shaders\vertexShader.vert" />
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="Assets\Images\awesomeface.png" />
     <Image Include="Assets\Images\container.jpg" />
     <Image Include="Assets\Images\TestImage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\flatShader.frag">
+      <FileType>Text</FileType>
+    </None>
+    <None Include="Assets\Shaders\phongShader.frag">
+      <FileType>Text</FileType>
+    </None>
+    <None Include="Assets\Shaders\vertexShader.vert">
+      <FileType>Text</FileType>
+    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
