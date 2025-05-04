@@ -30,35 +30,35 @@ float cubeVtx[] = {
 	// x y z.
 
 	// back face
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 1.0f,
 	// front face
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 1.0f,
 	// left face
-	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
+	-0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
 	// right face
-	 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
+	 0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
+	 0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
 	 // bottom face
-	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+	-0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 1.0f,
 	 // top face
-	-0.5f,  0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f
+	-0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 1.0f
 
 };
 
@@ -358,49 +358,54 @@ int main() {
 #pragma region // - shader compilation ---------
 	// - shader compilation ---------
 	// ----------------------------------------------------------------------------
-	int vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
 
 	std::string srcS{};
 	const char* src{};
+	int glStatus{};
 
+
+	// vertex shader
+	int vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
 	srcS = GetRawText("Assets/Shaders/vertexShader.vert");
 	src = srcS.c_str();
 	glShaderSource(vtxShader, 1, &src, NULL);
 	glCompileShader(vtxShader);
-
-	// a class for a shader would be a good idea?
-
-	// warning check
-	// status of thing
-	int glStatus{};
 	glGetShaderiv(vtxShader, GL_COMPILE_STATUS, &glStatus);
+
 	if (glStatus == GL_FALSE) {
 		char log[512];
 		glGetShaderInfoLog(vtxShader, 512, NULL, log);
-
 		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
 	// fragment shader
 	int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-
-
 	srcS = GetRawText("Assets/Shaders/phongShader.frag");
 	src = srcS.c_str();
-
-
 	glShaderSource(fragShader, 1, &src, NULL); // load shader source
 	glCompileShader(fragShader); // compile the shaders.
-
 	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
+
 	if (glStatus == GL_FALSE) {
 		char log[512];
 		glGetShaderInfoLog(fragShader, 512, NULL, log);
-
 		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
 
+	int flatShader = glCreateShader(GL_FRAGMENT_SHADER);
+	srcS = GetRawText("Assets/Shaders/flatShader.frag");
+	src = srcS.c_str();
+	glShaderSource(flatShader, 1, &src, NULL); // load shader source
+	glCompileShader(flatShader); // compile the shaders.
+	glGetShaderiv(flatShader, GL_COMPILE_STATUS, &glStatus);
+
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(flatShader, 512, NULL, log);
+
+		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
+	}
 
 	// creation and compiling the shader
 
@@ -408,6 +413,11 @@ int main() {
 	unsigned prg = glCreateProgram();
 	glAttachShader(prg, fragShader);
 	glAttachShader(prg, vtxShader);
+	glLinkProgram(prg);
+
+	unsigned flatPrg = glCreateProgram();
+	glAttachShader(flatPrg, flatShader);
+	glAttachShader(flatPrg, vtxShader);
 	glLinkProgram(prg);
 
 	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
@@ -418,9 +428,22 @@ int main() {
 		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
+	glGetShaderiv(flatPrg, GL_LINK_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(fragShader, 512, NULL, log);
+
+		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
+	}
+
+
+
 	// deletion can be done after compile.
 	glDeleteShader(vtxShader);
 	glDeleteShader(fragShader);
+	glDeleteShader(flatShader);
+
+
 #pragma endregion
 
 	// tex binding.
@@ -554,16 +577,21 @@ int main() {
 		uniformLoc = glGetUniformLocation(prg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
 
-
-
 		glBindVertexArray(VAO);
+		glm::mat4 objMat{ 1 };
+		pos = glm::translate(objMat, lightPos);
+		rot = glm::scale(objMat, glm::vec3(5));
+		scl = glm::rotate(objMat, 0.f, glm::vec3{1.f, 0.f, 0.f});
+
+
+
 		int cubeCount{ sizeof(cubePos) / sizeof(glm::vec3) };
 		for (int i{}; i < 1; ++i) {
 
 			// object matrix
 			glm::mat4 objMat{ 1 };
 			pos = glm::translate(objMat, cubePos[i]);
-			rot = glm::scale(objMat, glm::vec3(1.f, 1.0f, 1.f));
+			rot = glm::scale(objMat, glm::vec3(5));
 			scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians(25.f), glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
 
 			// glm works in column major first (wtv that means), so the order is reversed.

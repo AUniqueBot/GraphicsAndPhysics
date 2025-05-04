@@ -2,7 +2,7 @@
 in vec4 vtxPos;
 in vec3 aColour;
 in vec2 oUv;
-out vec4 FragColor;
+out vec4 outCol;
 
 uniform vec4 color;
 
@@ -13,14 +13,8 @@ uniform sampler2D tex2;
 
 
 void main() {
-	// FragColor = mix(texture(tex1, TexCoord), texture(tex2, TexCoord), 0.2);
-	FragColor = color;
-
-
-	FragColor = mix(texture(tex2, oUv), texture(tex1, vec2(1 - oUv.x, oUv.y)), 0.2) * vec4(oUv, 1, 1);
-	// in the future there will be normal and specular maps.
-
-	// trying to use the traditional specular lighting model
-
-	
+	outCol = color;
+	if (useTex1 == true && useTex2 == true) {
+		outCol = mix(texture(tex2, oUv), texture(tex1, vec2(1 - oUv.x, oUv.y)), 0.2) * vec4(oUv, 1, 1);
+	}
 }

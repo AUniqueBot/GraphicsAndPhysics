@@ -36,8 +36,6 @@ void main() {
 	// result = ambient + diffuse * objectColor + some specular;
 	vec4 surfaceCol = vec4(0.9, 0.3, 0.7, 1.0);
 	outCol = vec4(diffuse + ambient + specular, 1) * surfaceCol;
-
-	
 }
 
 vec3 Diffuse(vec3 _normal, vec3 _fragPos, vec3 _lightPosition, vec3 _lightCol) {
