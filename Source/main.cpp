@@ -27,16 +27,18 @@ glm::vec3 cubePos[] = {
 float cubeVtx[] = {
 	// positions		// normal			// uv
 
-	// bottom face
-	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
-	// top face
-	-0.5f, -0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f,
+	// x y z.
+
+	// back face
+	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
+	// front face
+	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f,
 	// left face
 	-0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
 	-0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
@@ -47,16 +49,16 @@ float cubeVtx[] = {
 	 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
 	 0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 	 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 1.0f, 1.0f,
-	 // front face
-	-0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f,
-	 // back face
-	-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f, 0.0f, 0.0f,  1.0f, 1.0f, 1.0f
+	 // bottom face
+	-0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f, -0.5f, -0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f, -0.5f,  0.5f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+	 // top face
+	-0.5f,  0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f,
+	 0.5f,  0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 0.0f,
+	-0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 0.0f, 1.0f,
+	 0.5f,  0.5f,  0.5f, 0.0f,  1.0f, 0.0f, 1.0f, 1.0f
 
 };
 
@@ -161,30 +163,104 @@ std::string GetRawText(std::string _pathToFile) {
 	return toRet.str();
 }
 
-glm::vec3 camFront{0, 0, 1};
+glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
+glm::vec3 camFwd = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 camUp = glm::vec3(0.0f, 1.0f, 0.0f);
+bool mouseLook = false;
+
+// - callbacks -----------------------------------------------------------------------------------------------
 
 void MouseCallback(GLFWwindow* window, double xpos, double ypos) {
-	// camera to control on the y axis - yaw, and x
+
+	if (!mouseLook) return;
+
+	static bool firstMouse = true;
+	static float lastX = 400.0f;
+	static float lastY = 300.0f;
+
 	static double yaw		{};
 	static double pitch		{};
 
+	float xoffset, yoffset;
 
-	// yaw to control pitch.
+	if (firstMouse) {
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+		return; // no movement on first frame
+	}
 
+	xoffset = xpos - lastX;
+	yoffset = lastY - ypos;
 
-	pitch = std::clamp(pitch, -89.00, 89.00);
-	
+	lastX = xpos;
+	lastY = ypos;
+	float sensitivity = 0.1f;
+	xoffset *= sensitivity;
+	yoffset *= sensitivity;
 
+	yaw += xoffset;
+	pitch += yoffset;
+
+	// Constrain pitch
+	if (pitch > 89.0f) pitch = 89.0f;
+	if (pitch < -89.0f) pitch = -89.0f;
+
+	// Convert to direction vector
 	glm::vec3 direction;
 	direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	direction.y = sin(glm::radians(pitch));
 	direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	camFront = glm::normalize(direction);
+	camFwd = glm::normalize(direction);
+}
+void MouseButtonCallback(GLFWwindow* window, int button, int action, int mods) {
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (glfwGetWindowAttrib(window, GLFW_FOCUSED)) {
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED); // Lock and hide
+			mouseLook = true;
+		}
+	}
+}
+void Input(GLFWwindow*& _window) {
+	if (glfwGetKey(_window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+		
+		glfwSetInputMode(_window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		mouseLook = false;
+		glfwWindowShouldClose(_window);
+		return;
+	}
 
+	// camera adjustmemts.
+	const float cameraSpeed = 0.05f; // adjust accordingly
+	if (glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS)
+		camPos += cameraSpeed * camFwd;
+	if (glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS)
+		camPos -= cameraSpeed * camFwd;
+	if (glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS)
+		camPos -= glm::normalize(glm::cross(camFwd, camUp)) *
+		cameraSpeed;
+	if (glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS)
+		camPos += glm::normalize(glm::cross(camFwd, camUp)) *
+		cameraSpeed;
+	if (glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS)
+		camPos += glm::normalize(camUp) *
+		cameraSpeed;
+	if (glfwGetKey(_window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+		camPos -= glm::normalize(camUp) *
+		cameraSpeed;
 }
 
 
 
+
+
+
+
+
+
+
+
+// - main -----------------------------------------------------------------------------------------------------
 int main() {
 
 
@@ -232,14 +308,12 @@ int main() {
 	tex3 = LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
 	// TODOs - Test out the texture class here and 
 	
-	// - set up functions ------------
 
-
-
-
+	// - callbacks -------------------
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
-	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPosCallback(mainWindow, MouseCallback);
+	glfwSetMouseButtonCallback(mainWindow, MouseButtonCallback);
+
 
 	/*
 	For reference
@@ -378,13 +452,15 @@ int main() {
 
 		c.Update();
 
+		Input(mainWindow);
+		
+
 
 		// bg colour.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
-		glm::mat4 pos, rot, scl{1.f};
-		glm::vec3 camPos			{ 0, 0, 3 };
+		glm::mat4 pos, rot, scl		{ 1.f };
 		glm::vec3 lightPos			{ 10, 10, 10 };
 		glm::vec3 lightCol			{ .96f, .56f, .05f };
 
@@ -439,6 +515,10 @@ int main() {
 		//	glm::vec3(0, 1, 0)
 		//);
 
+		// lookat for camera control
+		viewMtx = glm::lookAt(camPos, camPos + camFwd, camUp);
+
+
 
 		// to use the orthographic view, use this
 		/*
@@ -471,10 +551,14 @@ int main() {
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
 		uniformLoc = glGetUniformLocation(prg, "lightPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightPos));
+		uniformLoc = glGetUniformLocation(prg, "viewPos");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
+
 
 
 		glBindVertexArray(VAO);
-		for (int i{}; i < sizeof(cubePos) / sizeof(glm::vec3); ++i) {
+		int cubeCount{ sizeof(cubePos) / sizeof(glm::vec3) };
+		for (int i{}; i < 1; ++i) {
 
 			// object matrix
 			glm::mat4 objMat{ 1 };
