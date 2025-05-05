@@ -10,9 +10,6 @@ out vec3 fragPos;	// out position for every pixel
 out vec2 oUv;		// output to fragment shader
 out vec3 oNml;
 
-uniform float x_offset;
-uniform float y_offset;
-
 // - camera -----------------------------------------------------------------------
 uniform mat4 trs;			// object transform matrix
 uniform mat4 view;			// camera's view matrix (pos + rot, inverse)

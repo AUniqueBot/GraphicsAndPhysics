@@ -32,10 +32,12 @@ void main() {
 	vec3 ambient = Ambient(0.2, lightCol);
 	vec3 diffuse = Diffuse(oNml, fragPos, lightPos, lightCol);
 	vec3 specular = Specular(oNml, fragPos, 1, viewPos, lightPos, lightCol);
-
+	// specular = vec3(0, 0, 0);
 	// result = ambient + diffuse * objectColor + some specular;
 	vec4 surfaceCol = vec4(0.9, 0.3, 0.7, 1.0);
-	outCol = vec4(diffuse + ambient + specular, 1) * surfaceCol;
+
+	vec3 result = (diffuse + ambient + specular) * vec3(surfaceCol);
+	outCol = vec4(result, surfaceCol.z);
 }
 
 vec3 Diffuse(vec3 _normal, vec3 _fragPos, vec3 _lightPosition, vec3 _lightCol) {
@@ -50,7 +52,19 @@ vec3 Ambient(float _factor, vec3 _lightCol) {
 
 vec3 Specular(vec3 _normal, vec3 _fragPos, float _strength, vec3 _viewPos, vec3 _lightPos, vec3 _lightCol){
 	vec3 viewDir = normalize(_viewPos - _fragPos);
-	vec3 reflectDir = reflect(normalize(_fragPos - _lightPos), _normal);
+	vec3 reflectDir = reflect(-normalize(_lightPos - _fragPos), normalize(_normal));
 	// specular strength based on how aligned the viewing angle is to the reflection dir
 	return pow(max(dot(viewDir, reflectDir), 0), 32) * _strength * _lightCol;
+
+	/*
+		    vec3 normal = normalize(_normal);
+    vec3 lightDir = normalize(_lightPos - _fragPos);
+    vec3 viewDir = normalize(_viewPos - _fragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32.0);
+    return _strength * spec * _lightCol;
+
+
+	*/
 }

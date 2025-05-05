@@ -17,11 +17,4 @@ void TransformSystem::Start() {
 void TransformSystem::Update() {
 	auto data = Core::Registry().GetComponentPool<Transform>();
 	auto& compPool = data.value().get();
-	int count{};
-	std::cout << "Entity Count: " << compPool.size() << std::endl;
-	for (auto& i : compPool) {
-		//std::cout << i.Position() << std::endl;
-		//i.Position(i.Position() + glm::vec3(1, 0, 0));
-	}
-
 }

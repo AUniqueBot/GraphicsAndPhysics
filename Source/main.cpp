@@ -418,7 +418,7 @@ int main() {
 	unsigned flatPrg = glCreateProgram();
 	glAttachShader(flatPrg, flatShader);
 	glAttachShader(flatPrg, vtxShader);
-	glLinkProgram(prg);
+	glLinkProgram(flatPrg);
 
 	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
 	if (glStatus == GL_FALSE) {
@@ -446,17 +446,6 @@ int main() {
 
 #pragma endregion
 
-	// tex binding.
-	// select the current shader, and apply the shader.
-	glUseProgram(prg); // uses program, not the specific shader.
-	glUniform1i(glGetUniformLocation(prg, "tex1"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
-	glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
-
-	// activating textures
-	glActiveTexture(GL_TEXTURE0); // select tex 0
-	glBindTexture(GL_TEXTURE_2D, tex1);
-	glActiveTexture(GL_TEXTURE1); // select tex 1
-	glBindTexture(GL_TEXTURE_2D, tex2);
 
 	// transforms
 
@@ -478,13 +467,12 @@ int main() {
 		Input(mainWindow);
 		
 
-
 		// bg colour.
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
 		glm::mat4 pos, rot, scl		{ 1.f };
-		glm::vec3 lightPos			{ 10, 10, 10 };
+		glm::vec3 lightPos			{ 2, 5, 3 };
 		glm::vec3 lightCol			{ .96f, .56f, .05f };
 
 
@@ -556,6 +544,17 @@ int main() {
 			);
 		
 		*/
+		// tex binding.
+		// select the current shader, and apply the shader.
+		glUseProgram(prg); // uses program, not the specific shader.
+		glUniform1i(glGetUniformLocation(prg, "tex1"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
+		glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
+
+		// activating textures
+		glActiveTexture(GL_TEXTURE0); // select tex 0
+		glBindTexture(GL_TEXTURE_2D, tex1);
+		glActiveTexture(GL_TEXTURE1); // select tex 1
+		glBindTexture(GL_TEXTURE_2D, tex2);
 
 		// clear colour
 
@@ -579,9 +578,7 @@ int main() {
 
 		glBindVertexArray(VAO);
 		glm::mat4 objMat{ 1 };
-		pos = glm::translate(objMat, lightPos);
-		rot = glm::scale(objMat, glm::vec3(5));
-		scl = glm::rotate(objMat, 0.f, glm::vec3{1.f, 0.f, 0.f});
+
 
 
 
@@ -592,7 +589,7 @@ int main() {
 			glm::mat4 objMat{ 1 };
 			pos = glm::translate(objMat, cubePos[i]);
 			rot = glm::scale(objMat, glm::vec3(5));
-			scl = glm::rotate(objMat, (float)glfwGetTime() * glm::radians(25.f), glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
+			scl = glm::rotate(objMat, 0.f, glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
 
 			// glm works in column major first (wtv that means), so the order is reversed.
 			objMat = pos * rot * scl;
@@ -632,10 +629,31 @@ int main() {
 			glDrawElements(GL_TRIANGLES, (sizeof(indices)/ sizeof(float)), GL_UNSIGNED_INT, 0);
 		}
 
+
+		glUseProgram(flatPrg);
+		pos = glm::translate(objMat, lightPos);
+		rot = glm::scale(objMat, glm::vec3(1));
+		scl = glm::rotate(objMat, 0.f, glm::vec3{ 1.f, 0.f, 0.f });
+		objMat = pos * rot * scl;
+
+		uniformLoc = glGetUniformLocation(flatPrg, "colour");
+		glUniform4fv(uniformLoc, 1, glm::value_ptr(glm::vec4{1, 1, 1, 1})); // flat white cube
+		uniformLoc = glGetUniformLocation(flatPrg, "trs");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
+		uniformLoc = glGetUniformLocation(flatPrg, "view");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
+		uniformLoc = glGetUniformLocation(flatPrg, "projection");
+		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
+		uniformLoc = glGetUniformLocation(flatPrg, "viewPos");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
+
+
+
+		glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(float)), GL_UNSIGNED_INT, 0);
+
+
 		// unbind vertices.
 		glBindVertexArray(0);
-
-
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);
 		glfwPollEvents();

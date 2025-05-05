@@ -21,7 +21,7 @@ void RenderSystem::PreUpdate() {
 }
 
 void RenderSystem::Update() {
-	 std::cout << typeid(RenderSystem).name() << "::Update" << std::endl; 
+	 // std::cout << typeid(RenderSystem).name() << "::Update" << std::endl; 
 
 	// rasterise all renderables 
 
