@@ -2,7 +2,7 @@
 #include <pch.h>
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
-
+#include <arch/resources/res_mesh.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -22,67 +22,6 @@ glm::vec3 cubePos[] = {
 	glm::vec3(1.5f, 0.2f, -1.5f),
 	glm::vec3(-1.3f, 1.0f, -1.5f)
 };
-
-
-float cubeVtx[] = {
-	// positions		// normal			// uv
-
-	// x y z.
-
-	// back face
-	-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 1.0f,
-	// front face
-	-0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 1.0f,
-	// left face
-	-0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
-	// right face
-	 0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
-	 // bottom face
-	-0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 1.0f,
-	 // top face
-	-0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 1.0f
-
-};
-
-// this index specifies triangles based on vertex index (0, 1, 3 & 1, 2, 3 are separate triangles)
-unsigned int indices[] = { // note that we start from 0!
-	0, 1, 3, // first triangle
-	0, 2, 3, // second triangle
-
-	4, 5, 7,
-	4, 6, 7,
-
-	8, 9, 11,
-	8, 10, 11,
-
-	12, 13, 15,
-	12, 14, 15,
-
-	16, 17, 19,
-	16, 18, 19,
-
-	20, 21, 23,
-	20, 22, 23
-};
-
 
 enum IMAGE_CLAMP_BEHAVIOUR {
 	REPEAT,
@@ -252,14 +191,6 @@ void Input(GLFWwindow*& _window) {
 
 
 
-
-
-
-
-
-
-
-
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 
@@ -301,13 +232,16 @@ int main() {
 		return -1;
 	}
 	unsigned int tex1{}, tex2{}, tex3{};
+	unsigned int diffuse{}, specular{};
 
 	// LoadImages(tex1, tex2);
 	tex1 = LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
 	tex2 = LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
 	tex3 = LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
-	// TODOs - Test out the texture class here and 
-	
+
+	diffuse = LoadImage("Assets/Images/container2.png", true, REPEAT, REPEAT, NEAREST);
+	specular = LoadImage("Assets/Images/container2_specular.png", true, REPEAT, REPEAT, NEAREST);
+
 
 	// - callbacks -------------------
 	glfwSetFramebufferSizeCallback(mainWindow, glfw_resizeCallback);
@@ -323,34 +257,8 @@ int main() {
 	*/
 
 
-
-	// creation of VBOs and VAOs
-	unsigned VBO{};		// 
-	unsigned VAO{};		// 
-	unsigned EBO{};		//
-
-	// specifying the vertex buffer data
-	glGenBuffers(1, &VBO);					// VBO Gets assigned an ID of sorts
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);	// binding ID to an array buffer
-	glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVtx), cubeVtx, GL_STATIC_DRAW);	// filling array buffer data
-
-
-	// specifying vertex architecture
-	// VAO specification.
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0));					// Pos
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // normal
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
-	glEnableVertexAttribArray(2);
-
-	// specifying which vertices make a face
-	glGenBuffers(1, &EBO);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
-
+	Mesh mesh;
+	mesh.Init();
 
 
 	// use the shader program here.
@@ -407,23 +315,46 @@ int main() {
 		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
+
+	int texShader = glCreateShader(GL_FRAGMENT_SHADER);
+	srcS = GetRawText("Assets/Shaders/texturedFragShader.frag");
+	src = srcS.c_str();
+	glShaderSource(texShader, 1, &src, NULL); // load shader source
+	glCompileShader(texShader); // compile the shaders.
+	glGetShaderiv(texShader, GL_COMPILE_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(texShader, 512, NULL, log);
+		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
+	}
+
+
+
 	// creation and compiling the shader
 
 	// can be done in update.
 	unsigned prg = glCreateProgram();
+	unsigned flatPrg = glCreateProgram();
+	unsigned matPrg = glCreateProgram();
+
 	glAttachShader(prg, fragShader);
 	glAttachShader(prg, vtxShader);
 	glLinkProgram(prg);
 
-	unsigned flatPrg = glCreateProgram();
 	glAttachShader(flatPrg, flatShader);
 	glAttachShader(flatPrg, vtxShader);
 	glLinkProgram(flatPrg);
 
+	glAttachShader(matPrg, texShader);
+	glAttachShader(matPrg, vtxShader);
+	glLinkProgram(matPrg);
+
+
+
 	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
 	if (glStatus == GL_FALSE) {
 		char log[512];
-		glGetShaderInfoLog(fragShader, 512, NULL, log);
+		glGetShaderInfoLog(prg, 512, NULL, log);
 
 		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
 	}
@@ -431,17 +362,25 @@ int main() {
 	glGetShaderiv(flatPrg, GL_LINK_STATUS, &glStatus);
 	if (glStatus == GL_FALSE) {
 		char log[512];
-		glGetShaderInfoLog(fragShader, 512, NULL, log);
+		glGetShaderInfoLog(flatPrg, 512, NULL, log);
 
 		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
 	}
 
+	glGetShaderiv(matPrg, GL_LINK_STATUS, &glStatus);
+	if (glStatus == GL_FALSE) {
+		char log[512];
+		glGetShaderInfoLog(matPrg, 512, NULL, log);
+
+		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
+	}
 
 
 	// deletion can be done after compile.
 	glDeleteShader(vtxShader);
 	glDeleteShader(fragShader);
 	glDeleteShader(flatShader);
+	glDeleteShader(texShader);
 
 
 #pragma endregion
@@ -457,6 +396,9 @@ int main() {
 	// set to wireframe
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	glEnable(GL_DEPTH_TEST);
+	glm::mat4 pos, rot, scl{ 1.f };
+	glm::vec3 lightPos{ 2, 5, 3 };
+	glm::vec3 lightCol{ .96f, .56f, .05f };
 
 
 	// - Main Loop -----------------------------------------------------------------
@@ -471,10 +413,11 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 
-		glm::mat4 pos, rot, scl		{ 1.f };
-		glm::vec3 lightPos			{ 2, 5, 3 };
-		glm::vec3 lightCol			{ .96f, .56f, .05f };
 
+		float radius = 5.f;
+		lightPos.x = sin(glfwGetTime()) * radius;;
+		lightPos.y = sin(glfwGetTime() / 2) * radius;
+		lightPos.z = cos(glfwGetTime()) * radius;;
 
 
 		// set up the camera
@@ -546,15 +489,18 @@ int main() {
 		*/
 		// tex binding.
 		// select the current shader, and apply the shader.
-		glUseProgram(prg); // uses program, not the specific shader.
-		glUniform1i(glGetUniformLocation(prg, "tex1"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
-		glUniform1i(glGetUniformLocation(prg, "tex2"), 1);
+		int currentPrg;
+		currentPrg = matPrg;
+		glUseProgram(currentPrg); // uses program, not the specific shader.
+
+		glUniform1i(glGetUniformLocation(currentPrg, "surfaceMaterial.diffuse"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
+		glUniform1i(glGetUniformLocation(currentPrg, "surfaceMaterial.specular"), 1);
 
 		// activating textures
 		glActiveTexture(GL_TEXTURE0); // select tex 0
-		glBindTexture(GL_TEXTURE_2D, tex1);
+		glBindTexture(GL_TEXTURE_2D, diffuse);
 		glActiveTexture(GL_TEXTURE1); // select tex 1
-		glBindTexture(GL_TEXTURE_2D, tex2);
+		glBindTexture(GL_TEXTURE_2D, specular);
 
 		// clear colour
 
@@ -562,21 +508,23 @@ int main() {
 		// - depth
 		// - colour
 		int uniformLoc{};
-		uniformLoc = glGetUniformLocation(prg, "view");
+		uniformLoc = glGetUniformLocation(currentPrg, "view");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
-		uniformLoc = glGetUniformLocation(prg, "projection");
+		uniformLoc = glGetUniformLocation(currentPrg, "projection");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
-		uniformLoc = glGetUniformLocation(prg, "viewPos");
+		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
 
-		uniformLoc = glGetUniformLocation(prg, "lightCol");
+		uniformLoc = glGetUniformLocation(currentPrg, "lightCol");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
-		uniformLoc = glGetUniformLocation(prg, "lightPos");
+		uniformLoc = glGetUniformLocation(currentPrg, "lightPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightPos));
-		uniformLoc = glGetUniformLocation(prg, "viewPos");
+		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
+		uniformLoc = glGetUniformLocation(currentPrg, "time");
+		glUniform1f(uniformLoc, glfwGetTime());
 
-		glBindVertexArray(VAO);
+		mesh.UseVAO();
 		glm::mat4 objMat{ 1 };
 
 
@@ -599,7 +547,7 @@ int main() {
 			// this specifies the uniform, "offset" in the shader to be 0.5
 			// it returns an int (name) as the location specifier for the shader.
 			// if it doesn't exist probably -1?
-			uniformLoc = glGetUniformLocation(prg, "trs");
+			uniformLoc = glGetUniformLocation(currentPrg, "trs");
 			glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 
 
@@ -626,30 +574,30 @@ int main() {
 			*/
 
 		
-			glDrawElements(GL_TRIANGLES, (sizeof(indices)/ sizeof(float)), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 		}
 
-
-		glUseProgram(flatPrg);
+		currentPrg = flatPrg;
+		glUseProgram(currentPrg);
 		pos = glm::translate(objMat, lightPos);
 		rot = glm::scale(objMat, glm::vec3(1));
 		scl = glm::rotate(objMat, 0.f, glm::vec3{ 1.f, 0.f, 0.f });
 		objMat = pos * rot * scl;
 
-		uniformLoc = glGetUniformLocation(flatPrg, "colour");
+		uniformLoc = glGetUniformLocation(currentPrg, "colour");
 		glUniform4fv(uniformLoc, 1, glm::value_ptr(glm::vec4{1, 1, 1, 1})); // flat white cube
-		uniformLoc = glGetUniformLocation(flatPrg, "trs");
+		uniformLoc = glGetUniformLocation(currentPrg, "trs");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
-		uniformLoc = glGetUniformLocation(flatPrg, "view");
+		uniformLoc = glGetUniformLocation(currentPrg, "view");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
-		uniformLoc = glGetUniformLocation(flatPrg, "projection");
+		uniformLoc = glGetUniformLocation(currentPrg, "projection");
 		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
-		uniformLoc = glGetUniformLocation(flatPrg, "viewPos");
+		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
 
 
 
-		glDrawElements(GL_TRIANGLES, (sizeof(indices) / sizeof(float)), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 
 
 		// unbind vertices.

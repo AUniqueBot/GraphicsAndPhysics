@@ -10,7 +10,12 @@ Transform::Transform() {
 }
 
 void Transform::Init() {
+	std::cout << "trs init" << std::endl;
 	m_scl = glm::vec3(1.f);
+}
+
+void Transform::End() {
+	std::cout << typeid(Transform).name() << "::Component End()" << std::endl;
 }
 
 void Transform::RotationEuler(glm::vec3 _rotation) {

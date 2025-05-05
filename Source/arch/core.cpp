@@ -79,6 +79,7 @@ void Core::RegisterComponents() {
 	m_registry.RegisterType<Transform>();
 	m_registry.RegisterType<RigidBody>();
 	m_registry.RegisterType<Camera>();
+	m_registry.RegisterType<MeshRenderer>();
 
 
 	// register all types here.

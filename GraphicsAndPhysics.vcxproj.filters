@@ -252,5 +252,6 @@
     <None Include="Assets\Shaders\flatShader.frag" />
     <None Include="Assets\Shaders\phongShader.frag" />
     <None Include="Assets\Shaders\vertexShader.vert" />
+    <None Include="Assets\Shaders\texturedFragShader.frag" />
   </ItemGroup>
 </Project>

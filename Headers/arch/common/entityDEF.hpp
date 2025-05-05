@@ -12,8 +12,11 @@ void Entity::AddComponent() {
 
 	if (compPool != std::nullopt) {
 		std::cout << typeid(compPool.value().get()).name() << "current count: " << compPool.value().get().size() << std::endl;
+		compPool.value().get().Get(m_id).value().get().Init();
 	}
 
+
+	
 
 
 }
@@ -30,6 +33,7 @@ void Entity::RemoveComponent() {
 
 	if (compPool != std::nullopt) {
 		std::cout << typeid(compPool.value().get()).name() << "current count: " << compPool.value().get().size() << std::endl;
+		compPool.value().get().Get(m_id).value().get().End();
 	}
 
 }

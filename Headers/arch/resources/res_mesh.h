@@ -13,14 +13,11 @@ public:
 	/// @brief loads the mesh into gpu memory.
 	void Load();
 
+	void Init();
 
-		
-	void AttachVBO();
-	void AttachEBO();
+	void UseVAO(); // use this if you want to specify you want to use this mesh.
 
-	void UseVAO();
-
-
+	unsigned IndexCount() const { return m_indexCount; };
 
 private:
 	// mesh resource manages files
@@ -30,4 +27,10 @@ private:
 	// VBO - vertex buffer
 	// EBO - face for vtx
 
+
+	unsigned m_vao	{};
+	unsigned m_vbo	{};
+	unsigned m_ebo	{};
+
+	unsigned m_indexCount{};
 };

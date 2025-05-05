@@ -22,7 +22,7 @@ public:
 	Transform();
 	void Init() override;
 
-
+	void End() override;
 
 	// - transform attributes -----------------
 	void Position(glm::vec3 _pos)					{ m_pos = _pos; };

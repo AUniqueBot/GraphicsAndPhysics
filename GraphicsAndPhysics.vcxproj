@@ -243,6 +243,7 @@
     <None Include="Assets\Shaders\phongShader.frag">
       <FileType>Text</FileType>
     </None>
+    <None Include="Assets\Shaders\texturedFragShader.frag" />
     <None Include="Assets\Shaders\vertexShader.vert">
       <FileType>Text</FileType>
     </None>

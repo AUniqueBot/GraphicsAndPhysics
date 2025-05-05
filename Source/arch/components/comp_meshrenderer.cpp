@@ -9,8 +9,20 @@ MeshRenderer::MeshRenderer() {
 
 void MeshRenderer::Init() {
 	//
+
+	
+
 }
 
 void MeshRenderer::End() {
 	//
+}
+
+int MeshRenderer::VAO() const {
+
+	return 0;
+}
+
+int MeshRenderer::VBO() const {
+	return 0;
 }
