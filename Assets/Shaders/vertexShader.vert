@@ -18,7 +18,7 @@ uniform mat4 projection;	// camera's view frustum
 void main() {
 	
 	gl_Position = projection * view * trs * vec4(aPos, 1.0f);
-	fragPos = vec3(trs * vec4(aPos, 1.0));
+	fragPos = vec3(trs * vec4(aPos, 1.0));				
 
 	// Set the color of the vertex
 	oUv = aUv; // pass the texture coordinates to the fragment shader

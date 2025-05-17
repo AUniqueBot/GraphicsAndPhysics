@@ -235,12 +235,12 @@ int main() {
 	unsigned int diffuse{}, specular{};
 
 	// LoadImages(tex1, tex2);
-	tex1 = LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
-	tex2 = LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
-	tex3 = LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
+	tex1		= LoadImage("Assets/Images/container.jpg", false, TO_BORDER, TO_BORDER, LINEAR);
+	tex2		= LoadImage("Assets/Images/TestImage.png", true, REPEAT, REPEAT, NEAREST);
+	tex3		= LoadImage("Assets/Images/awesomeface.png", true, REPEAT, REPEAT, NEAREST);
 
-	diffuse = LoadImage("Assets/Images/container2.png", true, REPEAT, REPEAT, NEAREST);
-	specular = LoadImage("Assets/Images/container2_specular.png", true, REPEAT, REPEAT, NEAREST);
+	diffuse		= LoadImage("Assets/Images/container2.png", true, REPEAT, REPEAT, NEAREST);
+	specular	= LoadImage("Assets/Images/container2_specular.png", true, REPEAT, REPEAT, NEAREST);
 
 
 	// - callbacks -------------------
@@ -398,7 +398,8 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glm::mat4 pos, rot, scl{ 1.f };
 	glm::vec3 lightPos{ 2, 5, 3 };
-	glm::vec3 lightCol{ .96f, .56f, .05f };
+	glm::vec3 lightCol	{ 0.7f };
+	glm::vec3 lightSpec	{ 1.0f };
 
 
 	// - Main Loop -----------------------------------------------------------------
@@ -515,10 +516,14 @@ int main() {
 		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
 
-		uniformLoc = glGetUniformLocation(currentPrg, "lightCol");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
-		uniformLoc = glGetUniformLocation(currentPrg, "lightPos");
+		uniformLoc = glGetUniformLocation(currentPrg, "light.position");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightPos));
+		uniformLoc = glGetUniformLocation(currentPrg, "light.color");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
+		uniformLoc = glGetUniformLocation(currentPrg, "light.specular");
+		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightSpec));
+
+
 		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
 		glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
 		uniformLoc = glGetUniformLocation(currentPrg, "time");

@@ -201,6 +201,7 @@
     <ClInclude Include="Headers\arch\components\componentList.h" />
     <ClInclude Include="Headers\arch\components\comp_camera.h" />
     <ClInclude Include="Headers\arch\components\comp_headers.h" />
+    <ClInclude Include="Headers\arch\components\comp_light.h" />
     <ClInclude Include="Headers\arch\components\comp_meshrenderer.h" />
     <ClInclude Include="Headers\arch\components\comp_rigidbody.h" />
     <ClInclude Include="Headers\arch\components\comp_transform.h" />

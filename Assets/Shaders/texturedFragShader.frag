@@ -7,6 +7,16 @@ struct Material {
 
 };
 
+struct Light {
+
+	vec3 position;
+
+	vec3 color;
+	vec3 specular;
+
+};
+
+
 in vec3 fragPos;
 in vec2 oUv;
 in vec3 oNml;
@@ -14,8 +24,7 @@ in vec3 oNml;
 out vec4 outCol;
 
 uniform Material surfaceMaterial;
-uniform vec3 lightCol;
-uniform vec3 lightPos;
+uniform Light light;
 uniform vec3 viewPos;
 
 
@@ -25,9 +34,15 @@ vec3 Specular(vec3, vec3, float, vec3, vec3, vec3);
 
 
 void main() {
-	vec3 ambient = Ambient(0.2, lightCol) * vec3(texture(surfaceMaterial.diffuse, oUv));
-	vec3 diffuse = Diffuse(oNml, fragPos, lightPos, lightCol) * vec3(texture(surfaceMaterial.diffuse, oUv));
-	vec3 specular = Specular(oNml, fragPos, 0.5, viewPos, lightPos, lightCol) * vec3(texture(surfaceMaterial.specular, oUv));
+	vec3 lpos = light.position;
+	vec3 lcol = light.color;
+	vec3 lspc = light.specular;
+
+
+	vec3 ambient = Ambient(0.2, lcol) * texture(surfaceMaterial.diffuse, oUv).rgb;
+	vec3 diffuse = Diffuse(oNml, fragPos, lpos, lcol) * texture(surfaceMaterial.diffuse, oUv).rgb;
+	
+	vec3 specular = Specular(oNml, fragPos, 0.5, viewPos, lpos, lspc) * texture(surfaceMaterial.specular, oUv).rgb;
 	outCol = vec4(ambient + diffuse + specular, 1.0);
 }
 

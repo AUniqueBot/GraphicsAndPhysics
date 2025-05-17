@@ -236,6 +236,9 @@
     <ClInclude Include="Headers\util\util_convenient_conversions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\components\comp_light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Images\TestImage.png">

@@ -7,7 +7,7 @@ enum ComponentType {
 	RENDER,
 	RIGIDBODY,
 	COLLIDER,
-
+	LIGHT,
 
 	// maybe later when adding a UI
 	UI_TRANSFORM,
