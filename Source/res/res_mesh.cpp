@@ -76,7 +76,10 @@ void Mesh::Load() {
 }
 
 void Mesh::Init() {
-
+	/*
+		initialises VAAO.
+	
+	*/
 
 
 	// generate buffers
@@ -88,7 +91,7 @@ void Mesh::Init() {
 	UseVAO();
 
 	// filling vertex data
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo); // replace with vertex buffer by assimp.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vtxData), vtxData, GL_STATIC_DRAW);
 
 
@@ -115,3 +118,4 @@ void Mesh::Init() {
 void Mesh::UseVAO() {
 	glBindVertexArray(m_vao);
 }
+

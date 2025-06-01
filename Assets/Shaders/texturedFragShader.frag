@@ -14,6 +14,8 @@ struct Light {
 	vec3 color;
 	vec3 specular;
 
+	int type;
+	
 };
 
 

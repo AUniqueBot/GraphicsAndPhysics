@@ -37,16 +37,16 @@ private:
 	// non sun/directional
 	// saving strategy - contain only data for the light type.
 	// if you're saving sun data, only save the sun data.
-	glm::vec2 m_range		{ 10.f, 100.f }; // x - minimum attenuation, y - max attenuation
+	glm::vec2 m_range		{ 10.f, 100.f };		// x - minimum attenuation, y - max attenuation
 	
 
 	// area light
 	glm::vec2 m_dimensions	{ 1.0f, 1.0f };
-	bool m_isWindow			{};
+	bool m_isWindow			{ false };
 
 
 	// spotlight
-	float m_angle			{};
+	float m_angle			{ 25.0f };				// in degrees.
 
 	// all this would provide a struct of data to be sent for batch rendering.
 

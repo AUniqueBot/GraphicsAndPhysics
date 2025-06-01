@@ -19,7 +19,8 @@ public:
 public:
 	
 	// - generic ------------------------------
-	Transform();
+	
+	();
 	void Init() override;
 
 	void End() override;

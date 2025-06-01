@@ -29,6 +29,10 @@ public:
 	int VBO() const;
 
 
+	const Mesh& GetMesh() const	{ return m_mesh; };
+	Mesh& GetMesh()				{ return m_mesh; };
+
+
 public:
 
 private:
@@ -40,7 +44,7 @@ private:
 	
 	
 	Mesh m_mesh						{};
-	std::vector<Material> m_materials;
+	std::vector<Material> m_materials; // don't think abou this for a sec.
 	bool m_castShadow					{ true };
 	bool m_staticShadow					{};
 

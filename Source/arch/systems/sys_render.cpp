@@ -21,12 +21,28 @@ void RenderSystem::PreUpdate() {
 }
 
 void RenderSystem::Update() {
-	 // std::cout << typeid(RenderSystem).name() << "::Update" << std::endl; 
+	auto data = Core::Registry().GetComponentPool<MeshRenderer>();
+	auto& compPool = data.value().get();
+	
 
-	// rasterise all renderables 
+	/*
+		
+	*/
 
-	// once completed, print to screen.
+
+	for (auto& mesh : compPool) {
+		// do a loop here.
+
+		// push this mesh to buffer or something idk.
+
+		mesh.GetMesh().Init();
+
+		// we're assuming that 
 
 
+
+
+
+	}
 
 }

@@ -36,6 +36,16 @@ enum FILTER_TYPE {
 };
 
 
+struct Light {
+	glm::vec3 position;
+	glm::vec3 color;
+	glm::vec3 specular;
+
+
+	int type; // 0 == point, 1 == directional, 2 == spot, 3 == area.
+};
+
+
 unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType) {
 	// TODO - Retrofit this function to save as a class for asset management.
 
@@ -191,6 +201,8 @@ void Input(GLFWwindow*& _window) {
 
 
 
+
+
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 
@@ -256,7 +268,7 @@ int main() {
 		- EBO = Which vertices to use to make geometry
 	*/
 
-
+	// - note that we're using a mesh here. --------------------
 	Mesh mesh;
 	mesh.Init();
 

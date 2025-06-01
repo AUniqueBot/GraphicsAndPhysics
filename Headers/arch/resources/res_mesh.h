@@ -19,6 +19,8 @@ public:
 
 	unsigned IndexCount() const { return m_indexCount; };
 
+	
+
 private:
 	// mesh resource manages files
 
@@ -32,5 +34,18 @@ private:
 	unsigned m_vbo	{};
 	unsigned m_ebo	{};
 
+
+	/*
+		for now the mesh renderer will use a mesh array.
+	
+		- 
+
+	
+	*/
+
 	unsigned m_indexCount{};
+
+
+
+
 };

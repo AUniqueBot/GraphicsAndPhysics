@@ -27,10 +27,17 @@ void Core::Init() {
 	// adding and removing
 	obj1.AddComponent<Transform>();
 	obj2.AddComponent<Transform>();
+	obj1.AddComponent<MeshRenderer>();
+
+
+
 
 	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 1, 2));
 	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, 5));
 	
+	MeshRenderer& obj1_mr = obj1.GetComponent<MeshRenderer>().value().get();
+
+
 
 	// initialise here.
 	for (System* s : m_systemInstances) {

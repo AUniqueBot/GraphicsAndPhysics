@@ -19,7 +19,6 @@ void MeshRenderer::End() {
 }
 
 int MeshRenderer::VAO() const {
-
 	return 0;
 }
 
