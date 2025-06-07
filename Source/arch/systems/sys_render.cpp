@@ -5,10 +5,20 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 // components
 #include <arch/components/comp_meshrenderer.h>
+#include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
 #include <arch/components/comp_transform.h>`
 
 // Some other todos - make a shader editor! How hard can it be? :')
+
+struct LightData {
+
+	glm::vec3 position	{};
+	glm::vec3 rotation	{};
+	float intensity		{};
+		
+};
+
 
 void RenderSystem::Init() {
 	std::cout << typeid(RenderSystem).name() << "::Init" << std::endl; 
@@ -21,28 +31,35 @@ void RenderSystem::PreUpdate() {
 }
 
 void RenderSystem::Update() {
-	auto data = Core::Registry().GetComponentPool<MeshRenderer>();
-	auto& compPool = data.value().get();
+
+	EntityRegistry& registry = Core::Registry();
+
+	auto cameraData		= registry.GetComponentPool<Camera>();
+	auto meshData			= registry.GetComponentPool<MeshRenderer>();
+	auto lightData		= registry.GetComponentPool<Light>();
+
+	auto& camCompPool			= cameraData.value().get();
+	auto& meshCompPool	= meshData.value().get();
+	auto& lightCompPool		= lightData.value().get();
 	
 
-	/*
-		
-	*/
+	if (!cameraData.has_value()) return;
+	for (auto& camera : camCompPool) {
 
 
-	for (auto& mesh : compPool) {
-		// do a loop here.
+		if (!meshData.has_value()) continue;
+		for (auto& mesh : meshCompPool) {
 
-		// push this mesh to buffer or something idk.
-
-		mesh.GetMesh().Init();
-
-		// we're assuming that 
+			std::vector<LightData> lightList;
 
 
+			if (!lightData.has_value()) continue;
+			for (auto& light : lightCompPool) {
 
 
-
+			}
+		}
 	}
+	
 
 }

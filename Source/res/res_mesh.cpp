@@ -65,11 +65,6 @@ static unsigned int idxList[] = { // note that we start from 0!
 };
 
 void Mesh::Load() {
-	// for now we're using an AoS structure.
-
-	//
-
-
 
 	Init();
 

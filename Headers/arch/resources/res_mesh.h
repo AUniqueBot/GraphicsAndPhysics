@@ -38,7 +38,7 @@ private:
 	/*
 		for now the mesh renderer will use a mesh array.
 	
-		- 
+		- aw
 
 	
 	*/

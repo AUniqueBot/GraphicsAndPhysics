@@ -568,28 +568,6 @@ int main() {
 			glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 
 
-
-
-			// possible
-			/*
-				for (auto& vbo : ListOfObjs) {
-					glBindVertexArray(vbo.vao);
-					glDrawElements(GL_TRIANGLES, vbo.VtxCount, GL_UNSIGNED_INT, 0);
-				}
-				// to unbind
-				glBindVertexArray(0);
-
-
-
-				// maybe.
-
-
-				// alternatively, everything in 1 shader is connected in 1 ebo, vao, vbo.
-
-			
-
-			*/
-
 		
 			glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 		}

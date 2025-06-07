@@ -21,23 +21,31 @@ void Core::Init() {
 
 	std::reference_wrapper<Entity> obj1R = m_registry.Instantiate().value();
 	std::reference_wrapper<Entity> obj2R = m_registry.Instantiate().value();
+	std::reference_wrapper<Entity> camR = m_registry.Instantiate().value();
 	Entity& obj1 = obj1R.get();
 	Entity& obj2 = obj2R.get();
+	Entity& cam = camR.get();
+
+
+
 
 	// adding and removing
 	obj1.AddComponent<Transform>();
 	obj2.AddComponent<Transform>();
-	obj1.AddComponent<MeshRenderer>();
+	cam.AddComponent<Transform>();
+	
+	obj1.AddComponent<MeshRenderer>();	// object
+	obj2.AddComponent<Light>();			// light
+	cam.AddComponent<Camera>();			// cameara
 
 
 
 
 	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 1, 2));
 	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, 5));
+	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, 5));
 	
-	MeshRenderer& obj1_mr = obj1.GetComponent<MeshRenderer>().value().get();
-
-
+	
 
 	// initialise here.
 	for (System* s : m_systemInstances) {
@@ -87,6 +95,7 @@ void Core::RegisterComponents() {
 	m_registry.RegisterType<RigidBody>();
 	m_registry.RegisterType<Camera>();
 	m_registry.RegisterType<MeshRenderer>();
+	m_registry.RegisterType<Light>();
 
 
 	// register all types here.

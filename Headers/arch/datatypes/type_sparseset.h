@@ -36,9 +36,9 @@ public:
 
 	// getters for the container
 
-	std::vector<T>& Data()				{ return m_typeContainer; } ///<! try not to use this
+	std::deque<T>& Data()				{ return m_typeContainer; } ///<! try not to use this
 	
-	const std::vector<T>& Data() const	{ return m_typeContainer; } ///<! use this instead.
+	const std::deque<T>& Data() const	{ return m_typeContainer; } ///<! use this instead.
 
 
 public:

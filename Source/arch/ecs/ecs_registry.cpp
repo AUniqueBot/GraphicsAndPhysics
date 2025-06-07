@@ -1,6 +1,6 @@
 #include "pch.h"
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
-
+#include <arch/components/comp_transform.h>
 
 EntityRegistry::~EntityRegistry() {
 	Clear();
@@ -33,6 +33,10 @@ std::optional<std::reference_wrapper<Entity>> EntityRegistry::Instantiate() {
 	// m_entityList.Add(std::move(newEntt), newEntt.GetID());	
 	// m_entityList.emplace(std::make_pair(refID, std::move(newEntt)));
 	// return m_entityList.at(refID);
+
+	// note to add a transform component.
+	auto toRet = m_entityList.At(refID);
+	toRet.value().get().AddComponent<Transform>();
 	return m_entityList.At(refID);
 }
 

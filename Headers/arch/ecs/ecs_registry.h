@@ -97,7 +97,9 @@ public:
 	template <typename T>
 	std::optional<std::reference_wrapper<const ComponentPool<T>>> GetComponentPool() const;
 
-
+	std::deque<Entity>& GetEntityList()					{ return m_entityList.Data(); }
+	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
+	
 	
 	// component handling.
 
