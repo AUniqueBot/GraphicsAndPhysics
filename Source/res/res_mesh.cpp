@@ -110,7 +110,7 @@ void Mesh::Init() {
 
 
 
-void Mesh::UseVAO() {
+void Mesh::UseVAO() const {
 	glBindVertexArray(m_vao);
 }
 

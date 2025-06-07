@@ -8,9 +8,6 @@ MeshRenderer::MeshRenderer() {
 }
 
 void MeshRenderer::Init() {
-	//
-
-	
 
 }
 
@@ -19,7 +16,7 @@ void MeshRenderer::End() {
 }
 
 int MeshRenderer::VAO() const {
-	return 0;
+	return m_mesh.VAO();
 }
 
 int MeshRenderer::VBO() const {

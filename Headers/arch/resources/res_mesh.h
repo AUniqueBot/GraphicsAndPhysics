@@ -15,11 +15,13 @@ public:
 
 	void Init();
 
-	void UseVAO(); // use this if you want to specify you want to use this mesh.
+	void UseVAO() const; // use this if you want to specify you want to use this mesh.
 
 	unsigned IndexCount() const { return m_indexCount; };
 
-	
+	unsigned VAO() const { return m_vao; }
+	unsigned VBO() const { return m_vbo; }
+
 
 private:
 	// mesh resource manages files
