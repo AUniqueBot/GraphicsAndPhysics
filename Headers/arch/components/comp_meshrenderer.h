@@ -7,11 +7,12 @@
 #pragma once
 #include <arch/common/component.h>
 #include <arch/resources/res_mesh.h>
+#include <arch/resources/res_material.h>
 
 
-class Material {
-	glm::vec4 m_diffuseColor		{ HexToVec4(0xcececeff) };
-};
+
+
+
 
 class MeshRenderer : public Component {
 
@@ -31,6 +32,17 @@ public:
 
 	const Mesh& GetMesh() const	{ return m_mesh; };
 	Mesh& GetMesh()				{ return m_mesh; };
+	
+
+	/*
+		@brief
+			gets material list
+	*/
+	std::vector<Material>& GetMaterialList() { return m_materials; }
+	const std::vector<Material>& GetMaterialList() const { return m_materials; }
+
+
+	static Material& GetDefaultMaterial();
 
 
 public:

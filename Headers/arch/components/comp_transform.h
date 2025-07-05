@@ -73,8 +73,8 @@ private:
 
 private:
 	glm::vec3 m_pos					{};
-	glm::quat m_rot					{};
-	glm::vec3 m_scl					{};
+	glm::quat m_rot					{ 1.0f, 0.0f, 0.0f, 0.0f };
+	glm::vec3 m_scl					{1.0f, 1.0f, 1.0f };
 
 	glm::mat4 m_transformMtx		{ 1.f };
 

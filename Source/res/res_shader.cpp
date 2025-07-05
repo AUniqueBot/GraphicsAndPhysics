@@ -1,104 +1,124 @@
 #include <pch.h>
+#include <filesystem>
 #include <arch/resources/res_shader.h>
 
-void ShaderProgram::Load(std::string _vertexShader, std::string _fragShader) {
-	// bwoah
+static std::string GetRawText(std::string _pathToFile) {
+	std::stringstream toRet;
+	std::ifstream ifs{ _pathToFile };
+	if (!ifs.good()) return std::string{};
+	toRet << ifs.rdbuf();
+	return toRet.str();
 }
 
-void ShaderProgram::Compile() {
-	
-	// finish precompile check.
-	if (!PreCompileCheck()) {
-		return;
-	}
 
 
 
-	m_shaderID = glCreateProgram();
-	for (int i{}; i < SHADERTYPE::_COUNT; ++i) {
-		
-
-		GLint shaderType{};
-		SHADERTYPE currentType = static_cast<SHADERTYPE>(i);
-		int currentShaderID = 0;
-		switch (i) {
-		case VERTEX:
-			shaderType = GL_VERTEX_SHADER;
-			break;
-		case FRAG:
-			shaderType = GL_FRAGMENT_SHADER;
-			break;
-		case GEOMETRY:
-			shaderType = GL_GEOMETRY_SHADER;
-			break;
-		case TESELLATION_CONTROL:
-			shaderType = GL_TESS_CONTROL_SHADER;
-			break;
-		case TESSELATION_EVALUATION:
-			shaderType = GL_TESS_EVALUATION_SHADER;
-			break;
-		case COMPUTE:
-			shaderType = GL_COMPUTE_SHADER;
-			break;
-		default:
-			// do nothing.
-			break;
-		}
-
-		currentShaderID = glCreateShader(shaderType);
-		int glStatus{};
-		glGetShaderiv(currentShaderID, GL_COMPILE_STATUS, &glStatus);
-
-		LogCompileStatus(glStatus, currentShaderID);
-
-		m_shaderLoadStatus[i] = glStatus != GL_FALSE;
-		// only link if it's a success.
-		if (glStatus != GL_FALSE) {
-			glAttachShader(m_shaderID, currentShaderID);
-			
-		}
 
 
 
-		// delete the shader.
-		glDeleteShader(currentShaderID);
-	}
-	
-
-	// if creation fails, delet prg.
-
-
-
+void ShaderProgram::Init() {
 
 }
+
+
 
 void ShaderProgram::Load() {
+	
 }
 
 void ShaderProgram::Unload() {
+
+}
+
+
+
+GLuint ShaderProgram::LinkShaders(std::vector<GLuint> _shaderList) {
+	// go through shaders and link
+	GLuint programId = glCreateProgram();
+	for (GLuint& shaderId : _shaderList) {
+		if (!shaderId) {
+			// other logic here.
+			continue;
+		}
+		glAttachShader(programId, shaderId);
+	}
+	glLinkProgram(programId);
+	
+
+
+	GLint status{};
+	glGetProgramiv(programId, GL_LINK_STATUS, &status);
+
+	if (status == GL_FALSE) {
+		std::cout << "ShaderProgram::CompileShaders(): ERROR - Link Failed\n";
+		glDeleteProgram(programId);
+		return 0;
+	}
+	std::cout << "ShaderProgram::CompileShaders(): Program Generation Complete.\n";
+	return programId;
 }
 
 
 
 
+GLuint ShaderProgram::LoadShader(const char* _sourceCode, SHADERTYPE _type) {
 
-void ShaderProgram::LogCompileStatus(int _statusCode, int _shaderID) {
-	char log[512];
-	if (_statusCode == GL_FALSE) {
-		std::cout << "ERROR: "
-			<< "COMPILATION FAILED!";
+	// - reject cases -------------------------------
+	if (_type > FRAG) { // if (_type > _COUNT) { // once full implementation is complete.
+		std::cout << "ShaderProgram::LoadShader(): ERROR - Unsupported shader type'" << _type << "'.\n";
+		return 0;
 	}
-	glGetShaderInfoLog(_shaderID, 512, NULL, log);
+
+	// - source code handle -------------------------
+	const char* sourceTextPointer = _sourceCode;
+	
+	
+	// - type casting -------------------------------
+	GLuint shaderType = 0;
+	switch (_type) {
+	case VERTEX:
+		shaderType = GL_VERTEX_SHADER;
+		break;
+	case FRAG:
+		shaderType = GL_FRAGMENT_SHADER;
+		break;
+	//case GEOMETRY:
+	//	shaderType = GL_GEOMETRY_SHADER;
+	//	break;
+	//case TESELLATION_CONTROL:
+	//	shaderType = GL_TESS_CONTROL_SHADER;
+	//	break;
+	//case TESSELATION_EVALUATION:
+	//	shaderType = GL_TESS_EVALUATION_SHADER;
+	//	break;
+	//case COMPUTE:
+	//	shaderType = GL_COMPUTE_SHADER;
+	//	break;
+	default:
+		shaderType = 0;
+		break;
+	}
+	
+
+	// - shader generation --------------------------
+	GLuint shaderId = glCreateShader(shaderType);
+	glShaderSource(shaderId, 1, &sourceTextPointer, NULL);
+	glCompileShader(shaderId);
+
+	// - error handling -----------------------------
+	GLint status{};
+	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
+
+	if (status == GL_FALSE) {
+		std::cout << "ShaderProgram::LoadShader(): ERROR - Compilation Failed.\n";
+		glDeleteShader(shaderId);
+		return 0;
+	}
+
+	std::cout << "ShaderProgram::LoadShader(): Program Generation Complete.\n";
+	return shaderId;
 }
 
-bool ShaderProgram::PreCompileCheck() {
-	if (!m_shaderMap[VERTEX].empty()) {
-		std::cout << "Vertex Shader Missing" << std::endl;
-	}
-	if (!m_shaderMap[VERTEX].empty()) {
-		std::cout << "Frag Shader Missing" << std::endl;
-	}
-	return
-		!m_shaderMap[VERTEX].empty() &&
-		!m_shaderMap[FRAG].empty();
-}
+
+
+

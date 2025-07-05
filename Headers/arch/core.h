@@ -22,10 +22,13 @@ public:
 	void Stop();
 	void Cleanup();
 	
-
+	// - window -------------------------------------
 
 	static EntityRegistry& Registry()					{ return m_registry; }
 	// static const EntityRegistry& Registry()				{ return m_registry; }
+
+
+	
 
 public:
 	// static void AddSystem(System* newSys);
@@ -35,10 +38,13 @@ public:
 		m_systemInstances.push_back(&T::GetInstance());
 	}
 
-
+public:
+	static GLFWwindow* m_window;
 
 
 private:
+
+
 
 	void RegisterComponents();
 	void RegisterSystems();

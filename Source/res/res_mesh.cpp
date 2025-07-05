@@ -1,9 +1,7 @@
 #include <pch.h>
 #include <arch/resources/res_mesh.h>
 
-
-
-
+// - statics -------------------------------------------
 
 static float vtxData[] = {
 	// positions		// normal			// uv
@@ -39,10 +37,100 @@ static float vtxData[] = {
 	  -0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 0.0f,
 	   0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 0.0f,
 	  -0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 1.0f,
-	   0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 1.0f
-
+	   0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 1.0f 
 };
 
+static float positionData[] = {
+	// x y z.
+
+	// back face
+	-0.5f, -0.5f, -0.5f,
+	 0.5f, -0.5f, -0.5f,
+	-0.5f,  0.5f, -0.5f,
+	 0.5f,  0.5f, -0.5f,
+	// front face
+	-0.5f, -0.5f,  0.5f,
+	0.5f, -0.5f,  0.5f,
+	-0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f,
+	// left face
+	-0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f,  0.5f,
+	-0.5f,  0.5f, -0.5f,
+	-0.5f,  0.5f,  0.5f,
+	// right face
+	0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f,  0.5f,
+	0.5f,  0.5f, -0.5f,
+	0.5f,  0.5f,  0.5f,
+	// bottom face
+	-0.5f, -0.5f, -0.5f,
+	0.5f, -0.5f, -0.5f,
+	-0.5f, -0.5f,  0.5f,
+	0.5f, -0.5f,  0.5f,
+	// top face
+	-0.5f,  0.5f, -0.5f,
+	0.5f,  0.5f, -0.5f,
+	-0.5f,  0.5f,  0.5f,
+	0.5f,  0.5f,  0.5f
+};
+
+static float normalData[] = {
+	// x y z.
+
+	// back face
+	0.0f, 0.0f, -1.0f,  
+	0.0f, 0.0f, -1.0f,  
+	0.0f, 0.0f, -1.0f,  
+	0.0f, 0.0f, -1.0f,  
+	// front face
+	0.0f, 0.0f,  1.0f,  
+	0.0f, 0.0f,  1.0f,  
+	0.0f, 0.0f,  1.0f,  
+	0.0f, 0.0f,  1.0f,  
+	// left face
+	-1.0f, 0.0f, 0.0f,  
+	-1.0f, 0.0f, 0.0f,  
+	-1.0f, 0.0f, 0.0f,  
+	-1.0f, 0.0f, 0.0f,  
+	// right face
+	1.0f, 0.0f, 0.0f,   
+	1.0f, 0.0f, 0.0f,   
+	1.0f, 0.0f, 0.0f,   
+	1.0f, 0.0f, 0.0f,   
+	// bottom face
+	0.0f, -1.0f, 0.0f,  
+	0.0f, -1.0f, 0.0f,  
+	0.0f, -1.0f, 0.0f,  
+	0.0f, -1.0f, 0.0f,  
+	// top face
+	0.0f,  1.0f, 0.0f,  
+	0.0f,  1.0f, 0.0f,  
+	0.0f,  1.0f, 0.0f,  
+	0.0f,  1.0f, 0.0f  
+};
+
+static float uvData[] = {
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+	
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f,
+
+	0.0f, 0.0f,
+	1.0f, 0.0f,
+	0.0f, 1.0f,
+	1.0f, 1.0f
+};
 
 static unsigned int idxList[] = { // note that we start from 0!
 	0, 1, 3, // first triangle
@@ -64,6 +152,8 @@ static unsigned int idxList[] = { // note that we start from 0!
 	20, 22, 23
 };
 
+// - class methods -------------------------------------
+
 void Mesh::Load() {
 
 	Init();
@@ -72,35 +162,42 @@ void Mesh::Load() {
 
 void Mesh::Init() {
 	/*
-		initialises VAAO.
+		initialises a mesh.
 	
 	*/
 
-
 	// generate buffers
 	glGenVertexArrays(1, &m_vao);
-	glGenBuffers(1, &m_vbo);
+	glGenBuffers(3, m_vbo);
 	glGenBuffers(1, &m_ebo);
 
 	
+
 	UseVAO();
 
 	// filling vertex data
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo); // replace with vertex buffer by assimp.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vtxData), vtxData, GL_STATIC_DRAW);
+	
+	// position data
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]); // replace with vertex buffer by assimp.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(0); // at position 0
 
+	// normal data
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(normalData), normalData, GL_STATIC_DRAW);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(1); // at position 1
+
+	// uv data
+	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(uvData), uvData, GL_STATIC_DRAW);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(2); // at position 2
 
 	// filling vertex to face data
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxList), idxList, GL_STATIC_DRAW);
-
-	// defining vertex attributes.
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(0));					// Pos
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // normal
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // UV
-	glEnableVertexAttribArray(2);
 
 	// unbind 
 	glBindVertexArray(0);

@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\res\res_material.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp" />
@@ -208,10 +209,12 @@
     <ClInclude Include="Headers\arch\components\comp_collider.h" />
     <ClInclude Include="Headers\arch\core.h" />
     <ClInclude Include="Headers\arch\core\core_coordinatesystem.h" />
+    <ClInclude Include="Headers\arch\core\core_window.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
+    <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_resource.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />

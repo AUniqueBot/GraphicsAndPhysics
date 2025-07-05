@@ -104,13 +104,6 @@ unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _hori
 }
 
 
-std::string GetRawText(std::string _pathToFile) {
-	std::stringstream toRet;
-	std::ifstream ifs{ _pathToFile };
-	if (!ifs.good()) return std::string{};
-	toRet << ifs.rdbuf();
-	return toRet.str();
-}
 
 glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 3.0f);
 glm::vec3 camFwd = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -206,16 +199,13 @@ void Input(GLFWwindow*& _window) {
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 
-
 	Core c;
-	c.Init();
 
-	
 
 	// - GLFW Initialisation ------------------------------------------------------
 	glfwInit();
 
-	// setting up opengl version (opengl 3.3)
+	// setting up opengl version (opengl 4.)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
 
@@ -225,7 +215,9 @@ int main() {
 
 	// create a window
 	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
-	
+	c.m_window = mainWindow;
+
+
 	// failed to create window
 	if (!mainWindow) {
 		std::cout << "Bad GLFW Init.\n";
@@ -235,7 +227,7 @@ int main() {
 
 
 	glfwMakeContextCurrent(mainWindow);
-
+	
 	// - GLEW Initialisation -------------------------------------------------------
 	GLenum glewStatus = glewInit();
 	if (glewStatus != GLEW_OK) {
@@ -269,130 +261,18 @@ int main() {
 	*/
 
 	// - note that we're using a mesh here. --------------------
-	Mesh mesh;
-	mesh.Init();
 
 
 	// use the shader program here.
+	c.Init();
 
 #pragma region // - shader compilation ---------
 	// - shader compilation ---------
 	// ----------------------------------------------------------------------------
 
-	std::string srcS{};
-	const char* src{};
-	int glStatus{};
-
-
-	// vertex shader
-	int vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
-	srcS = GetRawText("Assets/Shaders/vertexShader.vert");
-	src = srcS.c_str();
-	glShaderSource(vtxShader, 1, &src, NULL);
-	glCompileShader(vtxShader);
-	glGetShaderiv(vtxShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(vtxShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	// fragment shader
-	int fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/phongShader.frag");
-	src = srcS.c_str();
-	glShaderSource(fragShader, 1, &src, NULL); // load shader source
-	glCompileShader(fragShader); // compile the shaders.
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(fragShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	int flatShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/flatShader.frag");
-	src = srcS.c_str();
-	glShaderSource(flatShader, 1, &src, NULL); // load shader source
-	glCompileShader(flatShader); // compile the shaders.
-	glGetShaderiv(flatShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(flatShader, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	int texShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/texturedFragShader.frag");
-	src = srcS.c_str();
-	glShaderSource(texShader, 1, &src, NULL); // load shader source
-	glCompileShader(texShader); // compile the shaders.
-	glGetShaderiv(texShader, GL_COMPILE_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(texShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
 
 
 
-	// creation and compiling the shader
-
-	// can be done in update.
-	unsigned prg = glCreateProgram();
-	unsigned flatPrg = glCreateProgram();
-	unsigned matPrg = glCreateProgram();
-
-	glAttachShader(prg, fragShader);
-	glAttachShader(prg, vtxShader);
-	glLinkProgram(prg);
-
-	glAttachShader(flatPrg, flatShader);
-	glAttachShader(flatPrg, vtxShader);
-	glLinkProgram(flatPrg);
-
-	glAttachShader(matPrg, texShader);
-	glAttachShader(matPrg, vtxShader);
-	glLinkProgram(matPrg);
-
-
-
-	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(prg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	glGetShaderiv(flatPrg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(flatPrg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	glGetShaderiv(matPrg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(matPrg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	// deletion can be done after compile.
-	glDeleteShader(vtxShader);
-	glDeleteShader(fragShader);
-	glDeleteShader(flatShader);
-	glDeleteShader(texShader);
 
 
 #pragma endregion
@@ -403,11 +283,6 @@ int main() {
 	// typical conversion is model mtx -> view mtx -> projection mtx
 	// coordinates are transformed 
 	// local -[model]-> world -[view]-> view -[projection]-> clip
-
-
-	// set to wireframe
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	glEnable(GL_DEPTH_TEST);
 	glm::mat4 pos, rot, scl{ 1.f };
 	glm::vec3 lightPos{ 2, 5, 3 };
 	glm::vec3 lightCol	{ 0.7f };
@@ -417,186 +292,10 @@ int main() {
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
 
+
+	
 		c.Update();
 
-		Input(mainWindow);
-		
-
-		// bg colour.
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-
-
-		float radius = 5.f;
-		lightPos.x = sin(glfwGetTime()) * radius;;
-		lightPos.y = sin(glfwGetTime() / 2) * radius;
-		lightPos.z = cos(glfwGetTime()) * radius;;
-
-
-		// set up the camera
-		glm::mat4 viewMtx	{ 1.f };
-		pos = glm::translate(
-			glm::mat4{ 1.f }, 
-			camPos
-		);
-		rot = glm::rotate(
-			glm::mat4		{ 1.f },
-			(float)glm::radians(25.f) * (float)sin(glfwGetTime()),
-			glm::vec3(0.f, 1.f, 0.f)
-		);
-		viewMtx =  pos * rot * glm::mat4{ 1.f };
-		viewMtx = glm::inverse(viewMtx); // camera's position are inversely applied to apply camera view
-
-
-		glm::mat4 projectionMtx{};
-		
-		// projection matrix
-		projectionMtx = glm::perspective(
-			glm::radians(60.f), // vertical fov 
-			16.f/9.f,					// CAMERA aspect ratio
-			0.0001f,					// near clip plane
-			1000.f							// far clip plane.
-		);
-
-		// note - viewport per camera.
-		//
-
-		// orthogonal
-		//GLint vp[4]{};
-		//glGetIntegerv(GL_VIEWPORT, vp);
-		//projectionMtx = glm::ortho(
-		//	0.0f, (float)vp[2],
-		//	0.0f, (float)vp[3],
-		//	0.0001f,
-		//	10000.f
-		//);
-
-		// look at mtx - from to and up.
-		//const float radius = 10.0f;
-		//float camX = sin(glfwGetTime()) * radius;
-		//float camZ = cos(glfwGetTime()) * radius;
-		//camPos = glm::vec3(camX, 0.f, camZ);
-		//viewMtx = glm::lookAt(
-		//	camPos,
-		//	glm::vec3(),
-		//	glm::vec3(0, 1, 0)
-		//);
-
-		// lookat for camera control
-		viewMtx = glm::lookAt(camPos, camPos + camFwd, camUp);
-
-
-
-		// to use the orthographic view, use this
-		/*
-			projectionMtx = glm::ortho(
-				0.f,				// min x 
-				1280.f,				// max x
-				0.f,				// min y
-				720.f,				// max y
-				// clip planes
-				0.001f,
-				1000.f
-			);
-		
-		*/
-		// tex binding.
-		// select the current shader, and apply the shader.
-		int currentPrg;
-		currentPrg = matPrg;
-		glUseProgram(currentPrg); // uses program, not the specific shader.
-
-		glUniform1i(glGetUniformLocation(currentPrg, "surfaceMaterial.diffuse"), 0); // this function binds texture slots. ->> TEXTURE_0 -> the uniform "tex1"
-		glUniform1i(glGetUniformLocation(currentPrg, "surfaceMaterial.specular"), 1);
-
-		// activating textures
-		glActiveTexture(GL_TEXTURE0); // select tex 0
-		glBindTexture(GL_TEXTURE_2D, diffuse);
-		glActiveTexture(GL_TEXTURE1); // select tex 1
-		glBindTexture(GL_TEXTURE_2D, specular);
-
-		// clear colour
-
-		// - stencil
-		// - depth
-		// - colour
-		int uniformLoc{};
-		uniformLoc = glGetUniformLocation(currentPrg, "view");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
-		uniformLoc = glGetUniformLocation(currentPrg, "projection");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
-		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
-
-		uniformLoc = glGetUniformLocation(currentPrg, "light.position");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightPos));
-		uniformLoc = glGetUniformLocation(currentPrg, "light.color");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightCol));
-		uniformLoc = glGetUniformLocation(currentPrg, "light.specular");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(lightSpec));
-
-
-		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(camPos));
-		uniformLoc = glGetUniformLocation(currentPrg, "time");
-		glUniform1f(uniformLoc, glfwGetTime());
-
-		mesh.UseVAO();
-		glm::mat4 objMat{ 1 };
-
-
-
-
-		int cubeCount{ sizeof(cubePos) / sizeof(glm::vec3) };
-		for (int i{}; i < 1; ++i) {
-
-			// object matrix
-			glm::mat4 objMat{ 1 };
-			pos = glm::translate(objMat, cubePos[i]);
-			rot = glm::scale(objMat, glm::vec3(5));
-			scl = glm::rotate(objMat, 0.f, glm::normalize(glm::vec3(1.f, 1.f, 0.f)));
-
-			// glm works in column major first (wtv that means), so the order is reversed.
-			objMat = pos * rot * scl;
-
-		
-
-			// this specifies the uniform, "offset" in the shader to be 0.5
-			// it returns an int (name) as the location specifier for the shader.
-			// if it doesn't exist probably -1?
-			uniformLoc = glGetUniformLocation(currentPrg, "trs");
-			glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
-
-
-		
-			glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
-		}
-
-		currentPrg = flatPrg;
-		glUseProgram(currentPrg);
-		pos = glm::translate(objMat, lightPos);
-		rot = glm::scale(objMat, glm::vec3(1));
-		scl = glm::rotate(objMat, 0.f, glm::vec3{ 1.f, 0.f, 0.f });
-		objMat = pos * rot * scl;
-
-		uniformLoc = glGetUniformLocation(currentPrg, "colour");
-		glUniform4fv(uniformLoc, 1, glm::value_ptr(glm::vec4{1, 1, 1, 1})); // flat white cube
-		uniformLoc = glGetUniformLocation(currentPrg, "trs");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
-		uniformLoc = glGetUniformLocation(currentPrg, "view");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx)); // constant
-		uniformLoc = glGetUniformLocation(currentPrg, "projection");
-		glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
-		uniformLoc = glGetUniformLocation(currentPrg, "viewPos");
-		glUniform3fv(uniformLoc, 1, glm::value_ptr(pos));
-
-
-
-		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
-
-
-		// unbind vertices.
-		glBindVertexArray(0);
 		// - Swapping Buffers ---------------
 		glfwSwapBuffers(mainWindow);
 		glfwPollEvents();

@@ -20,7 +20,7 @@ public:
 	unsigned IndexCount() const { return m_indexCount; };
 
 	unsigned VAO() const { return m_vao; }
-	unsigned VBO() const { return m_vbo; }
+
 
 
 private:
@@ -32,10 +32,10 @@ private:
 	// EBO - face for vtx
 
 
-	unsigned m_vao	{};
-	unsigned m_vbo	{};
-	unsigned m_ebo	{};
-
+	unsigned m_vao		{};
+	unsigned m_vbo[3]	{};
+	unsigned m_ebo		{};
+	std::vector<GLuint> m_vboList{};
 
 	/*
 		for now the mesh renderer will use a mesh array.
