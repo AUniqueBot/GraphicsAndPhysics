@@ -6,14 +6,9 @@
 
 
 
-std::vector<System*> Core::m_systemInstances{};
-EntityRegistry Core::m_registry{};
-
-GLFWwindow* Core::m_window{};
 
 void Core::Init() {
-	RegisterComponents();
-	RegisterSystems();
+	CoreInit();
 
 	// test out this stuff.
 	m_registry.name = "hi"; // for debugging purposes.
@@ -93,6 +88,11 @@ void Core::Cleanup() {
 }
 
 
+void Core::CoreInit() {
+	RegisterComponents();
+	RegisterSystems();
+}
+
 void Core::RegisterComponents() {
 	m_registry.RegisterType<Transform>();
 	m_registry.RegisterType<RigidBody>();
@@ -108,5 +108,4 @@ void Core::RegisterComponents() {
 void Core::RegisterSystems() {
 	RegisterSystem<TransformSystem>();
 	RegisterSystem<RenderSystem>();
-	
 }

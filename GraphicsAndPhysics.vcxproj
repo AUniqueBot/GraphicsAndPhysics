@@ -171,6 +171,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\arch\core\core_viewport.cpp" />
+    <ClCompile Include="Source\arch\core\core_viewportManager.cpp" />
     <ClCompile Include="Source\res\res_material.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
@@ -209,6 +211,8 @@
     <ClInclude Include="Headers\arch\components\comp_collider.h" />
     <ClInclude Include="Headers\arch\core.h" />
     <ClInclude Include="Headers\arch\core\core_coordinatesystem.h" />
+    <ClInclude Include="Headers\arch\core\core_viewport.h" />
+    <ClInclude Include="Headers\arch\core\core_viewportManager.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
@@ -242,15 +246,25 @@
     <Image Include="Assets\Images\TestImage.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\flatShader.frag">
+    <None Include="Assets\Shaders\frag_flat.frag">
       <FileType>Text</FileType>
     </None>
-    <None Include="Assets\Shaders\phongShader.frag">
+    <None Include="Assets\Shaders\frag_templateFile.frag" />
+    <None Include="Assets\Shaders\frag_phong.frag">
       <FileType>Text</FileType>
     </None>
-    <None Include="Assets\Shaders\texturedFragShader.frag" />
-    <None Include="Assets\Shaders\vertexShader.vert">
+    <None Include="Assets\Shaders\frag_texturedPhong.frag" />
+    <None Include="Assets\Shaders\vtx_vertex.vert">
       <FileType>Text</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\vtx_templateFile.vert">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+      <FileType>Document</FileType>
     </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

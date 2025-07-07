@@ -8,6 +8,21 @@ public:
 	using SHADERTYPE = ShaderProgram::SHADERTYPE; // alias the name
 
 public:
+	enum IMAGE_CLAMP_BEHAVIOUR {
+		REPEAT,
+		MIRROR_REPEAT,
+		TO_EDGE,
+		TO_BORDER
+	};
+
+	enum FILTER_TYPE {
+		LINEAR,
+		NEAREST
+	};
+
+
+
+public:
 
 	void Init();
 
@@ -15,6 +30,9 @@ public:
 
 	int GetShader() const;
 
+
+	// - material helpers -------------------------------------
+	static unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType);
 
 
 private:

@@ -1,12 +1,12 @@
 #pragma once
 #include <pch.h>
 #include "arch_headers.h"
+#include <arch/common/singleton.h>
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
-
 
 #include <arch/core/core_coordinatesystem.h>
 
-class Core {
+class Core : public Singleton<Core> {
 	
 public:
 	
@@ -22,38 +22,37 @@ public:
 	void Stop();
 	void Cleanup();
 	
+	EntityRegistry& Registry()					{  return m_registry; }
 	// - window -------------------------------------
 
-	static EntityRegistry& Registry()					{ return m_registry; }
-	// static const EntityRegistry& Registry()				{ return m_registry; }
 
+public:
+	GLFWwindow* m_window;
 
-	
 
 public:
 	// static void AddSystem(System* newSys);
 
 	template <typename T>
-	static std::enable_if_t<std::is_base_of_v<System, T>, void> RegisterSystem() {
+	std::enable_if_t<std::is_base_of_v<System, T>, void> RegisterSystem() {
 		m_systemInstances.push_back(&T::GetInstance());
 	}
-
-public:
-	static GLFWwindow* m_window;
 
 
 private:
 
-
+	void CoreInit();
 
 	void RegisterComponents();
 	void RegisterSystems();
 	
 
-	static EntityRegistry m_registry;
-	static std::vector<System*> m_systemInstances;
-
-
+	EntityRegistry m_registry;
 	CoordinateSystem m_coordinateSystem;
+
+	std::vector<System*> m_systemInstances;
+
+
+
 
 };

@@ -120,6 +120,12 @@
     <ClCompile Include="Source\res\res_material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\core\core_viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\core\core_viewportManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -251,6 +257,12 @@
     <ClInclude Include="Headers\arch\core\core_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_viewportManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Images\TestImage.png">
@@ -264,9 +276,11 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\flatShader.frag" />
-    <None Include="Assets\Shaders\phongShader.frag" />
-    <None Include="Assets\Shaders\vertexShader.vert" />
-    <None Include="Assets\Shaders\texturedFragShader.frag" />
+    <None Include="Assets\Shaders\frag_flat.frag" />
+    <None Include="Assets\Shaders\frag_phong.frag" />
+    <None Include="Assets\Shaders\vtx_vertex.vert" />
+    <None Include="Assets\Shaders\frag_texturedPhong.frag" />
+    <None Include="Assets\Shaders\frag_templateFile.frag" />
+    <None Include="Assets\Shaders\vtx_templateFile.vert" />
   </ItemGroup>
 </Project>

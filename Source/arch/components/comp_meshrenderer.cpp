@@ -11,12 +11,12 @@ const char* defaultVtxShader{
 	"// this describes how the vertex data is like -> [VEC3 : Pos] [VEC2 : UV]\n"
 	"layout(location = 0) in vec3 aPos;\n"
 	"out vec3 fragPos;	// out position for every pixel\n"
-	"uniform mat4 trs;			// object transform matrix\n"
-	"uniform mat4 view;			// camera's view matrix (pos + rot, inverse)\n"
-	"uniform mat4 projection;	// camera's view frustum\n"
+	"uniform mat4 u_objectMtx;			// object transform matrix\n"
+	"uniform mat4 u_cameraMtx;			// camera's view matrix (pos + rot, inverse)\n"
+	"uniform mat4 u_projectionMtx;	    // camera's view frustum\n"
 	"void main() {\n"
-	"	gl_Position = projection * view * trs * vec4(aPos, 1.0f);\n"
-	"	fragPos = vec3(trs * vec4(aPos, 1.0));\n"
+	"	gl_Position = u_projectionMtx * u_cameraMtx * u_objectMtx * vec4(aPos, 1.0f);\n"
+	"	fragPos = vec3(u_objectMtx * vec4(aPos, 1.0));\n"
 	"}\n"
 };
 

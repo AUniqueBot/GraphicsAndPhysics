@@ -61,11 +61,6 @@ glm::vec3 Transform::RotationEuler() const {
 }
 
 
-
-
-
-
-
 glm::vec3 Transform::Forward() const {
 	// forward vectors is always assumed to be the z axis.
 	return m_rot * glm::vec3(0, 0, 1);

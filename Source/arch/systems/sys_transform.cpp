@@ -15,6 +15,7 @@ void TransformSystem::Start() {
 }
 
 void TransformSystem::Update() {
-	auto data = Core::Registry().GetComponentPool<Transform>();
+	EntityRegistry& registry = Core::GetInstance().Registry();
+	auto data = registry.GetComponentPool<Transform>();
 	auto& compPool = data.value().get();
 }
