@@ -119,7 +119,7 @@ int main() {
 
 	// create a window
 	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
-	c.m_window = mainWindow;
+	c.SetWindow(mainWindow);
 
 
 	// failed to create window

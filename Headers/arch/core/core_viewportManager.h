@@ -9,6 +9,7 @@ public:
 
 	void CreateViewport();
 private:
+
 	void SortContainerList(); //<! sorts the viewport container list by order.
 private:
 	std::vector<Viewport> m_viewportContainer;

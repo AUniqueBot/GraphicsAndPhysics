@@ -15,6 +15,7 @@
 #include <unordered_map>
 #include <set>
 #include <algorithm>
+#include <bitset>
 
 #include <filesystem>
 

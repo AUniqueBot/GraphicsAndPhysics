@@ -76,7 +76,7 @@ public:
 	void RegisterType() {
 		// create a sparse set of type T
 		CompType currentComponent{ typeid(T) };
-		m_componentPool[currentComponent] = std::make_shared<ComponentPool<T>>();
+		m_componentPool.insert({ currentComponent,   std::make_shared<ComponentPool<T>>() });
 		m_compRegisterFunctions[currentComponent] = T::Register;
 
 

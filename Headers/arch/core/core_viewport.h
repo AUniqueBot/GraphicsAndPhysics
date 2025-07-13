@@ -12,6 +12,8 @@ public:
 	void Update();
 
 
+
+
 	// - camera transform -----------------------------
 	void Position(const glm::vec3& _position);
 	const glm::vec3& Position() const;
@@ -49,6 +51,14 @@ public:
 	const int& ViewportRenderOrder() const;
 	void ViewportRenderOrder(const int& _order);
 
+	// - navigation -----------------------------------
+	
+	bool IsViewportMovable() const;
+	void SetViewportMovable(bool _setting);
+	void OnScroll();
+	void OnMouseClickDrag();
+	void OnInput();
+
 
 
 
@@ -67,12 +77,17 @@ private:
 	glm::ivec2 m_viewportDimensions	{ 1280, 720 };
 
 private:
+
+	bool m_vpIsMovable				{ true };
+
 	// - camera transform settings ---------------------
 	glm::vec3 m_position			{};
 	glm::quat m_rotation			{};
 	glm::mat4 m_viewportMatrix		{ 1.f };
 	
 	bool m_transformDirty			{};
+	
+	// assuming forward is +y
 
 	// - camera projection settings --------------------
 	float m_nearClip				{ 0.001f };

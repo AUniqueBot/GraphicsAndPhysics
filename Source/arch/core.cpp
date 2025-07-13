@@ -8,7 +8,15 @@
 
 
 void Core::Init() {
+	if (!IsWindowSet()) {
+		std::cout << "Core::Init() - Window is not set - check if Core::SetWindow is called.\n";
+		return;
+	}
+
 	CoreInit();
+
+
+
 
 	// test out this stuff.
 	m_registry.name = "hi"; // for debugging purposes.
@@ -64,6 +72,9 @@ void Core::PreUpdate() {
 }
 
 void Core::Update() {
+	m_inputSystem.Update();
+
+
 
 	for (auto s : m_systemInstances) {
 		s->Update();
@@ -87,10 +98,36 @@ void Core::Cleanup() {
 
 }
 
+void Core::SetWindow(GLFWwindow* _window) {
+	if (_window == m_window) return;
+	m_window = _window;
+	if (!IsWindowSet()) {
+		std::cout << "Core::SetWindow - note window is unset\n";
+	}
+}
+
+double Core::DeltaTime() {
+	
+	static double prevTime    = glfwGetTime();
+	double currentTime	      = glfwGetTime();
+	
+	double deltaTime = currentTime - prevTime;
+
+	prevTime = currentTime;
+
+	return deltaTime;
+}
+
 
 void Core::CoreInit() {
 	RegisterComponents();
 	RegisterSystems();
+
+
+	// - input -------------------------------
+	glfwSetWindowUserPointer(m_window, this);
+	m_inputSystem.Init(m_window);
+
 }
 
 void Core::RegisterComponents() {

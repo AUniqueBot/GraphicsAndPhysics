@@ -1,6 +1,6 @@
 #include <pch.h>
 #include <arch/core/core_viewport.h>
-
+#include <arch/core.h>
 
 
 // - general ----------------------------------------------------------
@@ -99,6 +99,54 @@ const int& Viewport::ViewportRenderOrder() const {
 
 void Viewport::ViewportRenderOrder(const int& _order) {
 	m_renderOrder = _order;
+}
+
+
+
+// - navigation -------------------------------------------------------
+
+bool Viewport::IsViewportMovable() const {
+	return m_vpIsMovable;
+}
+
+void Viewport::SetViewportMovable(bool _setting) {
+	m_vpIsMovable = _setting;
+}
+
+void Viewport::OnScroll() {
+	if (!m_vpIsMovable) return;
+
+}
+
+void Viewport::OnMouseClickDrag() {
+	if (!m_vpIsMovable) return;
+
+}
+
+void Viewport::OnInput() {
+	
+	if (!m_vpIsMovable) return;
+	InputSystem& is = Core::GetInstance().GetInputSystem();
+	
+	// aliases here.
+	InputSystem::INPUT_KEY fwd		{ InputSystem::KEYBOARD_W };
+	InputSystem::INPUT_KEY back		{ InputSystem::KEYBOARD_S };
+	InputSystem::INPUT_KEY left		{ InputSystem::KEYBOARD_A };
+	InputSystem::INPUT_KEY right	{ InputSystem::KEYBOARD_D };
+	float moveSpeed					{ 3.0f };
+	double dt						{ Core::DeltaTime() };
+
+
+	// check for inputs
+	glm::vec2 inputVector{};
+	inputVector.y = static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back));
+	inputVector.x = static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left));
+	inputVector = glm::normalize(inputVector);
+
+
+	m_position.x += inputVector.x * moveSpeed;
+	m_position.y += inputVector.y * moveSpeed;
+	m_transformDirty = true;
 }
 
 

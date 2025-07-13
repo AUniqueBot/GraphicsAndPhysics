@@ -63,24 +63,30 @@ void RenderSystem::Update() {
 	glDisable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
 	glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 	glClear(clearFlags);
+	Render(dummy, dummy); // replace with a single viewport.
 
 
-	// -- render ---------------------------
-	glEnable(GL_SCISSOR_TEST);
 
-	// --- viewport render code ------------
-	glViewport(0, 0, 1280/2, 720/2);
-	glScissor(0, 0, 1280/2, 720/2);
-	glClearColor(0.3f, 0.5f, 0.3f, 1.0f);
-	glClear(clearFlags);
-	Render(dummy, dummy);
+	// viewport logic works like this.
+	// for now focus on getting the input first.
+	//// -- render ---------------------------
+	//glEnable(GL_SCISSOR_TEST);
 
-	glViewport(1280, 0, 1280/2, 720/2);
-	glScissor(1280, 0, 1280/2, 720/2);
-	glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
-	glClear(clearFlags);
-	Render(dummy, dummy);
+	//// --- viewport render code ------------
+	//glViewport(0, 0, 1280/2, 720/2);
+	//glScissor(0, 0, 1280/2, 720/2);
+	//glClearColor(0.3f, 0.5f, 0.3f, 1.0f);
+	//glClear(clearFlags);
+	//Render(dummy, dummy);
 
+	//glViewport(1280, 0, 1280/2, 720/2);
+	//glScissor(1280, 0, 1280/2, 720/2);
+	//glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
+	//glClear(clearFlags);
+	//Render(dummy, dummy);
+
+
+	
 }
 
 
@@ -131,8 +137,11 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 		1000.f							// far clip plane.
 	);
 
+	glm::vec2 m_pos = Core::GetInstance().GetInputSystem().GetMousePosition();
 
-
+	std::cout << "Mouse Position: ["
+		<< m_pos.x << ", "
+		<< m_pos.x << "]\n";
 
 
 	for (Entity& e : registry.GetEntityList()) {

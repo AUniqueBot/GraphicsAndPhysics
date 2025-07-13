@@ -5,6 +5,7 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 
 #include <arch/core/core_coordinatesystem.h>
+#include <arch/core/core_input.h>
 
 class Core : public Singleton<Core> {
 	
@@ -23,12 +24,24 @@ public:
 	void Cleanup();
 	
 	EntityRegistry& Registry()					{  return m_registry; }
+
 	// - window -------------------------------------
+	void SetWindow(GLFWwindow* _window);
+	bool IsWindowSet()							{ return m_window != nullptr; }
+	GLFWwindow* GetWindow()						{ return m_window; }
+
+
+
+	// - input system -------------------------------
+	InputSystem& GetInputSystem()				{ return m_inputSystem; }
+
+	// - delta time ---------------------------------
+	static double DeltaTime();
+
 
 
 public:
-	GLFWwindow* m_window;
-
+	// - public parameters --------------------------
 
 public:
 	// static void AddSystem(System* newSys);
@@ -47,6 +60,9 @@ private:
 	void RegisterSystems();
 	
 
+	GLFWwindow* m_window;
+
+	InputSystem m_inputSystem;
 	EntityRegistry m_registry;
 	CoordinateSystem m_coordinateSystem;
 

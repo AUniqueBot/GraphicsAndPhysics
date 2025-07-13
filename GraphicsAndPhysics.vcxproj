@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\arch\core\core_input.cpp" />
     <ClCompile Include="Source\arch\core\core_viewport.cpp" />
     <ClCompile Include="Source\arch\core\core_viewportManager.cpp" />
     <ClCompile Include="Source\res\res_material.cpp" />
@@ -211,6 +212,7 @@
     <ClInclude Include="Headers\arch\components\comp_collider.h" />
     <ClInclude Include="Headers\arch\core.h" />
     <ClInclude Include="Headers\arch\core\core_coordinatesystem.h" />
+    <ClInclude Include="Headers\arch\core\core_input.h" />
     <ClInclude Include="Headers\arch\core\core_viewport.h" />
     <ClInclude Include="Headers\arch\core\core_viewportManager.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
