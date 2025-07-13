@@ -1,6 +1,8 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/system.h>
+#include "./sys_render_modules/sys_render_viewportManager.h"
+
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
@@ -27,7 +29,8 @@ public:
 
 private:
 
-	
+	ViewportManager m_viewportManager;
+
 
 };
 

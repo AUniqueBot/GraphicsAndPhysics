@@ -1,12 +1,12 @@
 #include <pch.h>
-#include <arch/core/core_viewport.h>
+#include <arch/systems/sys_render_modules/sys_render_viewport.h>
 #include <arch/core.h>
 
 
 // - general ----------------------------------------------------------
 
 void Viewport::Init() {
-
+	// initialise with 1 viewport.
 }
 
 void Viewport::Start() {

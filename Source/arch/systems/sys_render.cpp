@@ -26,6 +26,12 @@ void RenderSystem::Init() {
 	// - initialise gl settings -----------------
 	glEnable(GL_DEPTH_TEST);
 
+
+
+	// - init viewport manager ------------------
+
+	m_viewportManager.CreateViewport();
+
 }
 
 void RenderSystem::PreUpdate() {

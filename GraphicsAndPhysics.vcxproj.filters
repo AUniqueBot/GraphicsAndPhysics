@@ -120,10 +120,10 @@
     <ClCompile Include="Source\res\res_material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\core\core_viewport.cpp">
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\core\core_viewportManager.cpp">
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewportManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\core\core_input.cpp">
@@ -260,10 +260,10 @@
     <ClInclude Include="Headers\arch\core\core_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\core\core_viewport.h">
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\core\core_viewportManager.h">
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewportManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\core\core_input.h">
