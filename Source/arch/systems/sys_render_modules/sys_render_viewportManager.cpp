@@ -5,23 +5,51 @@
 
 
 
-void ViewportManager::CreateViewport() {
-	//
-	Viewport newViewport{};
+Viewport::ViewportID ViewportManager::CreateViewport() {
+	Viewport::ViewportID id	{ m_nextId };
+	Viewport newVP			{ id };
+	++m_nextId;
 
+	newVP.Init();
+	m_viewportIndexRenderOrder.push_back(id);
+	m_viewports.emplace( id, std::move(newVP));
 
-
-
-	m_viewportContainer.push_back(newViewport);
-	SortContainerList();
+	return id;
 }
 
-void ViewportManager::SortContainerList() {
+void ViewportManager::RemoveViewport(Viewport::ViewportID _id) {
+	if (!m_viewports.contains(_id)) return;
+	m_viewports.erase(_id);
+	m_viewportIndexRenderOrder.erase(
+		std::remove(m_viewportIndexRenderOrder.begin(), m_viewportIndexRenderOrder.end(), _id),
+		m_viewportIndexRenderOrder.end()
+	);
+}
+
+std::map<Viewport::ViewportID, Viewport>& ViewportManager::ViewportList() {
+	return m_viewports;
+}
+
+const std::map<Viewport::ViewportID, Viewport>& ViewportManager::ViewportList() const {
+	return m_viewports;
+}
+
+void ViewportManager::RequestViewportSort() {
+	m_orderDirty = true;
+}
+
+const std::vector<Viewport::ViewportID>& ViewportManager::ViewportRenderOrderList() const {
+	return m_viewportIndexRenderOrder;
+}
+
+
+
+void ViewportManager::SortRenderOrder() {
 	std::stable_sort(
-		m_viewportContainer.begin(),
-		m_viewportContainer.end(),
-		[](const Viewport& _a, const Viewport& _b) {
-			return _a.ViewportRenderOrder() < _b.ViewportRenderOrder();
+		m_viewportIndexRenderOrder.begin(),
+		m_viewportIndexRenderOrder.end(),
+		[this](uint32_t a, uint32_t b) {
+			return m_viewports.at(a).ViewportRenderOrder() < m_viewports.at(b).ViewportRenderOrder();
 		}
 	);
 }

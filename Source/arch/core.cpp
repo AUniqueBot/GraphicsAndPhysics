@@ -108,11 +108,10 @@ void Core::SetWindow(GLFWwindow* _window) {
 
 double Core::DeltaTime() {
 	
-	static double prevTime    = glfwGetTime();
+	static double prevTime    = 0;
 	double currentTime	      = glfwGetTime();
 	
 	double deltaTime = currentTime - prevTime;
-
 	prevTime = currentTime;
 
 	return deltaTime;

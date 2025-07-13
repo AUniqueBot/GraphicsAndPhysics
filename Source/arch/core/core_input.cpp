@@ -35,11 +35,7 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 
 	glfwSetKeyCallback(
 		_window, [](GLFWwindow* _w, int _key, int _scancode, int _action, int _mods) {
-			static_cast<Core*>(glfwGetWindowUserPointer(_w))->GetInputSystem()._onKey(
-				_key, 
-				_scancode, 
-				_action, 
-				_mods);
+			static_cast<Core*>(glfwGetWindowUserPointer(_w))->GetInputSystem()._onKey(_key, _scancode, _action, _mods);
 		}
 	);
 

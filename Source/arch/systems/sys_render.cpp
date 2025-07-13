@@ -30,7 +30,11 @@ void RenderSystem::Init() {
 
 	// - init viewport manager ------------------
 
-	m_viewportManager.CreateViewport();
+	Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
+	Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
+
+
+
 
 }
 
@@ -64,12 +68,26 @@ void RenderSystem::Update() {
 	GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
 
 
-	// -- clearing -------------------------
 
-	glDisable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
-	glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-	glClear(clearFlags);
-	Render(dummy, dummy); // replace with a single viewport.
+	const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
+	auto& viewportMap					{ m_viewportManager.ViewportList() };
+	for (const Viewport::ViewportID& id : vpRenderOrder) {
+		Viewport& currentViewport	{ viewportMap.at(id ) };
+
+
+		currentViewport.Update();
+
+		glm::mat4 camMtx			{ glm::inverse(currentViewport.CameraMatrix()) };
+		glm::mat4 prjMtx			{ currentViewport.ProjectionMatrix() };
+
+
+		glDisable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
+		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+		glClear(clearFlags);
+		Render(camMtx, prjMtx); // replace with a single viewport.
+	}
+
+	// -- clearing -------------------------
 
 
 
@@ -102,10 +120,9 @@ void RenderSystem::Update() {
 void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _projectionMatrix) {
 	
 	// - for later -------------------------
-	(void)_cameraMatrix;
 	(void)_projectionMatrix;
 
-
+	
 
 	EntityRegistry& registry = Core::GetInstance().Registry();
 	// use the current camera for projection matrix.
@@ -122,33 +139,6 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 		camPos
 	);
 	rot = glm::mat4{ 1.f };
-
-	/*glm::rotate(
-	glm::mat4{ 1.f },
-	static_cast<float>(0),
-	glm::vec3(0.f, 1.f, 0.f)
-);*/
-
-	viewMtx = pos * rot * scl;
-	viewMtx = glm::inverse(viewMtx); // camera's position are inversely applied to apply camera view
-
-
-	glm::mat4 projectionMtx{ 1.f };
-
-	// projection matrix
-	projectionMtx = glm::perspective(
-		glm::radians(90.f), // vertical fov 
-		16.f / 9.f,					// CAMERA aspect ratio
-		0.0001f,					// near clip plane
-		1000.f							// far clip plane.
-	);
-
-	glm::vec2 m_pos = Core::GetInstance().GetInputSystem().GetMousePosition();
-
-	std::cout << "Mouse Position: ["
-		<< m_pos.x << ", "
-		<< m_pos.x << "]\n";
-
 
 	for (Entity& e : registry.GetEntityList()) {
 
@@ -209,9 +199,9 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				GLuint uniformLoc = glGetUniformLocation(program, OBJECT_MATRIX);
 				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 				uniformLoc = glGetUniformLocation(program, PROJECTION_MATRIX);
-				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(projectionMtx)); // constant
+				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
 				uniformLoc = glGetUniformLocation(program, CAMERA_MATRIX);
-				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(viewMtx));
+				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
 
 
 			}

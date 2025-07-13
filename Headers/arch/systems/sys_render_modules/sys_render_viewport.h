@@ -3,6 +3,11 @@
 
 class Viewport {
 public:
+	using ViewportID = uint32_t;
+public:
+	Viewport(ViewportID _generatedId);
+
+
 	void Init();
 	void Start();
 
@@ -60,7 +65,7 @@ public:
 	void OnInput();
 
 
-
+	ViewportID ID() const;
 
 private:
 	void UpdateAttributes();
@@ -71,21 +76,22 @@ private:
 
 private:
 	// - viewport window settings ---------------------
-	bool m_isActive					{};
+	bool m_isActive					{ true };
 	int m_renderOrder				{}; // affects render order. higher means render later.
 	glm::ivec2 m_viewportPosition	{};
 	glm::ivec2 m_viewportDimensions	{ 1280, 720 };
 
+	ViewportID m_vpId;
 private:
 
 	bool m_vpIsMovable				{ true };
 
 	// - camera transform settings ---------------------
 	glm::vec3 m_position			{};
-	glm::quat m_rotation			{};
+	glm::quat m_rotation			{ 1, 0, 0, 0 }; // better to not declare this.
 	glm::mat4 m_viewportMatrix		{ 1.f };
 	
-	bool m_transformDirty			{};
+	bool m_transformDirty			{ true };
 	
 	// assuming forward is +y
 
@@ -102,5 +108,7 @@ private:
 
 	bool m_projectionDirty			{ true };
 	glm::mat4 m_projectionMatrix	{ 1.f };
+
+
 
 };

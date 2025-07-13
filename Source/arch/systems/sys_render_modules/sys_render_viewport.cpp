@@ -5,8 +5,11 @@
 
 // - general ----------------------------------------------------------
 
+Viewport::Viewport(ViewportID _generatedId) : m_vpId{ _generatedId }, m_projectionDirty{ true }, m_transformDirty{ true }  {
+}
+
 void Viewport::Init() {
-	// initialise with 1 viewport.
+	UpdateAttributes();
 }
 
 void Viewport::Start() {
@@ -21,6 +24,7 @@ void Viewport::Render() {
 
 
 void Viewport::Update() {
+	OnInput();
 	UpdateAttributes();
 }
 
@@ -29,8 +33,6 @@ void Viewport::Update() {
 // - matrix -----------------------------------------------------------
 
 void Viewport::UpdateAttributes() {
-	
-	
 	if (m_transformDirty) {
 		glm::mat4 pos = glm::translate(
 			glm::mat4{ 1.f },
@@ -38,7 +40,6 @@ void Viewport::UpdateAttributes() {
 		);
 		glm::mat4 rot{ m_rotation };
 		m_viewportMatrix = pos * rot;
-
 		m_transformDirty = false;
 	}
 
@@ -126,6 +127,8 @@ void Viewport::OnMouseClickDrag() {
 void Viewport::OnInput() {
 	
 	if (!m_vpIsMovable) return;
+
+
 	InputSystem& is = Core::GetInstance().GetInputSystem();
 	
 	// aliases here.
@@ -133,20 +136,33 @@ void Viewport::OnInput() {
 	InputSystem::INPUT_KEY back		{ InputSystem::KEYBOARD_S };
 	InputSystem::INPUT_KEY left		{ InputSystem::KEYBOARD_A };
 	InputSystem::INPUT_KEY right	{ InputSystem::KEYBOARD_D };
-	float moveSpeed					{ 3.0f };
+	float moveSpeed					{ 10.0f };
 	double dt						{ Core::DeltaTime() };
 
 
 	// check for inputs
-	glm::vec2 inputVector{};
-	inputVector.y = static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back));
-	inputVector.x = static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left));
-	inputVector = glm::normalize(inputVector);
+	glm::vec2 inputVector			{ 0.0f, 0.0f };
 
+	inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
+	inputVector.x  = static_cast<float>(static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left)));
 
-	m_position.x += inputVector.x * moveSpeed;
-	m_position.y += inputVector.y * moveSpeed;
-	m_transformDirty = true;
+	if (inputVector.x || inputVector.y) {
+		inputVector = glm::normalize(inputVector);
+		m_position.x += inputVector.x * moveSpeed * dt;
+		m_position.y += inputVector.y * moveSpeed * dt;
+
+		std::cout << "input detected -> [" << m_position.x << ", " << m_position.y << "]\n";
+
+		
+		m_transformDirty = true;
+	}
+	else {
+		std::cout << "no input detected\n";
+	}
+}
+
+Viewport::ViewportID Viewport::ID() const {
+	return m_vpId;
 }
 
 

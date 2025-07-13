@@ -5,12 +5,28 @@
 
 
 class ViewportManager {
+
 public:
+	Viewport::ViewportID CreateViewport();
+	void RemoveViewport(Viewport::ViewportID _id);
 
-	void CreateViewport();
+	std::map<Viewport::ViewportID, Viewport>& ViewportList();
+	const std::map<Viewport::ViewportID, Viewport>& ViewportList() const;
+
+
+	void RequestViewportSort();
+	
+	const std::vector<Viewport::ViewportID>& ViewportRenderOrderList() const;
+
 private:
 
-	void SortContainerList(); //<! sorts the viewport container list by order.
+	void SortRenderOrder();
+
 private:
-	std::vector<Viewport> m_viewportContainer;
+	bool m_orderDirty								{ true };
+	Viewport::ViewportID m_nextId					{ 1 };
+	std::map<Viewport::ViewportID, Viewport> m_viewports;
+	std::vector<Viewport::ViewportID> m_viewportIndexRenderOrder;
+
+
 };
