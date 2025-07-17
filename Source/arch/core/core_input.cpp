@@ -43,10 +43,6 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 
 void InputSystem::Update() {
 
-
-
-	m_scrollOffsetDeltaX = 0;
-	m_scrollOffsetDeltaY = 0;
 	// update bitsets
 	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
 	m_activatedMouseButtons = m_activatedMouseButtonsPrev;
@@ -71,8 +67,31 @@ bool InputSystem::IsKeyReleased(INPUT_KEY _key) const {
 	return !m_activatedKeyboardButtons[_key] && m_activatedKeyboardButtonsPrev[_key];
 }
 
+bool InputSystem::IsMouseButtonClicked(INPUT_MOUSE_BUTTON _button) const {
+	if (_button == _MOUSE_COUNT || _button == _MOUSE_UNKNOWN) return false;
+	return m_activatedMouseButtons[_button] && !m_activatedMouseButtonsPrev[_button];
+}
+
+bool InputSystem::IsMouseButtonHeld(INPUT_MOUSE_BUTTON _button) const {
+	if (_button == _MOUSE_COUNT || _button == _MOUSE_UNKNOWN) return false;
+	return m_activatedMouseButtons[_button] && m_activatedMouseButtonsPrev[_button];
+}
+
+bool InputSystem::IsMouseButtonReleased(INPUT_MOUSE_BUTTON _button) const {
+	if (_button == _MOUSE_COUNT || _button == _MOUSE_UNKNOWN) return false;
+	return !m_activatedMouseButtons[_button] && m_activatedMouseButtonsPrev[_button];
+}
+
 glm::vec2 InputSystem::GetMousePosition() const {
 	return glm::vec2(m_mouseX, m_mouseY);
+}
+
+glm::vec2 InputSystem::GetMouseDelta() const {
+	static glm::vec2 prevMousePos	{ m_mouseX, m_mouseY };
+	const glm::vec2 currentMousePos	{ GetMousePosition() };
+	const glm::vec2 mouseDelta{ currentMousePos - prevMousePos };
+	prevMousePos = currentMousePos;
+	return mouseDelta;
 }
 
 
@@ -85,7 +104,8 @@ void InputSystem::_onMouseMove(double _xpos, double _ypos) {
 }
 
 void InputSystem::_onMouseButton(int _button, int _action, int _mods) {
-	if (_button < 0 || _button > GLFW_KEY_LAST) return;
+	if (_button < 0 || _button > GLFW_MOUSE_BUTTON_MIDDLE) return;
+
 	if (!GLFW_TO_MOUSE_BUTTON_MAP.contains(_button)) return;
 
 	INPUT_MOUSE_BUTTON currentKey = GLFW_TO_MOUSE_BUTTON_MAP.at(_button);
@@ -97,15 +117,8 @@ void InputSystem::_onMouseButton(int _button, int _action, int _mods) {
 }
 
 void InputSystem::_onScroll(double _xoffset, double _yoffset) {
-	
-	
 	m_scrollOffsetX += _xoffset;
 	m_scrollOffsetY += _yoffset;
-
-	m_scrollOffsetDeltaX = _xoffset;
-	m_scrollOffsetDeltaY = _yoffset;
-
-	std::cout << "nothing, just an inchident\n";
 }
 
 void InputSystem::_onKey(int _key, int _scancode, int _action, int _mods) {

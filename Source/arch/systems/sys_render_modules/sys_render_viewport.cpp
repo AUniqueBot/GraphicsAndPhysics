@@ -25,6 +25,8 @@ void Viewport::Render() {
 
 void Viewport::Update() {
 	OnInput();
+	//OnMouseMove();
+
 	UpdateAttributes();
 }
 
@@ -35,11 +37,14 @@ void Viewport::Update() {
 void Viewport::UpdateAttributes() {
 	if (m_transformDirty) {
 		glm::mat4 pos = glm::translate(
-			glm::mat4{ 1.f },
+			glm::mat4	{ 1.f },
 			m_position
 		);
-		glm::mat4 rot{ m_rotation };
-		m_viewportMatrix = pos * rot;
+
+		glm::mat4 rot	{ m_rotation };
+		glm::mat4 flipZ = glm::scale(glm::mat4(1.0f), glm::vec3(1, 1, -1));
+
+		m_viewportMatrix = pos * rot * flipZ;
 		m_transformDirty = false;
 	}
 
@@ -119,9 +124,44 @@ void Viewport::OnScroll() {
 
 }
 
-void Viewport::OnMouseClickDrag() {
+void Viewport::OnMouseMove() {
 	if (!m_vpIsMovable) return;
 
+
+	InputSystem& is = Core::GetInstance().GetInputSystem();
+	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
+		return;
+	}
+	std::cout << "left click is held" << '\n';
+	glm::vec2 delta = is.GetMouseDelta();
+
+	if (!delta.x && !delta.y) return;
+
+	const glm::vec3 forwardVec	{ 0, 0, 1 };
+	const glm::vec3 upVec		{ 0, 1, 0 };
+
+	// sensitivity tuning (adjust as needed)
+	float sensitivity = 0.002f;
+	float yaw			= -delta.x * sensitivity;
+	float pitch			= -delta.y * sensitivity;
+
+	glm::vec3 forward	= m_rotation * forwardVec; 
+	glm::vec3 right		= glm::normalize(glm::cross(forward, upVec));
+
+	glm::quat yawRot	= glm::angleAxis(yaw, upVec);
+	glm::quat pitchRot	= glm::angleAxis(pitch, right);
+
+	m_rotation			= glm::normalize(yawRot * pitchRot * m_rotation);
+
+	glm::vec3 newForward = m_rotation * glm::vec3(0, 0, 1);
+
+	m_transformDirty = true;
+
+	std::cout << "New Forward: ["
+		<< newForward.x << ", "
+		<< newForward.y << ", "
+		<< newForward.z << "]\n";
+	
 }
 
 void Viewport::OnInput() {
@@ -132,33 +172,43 @@ void Viewport::OnInput() {
 	InputSystem& is = Core::GetInstance().GetInputSystem();
 	
 	// aliases here.
-	InputSystem::INPUT_KEY fwd		{ InputSystem::KEYBOARD_W };
-	InputSystem::INPUT_KEY back		{ InputSystem::KEYBOARD_S };
-	InputSystem::INPUT_KEY left		{ InputSystem::KEYBOARD_A };
-	InputSystem::INPUT_KEY right	{ InputSystem::KEYBOARD_D };
+	const InputSystem::INPUT_KEY fwd		{ InputSystem::KEYBOARD_W };
+	const InputSystem::INPUT_KEY back		{ InputSystem::KEYBOARD_S };
+	const InputSystem::INPUT_KEY left		{ InputSystem::KEYBOARD_A };
+	const InputSystem::INPUT_KEY right		{ InputSystem::KEYBOARD_D };
+	const InputSystem::INPUT_KEY up			{ InputSystem::KEYBOARD_SPACE };
+	const InputSystem::INPUT_KEY down		{ InputSystem::KEYBOARD_LCONTROL };
+
 	float moveSpeed					{ 10.0f };
 	double dt						{ Core::DeltaTime() };
 
 
 	// check for inputs
-	glm::vec2 inputVector			{ 0.0f, 0.0f };
+	glm::vec3 inputVector			{ 0.0f, 0.0f, 0.0f };
 
-	inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
+
 	inputVector.x  = static_cast<float>(static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left)));
+	inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
+	inputVector.z  = static_cast<float>(static_cast<int>(is.IsKeyHeld(up)) - static_cast<int>(is.IsKeyHeld(down)));
 
-	if (inputVector.x || inputVector.y) {
+	if (inputVector.x || inputVector.y || inputVector.z) {
 		inputVector = glm::normalize(inputVector);
-		m_position.x += inputVector.x * moveSpeed * dt;
-		m_position.y += inputVector.y * moveSpeed * dt;
+		inputVector = m_rotation * inputVector;
 
-		std::cout << "input detected -> [" << m_position.x << ", " << m_position.y << "]\n";
+		m_position.x += inputVector.x * moveSpeed * dt;
+		m_position.z += inputVector.y * moveSpeed * dt;
+		m_position.y += inputVector.z * moveSpeed * dt;
+
+		std::cout << "input detected -> [" 
+			<< m_position.x << ", " 
+			<< m_position.y << ", " 
+			<< m_position.z
+			<< "]\n";
 
 		
 		m_transformDirty = true;
 	}
-	else {
-		std::cout << "no input detected\n";
-	}
+
 }
 
 Viewport::ViewportID Viewport::ID() const {

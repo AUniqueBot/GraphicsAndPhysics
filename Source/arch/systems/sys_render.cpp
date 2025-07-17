@@ -71,6 +71,12 @@ void RenderSystem::Update() {
 
 	const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
 	auto& viewportMap					{ m_viewportManager.ViewportList() };
+
+	glDisable(GL_SCISSOR_TEST);
+	glClearColor(0, 0, 0, 1);
+	glClear(clearFlags);
+
+	glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
 	for (const Viewport::ViewportID& id : vpRenderOrder) {
 		Viewport& currentViewport	{ viewportMap.at(id ) };
 
@@ -81,7 +87,6 @@ void RenderSystem::Update() {
 		glm::mat4 prjMtx			{ currentViewport.ProjectionMatrix() };
 
 
-		glDisable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 		glClear(clearFlags);
 		Render(camMtx, prjMtx); // replace with a single viewport.
@@ -119,10 +124,6 @@ void RenderSystem::Update() {
 
 void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _projectionMatrix) {
 	
-	// - for later -------------------------
-	(void)_projectionMatrix;
-
-	
 
 	EntityRegistry& registry = Core::GetInstance().Registry();
 	// use the current camera for projection matrix.
@@ -152,8 +153,6 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 			Transform& trs = trsHandle.value().get();
 
 
-
-
 			// assigns this buffer to mesh.
 			Mesh& mesh = mr.GetMesh();
 			mesh.UseVAO();
@@ -168,17 +167,8 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				glUseProgram(program);
 				glm::mat4 objMat{ 1.f };
 
-
-
-				static double prevTime{};
-				static double currentTime{};
-				static glm::vec3 rot_v{};
-				double deltaTime{};
-
-
-				currentTime = glfwGetTime();
-				deltaTime = currentTime - prevTime;
-				prevTime = currentTime;
+				static glm::vec3 rot_v	{};
+				double deltaTime		{ Core::DeltaTime() };
 
 
 				rot_v[0] += deltaTime * 50;

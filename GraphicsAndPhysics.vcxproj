@@ -234,6 +234,7 @@
     <ClInclude Include="Headers\arch\systems\sys_transform.h" />
     <ClInclude Include="Headers\graphics\gfx_dependencies.h" />
     <ClInclude Include="Headers\graphics\gfx_glfwCustomCallbackFunctions.h" />
+    <ClInclude Include="Headers\graphics\gfx_uniformNamingDefines.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
     <ClInclude Include="Headers\util\Header.h" />

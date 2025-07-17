@@ -47,7 +47,7 @@ void Core::Init() {
 
 	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, -2));
 	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 0));
-	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, 5));
+	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, -5));
 	
 
 	
