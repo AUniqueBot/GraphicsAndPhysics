@@ -34,7 +34,7 @@
 
 
 // - setup vars -----------------------------------------------------
-layout(location=0) in vec3 aPos; 
+layout(location=0) in vec3 a_position; 
 
 uniform mat4 U_OBJECT_MATRIX;
 uniform mat4 U_CAMERA_MATRIX;
@@ -44,5 +44,5 @@ uniform mat4 U_PROJECTION_MATRIX;
 
 void main(){
     // do something here
-    gl_Position = U_PROJECTION_MATRIX * U_CAMERA_MATRIX * U_OBJECT_MATRIX * vec4(aPos, 1.0);
+    gl_Position = U_PROJECTION_MATRIX * U_CAMERA_MATRIX * U_OBJECT_MATRIX * vec4(a_position, 1.0);
 }

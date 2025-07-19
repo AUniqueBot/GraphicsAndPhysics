@@ -1,18 +1,6 @@
-#include "pch.h"
 #include <arch/resources/res_material.h>
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-
-
-
-
-static std::string GetRawText(std::string _pathToFile) {
-	std::stringstream toRet;
-	std::ifstream ifs{ _pathToFile };
-	if (!ifs.good()) return std::string{};
-	toRet << ifs.rdbuf();
-	return toRet.str();
-}
 
 
 void Material::Init() {
@@ -84,6 +72,15 @@ unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAV
 	stbi_image_free(data);
 
 	return id;
+}
+
+void Material::InitUniformLocations() {
+	if (m_shader.get()) {
+		int programId { m_shader.get()->ShaderID() };
+		m_uniformLocations[OBJECT_MATRIX] = glGetUniformLocation(programId, OBJECT_MATRIX);
+		m_uniformLocations[CAMERA_MATRIX] = glGetUniformLocation(programId, CAMERA_MATRIX);
+		m_uniformLocations[PROJECTION_MATRIX] = glGetUniformLocation(programId, PROJECTION_MATRIX);
+	}
 }
 
 

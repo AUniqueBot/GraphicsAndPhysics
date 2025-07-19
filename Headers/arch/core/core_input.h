@@ -182,6 +182,9 @@ private:
 
     double m_mouseX                                         { 0 };
     double m_mouseY                                         { 0 };
+    double m_prevMouseX                                     { 0 };
+    double m_prevMouseY                                     { 0 };
+
 
     double m_scrollOffsetX                                  { 0 };
     double m_scrollOffsetY                                  { 0 };

@@ -136,7 +136,7 @@ void Viewport::OnMouseMove() {
 		LOG_INFO("LMB Clicked");
 	}
 	if (is.IsMouseButtonReleased(actionButton)) {
-		LOG_INFO("LMB Rekeased");
+		LOG_INFO("LMB Released");
 	}
 	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
 		return;

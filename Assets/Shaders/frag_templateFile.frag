@@ -34,8 +34,8 @@
 
 
 // - setup vars -----------------------------------------------------
-in vec3 vPos; 
-out vec4 outCol;
+in vec3 frag_position; 
+out vec4 out_color;
 
 uniform mat4 U_OBJECT_MATRIX;
 uniform mat4 U_CAMERA_MATRIX;
@@ -45,5 +45,5 @@ uniform mat4 U_PROJECTION_MATRIX;
 
 void main(){
     // do something here
-    outCol = vec4(1.0, 0.0, 1.0, 1.0);
+    out_color = vec4(1.0, 0.0, 1.0, 1.0);
 }

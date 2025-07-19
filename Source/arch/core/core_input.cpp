@@ -49,6 +49,9 @@ void InputSystem::Update() {
 void InputSystem::PostUpdate() {
 	m_activatedMouseButtonsPrev = m_activatedMouseButtons;
 	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
+
+	m_prevMouseX = m_mouseX;
+	m_prevMouseY = m_mouseY;
 }
 
 // - query -----------------------------------------
@@ -89,11 +92,7 @@ glm::vec2 InputSystem::GetMousePosition() const {
 }
 
 glm::vec2 InputSystem::GetMouseDelta() const {
-	static glm::vec2 prevMousePos	{ m_mouseX, m_mouseY };
-	const glm::vec2 currentMousePos	{ GetMousePosition() };
-	const glm::vec2 mouseDelta{ currentMousePos - prevMousePos };
-	prevMousePos = currentMousePos;
-	return mouseDelta;
+	return glm::vec2{m_mouseX - m_prevMouseX, m_mouseY - m_prevMouseY};
 }
 
 

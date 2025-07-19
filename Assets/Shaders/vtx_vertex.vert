@@ -1,32 +1,31 @@
 #version 460 core
 
 
-// - define standardised names here ---------------------------------
 #define U_OBJECT_MATRIX u_objectMtx
 #define U_CAMERA_MATRIX u_cameraMtx
-#define U_PROJECITON_MATRIX u_projectionMtx
+#define U_PROJECTION_MATRIX u_projectionMtx
 
-// for now, start with the basics and only focus on position.
-// this describes how the vertex data is like -> [VEC3 : Pos] [VEC2 : UV]
-layout (location = 0) in vec3 aPos;
-layout (location = 1) in vec3 aNml;
-layout (location = 2) in vec2 aUv;
 
-out vec3 fragPos;	// out position for every pixel
-out vec2 oUv;		// output to fragment shader
-out vec3 oNml;
 
-// - camera -----------------------------------------------------------------------
-uniform mat4 U_OBJECT_MATRIX;			// object transform matrix
-uniform mat4 U_CAMERA_MATRIX;			// camera's view matrix (pos + rot, inverse)
-uniform mat4 U_PROJECITON_MATRIX;	// camera's view frustum
+// - setup vars -----------------------------------------------------
+layout (location=0) in vec3 a_position; 
+layout (location = 1) in vec3 a_normal;
+layout (location = 2) in vec2 a_uv;
 
-void main() {
-	
-	gl_Position = U_PROJECITON_MATRIX * U_CAMERA_MATRIX * U_OBJECT_MATRIX * vec4(aPos, 1.0f);
-	fragPos = vec3(U_OBJECT_MATRIX * vec4(aPos, 1.0));				
+uniform mat4 U_OBJECT_MATRIX;
+uniform mat4 U_CAMERA_MATRIX;
+uniform mat4 U_PROJECTION_MATRIX;
 
-	// Set the color of the vertex
-	oUv = aUv; // pass the texture coordinates to the fragment shader
-	oNml = mat3(transpose(inverse(mat3(U_OBJECT_MATRIX)))) * aNml; // normal mtx, no translate.
+out vec3 frag_position;
+out vec3 frag_normal;
+out vec2 frag_uv;
+
+void main(){
+    // do something here
+    gl_Position = U_PROJECTION_MATRIX * U_CAMERA_MATRIX * U_OBJECT_MATRIX * vec4(a_position, 1.0);
+
+    frag_position = vec3(gl_Position);
+    frag_normal = a_normal;
+    frag_uv = a_uv;
+    
 }

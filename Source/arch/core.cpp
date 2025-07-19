@@ -5,7 +5,6 @@
 #include <arch/components/comp_headers.h>
 
 
-
 Clock Core::m_clock {};
 
 void Core::Init() {
@@ -132,6 +131,8 @@ void Core::CoreInit() {
 	m_inputSystem.Init(m_window);
 
 }
+
+
 
 void Core::RegisterComponents() {
 	m_registry.RegisterType<Transform>();

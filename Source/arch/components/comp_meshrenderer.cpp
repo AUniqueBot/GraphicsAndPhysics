@@ -1,35 +1,6 @@
-
-#include <pch.h>
 #include <arch/components/comp_meshrenderer.h>
+#include <util/util_serialisation.h>
 
-
-// - statics --------------------------------
-// general shaders.
-const char* defaultVtxShader{
-	"#version 330 core\n"
-	"// a basic vertex shader that only takes in a vertex's positions.\n"
-	"// this describes how the vertex data is like -> [VEC3 : Pos] [VEC2 : UV]\n"
-	"layout(location = 0) in vec3 aPos;\n"
-	"out vec3 fragPos;	// out position for every pixel\n"
-	"uniform mat4 u_objectMtx;			// object transform matrix\n"
-	"uniform mat4 u_cameraMtx;			// camera's view matrix (pos + rot, inverse)\n"
-	"uniform mat4 u_projectionMtx;	    // camera's view frustum\n"
-	"void main() {\n"
-	"	gl_Position = u_projectionMtx * u_cameraMtx * u_objectMtx * vec4(aPos, 1.0f);\n"
-	"	fragPos = vec3(u_objectMtx * vec4(aPos, 1.0));\n"
-	"}\n"
-};
-
-const char* defaultFragShader{
-	"#version 330 core\n"
-	"in vec3 fragPos;\n"
-	"out vec4 outCol;\n"
-	"void main() {\n"
-	"    // Map world position from [-1,1] to [0,1] for colour display\n"
-	"    vec3 colour = fragPos * 0.5 + 0.5;\n"
-	"    outCol = vec4(colour, 1.0);\n"
-	"}\n"
-};
 
 // - method function ------------------------
 
@@ -54,6 +25,14 @@ int MeshRenderer::VBO() const {
 	return 0;
 }
 
+void MeshRenderer::Render(
+	const glm::vec4& _objectMatrix, 
+	const glm::vec4& _projectionMatrix, 
+	const glm::vec4& _cameraMatrix
+) {
+	
+}
+
 Material& MeshRenderer::GetDefaultMaterial() {
 	static Material m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
@@ -61,10 +40,15 @@ Material& MeshRenderer::GetDefaultMaterial() {
 		m_defaultMaterial.Init();
 
 
+
+		std::string vertexShaderSource = FileReading::GetRawTextFromFile("./Assets/Shaders/vtx_vertex.vert");
+		std::string fragmentShaderSource = FileReading::GetRawTextFromFile("./Assets/Shaders/frag_flatColor.frag");
+
+
 		// - create a basic shader --------------------------------
 		ShaderProgram dShader{};
-		GLuint vtxShaderId  = ShaderProgram::LoadShader(defaultVtxShader,  ShaderProgram::VERTEX);
-		GLuint fragShaderId = ShaderProgram::LoadShader(defaultFragShader, ShaderProgram::FRAG);
+		GLuint vtxShaderId  = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
+		GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
 		
 		std::vector<GLuint> shaderList		{ vtxShaderId, fragShaderId };
 		GLuint prg							{ ShaderProgram::LinkShaders(shaderList) };

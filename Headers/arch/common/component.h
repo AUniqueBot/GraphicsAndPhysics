@@ -1,5 +1,7 @@
 #pragma once
-#include "../components/componentList.h"
+#include <pch.h>
+#include <arch/components/componentList.h>
+
 
 class Component {
 	

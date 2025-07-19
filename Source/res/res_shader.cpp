@@ -64,7 +64,6 @@ GLuint ShaderProgram::LinkShaders(std::vector<GLuint> _shaderList) {
 
 
 GLuint ShaderProgram::LoadShader(const char* _sourceCode, SHADERTYPE _type) {
-
 	// - reject cases -------------------------------
 	if (_type > FRAG) { // if (_type > _COUNT) { // once full implementation is complete.
 		LOG_WARN("Unsupported shader type");

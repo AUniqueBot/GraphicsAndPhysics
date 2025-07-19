@@ -11,12 +11,6 @@
 #include <util/util_ostreamOverrides.h>
 #include <util/util_logging.h>
 
-constexpr const char* OBJECT_MATRIX			{ "u_objectMtx" };
-constexpr const char* CAMERA_MATRIX			{ "u_cameraMtx" };
-constexpr const char* PROJECTION_MATRIX		{ "u_projectionMtx" };
-
-
-
 
 
 // Some other todos - make a shader editor! How hard can it be? :')
@@ -40,7 +34,7 @@ void RenderSystem::Init() {
 
 void RenderSystem::PreUpdate() {
 	// clear the buffer.
-	LOG_INFO("Run PreUpdate");
+	//LOG_INFO("Run PreUpdate");
 }
 
 
@@ -131,7 +125,7 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 			Mesh& mesh = mr.GetMesh();
 			mesh.UseVAO();
 
-			if (false && mr.GetMaterialList().size()) {
+			if (false) {
 				// go through each material
 				glUseProgram(mr.GetMaterialList()[0].GetShader());
 			}
@@ -139,6 +133,12 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 
 				GLuint program = mr.GetDefaultMaterial().GetShader();
 				glUseProgram(program);
+
+				GLenum err;
+				while ((err = glGetError()) != GL_NO_ERROR) {
+					std::cerr << "OpenGL Error: " << std::hex << err << std::dec << "\n";
+				}
+
 				glm::mat4 objMat{ 1.f };
 
 				static glm::vec3 rot_v	{};
@@ -159,11 +159,20 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				// transform is working properly
 
 				// need camera position.
-				GLuint uniformLoc = glGetUniformLocation(program, OBJECT_MATRIX);
+				GLint uniformLoc = glGetUniformLocation(program, OBJECT_MATRIX);
+				if (uniformLoc < 0) {
+					LOG_WARN("Bad object matrix uniform location");
+				}
 				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
 				uniformLoc = glGetUniformLocation(program, PROJECTION_MATRIX);
+				if (uniformLoc < 0) {
+					LOG_WARN("Bad projection matrix uniform location");
+				}
 				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
 				uniformLoc = glGetUniformLocation(program, CAMERA_MATRIX);
+				if (uniformLoc < 0) {
+					LOG_WARN("Bad camera matrix uniform location");
+				}
 				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
 
 

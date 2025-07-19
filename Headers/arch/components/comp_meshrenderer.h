@@ -5,6 +5,7 @@
 */
 
 #pragma once
+#include <pch.h>
 #include <arch/common/component.h>
 #include <arch/resources/res_mesh.h>
 #include <arch/resources/res_material.h>
@@ -38,8 +39,15 @@ public:
 		@brief
 			gets material list
 	*/
-	std::vector<Material>& GetMaterialList() { return m_materials; }
+	std::vector<Material>& GetMaterialList()			{ return m_materials; }
 	const std::vector<Material>& GetMaterialList() const { return m_materials; }
+
+
+	void Render(
+		const glm::vec4& _objectMatrix, 
+		const glm::vec4& _projectionMatrix, 
+		const glm::vec4& _cameraMatrix
+		);
 
 
 	static Material& GetDefaultMaterial();
@@ -52,18 +60,10 @@ private:
 	// Needs Mesh.
 	// model resource
 	
-
-	
-	
-	Mesh m_mesh						{};
-	std::vector<Material> m_materials; // don't think abou this for a sec.
+	Mesh m_mesh							{};
+	std::vector<Material> m_materials;
 	bool m_castShadow					{ true };
 	bool m_staticShadow					{};
-
-
-
-
-
 
 
 };
