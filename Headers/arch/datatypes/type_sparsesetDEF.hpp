@@ -7,7 +7,7 @@ bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_valueToIdx.contains(_id)) {
-		std::cout << "Attempting to add an item for a registered client." << std::endl;
+		LOG_WARN("Attempting to add an item for a registered client.");
 		return false;
 	}
 	// add this value 

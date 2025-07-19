@@ -6,7 +6,7 @@ class Component {
 public:
 
 
-	virtual void Init() { std::cout << typeid(Component).name() << ": Initialised" << std::endl; };
+	virtual void Init() { LOG_INFO("Initialised Component"); };
 	virtual void End()	{};
 
 	// not intended to be set outside.
@@ -17,7 +17,7 @@ public:
 
 
 	// serialization function
-	static void Register() { std::cout << typeid(Component).name() << ":Register Generic" << std::endl; };
+	static void Register() { LOG_INFO("Registering Component - Generic. If you see this, you didn't override this in your component."); };
 private:
 	ComponentType m_type						{ __INVALID };
 	

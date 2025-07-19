@@ -8,7 +8,9 @@ bool Texture::Load() {
 		
 	glGenTextures(1, &m_textureID);
 	if (!BindTexture()) {
-		std::cout << m_resPath.filename() << ":: Failed to generate texture memory" << std::endl;
+		std::stringstream ss;
+		ss << m_resPath.filename() << ":: Failed to generate texture memory" << std::endl;
+		LOG_ERROR(ss.str());
 	}
 
 	
@@ -69,7 +71,9 @@ bool Texture::LoadImage() {
 	unsigned char* imgData		{ nullptr };
 	// stbi_set_flip_vertically_on_load(m_flipImage);
 	if (!imgData) {
-		std::cout << m_resPath.filename() << ":: Failed to load texture" << std::endl;
+		std::stringstream ss;
+		ss << m_resPath.filename() << ":: Failed to load texture" << std::endl;
+		LOG_ERROR(ss.str());
 		return false;
 	}
 	glTexImage2D(

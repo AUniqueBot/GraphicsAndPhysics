@@ -8,7 +8,8 @@
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
 #include <arch/components/comp_transform.h>`
-
+#include <util/util_ostreamOverrides.h>
+#include <util/util_logging.h>
 
 constexpr const char* OBJECT_MATRIX			{ "u_objectMtx" };
 constexpr const char* CAMERA_MATRIX			{ "u_cameraMtx" };
@@ -21,8 +22,7 @@ constexpr const char* PROJECTION_MATRIX		{ "u_projectionMtx" };
 // Some other todos - make a shader editor! How hard can it be? :')
 
 void RenderSystem::Init() {
-	std::cout << typeid(RenderSystem).name() << "::Init" << std::endl; 
-	
+
 	// - initialise gl settings -----------------
 	glEnable(GL_DEPTH_TEST);
 
@@ -34,14 +34,13 @@ void RenderSystem::Init() {
 	Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
 
 
-
+	LOG_INFO("Run Init");
 
 }
 
 void RenderSystem::PreUpdate() {
 	// clear the buffer.
-	std::cout << typeid(RenderSystem).name() << "::PreUpdate" << std::endl;
-
+	LOG_INFO("Run PreUpdate");
 }
 
 
@@ -90,32 +89,7 @@ void RenderSystem::Update() {
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 		glClear(clearFlags);
 		Render(camMtx, prjMtx); // replace with a single viewport.
-	}
-
-	// -- clearing -------------------------
-
-
-
-	// viewport logic works like this.
-	// for now focus on getting the input first.
-	//// -- render ---------------------------
-	//glEnable(GL_SCISSOR_TEST);
-
-	//// --- viewport render code ------------
-	//glViewport(0, 0, 1280/2, 720/2);
-	//glScissor(0, 0, 1280/2, 720/2);
-	//glClearColor(0.3f, 0.5f, 0.3f, 1.0f);
-	//glClear(clearFlags);
-	//Render(dummy, dummy);
-
-	//glViewport(1280, 0, 1280/2, 720/2);
-	//glScissor(1280, 0, 1280/2, 720/2);
-	//glClearColor(0.3f, 0.3f, 0.5f, 1.0f);
-	//glClear(clearFlags);
-	//Render(dummy, dummy);
-
-
-	
+	}	
 }
 
 
@@ -180,7 +154,6 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				rot = glm::mat4(trs.Rotation());
 				scl = glm::scale(objMat, trs.Scale());
 				objMat = pos * rot * scl;
-
 
 
 				// transform is working properly

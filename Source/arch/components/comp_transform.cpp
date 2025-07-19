@@ -6,16 +6,16 @@
 #include <algorithm>
 
 Transform::Transform() {
-	std::cout << typeid(Transform).name() << "::Component Added" << std::endl;
+	LOG_INFO("Adding Transform Component");
 }
 
 void Transform::Init() {
-	std::cout << "trs init" << std::endl;
+	LOG_INFO("Init Transform Component");
 	m_scl = glm::vec3(1.f);
 }
 
 void Transform::End() {
-	std::cout << typeid(Transform).name() << "::Component End()" << std::endl;
+	LOG_INFO("End Transform Component");
 }
 
 void Transform::RotationEuler(glm::vec3 _rotation) {

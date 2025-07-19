@@ -151,7 +151,7 @@ public:
 public:
     void Init(GLFWwindow* _window);
     void Update();
-
+    void PostUpdate();
 
     // - query --------------------------
     
@@ -192,8 +192,6 @@ private:
 
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtons      { false };
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtonsPrev  { false }; // history
-    std::bitset<1> m_activatedBitset;
-
 
 
 private:

@@ -59,7 +59,7 @@ public:
 
 
 
-	static void Register() { std::cout << typeid(Transform).name() << ":Register override" << std::endl; }
+	static void Register() { LOG_INFO("Register Override"); }
 
 
 private:

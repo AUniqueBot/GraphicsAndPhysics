@@ -6,10 +6,11 @@
 
 
 
+Clock Core::m_clock {};
 
 void Core::Init() {
 	if (!IsWindowSet()) {
-		std::cout << "Core::Init() - Window is not set - check if Core::SetWindow is called.\n";
+		LOG_WARN("Window is not set - check if Core::SetWindow is called");
 		return;
 	}
 
@@ -45,7 +46,7 @@ void Core::Init() {
 
 
 
-	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, -2));
+	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 2));
 	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 0));
 	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, -5));
 	
@@ -65,6 +66,13 @@ void Core::Start() {
 	}
 }
 
+void Core::Run() {
+	PreUpdate();
+	glfwPollEvents();
+	Update();
+	PostUpdate();
+}
+
 void Core::PreUpdate() {
 	for (auto s : m_systemInstances) {
 		s->PreUpdate();
@@ -72,8 +80,9 @@ void Core::PreUpdate() {
 }
 
 void Core::Update() {
-	m_inputSystem.Update();
 
+	m_inputSystem.Update();
+	m_clock.Update();
 
 
 	for (auto s : m_systemInstances) {
@@ -82,6 +91,7 @@ void Core::Update() {
 }
 
 void Core::PostUpdate() {
+	m_inputSystem.PostUpdate();
 }
 
 void Core::Stop() {
@@ -102,20 +112,14 @@ void Core::SetWindow(GLFWwindow* _window) {
 	if (_window == m_window) return;
 	m_window = _window;
 	if (!IsWindowSet()) {
-		std::cout << "Core::SetWindow - note window is unset\n";
+		LOG_INFO("note window is unset");
 	}
 }
 
 double Core::DeltaTime() {
-	
-	static double prevTime    = 0;
-	double currentTime	      = glfwGetTime();
-	
-	double deltaTime = currentTime - prevTime;
-	prevTime = currentTime;
-
-	return deltaTime;
+	return m_clock.DeltaTime();
 }
+
 
 
 void Core::CoreInit() {

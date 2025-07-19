@@ -11,13 +11,13 @@ public:
 	void Init()		override;
 
 
-	void Start()	override { std::cout << typeid(RenderSystem).name() << "::Start" << std::endl;};
+	void Start()	override { LOG_INFO("Start"); };
 
 
 	void PreUpdate() override;
 	void Update()	override;
-	void Stop()		override { std::cout << typeid(RenderSystem).name() << "::Stop" << std::endl; };
-	void Cleanup()	override { std::cout << typeid(RenderSystem).name() << "::Cleanup" << std::endl; };
+	void Stop()		override { LOG_INFO("Stop"); };
+	void Cleanup()	override { LOG_INFO("Cleanup"); };
 
 
 

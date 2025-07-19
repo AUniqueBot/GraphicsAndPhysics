@@ -17,7 +17,7 @@ public:
 	void Update();
 	void End() override;
 
-	static void Register() { std::cout << typeid(Camera).name() << ":Register override" << std::endl; }
+	static void Register() { LOG_INFO("Camera Register Override"); }
 
 
 	// - camera handling ------------------------

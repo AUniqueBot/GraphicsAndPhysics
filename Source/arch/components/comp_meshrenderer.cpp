@@ -38,7 +38,7 @@ MeshRenderer::MeshRenderer() {
 }
 
 void MeshRenderer::Init() {
-	std::cout << "[MeshRenderer]::Init()" << std::endl;
+	LOG_INFO("Running Init");
 	m_mesh.Init();
 }
 

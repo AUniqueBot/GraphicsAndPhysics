@@ -14,137 +14,6 @@ static std::string GetRawText(std::string _pathToFile) {
 	return toRet.str();
 }
 
-// example function, don't delete.
-void LoadShaders() {
-
-
-	// 
-	std::string srcS{};
-	const char* src{};
-	int glStatus{};
-
-
-	int vtxShader = 0;
-	int fragShader = 0;
-	int flatShader = 0;
-	int texShader = 0;
-
-
-	// vertex shader
-	vtxShader = glCreateShader(GL_VERTEX_SHADER);	// assign this id to a vertex shader
-	srcS = GetRawText("Assets/Shaders/vertexShader.vert");
-	src = srcS.c_str();
-	glShaderSource(vtxShader, 1, &src, NULL);
-	glCompileShader(vtxShader);
-	glGetShaderiv(vtxShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(vtxShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	// fragment shader
-	fragShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/phongShader.frag");
-	src = srcS.c_str();
-	glShaderSource(fragShader, 1, &src, NULL); // load shader source
-	glCompileShader(fragShader); // compile the shaders.
-	glGetShaderiv(fragShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(fragShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	flatShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/flatShader.frag");
-	src = srcS.c_str();
-	glShaderSource(flatShader, 1, &src, NULL); // load shader source
-	glCompileShader(flatShader); // compile the shaders.
-	glGetShaderiv(flatShader, GL_COMPILE_STATUS, &glStatus);
-
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(flatShader, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	texShader = glCreateShader(GL_FRAGMENT_SHADER);
-	srcS = GetRawText("Assets/Shaders/texturedFragShader.frag");
-	src = srcS.c_str();
-	glShaderSource(texShader, 1, &src, NULL); // load shader source
-	glCompileShader(texShader); // compile the shaders.
-	glGetShaderiv(texShader, GL_COMPILE_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(texShader, 512, NULL, log);
-		std::cout << "ERROR::SHADER::FRAG::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-
-
-
-
-	// creation and compiling the shader
-	// can be done in update.
-	int prg = glCreateProgram();
-	int flatPrg = glCreateProgram();
-	int matPrg = glCreateProgram();
-
-	glAttachShader(prg, fragShader);
-	glAttachShader(prg, vtxShader);
-	glLinkProgram(prg);
-
-	glAttachShader(flatPrg, flatShader);
-	glAttachShader(flatPrg, vtxShader);
-	glLinkProgram(flatPrg);
-
-	glAttachShader(matPrg, texShader);
-	glAttachShader(matPrg, vtxShader);
-	glLinkProgram(matPrg);
-
-
-
-	glGetShaderiv(prg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(prg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	glGetShaderiv(flatPrg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(flatPrg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-	glGetShaderiv(matPrg, GL_LINK_STATUS, &glStatus);
-	if (glStatus == GL_FALSE) {
-		char log[512];
-		glGetShaderInfoLog(matPrg, 512, NULL, log);
-
-		std::cout << "ERROR::SHADER::LINK::COMPILATION_FAILED\n" << log << std::endl;
-	}
-
-
-	// deletion can be done after compile.
-	glDeleteShader(vtxShader);
-	glDeleteShader(fragShader);
-	glDeleteShader(flatShader);
-	glDeleteShader(texShader);
-
-
-}
-
 
 void Material::Init() {
     
@@ -205,13 +74,13 @@ unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAV
 	GLint format = _hasAlpha ? GL_RGBA : GL_RGB;
 
 	if (!data) {
-		std::cout << path << ": Failed to load texture" << std::endl;
+		LOG_ERROR("Failed to load texture");
 		stbi_image_free(data);
 		return id;
 	}
 	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 	glGenerateMipmap(GL_TEXTURE_2D);
-	std::cout << path << ": Load OK" << std::endl;
+	LOG_ERROR("Load OK");
 	stbi_image_free(data);
 
 	return id;

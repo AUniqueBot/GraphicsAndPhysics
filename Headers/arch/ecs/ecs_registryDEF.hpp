@@ -7,7 +7,8 @@ std::optional<std::reference_wrapper<ComponentPool<T>>> EntityRegistry::GetCompo
 	if (itr != m_componentPool.end())
 		return std::ref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
 
-	std::cout << "Non registered type called: " << typeid(T).name() << std::endl;
+
+	LOG_WARN("Non Registered Typed Called. Returning nullopt");
 	return std::nullopt;
 }
 
@@ -18,7 +19,7 @@ std::optional<std::reference_wrapper<const ComponentPool<T>>> EntityRegistry::Ge
 	if (itr != m_componentPool.end())
 		return std::cref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
 
-	std::cout << "Non registered type called: " << typeid(T).name() << std::endl;
+	LOG_WARN("Non Registered Typed Called. Returning nullopt");
 	return std::nullopt;
 }
 
@@ -29,7 +30,9 @@ template <typename T>
 bool EntityRegistry::AddComponent(EntityID _addTo) {
 	auto val = GetComponentPool<T>();
 	if (!val.has_value()) {
-		std::cout << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T).name() << "\" undefined.\n";
+		std::stringstream ss;
+		ss << "Component type: \"" << typeid(T).name() << "\" undefined.\n";
+		LOG_WARN(ss.str());
 		return false;
 	}
 	ComponentPool<T>& compPool = val.value().get();
@@ -41,7 +44,9 @@ template <typename T>
 bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	auto val = GetComponentPool<T>();
 	if (!val.has_value()) {
-		std::cout << typeid(EntityRegistry).name() << ": Component type: \"" << typeid(T).name() << "\" undefined.\n";
+		std::stringstream ss;
+		ss << "Component type: \"" << typeid(T).name() << "\" undefined.\n";
+		LOG_WARN(ss.str());
 		return false;
 	}
 	ComponentPool<T>& compPool = val.value().get();

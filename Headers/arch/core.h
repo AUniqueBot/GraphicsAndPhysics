@@ -5,7 +5,9 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 
 #include <arch/core/core_coordinatesystem.h>
+#include <arch/core/core_clock.h>
 #include <arch/core/core_input.h>
+
 
 class Core : public Singleton<Core> {
 	
@@ -14,6 +16,10 @@ public:
 	void Init();
 
 	void Start();
+
+
+	void Run();
+
 
 	void PreUpdate();
 	void Update();
@@ -62,13 +68,15 @@ private:
 
 	GLFWwindow* m_window;
 
-	InputSystem m_inputSystem;
-	EntityRegistry m_registry;
-	CoordinateSystem m_coordinateSystem;
-
 	std::vector<System*> m_systemInstances;
 
 
+
+	// - modules ------------------------------------
+	InputSystem m_inputSystem;
+	EntityRegistry m_registry;
+	CoordinateSystem m_coordinateSystem;
+	static Clock m_clock;
 
 
 };

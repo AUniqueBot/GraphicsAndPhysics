@@ -11,7 +11,7 @@
 
 
 void TransformSystem::Start() {
-	std::cout << typeid(TransformSystem).name() << ": Start" << std::endl;
+	LOG_INFO("Start");
 }
 
 void TransformSystem::Update() {

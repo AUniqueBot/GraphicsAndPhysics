@@ -79,9 +79,9 @@ public:
 		m_componentPool.insert({ currentComponent,   std::make_shared<ComponentPool<T>>() });
 		m_compRegisterFunctions.insert({ currentComponent, T::Register });
 
-
-		std::cout << __FUNCSIG__ << ": registering component: " << currentComponent.name() << std::endl;
-
+		std::string log{"Registering Component: "};
+		log += currentComponent.name();
+		LOG_INFO(log);
 	}
 
 	void RegisterComponentsForSerialisation() {

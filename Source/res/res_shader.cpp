@@ -1,6 +1,7 @@
 #include <pch.h>
 #include <filesystem>
 #include <arch/resources/res_shader.h>
+#include <util/util_logging.h>
 
 static std::string GetRawText(std::string _pathToFile) {
 	std::stringstream toRet;
@@ -50,11 +51,12 @@ GLuint ShaderProgram::LinkShaders(std::vector<GLuint> _shaderList) {
 	glGetProgramiv(programId, GL_LINK_STATUS, &status);
 
 	if (status == GL_FALSE) {
-		std::cout << "ShaderProgram::CompileShaders(): ERROR - Link Failed\n";
+		LOG_WARN("Program Linking Failed");
 		glDeleteProgram(programId);
 		return 0;
 	}
-	std::cout << "ShaderProgram::CompileShaders(): Program Generation Complete.\n";
+
+	LOG_INFO("Program Generation Complete");
 	return programId;
 }
 
@@ -65,7 +67,7 @@ GLuint ShaderProgram::LoadShader(const char* _sourceCode, SHADERTYPE _type) {
 
 	// - reject cases -------------------------------
 	if (_type > FRAG) { // if (_type > _COUNT) { // once full implementation is complete.
-		std::cout << "ShaderProgram::LoadShader(): ERROR - Unsupported shader type'" << _type << "'.\n";
+		LOG_WARN("Unsupported shader type");
 		return 0;
 	}
 
@@ -110,12 +112,11 @@ GLuint ShaderProgram::LoadShader(const char* _sourceCode, SHADERTYPE _type) {
 	glGetShaderiv(shaderId, GL_COMPILE_STATUS, &status);
 
 	if (status == GL_FALSE) {
-		std::cout << "ShaderProgram::LoadShader(): ERROR - Compilation Failed.\n";
+		LOG_ERROR("Shader Compilation Failed");
 		glDeleteShader(shaderId);
 		return 0;
 	}
-
-	std::cout << "ShaderProgram::LoadShader(): Program Generation Complete.\n";
+	LOG_INFO("Program Generation Complete");
 	return shaderId;
 }
 

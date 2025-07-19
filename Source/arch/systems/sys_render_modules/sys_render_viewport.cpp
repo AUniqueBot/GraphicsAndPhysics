@@ -25,7 +25,7 @@ void Viewport::Render() {
 
 void Viewport::Update() {
 	OnInput();
-	//OnMouseMove();
+	OnMouseMove();
 
 	UpdateAttributes();
 }
@@ -129,10 +129,21 @@ void Viewport::OnMouseMove() {
 
 
 	InputSystem& is = Core::GetInstance().GetInputSystem();
+
+
+	InputSystem::INPUT_MOUSE_BUTTON actionButton = InputSystem::MOUSE_LEFT;
+	if (is.IsMouseButtonClicked(actionButton)) {
+		LOG_INFO("LMB Clicked");
+	}
+	if (is.IsMouseButtonReleased(actionButton)) {
+		LOG_INFO("LMB Rekeased");
+	}
 	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
 		return;
 	}
-	std::cout << "left click is held" << '\n';
+
+
+
 	glm::vec2 delta = is.GetMouseDelta();
 
 	if (!delta.x && !delta.y) return;
@@ -157,10 +168,6 @@ void Viewport::OnMouseMove() {
 
 	m_transformDirty = true;
 
-	std::cout << "New Forward: ["
-		<< newForward.x << ", "
-		<< newForward.y << ", "
-		<< newForward.z << "]\n";
 	
 }
 
@@ -199,13 +206,6 @@ void Viewport::OnInput() {
 		m_position.z += inputVector.y * moveSpeed * dt;
 		m_position.y += inputVector.z * moveSpeed * dt;
 
-		std::cout << "input detected -> [" 
-			<< m_position.x << ", " 
-			<< m_position.y << ", " 
-			<< m_position.z
-			<< "]\n";
-
-		
 		m_transformDirty = true;
 	}
 

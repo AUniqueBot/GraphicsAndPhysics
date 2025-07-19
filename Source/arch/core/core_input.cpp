@@ -43,11 +43,13 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 
 void InputSystem::Update() {
 
-	// update bitsets
-	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
-	m_activatedMouseButtons = m_activatedMouseButtonsPrev;
+
 }
 
+void InputSystem::PostUpdate() {
+	m_activatedMouseButtonsPrev = m_activatedMouseButtons;
+	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
+}
 
 // - query -----------------------------------------
 
@@ -109,7 +111,8 @@ void InputSystem::_onMouseButton(int _button, int _action, int _mods) {
 	if (!GLFW_TO_MOUSE_BUTTON_MAP.contains(_button)) return;
 
 	INPUT_MOUSE_BUTTON currentKey = GLFW_TO_MOUSE_BUTTON_MAP.at(_button);
-	
+
+
 	m_activatedMouseButtons[currentKey] =
 		_action == GLFW_PRESS ? true :
 		_action == GLFW_RELEASE ? false :

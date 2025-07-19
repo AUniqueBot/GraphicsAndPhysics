@@ -31,7 +31,7 @@ int main() {
 
 	// failed to create window
 	if (!mainWindow) {
-		std::cout << "Bad GLFW Init.\n";
+		LOG_ERROR("Bad GLFW Init.");
 		glfwTerminate();
 		return -1;
 	}
@@ -42,7 +42,7 @@ int main() {
 	// - GLEW Initialisation -------------------------------------------------------
 	GLenum glewStatus = glewInit();
 	if (glewStatus != GLEW_OK) {
-		std::cout << "Bad GLEW Init\n";
+		LOG_ERROR("Bad GLEW Init.");
 		glfwTerminate();
 		return -1;
 	}
@@ -52,10 +52,11 @@ int main() {
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
-		c.Update();
-
-		glfwSwapBuffers(mainWindow);
+		
+		
 		glfwPollEvents();
+		c.Run();
+		glfwSwapBuffers(mainWindow);
 	}
 
 	c.Stop();
