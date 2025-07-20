@@ -30,6 +30,7 @@ void RenderSystem::Init() {
 
 	LOG_INFO("Run Init");
 
+
 }
 
 void RenderSystem::PreUpdate() {
@@ -143,16 +144,15 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				double deltaTime		{ Core::DeltaTime() };
 
 
-				rot_v[0] += deltaTime * 50;
-				rot_v[1] += deltaTime * 50;
-				rot_v[2] += deltaTime * 50;
+				rot_v[0] += static_cast<float>(deltaTime * 50);
+				rot_v[1] += static_cast<float>(deltaTime * 50);
+				rot_v[2] += static_cast<float>(deltaTime * 50);
 
 				trs.RotationEuler(rot_v);
 				pos = glm::translate(objMat, trs.Position());
 				rot = glm::mat4(trs.Rotation());
 				scl = glm::scale(objMat, trs.Scale());
 				objMat = pos * rot * scl;
-
 
 				mat.Render(
 					objMat,

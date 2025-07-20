@@ -1,6 +1,10 @@
 #pragma once
 #include <pch.h>
 #include <arch/core.h>
+#include <regex>
+#include <unordered_set>
+
+
 
 class ShaderProgram {
 /*
@@ -26,6 +30,9 @@ public:
 	void Load();
 	void Unload();
 
+	static std::string ParseShaderCode(
+		const std::string& _sourceCodePath
+	);
 	static GLuint LoadShader(const char* _sourceCode, SHADERTYPE _type);
 	static GLuint LinkShaders(std::vector<GLuint>);
 
@@ -34,7 +41,15 @@ public:
 
 	int ShaderID() const { return m_programId; };
 
+
+
+
+
 private:
+	static std::string ParseShaderCode_Internal(
+		const std::string& filePath,
+		std::unordered_set<std::string>& visited
+	);
 
 
 private:

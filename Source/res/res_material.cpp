@@ -74,13 +74,116 @@ unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAV
 	return id;
 }
 
+
+
 void Material::InitUniformLocations() {
 	if (m_shader.get()) {
 		int programId { m_shader.get()->ShaderID() };
-		m_uniformLocations[OBJECT_MATRIX] = glGetUniformLocation(programId, OBJECT_MATRIX);
-		m_uniformLocations[CAMERA_MATRIX] = glGetUniformLocation(programId, CAMERA_MATRIX);
-		m_uniformLocations[PROJECTION_MATRIX] = glGetUniformLocation(programId, PROJECTION_MATRIX);
+		GLint uniformCount{};
+		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
+
+		for (unsigned i{}; i < uniformCount; ++i) {
+			std::string name(256, '\0');
+			GLint nameLen{};
+			GLint size{};
+			GLenum type{};
+			glGetActiveUniform(programId, i, name.size(), &nameLen, &size, &type, &name[0]);
+			name.resize(nameLen);
+			
+
+			// data here
+			UniformData u_data{};
+			u_data.m_uniformLocation = i;
+			u_data.m_type = type;
+			LOG_INFO("Uniform name - : " + name);
+			m_uniformData.emplace(name, u_data);
+			m_uniformLocations.emplace(name, i);
+		}
 	}
 }
 
+void Material::SetUniform(std::string _uniformName, UniformData _data) const {
+	GLenum dataType{ _data.m_type };
+	GLint location{ _data.m_uniformLocation };
 
+	if (location == -1) {
+		LOG_WARN(_uniformName + " not found in program, ignoring.");
+		return;
+	}
+
+
+
+	// Lambda to call the correct glUniform* function based on variant type
+	auto setter = [&](auto&& value) {
+		using T = std::decay_t<decltype(value)>;
+		if constexpr (std::is_same_v<T, int>) {
+			glUniform1i(_data.m_uniformLocation, value);
+			//LOG_INFO("Set int uniform '" + _uniformName + "' to " + std::to_string(value));
+		}
+		else if constexpr (std::is_same_v<T, unsigned>) {
+			glUniform1ui(_data.m_uniformLocation, value);
+			//LOG_INFO("Set unsigned int uniform '" + _uniformName + "' to " + std::to_string(value));
+		}
+		else if constexpr (std::is_same_v<T, float>) {
+			glUniform1f(_data.m_uniformLocation, value);
+			//LOG_INFO("Set float uniform '" + _uniformName + "' to " + std::to_string(value));
+		}
+		else if constexpr (std::is_same_v<T, glm::vec2>) {
+			glUniform2fv(_data.m_uniformLocation, 1, &value[0]);
+			//LOG_INFO("Set vec2 uniform '" + _uniformName + "'");
+		}
+		else if constexpr (std::is_same_v<T, glm::vec3>) {
+			glUniform3fv(_data.m_uniformLocation, 1, &value[0]);
+			//LOG_INFO("Set vec3 uniform '" + _uniformName + "'");
+		}
+		else if constexpr (std::is_same_v<T, glm::vec4>) {
+			glUniform4fv(_data.m_uniformLocation, 1, &value[0]);
+			//LOG_INFO("Set vec4 uniform '" + _uniformName + "'");
+		}
+		else if constexpr (std::is_same_v<T, glm::mat2>) {
+			glUniformMatrix2fv(_data.m_uniformLocation, 1, GL_FALSE, &value[0][0]);
+			//LOG_INFO("Set mat2 uniform '" + _uniformName + "'");
+		}
+		else if constexpr (std::is_same_v<T, glm::mat3>) {
+			glUniformMatrix3fv(_data.m_uniformLocation, 1, GL_FALSE, &value[0][0]);
+			//LOG_INFO("Set mat3 uniform '" + _uniformName + "'");
+		}
+		else if constexpr (std::is_same_v<T, glm::mat4>) {
+			glUniformMatrix4fv(_data.m_uniformLocation, 1, GL_FALSE, &value[0][0]);
+			//LOG_INFO("Set mat4 uniform '" + _uniformName + "'");
+		}
+		else {
+			//LOG_ERROR("Unsupported uniform type for '" + _uniformName + "'");
+		}
+		};
+
+	try {
+		std::visit(setter, _data.m_data);
+	}
+	catch (const std::bad_variant_access& e) {
+		LOG_ERROR("Variant access error in SetUniform for '" + _uniformName + "': " + e.what());
+	}
+
+}
+
+void Material::Render(
+	const glm::mat4& _objectMatrix,
+	const glm::mat4& _projectionMatrix,
+	const glm::mat4& _cameraMatrix
+) const {
+
+	const int shaderId{ GetShader() };
+	if (!shaderId) return;
+	glUseProgram(shaderId);
+
+	for (const auto& [uniformName, data] : m_uniformData) {
+		SetUniform(uniformName, data);
+	}
+
+	glUniformMatrix4fv(m_uniformData.at(U_OBJECT_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
+	glUniformMatrix4fv(m_uniformData.at(U_PROJECTION_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
+	glUniformMatrix4fv(m_uniformData.at(U_CAMERA_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+
+
+
+}

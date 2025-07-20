@@ -141,6 +141,15 @@
     <ClCompile Include="Source\util\util_serialisation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\res\res_material_uniform\res_material_ubo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -299,6 +308,9 @@
     <ClInclude Include="Headers\util\util_ostreamOverrides.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Images\TestImage.png">
@@ -310,11 +322,5 @@
     <Image Include="Assets\Images\awesomeface.png">
       <Filter>Resource Files</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Shaders\frag_templateFile.frag" />
-    <None Include="Assets\Shaders\vtx_templateFile.vert" />
-    <None Include="Assets\Shaders\frag_flatColor.frag" />
-    <None Include="Assets\Shaders\vtx_vertex.vert" />
   </ItemGroup>
 </Project>

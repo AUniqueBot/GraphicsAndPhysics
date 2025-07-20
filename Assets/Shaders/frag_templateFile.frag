@@ -1,5 +1,5 @@
 #version 460 core
-
+#include "./UBO/CommonUBOs.glsl"
 /*
     here's a sample file for a shader.
     naming conventions are important in this scenario so this file should be a good jumping off point.
@@ -24,12 +24,6 @@
 
 */
 
-
-
-// - define standardised names here ---------------------------------
-#define U_OBJECT_MATRIX u_objectMtx
-#define U_CAMERA_MATRIX u_cameraMtx
-#define U_PROJECITON_MATRIX u_projectionMtx
 
 
 

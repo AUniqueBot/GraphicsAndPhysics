@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <arch/resources/res_shader.h>
 #include <util/util_logging.h>
+#include <util/util_serialisation.h>
 
 static std::string GetRawText(std::string _pathToFile) {
 	std::stringstream toRet;
@@ -59,6 +60,61 @@ GLuint ShaderProgram::LinkShaders(std::vector<GLuint> _shaderList) {
 	LOG_INFO("Program Generation Complete");
 	return programId;
 }
+
+
+
+
+
+
+std::string ShaderProgram::ParseShaderCode(const std::string& filePath) {
+	std::unordered_set<std::string> visited;
+	return ParseShaderCode_Internal(filePath, visited);
+}
+
+std::string ShaderProgram::ParseShaderCode_Internal(
+	const std::string& filePath, 
+	std::unordered_set<std::string>& visited
+) {
+
+	if (visited.contains(filePath)) {
+		return "// Skipping already included: " + filePath + "\n";
+	}
+
+	visited.insert(filePath);
+
+	std::string sourceCode = FileReading::GetRawTextFromFile(filePath);
+	std::stringstream parsedCode;
+	std::istringstream stream(sourceCode);
+	std::string line;
+
+	std::regex includeRegex(R"(^\s*#include\s+\"(.+)\"\s*)");
+	std::string parentDir = filePath.substr(0, filePath.find_last_of("/\\"));
+
+	while (std::getline(stream, line)) {
+		std::smatch match;
+		if (std::regex_match(line, match, includeRegex)) {
+			std::string includePath = parentDir + "/" + match[1].str();
+			std::string includedCode = ParseShaderCode_Internal(includePath, visited);
+			parsedCode << "// Begin include: " << includePath << "\n"
+				<< includedCode << "\n"
+				<< "// End include: " << includePath << "\n";
+		}
+		else {
+			parsedCode << line << "\n";
+		}
+	}
+
+	return parsedCode.str();
+}
+
+
+
+
+
+
+
+
+
 
 
 

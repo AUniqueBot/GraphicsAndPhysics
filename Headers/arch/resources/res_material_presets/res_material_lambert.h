@@ -12,15 +12,12 @@ public:
 
 	// - getters -------------------------------------
 	const glm::vec4& Color() const;
-	void Color(glm::vec4 _newColor) ;
+	void Color(glm::vec4 _newColor);
+	void Color(unsigned _newColor);
 
 
-	void Render(
-		const glm::mat4& _objectMatrix,
-		const glm::mat4& _projectionMatrix,
-		const glm::mat4& _cameraMatrix
-	) const override;
 
 private:
 	glm::vec4 m_color {};
 };
+

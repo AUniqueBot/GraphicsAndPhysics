@@ -1,13 +1,21 @@
 #pragma once
 
 #include <pch.h>
+#include <variant>
 #include <arch/resources/res_shader.h>
+#include <arch/resources/res_material_uniform/res_material_uniform.h>
 
 // - constants -------------------------
 
-constexpr const char* OBJECT_MATRIX		{ "u_objectMtx" };
-constexpr const char* CAMERA_MATRIX		{ "u_cameraMtx" };
-constexpr const char* PROJECTION_MATRIX	{ "u_projectionMtx" };
+constexpr const char* U_OBJECT_MATRIX		{ "u_objectMtx" };
+constexpr const char* U_CAMERA_MATRIX		{ "u_cameraMtx" };
+constexpr const char* U_PROJECTION_MATRIX	{ "u_projectionMtx" };
+
+
+
+constexpr const char* U_COLOR		{ "u_color" };
+
+
 
 
 // - class -----------------------------
@@ -38,11 +46,12 @@ public:
 
 	int GetShader() const;
 
-	virtual void Render(
+	void Render(
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 
 		const glm::mat4& _cameraMatrix
-		) const {};
+	
+	) const;
 
 
 	// - material helpers -------------------------------------
@@ -51,9 +60,12 @@ public:
 
 protected:
 	void InitUniformLocations();
-	
+	void SetUniform(std::string _uniformName, UniformData _data) const;
+
 	std::shared_ptr<ShaderProgram> m_shader;
+
+
+	std::map<std::string, UniformData> m_uniformData;
 	std::map<std::string, GLuint> m_uniformLocations;
-	
 
 };

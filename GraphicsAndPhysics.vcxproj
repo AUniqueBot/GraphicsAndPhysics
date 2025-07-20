@@ -98,12 +98,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp" />
     <ClCompile Include="Source\res\res_material_presets\res_material_lambert.cpp" />
     <ClCompile Include="Source\arch\core\core_clock.cpp" />
     <ClCompile Include="Source\arch\core\core_input.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewport.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewportManager.cpp" />
     <ClCompile Include="Source\res\res_material.cpp" />
+    <ClCompile Include="Source\res\res_material_uniform\res_material_ubo.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp" />
@@ -146,6 +149,7 @@
     <ClInclude Include="Headers\arch\core\core_input.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_lambert.h" />
+    <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewportManager.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
@@ -182,18 +186,6 @@
     <Image Include="Assets\Images\awesomeface.png" />
     <Image Include="Assets\Images\container.jpg" />
     <Image Include="Assets\Images\TestImage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Shaders\frag_flatColor.frag" />
-    <None Include="Assets\Shaders\frag_templateFile.frag" />
-    <None Include="Assets\Shaders\vtx_vertex.vert" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Assets\Shaders\vtx_templateFile.vert">
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <FileType>Document</FileType>
-    </None>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
