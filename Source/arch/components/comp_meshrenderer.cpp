@@ -1,6 +1,8 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <util/util_serialisation.h>
 
+#include <arch/resources/res_material_presets/res_material_lambert.h>
+
 
 // - method function ------------------------
 
@@ -34,31 +36,11 @@ void MeshRenderer::Render(
 }
 
 Material& MeshRenderer::GetDefaultMaterial() {
-	static Material m_defaultMaterial{};
+
+	static LambertMaterial m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
 	if (!defaultMatInit) {
 		m_defaultMaterial.Init();
-
-
-
-		std::string vertexShaderSource = FileReading::GetRawTextFromFile("./Assets/Shaders/vtx_vertex.vert");
-		std::string fragmentShaderSource = FileReading::GetRawTextFromFile("./Assets/Shaders/frag_flatColor.frag");
-
-
-		// - create a basic shader --------------------------------
-		ShaderProgram dShader{};
-		GLuint vtxShaderId  = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-		GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
-		
-		std::vector<GLuint> shaderList		{ vtxShaderId, fragShaderId };
-		GLuint prg							{ ShaderProgram::LinkShaders(shaderList) };
-		
-
-		if (prg) dShader.SetShaderID(prg);
-
-		// - move shader program to default material --------------
-		m_defaultMaterial.SetShaderProgram(std::make_shared<ShaderProgram>(dShader));
-		
 
 		// - init is true -----------------------------------------
 		defaultMatInit = true;

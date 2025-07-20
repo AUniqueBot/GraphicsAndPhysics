@@ -33,16 +33,18 @@ void LambertMaterial::Render(
     const glm::mat4& _objectMatrix, 
     const glm::mat4& _projectionMatrix, 
     const glm::mat4& _cameraMatrix
-) {
+) const {
     const int shaderId  { GetShader() };
     if (!shaderId) return;
 
     glUseProgram(shaderId);
 
 
-    glUniformMatrix4fv(m_uniformLocations[OBJECT_MATRIX], 1, GL_FALSE, glm::value_ptr(_objectMatrix));
-    glUniformMatrix4fv(m_uniformLocations[CAMERA_MATRIX], 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
-    glUniformMatrix4fv(m_uniformLocations[PROJECTION_MATRIX], 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
+
+    
+    glUniformMatrix4fv(m_uniformLocations.at(OBJECT_MATRIX), 1, GL_FALSE, glm::value_ptr(_objectMatrix));
+    glUniformMatrix4fv(m_uniformLocations.at(CAMERA_MATRIX), 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+    glUniformMatrix4fv(m_uniformLocations.at(PROJECTION_MATRIX), 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
 
 
 }

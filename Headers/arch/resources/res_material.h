@@ -42,7 +42,7 @@ public:
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 
 		const glm::mat4& _cameraMatrix
-		) {};
+		) const {};
 
 
 	// - material helpers -------------------------------------

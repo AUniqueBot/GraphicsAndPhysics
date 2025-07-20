@@ -131,14 +131,12 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 			}
 			else {
 
+
+				const Material& mat = mr.GetDefaultMaterial();
 				GLuint program = mr.GetDefaultMaterial().GetShader();
 				glUseProgram(program);
 
-				GLenum err;
-				while ((err = glGetError()) != GL_NO_ERROR) {
-					std::cerr << "OpenGL Error: " << std::hex << err << std::dec << "\n";
-				}
-
+		
 				glm::mat4 objMat{ 1.f };
 
 				static glm::vec3 rot_v	{};
@@ -156,24 +154,11 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				objMat = pos * rot * scl;
 
 
-				// transform is working properly
-
-				// need camera position.
-				GLint uniformLoc = glGetUniformLocation(program, OBJECT_MATRIX);
-				if (uniformLoc < 0) {
-					LOG_WARN("Bad object matrix uniform location");
-				}
-				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(objMat));
-				uniformLoc = glGetUniformLocation(program, PROJECTION_MATRIX);
-				if (uniformLoc < 0) {
-					LOG_WARN("Bad projection matrix uniform location");
-				}
-				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
-				uniformLoc = glGetUniformLocation(program, CAMERA_MATRIX);
-				if (uniformLoc < 0) {
-					LOG_WARN("Bad camera matrix uniform location");
-				}
-				glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+				mat.Render(
+					objMat,
+					_projectionMatrix,
+					_cameraMatrix
+				);
 
 
 			}
