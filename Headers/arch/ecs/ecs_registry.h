@@ -6,7 +6,7 @@
 #include <arch/datatypes/type_sparseset.h>
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
-#include <arch/common/componentView.h>
+#include <arch/common/sparseSetViewHandles.h>
 
 #include <typeindex>
 #include <functional>
@@ -52,7 +52,7 @@ public:
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
 
-	bool ComponentExistsForEntity(const EntityID& _id) { return m_compPool.At(_id); }
+	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.At(_id)); }
 
 	ComponentView<T> Get(EntityID _client);
 	ComponentView<const T> Get(EntityID _client) const;

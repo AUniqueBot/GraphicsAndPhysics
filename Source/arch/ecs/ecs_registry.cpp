@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 #include <arch/components/comp_transform.h>
-#include <arch/common/componentView.h>
+#include <arch/common/sparseSetViewHandles.h>
 
 EntityRegistry::~EntityRegistry() {
 	Clear();

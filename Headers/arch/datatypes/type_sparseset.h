@@ -5,7 +5,7 @@
 
 #include <pch.h>
 #include <unordered_map>
-#include <arch/common/componentView.h>
+#include <arch/common/sparseSetViewHandles.h>
 
 
 #ifndef TYPE_SPARSESET

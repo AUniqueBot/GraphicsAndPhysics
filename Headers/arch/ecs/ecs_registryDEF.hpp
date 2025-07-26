@@ -1,5 +1,5 @@
 #include "ecs_registry.h"
-#include <arch/common/componentView.h>
+#include <arch/common/sparseSetViewHandles.h>
 #pragma once
 
 template <typename T>
