@@ -2,7 +2,9 @@
 #include <pch.h>
 #include <variant>
 
+constexpr unsigned C_MAX_LIGHTS { 8 };
 
+// idk
 struct UniformData  {
 
 	using UniformType = std::variant<
@@ -28,3 +30,19 @@ struct CameraUBO {
 
 
 
+struct MaterialUBO {
+	glm::vec4 m_albedoColor; 
+	glm::vec4 m_specularColor; 
+	glm::vec4 m_emissiveColor;
+
+	float m_metallic;
+	float m_roughness;
+	
+
+};
+
+
+
+struct LightUBO {
+
+};

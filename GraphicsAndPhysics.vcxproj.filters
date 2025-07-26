@@ -150,6 +150,9 @@
     <ClCompile Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\components\comp_light.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">

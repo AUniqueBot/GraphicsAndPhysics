@@ -25,7 +25,7 @@ void Core::Init() {
 
 	std::reference_wrapper<Entity> obj1R = m_registry.Instantiate().value();
 	std::reference_wrapper<Entity> obj2R = m_registry.Instantiate().value();
-	std::reference_wrapper<Entity> camR = m_registry.Instantiate().value();
+	std::reference_wrapper<Entity> camR  = m_registry.Instantiate().value();
 	Entity& obj1 = obj1R.get();
 	Entity& obj2 = obj2R.get();
 	Entity& cam = camR.get();
@@ -37,16 +37,22 @@ void Core::Init() {
 	obj1.AddComponent<Transform>();
 	obj2.AddComponent<Transform>();
 	cam.AddComponent<Transform>();
+
+	//3779775239
+
+
 	
 	obj1.AddComponent<MeshRenderer>();	// object
 	obj2.AddComponent<Light>();			// light
 	cam.AddComponent<Camera>();			// cameara
 
+	std::reference_wrapper<Light> lightComp = obj2.GetComponent<Light>().value();
 
+	lightComp.get().Power(20);
 
 
 	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 2));
-	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 0));
+	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(2, 0, 4));
 	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, -5));
 	
 

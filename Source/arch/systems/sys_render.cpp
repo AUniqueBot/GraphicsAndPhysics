@@ -5,7 +5,6 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 // components
 #include <arch/components/comp_meshrenderer.h>
-#include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
 #include <arch/components/comp_transform.h>`
 #include <util/util_ostreamOverrides.h>
@@ -110,10 +109,53 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 	);
 	rot = glm::mat4{ 1.f };
 
-	for (Entity& e : registry.GetEntityList()) {
+	const auto& lightPoolRef = registry.GetComponentPool<Light>();
+	LightData lightDataArray[C_MAX_LIGHT_COUNT_LOW]{};
+
+	auto& entityList = registry.GetEntityList();
+
+	// get the list of lights to prep for UBO.
+	if (lightPoolRef.has_value()) {
+	
+		const ComponentPool<Light>& lightPool = lightPoolRef.value().get();
+		const unsigned lightCount = m_maxLightCount;
+		const auto& lightComponentData = lightPool.Data();
+		
+		unsigned count{};
+		for (const auto& light: lightComponentData) {
+			
+			if (count >= m_maxLightCount) break;
+			EntityID id = light.GetEntityID();
+
+			// safety
+			if (!registry.Get(id).has_value()) {
+				continue;
+			}
+
+			const std::reference_wrapper<Transform> trs = registry.Get(id).value().get().GetComponent<Transform>().value();
+			LightData lightData = light.GetLightData();
 
 
-		// render a mesh.
+			glm::vec3 position = trs.get().Position();
+			glm::vec3 lookAt = trs.get().Rotation() * glm::vec3(0, 0, -1);
+
+			lightData.m_position_type.x = position.x;
+			lightData.m_position_type.y = position.y;
+			lightData.m_position_type.z = position.z;
+			
+
+			LOG_INFO("Position: " << position);
+		}	
+	}
+
+	
+
+
+
+	for (Entity& e : entityList) {
+
+
+
 		if (e.GetComponent<MeshRenderer>().has_value()) {
 			auto meshHandle = e.GetComponent<MeshRenderer>();
 			auto matHandle = 0;	// pls get the material now.
@@ -131,6 +173,9 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 				glUseProgram(mr.GetMaterialList()[0].GetShader());
 			}
 			else {
+
+
+
 
 
 				const Material& mat = mr.GetDefaultMaterial();
@@ -173,4 +218,40 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 
 	}
 	glBindVertexArray(0);
+}
+
+bool RenderSystem::LightCollisionTest(const Light& _lightComponent) {
+	bool testCase = false;
+	switch (_lightComponent.Type()){
+	case POINT:
+		testCase = PointLightCollisionTest(_lightComponent);
+		break;
+	case AREA:
+		break;
+	case SPOT:
+		testCase = SpotLightCollisionTest(_lightComponent);
+		break;
+	case DIRECTIONAL:
+		break;
+	case AMBIENT:
+		testCase = true;
+		break;
+	case SUN:
+		testCase = true;
+		break;
+
+	default:
+		break;
+	}
+	return testCase;
+}
+
+bool RenderSystem::SpotLightCollisionTest(const Light& _lightComponent) {
+	(void)_lightComponent;
+	return false;
+}
+
+bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent) {
+	(void)_lightComponent;
+	return false;
 }

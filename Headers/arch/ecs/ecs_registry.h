@@ -24,7 +24,7 @@ class IComponentPool {
 public:
 	IComponentPool() = default;
 	virtual ~IComponentPool() = default;
-	virtual size_t size() const { return 3; } // test value 3.
+	virtual size_t size() const { return 0; } // test value 3.
 };
 
 
@@ -100,6 +100,10 @@ public:
 	std::deque<Entity>& GetEntityList()					{ return m_entityList.Data(); }
 	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
 	
+
+	std::optional<std::reference_wrapper<Entity>> Get(const EntityID& _id)			   { return m_entityList.At(_id); };
+	std::optional<std::reference_wrapper<const Entity>> Get(const EntityID& _id) const { return m_entityList.At(_id); };
+
 	
 	// component handling.
 

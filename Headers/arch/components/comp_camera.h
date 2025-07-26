@@ -61,7 +61,7 @@ private:
 private:
 	static int m_activeCameraId;
 	static int m_cameraCount;
-
+	static int m_staticCounter;
 	int m_cameraId						{};
 
 

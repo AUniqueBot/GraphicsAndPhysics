@@ -6,14 +6,14 @@
 
 int Camera::m_activeCameraId    {};
 int Camera::m_cameraCount       {};
-
+int Camera::m_staticCounter     {};
 
 
 // - generic ----------------------------------------------------------
 void Camera::Init() {
     ++m_cameraCount;
     // time based stuff
-    m_cameraId = static_cast<int>(s_TpHash(ch::system_clock::now()));
+    m_cameraId = m_staticCounter++;
     UpdateProjectionMatrix();
     // cannot start until this projection matrix is up and running.
 

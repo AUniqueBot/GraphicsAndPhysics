@@ -4,7 +4,6 @@
 
 
 
-
 void LambertMaterial::Init() {
 
 
@@ -24,9 +23,11 @@ void LambertMaterial::Init() {
     InitUniformLocations();
 }
 
+
 const glm::vec4& LambertMaterial::Color() const {
     return m_color;
 }
+
 
 void LambertMaterial::Color(glm::vec4 _newColor) {
     m_color = _newColor;

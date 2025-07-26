@@ -98,6 +98,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\arch\components\comp_light.cpp" />
     <ClCompile Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp" />
     <ClCompile Include="Source\res\res_material_presets\res_material_lambert.cpp" />

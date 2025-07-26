@@ -74,10 +74,16 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 	std::cout << "Adding Component: " << typeid(T).name() << std::endl;
 	std::cout << "Client: " << _addTo << std::endl;
 	bool result = m_compPool.Add(T{}, _addTo);
-	// to initialise.
+	
 	std::cout << (result ? "Good" : "Bad") << std::endl;
 	std::cout << "Comp Pool Size: " << m_compPool.size() << std::endl;
 	std::cout << "[[ ================================================================== ]]" << std::endl;
+	
+	if (result) {
+		std::reference_wrapper<T> component = m_compPool.At(_addTo).value();
+		component.get().SetEntityID(_addTo);
+	}
+	
 	return result;
 }
 
