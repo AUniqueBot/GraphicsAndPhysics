@@ -53,6 +53,11 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	return compPool.Remove(_removeFrom);
 }
 
+template<typename T>
+inline bool EntityRegistry::ComponentPoolExists() {
+	return GetComponentPool<T>().has_value();
+}
+
 
 
 

@@ -42,12 +42,14 @@ public:
 	SparseSet<EntityID, T>& Data();
 	const SparseSet<EntityID, T>& Data() const;
 
-	auto begin()	{ return m_compPool.begin(); }
+	auto begin()		{ return m_compPool.begin(); }
 	auto end()		{ return m_compPool.end(); }
 
 
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
+
+	bool ComponentExistsForEntity(const EntityID& _id) { return m_compPool.At(_id).has_value(); };
 
 	std::optional<std::reference_wrapper<T>> Get(EntityID _client);
 	std::optional<std::reference_wrapper<const T>> Get(EntityID _client) const;
@@ -125,6 +127,13 @@ public:
 
 	// creates an entity.
 	std::optional<std::reference_wrapper<Entity>> Instantiate();
+
+
+	// - existence checks -------------------------------------------------
+	bool EntityExists(const EntityID& _entityId) { return m_entityList.At(_entityId).has_value(); };
+	template <typename T>
+	bool ComponentPoolExists();
+
 
 	std::string name;
 private:

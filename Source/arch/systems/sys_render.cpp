@@ -116,35 +116,31 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 
 	// get the list of lights to prep for UBO.
 	if (lightPoolRef.has_value()) {
-	
+		
 		const ComponentPool<Light>& lightPool = lightPoolRef.value().get();
 		const unsigned lightCount = m_maxLightCount;
 		const auto& lightComponentData = lightPool.Data();
 		
 		unsigned count{};
 		for (const auto& light: lightComponentData) {
+			//
+			if (!registry.EntityExists(light.GetEntityID())) continue;
 			
-			if (count >= m_maxLightCount) break;
-			EntityID id = light.GetEntityID();
-
-			// safety
-			if (!registry.Get(id).has_value()) {
+			//
+			if (!LightCollisionTest(light)) {
+				// light does not appear or cause an effect in the camera frustum.
 				continue;
 			}
-
+			if (count >= m_maxLightCount) break;
+			EntityID id = light.GetEntityID();
 			const std::reference_wrapper<Transform> trs = registry.Get(id).value().get().GetComponent<Transform>().value();
 			LightData lightData = light.GetLightData();
 
-
 			glm::vec3 position = trs.get().Position();
-			glm::vec3 lookAt = trs.get().Rotation() * glm::vec3(0, 0, -1);
+			lightData.SetPosition(position);
 
-			lightData.m_position_type.x = position.x;
-			lightData.m_position_type.y = position.y;
-			lightData.m_position_type.z = position.z;
-			
-
-			LOG_INFO("Position: " + position);
+		
+			LOG_INFO("Position: " << position);
 		}	
 	}
 
@@ -220,7 +216,11 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 	glBindVertexArray(0);
 }
 
-bool RenderSystem::LightCollisionTest(const Light& _lightComponent) {
+bool RenderSystem::LightCollisionTest(
+	const Light& _lightComponent, 
+	const glm::mat4& _cameraMatrix, 
+	const glm::mat4& _projectionMatrix
+) {
 	bool testCase = false;
 	switch (_lightComponent.Type()){
 	case POINT:
@@ -246,12 +246,21 @@ bool RenderSystem::LightCollisionTest(const Light& _lightComponent) {
 	return testCase;
 }
 
-bool RenderSystem::SpotLightCollisionTest(const Light& _lightComponent) {
+
+bool RenderSystem::SpotLightCollisionTest(
+	const Light& _lightComponent,
+	const glm::mat4& _cameraMatrix,
+	const glm::mat4& _projectionMatrix
+) {
 	(void)_lightComponent;
 	return false;
 }
 
-bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent) {
+bool RenderSystem::PointLightCollisionTest(
+	const Light& _lightComponent,
+	const glm::mat4& _cameraMatrix,
+	const glm::mat4& _projectionMatrix
+) {
 	(void)_lightComponent;
 	return false;
 }

@@ -17,6 +17,19 @@ struct LightData {
 	glm::vec4 m_direction_roll;	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power;	// x,y,z - color,	  w - power
 	glm::vec4 m_attenuation;	// x,y - attenuation, z,w - padding
+
+
+	void SetPosition(const glm::vec3& pos) { m_position_type = glm::vec4(pos, m_position_type.w); }
+	void SetType(float type) { m_position_type.w = type; }
+
+	void SetDirection(const glm::vec3& dir) { m_direction_roll = glm::vec4(dir, m_direction_roll.w); }
+	void SetRoll(float roll) { m_direction_roll.w = roll; }
+
+	void SetColor(const glm::vec3& color) { m_color_power = glm::vec4(color, m_color_power.w); }
+	void SetPower(float power) { m_color_power.w = power; }
+
+	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
+	// Padding z,w can be left alone or zeroed
 };
 
 

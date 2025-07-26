@@ -33,9 +33,24 @@ public:
 
 
 private:
-	bool LightCollisionTest(const Light& _lightComponent);
-	bool SpotLightCollisionTest(const Light& _lightComponent);
-	bool PointLightCollisionTest(const Light& _lightComponent);
+	bool LightCollisionTest(
+		const Light& _lightComponent, 
+		const glm::mat4& _cameraMatrix, 
+		const glm::mat4& _projectionMatrix
+	);
+
+
+
+	bool SpotLightCollisionTest(
+		const Light& _lightComponent,
+		const glm::mat4& _cameraMatrix,
+		const glm::mat4& _projectionMatrix
+	);
+	bool PointLightCollisionTest(
+		const Light& _lightComponent,
+		const glm::mat4& _cameraMatrix,
+		const glm::mat4& _projectionMatrix
+	);
 
 
 private:
