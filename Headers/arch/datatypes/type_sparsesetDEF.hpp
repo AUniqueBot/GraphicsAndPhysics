@@ -50,25 +50,31 @@ bool SparseSet<IDType, T>::Remove(IDType _id){
 }
 
 template <typename IDType, typename T>
-std::optional<std::reference_wrapper<T>> SparseSet<IDType, T>::operator[](IDType _entityID) {
+SparseSetView<T> SparseSet<IDType, T>::operator[](IDType _entityID) {
 	if (m_valueToIdx.contains(_entityID)) {
-		return m_typeContainer[m_valueToIdx[_entityID]];
+		return SparseSetView<T>(m_typeContainer[m_valueToIdx[_entityID]]);
 	}
-	return std::nullopt;
+	return SparseSetView<T>(std::nullopt);
 }
 
 template <typename IDType, typename T>
-inline std::optional<std::reference_wrapper<T>> SparseSet<IDType, T>::At(IDType _entityID) {
+inline SparseSetView<T> SparseSet<IDType, T>::At(IDType _entityID) {
 	if (m_valueToIdx.contains(_entityID)) {
-		return std::ref(m_typeContainer[m_valueToIdx[_entityID]]);
+		return SparseSetView<T>(
+			std::ref(
+				m_typeContainer.at(m_valueToIdx.at(_entityID))
+			));
 	}
-	return std::nullopt;
+	return SparseSetView<T>(std::nullopt);
 }
 
 template <typename IDType, typename T>
-inline std::optional<std::reference_wrapper<const T>> SparseSet<IDType, T>::At(IDType _entityID) const {
+inline SparseSetView<const T> SparseSet<IDType, T>::At(IDType _entityID) const {
 	if (m_valueToIdx.contains(_entityID)) {
-		return std::ref(m_typeContainer.at(m_valueToIdx.at(_entityID)));
+		return SparseSetView<const T>(
+			std::ref(
+				m_typeContainer.at(m_valueToIdx.at(_entityID))
+			));
 	}
-	return std::nullopt;
+	return SparseSetView<const T>(std::nullopt);
 }

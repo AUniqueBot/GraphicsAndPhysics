@@ -1,26 +1,29 @@
 #include "ecs_registry.h"
+#include <arch/common/componentView.h>
 #pragma once
 
 template <typename T>
-std::optional<std::reference_wrapper<ComponentPool<T>>> EntityRegistry::GetComponentPool() {
+SparseSetView<ComponentPool<T>>  EntityRegistry::GetComponentPool() {
 	auto itr = m_componentPool.find(typeid(T));
 	if (itr != m_componentPool.end())
-		return std::ref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
+		return SparseSetView<ComponentPool<T>>{
+			std::ref(*std::static_pointer_cast<ComponentPool<T>>(itr->second)) 
+		};
 
 
 	LOG_WARN("Non Registered Typed Called. Returning nullopt");
-	return std::nullopt;
+	return SparseSetView<ComponentPool<T>>(std::nullopt);
 }
 
 
 template <typename T>
-std::optional<std::reference_wrapper<const ComponentPool<T>>> EntityRegistry::GetComponentPool() const {
+SparseSetView<const ComponentPool<T>> EntityRegistry::GetComponentPool() const {
 	auto itr = m_componentPool.find(typeid(T));
 	if (itr != m_componentPool.end())
 		return std::cref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
 
 	LOG_WARN("Non Registered Typed Called. Returning nullopt");
-	return std::nullopt;
+	return SparseSetView<const ComponentPool<T>>(std::nullopt);
 }
 
 
@@ -29,16 +32,14 @@ std::optional<std::reference_wrapper<const ComponentPool<T>>> EntityRegistry::Ge
 template <typename T>
 bool EntityRegistry::AddComponent(EntityID _addTo) {
 	auto val = GetComponentPool<T>();
-	if (!val.has_value()) {
+	if (!val) {
 		std::stringstream ss;
 		ss << "Component type: \"" << typeid(T).name() << "\" undefined.\n";
 		LOG_WARN(ss.str());
 		return false;
 	}
-	ComponentPool<T>& compPool = val.value().get();
 
-
-	return compPool.Add(_addTo);
+	return val->Add(_addTo);
 }
 template <typename T>
 bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
@@ -55,7 +56,7 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 
 template<typename T>
 inline bool EntityRegistry::ComponentPoolExists() {
-	return GetComponentPool<T>().has_value();
+	return static_cast<bool>(GetComponentPool<T>());
 }
 
 
@@ -85,8 +86,8 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 	std::cout << "[[ ================================================================== ]]" << std::endl;
 	
 	if (result) {
-		std::reference_wrapper<T> component = m_compPool.At(_addTo).value();
-		component.get().SetEntityID(_addTo);
+		ComponentView<T> component = m_compPool.At(_addTo);
+		component->SetEntityID(_addTo);
 	}
 	
 	return result;
@@ -99,13 +100,15 @@ bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 
 template<typename T>
 inline ComponentView<T> ComponentPool<T>::Get(EntityID _client) {
-	return ComponentView<T>(m_compPool.At(_client));
+	return m_compPool.At(_client);
 }
+
 
 template<typename T>
 inline ComponentView<const T> ComponentPool<T>::Get(EntityID _client) const {
-	return ComponentView(m_compPool.At(_client));
+	return m_compPool.At(_client);
 }
+
 
 
 // ======================================================================================

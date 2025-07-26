@@ -29,6 +29,8 @@ public:
 };
 
 
+
+
 template <typename T>
 class ComponentPool : public IComponentPool {
 
@@ -50,11 +52,10 @@ public:
 	bool Add(EntityID _addTo);
 	bool Remove(EntityID _removeFrom);
 
-	bool ComponentExistsForEntity(const EntityID& _id) { return m_compPool.At(_id).has_value(); };
+	bool ComponentExistsForEntity(const EntityID& _id) { return m_compPool.At(_id); }
 
 	ComponentView<T> Get(EntityID _client);
 	ComponentView<const T> Get(EntityID _client) const;
-
 	size_t size() const override { return m_compPool.size(); };
 
 	void clear() { m_compPool.clear(); };
@@ -95,17 +96,16 @@ public:
 	void PrintDebugInfo() const;
 
 	template <typename T>
-	std::optional<std::reference_wrapper<ComponentPool<T>>> GetComponentPool();
+	SparseSetView<ComponentPool<T>> GetComponentPool();
 
 	template <typename T>
-	std::optional<std::reference_wrapper<const ComponentPool<T>>> GetComponentPool() const;
+	SparseSetView<const ComponentPool<T>> GetComponentPool() const;
 
 	std::deque<Entity>& GetEntityList()					{ return m_entityList.Data(); }
 	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
 	
 
-	std::optional<std::reference_wrapper<Entity>> Get(const EntityID& _id)			   { return m_entityList.At(_id); };
-	std::optional<std::reference_wrapper<const Entity>> Get(const EntityID& _id) const { return m_entityList.At(_id); };
+	EntityView Get(const EntityID& _id)					{ return m_entityList.At(_id); };
 
 	
 	// component handling.
@@ -127,11 +127,10 @@ public:
 
 
 	// creates an entity.
-	std::optional<std::reference_wrapper<Entity>> Instantiate();
+	EntityView Instantiate();
 
 
 	// - existence checks -------------------------------------------------
-	bool EntityExists(const EntityID& _entityId) { return m_entityList.At(_entityId).has_value(); };
 	template <typename T>
 	bool ComponentPoolExists();
 

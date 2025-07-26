@@ -1,19 +1,25 @@
 #pragma once
 #include <pch.h>
+#include <arch/common/component.h>
 
-
+class Entity;
 
 template <typename T>
-class ComponentView {
-	std::optional<std::reference_wrapper<T>> refOpt;
+class SparseSetView {
+	std::optional<std::reference_wrapper<T>> m_ref;
+
 public:
-	ComponentView(std::optional<std::reference_wrapper<T>> o) : refOpt(std::move(o)) {}
+	SparseSetView(std::optional<std::reference_wrapper<T>> ref) : m_ref(std::move(ref)) {}
 
-	explicit operator bool() const { return refOpt.has_value(); }
+	explicit operator bool() const { return m_ref.has_value(); }
 
-	T& operator*() { return refOpt->get(); }
-	T* operator->() { return &refOpt->get(); }
-
-	const T& operator*() const { return refOpt->get(); }
-	const T* operator->() const { return &refOpt->get(); }
+	T& operator*() const { return m_ref->get(); }
+	T* operator->() const { return &m_ref->get(); }
 };
+
+
+using EntityView = SparseSetView<Entity>;
+using EntityViewConst = SparseSetView<const Entity>;
+
+template <TemplateComponentType T>
+using ComponentView = SparseSetView<T>;

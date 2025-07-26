@@ -26,6 +26,7 @@ void RenderSystem::Init() {
 	Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
 	Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
 
+	
 
 	LOG_INFO("Run Init");
 
@@ -184,22 +185,23 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 	}
 
 
-	const ComponentPool<Light>& lightPool = lightPoolRef.value().get();
+	const ComponentPool<Light>& lightPool = *lightPoolRef;
 	const unsigned lightCount = m_maxLightCount;
 	const auto& lightComponentData = lightPool.Data();
 
 		
 	for (const auto& light : lightComponentData) {
-		//
-		if (!registry.EntityExists(light.GetEntityID())) continue;
+
+		EntityView entity = registry.Get(light.GetEntityID());
+		if (entity) continue;
 
 		//
 		if (!LightCollisionTest(light, _viewport)) {
 			// light does not appear or cause an effect in the camera frustum.
 			continue;
 		}
-		EntityID id = light.GetEntityID();
-		ComponentView<Transform> trs = registry.Get(id).value().get().GetComponent<Transform>();
+
+		ComponentView<Transform> trs = entity->GetComponent<Transform>();
 		
 		LightData lightData = light.GetLightData();
 		glm::vec3 position = trs->Position();

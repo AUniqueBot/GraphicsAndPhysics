@@ -17,13 +17,13 @@ void Entity::AddComponent() {
 
 	auto compPool = m_registry->GetComponentPool<T>();
 
-	if (compPool != std::nullopt) {
+	if (compPool) {
 		ss.clear();
-		ss << "current count: " << compPool.value().get().size() << std::endl;
+		ss << "current count: " << compPool->size() << std::endl;
 
 		LOG_INFO(ss.str());
 
-		compPool.value().get().Get(m_id)->Init();
+		compPool->Get(m_id)->Init();
 	}
 
 }
@@ -51,7 +51,7 @@ void Entity::RemoveComponent() {
 		
 		LOG_INFO(ss.str());
 		
-		compPool.value().get().Get(m_id)->End();
+		compPool.get().Get(m_id)->End();
 	}
 
 }
@@ -61,12 +61,12 @@ ComponentView<T> Entity::GetComponent() const {
 	if (!m_registry) 
 		return ComponentView<T>(std::nullopt);
 	
-	std::optional<std::reference_wrapper<ComponentPool<T>>> compPoolValue
+	SparseSetView<ComponentPool<T>> compPoolValue
 		= m_registry->GetComponentPool<T>();
 	
-	if (!compPoolValue.has_value()) return ComponentView<T>(std::nullopt);
+	if (!compPoolValue) return ComponentView<T>(std::nullopt);
 	
-	ComponentPool<T>& compPool = compPoolValue.value().get();
+	ComponentPool<T>& compPool = *compPoolValue;
 	return compPool.Get(m_id);
 }
 

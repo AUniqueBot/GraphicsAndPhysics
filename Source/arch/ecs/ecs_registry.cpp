@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 #include <arch/components/comp_transform.h>
+#include <arch/common/componentView.h>
 
 EntityRegistry::~EntityRegistry() {
 	Clear();
@@ -25,8 +26,8 @@ void EntityRegistry::PrintDebugInfo() const {
 }
 
 
-std::optional<std::reference_wrapper<Entity>> EntityRegistry::Instantiate() {
-	Entity newEntt{this};
+EntityView EntityRegistry::Instantiate() {
+	Entity newEntt	{ this };
 	EntityID refID = newEntt.GetID();
 	m_entityList.Add(std::move(newEntt), refID);
 	// map version.
@@ -36,7 +37,7 @@ std::optional<std::reference_wrapper<Entity>> EntityRegistry::Instantiate() {
 
 	// note to add a transform component.
 	auto toRet = m_entityList.At(refID);
-	toRet.value().get().AddComponent<Transform>();
+	toRet->AddComponent<Transform>();
 	return m_entityList.At(refID);
 }
 

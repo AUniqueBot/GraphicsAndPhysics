@@ -1,7 +1,11 @@
+#pragma once
 #include <pch.h>
 
+class UBO;
+class UBOManager;
 
 class UBO {
+	friend class UBOManager;
 public:
 	enum BUFFER_TYPE {
 		TRANSFORMS,				// transform buffer - contains camera, projection, and object transform
@@ -32,13 +36,11 @@ private:
 
 class UBOManager {
 
+public:
+	void Init();
 
-
-
+	void CreateUBO(UBO::BUFFER_TYPE _bufferType, size_t _size = 100);
 
 private:
-	UBO m_lightUBO{};	
-	UBO m_transformUBO{};
-	UBO m_materialUBO{};
-
+	std::map<UBO::BUFFER_TYPE, UBO> m_uboMap;
 };

@@ -33,3 +33,28 @@ void UBO::FillBufferData(const void* _data) {
 	BindBuffer();
 	glBufferSubData(GL_UNIFORM_BLOCK, 0, m_bufferSize, _data);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+void UBOManager::Init() {
+		
+}
+
+void UBOManager::CreateUBO(UBO::BUFFER_TYPE _bufferType, size_t _size) {
+	if (m_uboMap.contains(_bufferType)) {
+		LOG_WARN("Buffer Type <" << typeid(_bufferType).name() << "> already created.");
+		return;
+	}
+	UBO& ref = m_uboMap[_bufferType];
+	ref.BufferSize(_size);
+}

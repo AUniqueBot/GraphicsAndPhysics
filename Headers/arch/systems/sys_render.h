@@ -2,7 +2,7 @@
 #include <pch.h>
 #include <arch/common/system.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
-
+#include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/components/comp_light.h>
 
 
@@ -47,6 +47,7 @@ private:
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	ViewportManager m_viewportManager;
+
 
 };
 

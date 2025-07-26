@@ -23,12 +23,9 @@ void Core::Init() {
 	
 
 
-	std::reference_wrapper<Entity> obj1R = m_registry.Instantiate().value();
-	std::reference_wrapper<Entity> obj2R = m_registry.Instantiate().value();
-	std::reference_wrapper<Entity> camR  = m_registry.Instantiate().value();
-	Entity& obj1 = obj1R.get();
-	Entity& obj2 = obj2R.get();
-	Entity& cam = camR.get();
+	Entity& obj1 = *(m_registry.Instantiate());
+	Entity& obj2 = *(m_registry.Instantiate());
+	Entity& cam =  *(m_registry.Instantiate());
 
 
 

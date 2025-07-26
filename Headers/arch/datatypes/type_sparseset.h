@@ -5,6 +5,7 @@
 
 #include <pch.h>
 #include <unordered_map>
+#include <arch/common/componentView.h>
 
 
 #ifndef TYPE_SPARSESET
@@ -48,24 +49,21 @@ public:
 	///! @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist
-	std::optional<std::reference_wrapper<T>> operator[](IDType _entityID);
+	SparseSetView<T> operator[](IDType _entityID);
 	
 	/// @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist
-	std::optional<std::reference_wrapper<T>> At(IDType _entityID);
+	SparseSetView<T> At(IDType _entityID);
+	SparseSetView<const T> At(IDType _entityID) const;
 
-	/// @brief accesses the data type given the [_entityID]
-	///! @param _entityID: the id of the item associated with this.
-	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist. const enabled.
-	std::optional<std::reference_wrapper<const T>>  At(IDType _entityID) const;
 
 	// functions to enable for range loop functionality
 	
 	///! @brief provides the iterator to the beginning of the sparse set.
 	///! @return iterator to the beginning of the sparse set. (stored as a vector)
-	auto begin()						{ return m_typeContainer.begin(); }
-	auto begin() const					{ return m_typeContainer.begin(); }
+	auto begin()							{ return m_typeContainer.begin(); }
+	auto begin() const				{ return m_typeContainer.begin(); }
 
 	///! @brief provides the iterator to the end of the sparse set.
 	///! @return iterator to the end of the iterator. (stored as a vector)

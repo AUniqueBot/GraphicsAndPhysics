@@ -3,6 +3,10 @@
 #include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
 
+
+
+
+
 class Component {
 	
 public:
@@ -29,3 +33,5 @@ private:
 	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
 };
 
+template <typename T>
+concept TemplateComponentType = std::derived_from<T, Component>;
