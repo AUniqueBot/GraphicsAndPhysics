@@ -144,7 +144,7 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 			lightData.m_position_type.z = position.z;
 			
 
-			LOG_INFO("Position: " << position);
+			LOG_INFO("Position: " + position);
 		}	
 	}
 
