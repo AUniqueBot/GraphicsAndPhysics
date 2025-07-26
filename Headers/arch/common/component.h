@@ -26,5 +26,5 @@ protected:
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 private:
 	ComponentType m_type						{ __INVALID };
-	EntityID m_registeredEntity					{ 0 };
+	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
 };
