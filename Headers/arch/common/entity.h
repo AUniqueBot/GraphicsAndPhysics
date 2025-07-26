@@ -1,8 +1,9 @@
 #pragma once
 
-#include <arch/components/componentList.h>
-#include <arch/common/entityid.h>
 #include <bitset>
+#include <arch/common/entityid.h>
+#include <arch/common/componentView.h>
+#include <arch/components/componentList.h>
 
 
 
@@ -29,9 +30,7 @@ public:
 
 
 	template <typename T>
-	std::optional<std::reference_wrapper<T>> GetComponent();
-	template <typename T>
-	std::optional<std::reference_wrapper<const T>> GetComponent() const;
+	ComponentView<T> GetComponent() const;
 
 
 	EntityRegistry* GetRegistry()								{ return m_registry; }

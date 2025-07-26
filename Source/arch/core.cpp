@@ -38,7 +38,6 @@ void Core::Init() {
 	obj2.AddComponent<Transform>();
 	cam.AddComponent<Transform>();
 
-	//3779775239
 
 
 	
@@ -46,14 +45,13 @@ void Core::Init() {
 	obj2.AddComponent<Light>();			// light
 	cam.AddComponent<Camera>();			// cameara
 
-	std::reference_wrapper<Light> lightComp = obj2.GetComponent<Light>().value();
 
-	lightComp.get().Power(20);
+	obj2.GetComponent<Light>()->Power(20);
 
 
-	obj1.GetComponent<Transform>().value().get().Position(glm::vec3(0, 0, 2));
-	obj2.GetComponent<Transform>().value().get().Position(glm::vec3(2, 0, 4));
-	cam.GetComponent<Transform>().value().get().Position(glm::vec3(3, 4, -5));
+	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
+	obj2.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
+	cam.GetComponent<Transform>()->Position(glm::vec3(3, 4, -5));
 	
 
 	

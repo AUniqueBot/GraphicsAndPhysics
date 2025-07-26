@@ -98,13 +98,13 @@ bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 }
 
 template<typename T>
-inline std::optional<std::reference_wrapper<T>> ComponentPool<T>::Get(EntityID _client) {
-	return m_compPool.At(_client);
+inline ComponentView<T> ComponentPool<T>::Get(EntityID _client) {
+	return ComponentView<T>(m_compPool.At(_client));
 }
 
 template<typename T>
-inline std::optional<std::reference_wrapper<const T>> ComponentPool<T>::Get(EntityID _client) const {
-	return m_compPool.At(_client);
+inline ComponentView<const T> ComponentPool<T>::Get(EntityID _client) const {
+	return ComponentView(m_compPool.At(_client));
 }
 
 

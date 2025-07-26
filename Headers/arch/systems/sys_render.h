@@ -10,6 +10,9 @@ constexpr unsigned C_MAX_LIGHT_COUNT_LOW	{ 20 };
 constexpr unsigned C_MAX_LIGHT_COUNT_MED	{ 40 };
 constexpr unsigned C_MAX_LIGHT_COUNT_HIGH	{ 60 };
 
+
+constexpr unsigned CURRENT_MAX_LIGHT_COUNT	{ 20 };
+
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
 	
@@ -29,28 +32,16 @@ public:
 
 
 	// run the logic to render one of the cameras.
-	void Render(const glm::mat4& _cameraMatrix, const glm::mat4&  _projectionMatrix);
+	void Render(const Viewport& _viewport);
 
 
 private:
-	bool LightCollisionTest(
-		const Light& _lightComponent, 
-		const glm::mat4& _cameraMatrix, 
-		const glm::mat4& _projectionMatrix
-	);
+	std::vector<LightData> CullLights(const Viewport& _viewport);
 
 
-
-	bool SpotLightCollisionTest(
-		const Light& _lightComponent,
-		const glm::mat4& _cameraMatrix,
-		const glm::mat4& _projectionMatrix
-	);
-	bool PointLightCollisionTest(
-		const Light& _lightComponent,
-		const glm::mat4& _cameraMatrix,
-		const glm::mat4& _projectionMatrix
-	);
+	bool LightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;
+	bool SpotLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;
+	bool PointLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;
 
 
 private:

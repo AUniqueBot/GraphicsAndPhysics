@@ -6,6 +6,7 @@
 #include <arch/datatypes/type_sparseset.h>
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
+#include <arch/common/componentView.h>
 
 #include <typeindex>
 #include <functional>
@@ -51,8 +52,8 @@ public:
 
 	bool ComponentExistsForEntity(const EntityID& _id) { return m_compPool.At(_id).has_value(); };
 
-	std::optional<std::reference_wrapper<T>> Get(EntityID _client);
-	std::optional<std::reference_wrapper<const T>> Get(EntityID _client) const;
+	ComponentView<T> Get(EntityID _client);
+	ComponentView<const T> Get(EntityID _client) const;
 
 	size_t size() const override { return m_compPool.size(); };
 

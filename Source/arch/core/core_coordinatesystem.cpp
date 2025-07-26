@@ -21,15 +21,14 @@ inline glm::vec3 CoordinateSystem::GetWorldForward() const {
 }
 
 glm::vec3 CoordinateSystem::GetLocalUp(const Entity& _entity) const {
-    std::optional<std::reference_wrapper<const Transform>> trsV = _entity.GetComponent<Transform>();
-    if (!trsV.has_value()) return glm::vec3();
-    const Transform& trs = trsV.value().get();
-    return trs.Up();
+    ComponentView<Transform> trs = _entity.GetComponent<Transform>();
+    if (!trs) return glm::vec3();
+    return trs->Up();
 }
 
 glm::vec3 CoordinateSystem::GetLocalFowrard(const Entity& _entity) const {
-    std::optional<std::reference_wrapper<const Transform>> trsV = _entity.GetComponent<Transform>();
-    if (!trsV.has_value()) return glm::vec3();
-    const Transform& trs = trsV.value().get();
-    return trs.Forward();
+    ComponentView<Transform> trs = _entity.GetComponent<Transform>();
+
+    if (!trs) return glm::vec3();
+    return trs->Forward();
 }

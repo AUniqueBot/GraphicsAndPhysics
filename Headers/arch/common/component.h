@@ -28,3 +28,4 @@ private:
 	ComponentType m_type						{ __INVALID };
 	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
 };
+

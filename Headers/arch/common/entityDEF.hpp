@@ -23,10 +23,8 @@ void Entity::AddComponent() {
 
 		LOG_INFO(ss.str());
 
-		compPool.value().get().Get(m_id).value().get().Init();
+		compPool.value().get().Get(m_id)->Init();
 	}
-
-
 
 }
 
@@ -53,27 +51,23 @@ void Entity::RemoveComponent() {
 		
 		LOG_INFO(ss.str());
 		
-		compPool.value().get().Get(m_id).value().get().End();
+		compPool.value().get().Get(m_id)->End();
 	}
 
 }
 
 template<typename T>
-std::optional<std::reference_wrapper<T>> Entity::GetComponent() {
-	if (m_registry == nullptr) return std::nullopt;
+ComponentView<T> Entity::GetComponent() const {
+	if (!m_registry) 
+		return ComponentView<T>(std::nullopt);
+	
 	std::optional<std::reference_wrapper<ComponentPool<T>>> compPoolValue
 		= m_registry->GetComponentPool<T>();
-	if (!compPoolValue.has_value()) return std::nullopt;
+	
+	if (!compPoolValue.has_value()) return ComponentView<T>(std::nullopt);
+	
 	ComponentPool<T>& compPool = compPoolValue.value().get();
 	return compPool.Get(m_id);
 }
 
-template<typename T>
-std::optional<std::reference_wrapper<const T>> Entity::GetComponent() const {
-	if (m_registry == nullptr) return std::nullopt;
-	std::optional<std::reference_wrapper<const ComponentPool<T>>> compPoolValue 
-		= m_registry->GetComponentPool<T>();
-	if (!compPoolValue.has_value()) return std::nullopt;
-	const ComponentPool<T>& compPool = compPoolValue.value().get();
-	return compPool.Get(m_id);
-}
+

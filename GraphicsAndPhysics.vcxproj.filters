@@ -314,6 +314,9 @@
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\common\componentView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\Images\TestImage.png">

@@ -76,13 +76,10 @@ void RenderSystem::Update() {
 
 		currentViewport.Update();
 
-		glm::mat4 camMtx			{ glm::inverse(currentViewport.CameraMatrix()) };
-		glm::mat4 prjMtx			{ currentViewport.ProjectionMatrix() };
-
 
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 		glClear(clearFlags);
-		Render(camMtx, prjMtx); // replace with a single viewport.
+		Render(currentViewport); // replace with a single viewport.
 	}	
 }
 
@@ -90,8 +87,9 @@ void RenderSystem::Update() {
 
 
 
-void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _projectionMatrix) {
-	
+void RenderSystem::Render(const Viewport& _viewport) {
+	const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
+	const glm::mat4 & _projectionMatrix		{ _viewport.ProjectionMatrix() };;
 
 	EntityRegistry& registry = Core::GetInstance().Registry();
 	// use the current camera for projection matrix.
@@ -99,137 +97,131 @@ void RenderSystem::Render(const glm::mat4& _cameraMatrix, const glm::mat4& _proj
 	// set to wireframe
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-	glm::vec3 camPos = glm::vec3(0.0f, 0.0f, 10.0f);
 
 	glm::mat4 pos, rot, scl{ 1.f };
 	glm::mat4 viewMtx{ 1.f };
-	pos = glm::translate(
-		glm::mat4{ 1.f },
-		camPos
-	);
+	pos = glm::translate(glm::mat4{ 1.f }, glm::vec3());
 	rot = glm::mat4{ 1.f };
 
-	const auto& lightPoolRef = registry.GetComponentPool<Light>();
-	LightData lightDataArray[C_MAX_LIGHT_COUNT_LOW]{};
+	
 
-	auto& entityList = registry.GetEntityList();
-
-	// get the list of lights to prep for UBO.
-	if (lightPoolRef.has_value()) {
-		
-		const ComponentPool<Light>& lightPool = lightPoolRef.value().get();
-		const unsigned lightCount = m_maxLightCount;
-		const auto& lightComponentData = lightPool.Data();
-		
-		unsigned count{};
-		for (const auto& light: lightComponentData) {
-			//
-			if (!registry.EntityExists(light.GetEntityID())) continue;
-			
-			//
-			if (!LightCollisionTest(light)) {
-				// light does not appear or cause an effect in the camera frustum.
-				continue;
-			}
-			if (count >= m_maxLightCount) break;
-			EntityID id = light.GetEntityID();
-			const std::reference_wrapper<Transform> trs = registry.Get(id).value().get().GetComponent<Transform>().value();
-			LightData lightData = light.GetLightData();
-
-			glm::vec3 position = trs.get().Position();
-			lightData.SetPosition(position);
-
-		
-			LOG_INFO("Position: " << position);
-		}	
-	}
-
+	std::vector<LightData> lightList = CullLights(_viewport);
+	// set into UBO here.
 	
 
 
 
+	auto& entityList = registry.GetEntityList();
 	for (Entity& e : entityList) {
+		const auto& mr = e.GetComponent<MeshRenderer>();
+		if (!mr) {
+			continue;
+		}
+		
+		
+
+		auto matHandle = 0;	// pls get the material now.
+		auto trs = e.GetComponent<Transform>();
+
+		// assigns this buffer to mesh.
+		const Mesh& mesh = mr->GetMesh();
+		mesh.UseVAO();
+
+		if (false) {
+			// go through each material
+			glUseProgram(mr->GetMaterialList()[0].GetShader());
+		}
+		else {
+			const Material& mat = mr->GetDefaultMaterial();
+			GLuint program = mr->GetDefaultMaterial().GetShader();
+			glUseProgram(program);	
+			glm::mat4 objMat{ 1.f };
+
+			static glm::vec3 rot_v	{};
+			double deltaTime		{ Core::DeltaTime() };
+
+
+			rot_v[0] += static_cast<float>(deltaTime * 50);
+			rot_v[1] += static_cast<float>(deltaTime * 50);
+			rot_v[2] += static_cast<float>(deltaTime * 50);
+
+			trs->RotationEuler(rot_v);
+			pos = glm::translate(objMat, trs->Position());
+			rot = glm::mat4(trs->Rotation());
+			scl = glm::scale(objMat, trs->Scale());
+			objMat = pos * rot * scl;
+
+			mat.Render(
+				objMat,
+				_projectionMatrix,
+				_cameraMatrix
+			);
+		}
 
 
 
-		if (e.GetComponent<MeshRenderer>().has_value()) {
-			auto meshHandle = e.GetComponent<MeshRenderer>();
-			auto matHandle = 0;	// pls get the material now.
-			auto trsHandle = e.GetComponent<Transform>();
-			MeshRenderer& mr = meshHandle.value().get();
-			Transform& trs = trsHandle.value().get();
-
-
-			// assigns this buffer to mesh.
-			Mesh& mesh = mr.GetMesh();
-			mesh.UseVAO();
-
-			if (false) {
-				// go through each material
-				glUseProgram(mr.GetMaterialList()[0].GetShader());
-			}
-			else {
-
-
-
-
-
-				const Material& mat = mr.GetDefaultMaterial();
-				GLuint program = mr.GetDefaultMaterial().GetShader();
-				glUseProgram(program);
+		// for now, position the frag shader
+		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 
 		
-				glm::mat4 objMat{ 1.f };
-
-				static glm::vec3 rot_v	{};
-				double deltaTime		{ Core::DeltaTime() };
-
-
-				rot_v[0] += static_cast<float>(deltaTime * 50);
-				rot_v[1] += static_cast<float>(deltaTime * 50);
-				rot_v[2] += static_cast<float>(deltaTime * 50);
-
-				trs.RotationEuler(rot_v);
-				pos = glm::translate(objMat, trs.Position());
-				rot = glm::mat4(trs.Rotation());
-				scl = glm::scale(objMat, trs.Scale());
-				objMat = pos * rot * scl;
-
-				mat.Render(
-					objMat,
-					_projectionMatrix,
-					_cameraMatrix
-				);
-
-
-			}
-
-
-
-			// for now, position the frag shader
-			glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
-
-
-		}
 
 	}
 	glBindVertexArray(0);
 }
 
-bool RenderSystem::LightCollisionTest(
-	const Light& _lightComponent, 
-	const glm::mat4& _cameraMatrix, 
-	const glm::mat4& _projectionMatrix
-) {
+
+
+std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
+
+	std::vector<LightData> potentialLights{};
+
+	EntityRegistry& registry = Core::GetInstance().Registry();
+	const auto& lightPoolRef = registry.GetComponentPool<Light>();
+
+	if (!registry.ComponentPoolExists<Light>()) {
+		LOG_WARN("Light Component Pool does not exist");
+		return std::vector<LightData> {};
+	}
+
+
+	const ComponentPool<Light>& lightPool = lightPoolRef.value().get();
+	const unsigned lightCount = m_maxLightCount;
+	const auto& lightComponentData = lightPool.Data();
+
+		
+	for (const auto& light : lightComponentData) {
+		//
+		if (!registry.EntityExists(light.GetEntityID())) continue;
+
+		//
+		if (!LightCollisionTest(light, _viewport)) {
+			// light does not appear or cause an effect in the camera frustum.
+			continue;
+		}
+		EntityID id = light.GetEntityID();
+		ComponentView<Transform> trs = registry.Get(id).value().get().GetComponent<Transform>();
+		
+		LightData lightData = light.GetLightData();
+		glm::vec3 position = trs->Position();
+		lightData.SetPosition(position);
+		LOG_INFO("Position: " << position);
+		potentialLights.push_back(lightData);
+	}
+	return potentialLights;
+}
+
+
+
+bool RenderSystem::LightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
 	bool testCase = false;
 	switch (_lightComponent.Type()){
 	case POINT:
-		testCase = PointLightCollisionTest(_lightComponent);
+		testCase = PointLightCollisionTest(_lightComponent, _viewport);
 		break;
 	case AREA:
 		break;
 	case SPOT:
-		testCase = SpotLightCollisionTest(_lightComponent);
+		testCase = SpotLightCollisionTest(_lightComponent, _viewport);
 		break;
 	case DIRECTIONAL:
 		break;
@@ -246,21 +238,14 @@ bool RenderSystem::LightCollisionTest(
 	return testCase;
 }
 
-
-bool RenderSystem::SpotLightCollisionTest(
-	const Light& _lightComponent,
-	const glm::mat4& _cameraMatrix,
-	const glm::mat4& _projectionMatrix
-) {
+bool RenderSystem::SpotLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
 	(void)_lightComponent;
-	return false;
+	return true;
 }
 
-bool RenderSystem::PointLightCollisionTest(
-	const Light& _lightComponent,
-	const glm::mat4& _cameraMatrix,
-	const glm::mat4& _projectionMatrix
-) {
+bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
 	(void)_lightComponent;
-	return false;
+	return true;
 }
+
+
