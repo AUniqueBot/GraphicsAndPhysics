@@ -37,7 +37,8 @@ EntityView EntityRegistry::Instantiate() {
 
 	// note to add a transform component.
 	auto toRet = m_entityList.At(refID);
-	toRet->AddComponent<Transform>();
+	toRet->AddComponent<Transform>(); // it will ALWAYS add a transform component.
+
 	return m_entityList.At(refID);
 }
 

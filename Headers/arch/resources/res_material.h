@@ -1,21 +1,11 @@
 #pragma once
 
 #include <pch.h>
+#include <array>
 #include <variant>
 #include <arch/resources/res_shader.h>
 #include <arch/resources/res_material_uniform/res_material_uniform.h>
-
-// - constants -------------------------
-
-constexpr const char* U_OBJECT_MATRIX		{ "u_objectMtx" };
-constexpr const char* U_CAMERA_MATRIX		{ "u_cameraMtx" };
-constexpr const char* U_PROJECTION_MATRIX	{ "u_projectionMtx" };
-
-
-
-constexpr const char* U_COLOR		{ "u_color" };
-
-
+#include <arch/resources/res_material_uniform/res_material_uniformAliases.h>
 
 
 // - class -----------------------------
@@ -46,18 +36,23 @@ public:
 
 	int GetShader() const;
 
-	void Render(
+	virtual void Render(
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 
 		const glm::mat4& _cameraMatrix
-	
 	) const;
 
 
 	// - material helpers -------------------------------------
 	static unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType);
 
+	// - tex generator ----------------------------------------
+	static GLuint GenerateEmptyColorTexture();									// this function generates a 1x1 texture. No data is filled.
+	static void DeleteTexture(const GLuint& _id);								// this function deletes any texture.
+	static void UpdateColorTexture(const GLuint& _id, const glm::vec4& _col);	// this function changes a 1x1 texture color.
+	static std::array<GLubyte, 4> ColorToBytes(const glm::vec4& col);
 
+	
 protected:
 	void InitUniformLocations();
 	void SetUniform(std::string _uniformName, UniformData _data) const;

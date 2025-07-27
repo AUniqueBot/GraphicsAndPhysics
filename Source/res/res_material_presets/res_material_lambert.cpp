@@ -19,8 +19,13 @@ void LambertMaterial::Init() {
     lambertShader.SetShaderID(programId);
     SetShaderProgram(std::make_shared<ShaderProgram>(lambertShader));
 
+
+    m_reservedColorTexId = GenerateEmptyColorTexture();
+
     // - setting up uniforms -------------
     InitUniformLocations();
+
+    UpdateTextureID();
 }
 
 
@@ -30,14 +35,45 @@ const glm::vec4& LambertMaterial::Color() const {
 
 
 void LambertMaterial::Color(glm::vec4 _newColor) {
+    if (m_color == _newColor) return;
     m_color = _newColor;
+    UpdateColorTexture(m_reservedColorTexId, m_color);
 }
 
 void LambertMaterial::Color(unsigned _newColor) {
-    m_color = HexToVec4(_newColor);
+    Color(HexToVec4(_newColor));
+}
+
+void LambertMaterial::UsesColor(bool _usesColor) {
+    if (_usesColor == m_usesColor) return;
+    m_usesColor = _usesColor;
+    UpdateTextureID();
+}
+
+bool LambertMaterial::UsesColor() const {
+    return m_usesColor;
 }
 
 
+void LambertMaterial::UpdateTextureID() {
+    m_texId = m_usesColor ? m_reservedColorTexId : m_reservedImageTexId;
+}
 
+void LambertMaterial::Render(
+    const glm::mat4& _objectMatrix,
+    const glm::mat4& _projectionMatrix,
+    const glm::mat4& _cameraMatrix
+) const {
+    Material::Render(_objectMatrix, _projectionMatrix, _cameraMatrix);
 
+    const int shaderId{ GetShader() };
+    GLint colLoc = glGetUniformLocation(shaderId, U_ALBEDO);
+    
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, m_texId);
+
+    
+    glUniform1i(colLoc, 0);
+
+}
 

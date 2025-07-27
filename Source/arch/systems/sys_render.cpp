@@ -159,8 +159,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			);
 		}
 
-
-
 		// for now, position the frag shader
 		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
 

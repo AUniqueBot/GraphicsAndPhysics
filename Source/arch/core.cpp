@@ -3,6 +3,7 @@
 
 #include <arch/systems/sys_headers.h>
 #include <arch/components/comp_headers.h>
+#include <arch/resources/res_material_presets/res_material_lambert.h>
 
 
 Clock Core::m_clock {};
@@ -28,15 +29,6 @@ void Core::Init() {
 	Entity& cam =  *(m_registry.Instantiate());
 
 
-
-
-	// adding and removing
-	obj1.AddComponent<Transform>();
-	obj2.AddComponent<Transform>();
-	cam.AddComponent<Transform>();
-
-
-
 	
 	obj1.AddComponent<MeshRenderer>();	// object
 	obj2.AddComponent<Light>();			// light
@@ -50,8 +42,8 @@ void Core::Init() {
 	obj2.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
 	cam.GetComponent<Transform>()->Position(glm::vec3(3, 4, -5));
 	
-
-	
+	LambertMaterial& mat = static_cast<LambertMaterial&>(obj1.GetComponent<MeshRenderer>()->GetDefaultMaterial());
+	mat.Color(0xaaaaeeff);
 	
 
 	// initialise here.

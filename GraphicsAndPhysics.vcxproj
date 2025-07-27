@@ -152,6 +152,7 @@
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_lambert.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
+    <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewportManager.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />

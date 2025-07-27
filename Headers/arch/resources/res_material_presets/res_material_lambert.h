@@ -15,9 +15,32 @@ public:
 	void Color(glm::vec4 _newColor);
 	void Color(unsigned _newColor);
 
+	void UsesColor(bool _usesTexture);
+	bool UsesColor() const;
+
+	inline GLuint TextureID() const { return m_texId; }
 
 
+	void Render(
+		const glm::mat4& _objectMatrix,
+		const glm::mat4& _projectionMatrix,
+		const glm::mat4& _cameraMatrix
+	) const override;
+
+	// need a resource manager for textures
 private:
-	glm::vec4 m_color {};
+	void UpdateTextureID();
+private:
+
+	// - color ---------------------------------------
+	glm::vec4 m_color			{};
+	bool m_usesColor			{ true };
+	GLuint m_texId				{}; // texture identifier, sent via uniform
+
+	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
+	GLuint m_reservedColorTexId {}; // texture identifier, storage of color texture.
+
+	
+
 };
 
