@@ -75,7 +75,6 @@ std::string ShaderProgram::ParseShaderCode_Internal(
 	const std::string& filePath, 
 	std::unordered_set<std::string>& visited
 ) {
-
 	if (visited.contains(filePath)) {
 		return "// Skipping already included: " + filePath + "\n";
 	}
@@ -87,7 +86,7 @@ std::string ShaderProgram::ParseShaderCode_Internal(
 	std::istringstream stream(sourceCode);
 	std::string line;
 
-	std::regex includeRegex(R"(^\s*#include\s+\"(.+)\"\s*)");
+	std::regex includeRegex(R"(^\s*#include\s+[\"<](.+)[\">]\s*)");
 	std::string parentDir = filePath.substr(0, filePath.find_last_of("/\\"));
 
 	while (std::getline(stream, line)) {

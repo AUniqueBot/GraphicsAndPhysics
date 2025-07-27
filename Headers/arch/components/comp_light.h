@@ -46,6 +46,7 @@ public:
 	void Init() override {}
 
 	LightType Type() const;
+	void Type(LightType _type);
 	
 	float Power() const;
 	void Power(float _value);
@@ -58,7 +59,7 @@ public:
 
 private:
 
-	void UpdateLightData();
+	void UpdateLightData() const;
 
 private:
 	// generic values
@@ -80,10 +81,12 @@ private:
 	// spotlight
 	float m_angle				{ 25.0f };				// in degrees.
 
-	// all this would provide a struct of data to be sent for batch rendering.
 
-	LightData m_lightData		{};
-	bool m_lightDataMismatch	{ true };
+	// all this would provide a struct of data to be sent for rendering.
+
+	// -  cached data to be mutable --------------------------
+	mutable LightData m_lightData		{};
+	mutable bool m_lightDataMismatch	{ true };
 
 };
 

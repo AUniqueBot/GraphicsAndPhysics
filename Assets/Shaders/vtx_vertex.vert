@@ -1,5 +1,4 @@
-#version 460 core
-
+// #include "./UBO/CameraUBO.glsl"
 
 #define U_OBJECT_MATRIX u_objectMtx
 #define U_CAMERA_MATRIX u_cameraMtx

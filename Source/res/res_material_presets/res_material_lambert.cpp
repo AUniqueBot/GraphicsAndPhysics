@@ -8,8 +8,12 @@ void LambertMaterial::Init() {
 
 
     // - loading shader ------------------
-    std::string vertexShaderSource   = ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
-    std::string fragmentShaderSource = ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_flatColor.frag");
+    std::string vertexShaderSource   = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
+    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_lambert.frag");
+
+    LOG_INFO(fragmentShaderSource);
+    LOG_INFO(vertexShaderSource);
+
     ShaderProgram lambertShader{};
     GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
     GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
@@ -59,6 +63,7 @@ void LambertMaterial::UpdateTextureID() {
     m_texId = m_usesColor ? m_reservedColorTexId : m_reservedImageTexId;
 }
 
+
 void LambertMaterial::Render(
     const glm::mat4& _objectMatrix,
     const glm::mat4& _projectionMatrix,
@@ -66,14 +71,13 @@ void LambertMaterial::Render(
 ) const {
     Material::Render(_objectMatrix, _projectionMatrix, _cameraMatrix);
 
-    const int shaderId{ GetShader() };
-    GLint colLoc = glGetUniformLocation(shaderId, U_ALBEDO);
-    
+
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texId);
 
-    
-    glUniform1i(colLoc, 0);
+    if (m_uniformLocations.contains(U_ALBEDO)) {
+        glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
 
+    }
 }
 

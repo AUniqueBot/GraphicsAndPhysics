@@ -11,7 +11,6 @@
 #include <util/util_logging.h>
 
 
-
 // Some other todos - make a shader editor! How hard can it be? :')
 
 void RenderSystem::Init() {

@@ -5,6 +5,14 @@ LightType Light::Type() const {
     return m_lightType;
 }
 
+void Light::Type(LightType _type) {
+    if (_type == m_lightType) {
+        return;
+    }
+    m_lightType = _type;
+    m_lightDataMismatch = true;
+}
+
 float Light::Power() const {
     return m_power;
 }
@@ -29,12 +37,12 @@ inline void Light::Color(glm::vec3 _col) {
 
 LightData Light::GetLightData() const {
     if (m_lightDataMismatch) {
-        // UpdateLightData();
+         UpdateLightData();
     }
     return m_lightData;
 }
 
-void Light::UpdateLightData() {
+void Light::UpdateLightData() const {
     if (!m_lightDataMismatch) return;
     m_lightData.m_position_type.w   = m_lightType;
     m_lightData.m_color_power       = glm::vec4(m_color, m_power);

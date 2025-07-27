@@ -34,9 +34,9 @@ void Core::Init() {
 	obj2.AddComponent<Light>();			// light
 	cam.AddComponent<Camera>();			// cameara
 
-
-	obj2.GetComponent<Light>()->Power(20);
-
+	Light& light = *(obj2.GetComponent<Light>());
+	light.Power(5);
+	light.Type(LightType::AMBIENT);
 
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
 	obj2.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
