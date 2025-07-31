@@ -30,7 +30,6 @@ public:
 
 
 
-
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
 
@@ -46,8 +45,9 @@ private:
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
+	
 	ViewportManager m_viewportManager;
-
+	UBOManager m_uboManager;
 
 };
 

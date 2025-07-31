@@ -153,6 +153,9 @@
     <ClCompile Include="Source\arch\components\comp_light.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\util\util_graphics_debugging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -318,6 +321,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\util\util_graphics_debugging.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

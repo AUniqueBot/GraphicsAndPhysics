@@ -11,12 +11,12 @@ enum LightType {
 	SUN
 };
 
-struct LightData {
+struct alignas(sizeof(glm::vec4)) LightData {
 	// packed data to be sent to UBO for extensive testing
-	glm::vec4 m_position_type;	// x,y,z - position,  w - type
-	glm::vec4 m_direction_roll;	// x,y,z - direction, w - roll
-	glm::vec4 m_color_power;	// x,y,z - color,	  w - power
-	glm::vec4 m_attenuation;	// x,y - attenuation, z,w - padding
+	glm::vec4 m_position_type		{};	// x,y,z - position,  w - type
+	glm::vec4 m_direction_roll		{};	// x,y,z - direction, w - roll
+	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
+	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
 
 
 	void SetPosition(const glm::vec3& pos) { m_position_type = glm::vec4(pos, m_position_type.w); }

@@ -198,8 +198,10 @@ void Material::Render(
 	if (!shaderId) return;
 	glUseProgram(shaderId);
 
+
+
 	glUniformMatrix4fv(m_uniformData.at(U_OBJECT_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
 	glUniformMatrix4fv(m_uniformData.at(U_PROJECTION_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
 	glUniformMatrix4fv(m_uniformData.at(U_CAMERA_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
-
+	glGetError();
 }

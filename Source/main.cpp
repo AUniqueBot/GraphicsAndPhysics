@@ -22,6 +22,7 @@ int main() {
 
 	// tbh mate, idk what this does.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
 
 
 	// create a window

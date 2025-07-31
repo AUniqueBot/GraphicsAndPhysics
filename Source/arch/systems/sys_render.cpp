@@ -9,9 +9,57 @@
 #include <arch/components/comp_transform.h>`
 #include <util/util_ostreamOverrides.h>
 #include <util/util_logging.h>
-
+#include <util/util_graphics_debugging.h>
 
 // Some other todos - make a shader editor! How hard can it be? :')
+
+constexpr size_t C_PAD_SIZE { sizeof(glm::vec4) };
+struct LightUBOData {
+	int m_count	{};
+	int var2	{};
+	int _pad[2]	{};
+};
+
+
+
+void APIENTRY GLDebugCallback(GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam
+) {
+	// Filter out non-significant messages if you want, e.g., id == 131185 on NVIDIA
+	std::ostringstream oss;
+	oss << "\n// -------------------------------------------------------- //\n";
+	oss << "[GL DEBUG] id = " << id << '\n'
+		<< "source = " << source << '\n'
+		<< "type = " << type << '\n'
+		<< "severity=" << severity << '\n'
+		<< ">> message = " << message << '\n';
+	oss << "// -------------------------------------------------------- //\n";
+	// You can refine formatting / map enums to strings for readability.
+	LOG_INFO(oss.str());
+}
+
+void SetupGLDebug() {
+	GLint flags = 0;
+	glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
+	if (flags & GL_CONTEXT_FLAG_DEBUG_BIT) {
+		LOG_INFO("GEN");
+		glEnable(GL_DEBUG_OUTPUT);
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // easier for debugging (makes callback synchronous)
+		glDebugMessageCallback(GLDebugCallback, nullptr);
+		// Optional: control which messages come through
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+	}
+	else {
+		LOG_WARN("OpenGL context not created with debug flag; debug messages may be limited.");
+	}
+}
+
+
 
 void RenderSystem::Init() {
 
@@ -26,8 +74,9 @@ void RenderSystem::Init() {
 	Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
 
 	
-
-	LOG_INFO("Run Init");
+	SetupGLDebug();
+	m_uboManager.Init();
+	m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
 
 
 }
@@ -88,6 +137,8 @@ void RenderSystem::Update() {
 
 
 void RenderSystem::Render(const Viewport& _viewport) {
+	auto GetError = GraphicsDebug::GetError;
+
 	const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
 	const glm::mat4 & _projectionMatrix		{ _viewport.ProjectionMatrix() };;
 
@@ -105,9 +156,21 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
 	
 
-	std::vector<LightData> lightList = CullLights(_viewport);
+	std::vector<LightData> culledLights = CullLights(_viewport);
 	// set into UBO here.
 	
+	UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
+	LightUBOData lightUBO{};
+	lightUBO.m_count = 3;
+	lightUBO.var2 = 1;
+
+
+	lightUBO.m_count = 0;
+	for (size_t i = 0; i < lightUBO.m_count; ++i) {
+		//lightUBO.m_lightData[i] = culledLights[i]; // or whatever data source
+	}
+
+
 
 
 
@@ -135,6 +198,11 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			const Material& mat = mr->GetDefaultMaterial();
 			GLuint program = mr->GetDefaultMaterial().GetShader();
 			glUseProgram(program);	
+
+			int size{};
+			int binding{};
+			int blockId = glGetUniformBlockIndex(program, "LightBlock");
+
 			glm::mat4 objMat{ 1.f };
 
 			static glm::vec3 rot_v	{};
@@ -151,11 +219,15 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			scl = glm::scale(objMat, trs->Scale());
 			objMat = pos * rot * scl;
 
+
+			
+
 			mat.Render(
 				objMat,
 				_projectionMatrix,
 				_cameraMatrix
 			);
+			GetError();
 		}
 
 		// for now, position the frag shader
@@ -165,6 +237,9 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
 	}
 	glBindVertexArray(0);
+
+
+	//LOG_SPLITTER();
 }
 
 

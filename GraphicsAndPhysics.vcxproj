@@ -126,6 +126,7 @@
     <ClCompile Include="Source\res\res_resourceManager.cpp" />
     <ClCompile Include="Source\res\res_shader.cpp" />
     <ClCompile Include="Source\res\res_texture.cpp" />
+    <ClCompile Include="Source\util\util_graphics_debugging.cpp" />
     <ClCompile Include="Source\util\util_serialisation.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +180,7 @@
     <ClInclude Include="Headers\pch.h" />
     <ClInclude Include="Headers\util\Header.h" />
     <ClInclude Include="Headers\util\util_convenient_conversions.h" />
+    <ClInclude Include="Headers\util\util_graphics_debugging.h" />
     <ClInclude Include="Headers\util\util_logging.h" />
     <ClInclude Include="Headers\util\util_math.h" />
     <ClInclude Include="Headers\util\util_ostreamOverrides.h" />

@@ -1,5 +1,3 @@
-// #include "./UBO/CameraUBO.glsl"
-
 #define U_OBJECT_MATRIX u_objectMtx
 #define U_CAMERA_MATRIX u_cameraMtx
 #define U_PROJECTION_MATRIX u_projectionMtx

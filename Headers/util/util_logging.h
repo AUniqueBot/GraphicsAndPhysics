@@ -19,7 +19,7 @@
 #define LOG_WARN(message)  std::cout  << "[WARNING] - <" << FUNC_SIG << ">: " << message << '\n'
 #define LOG_ERROR(message) std::cout  << "[ERROR] -   <" << FUNC_SIG << ">: " << message << '\n'
 
-
+#define LOG_SPLITTER() std::cout << "// --------------------------------------------------------- //\n"
 
 
 

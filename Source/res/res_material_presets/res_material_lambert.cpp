@@ -11,8 +11,8 @@ void LambertMaterial::Init() {
     std::string vertexShaderSource   = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
     std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_lambert.frag");
 
-    LOG_INFO(fragmentShaderSource);
-    LOG_INFO(vertexShaderSource);
+    //LOG_INFO(fragmentShaderSource);
+    //LOG_INFO(vertexShaderSource);
 
     ShaderProgram lambertShader{};
     GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
@@ -69,15 +69,14 @@ void LambertMaterial::Render(
     const glm::mat4& _projectionMatrix,
     const glm::mat4& _cameraMatrix
 ) const {
+
+
     Material::Render(_objectMatrix, _projectionMatrix, _cameraMatrix);
-
-
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, m_texId);
 
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
-
     }
 }
 

@@ -15,8 +15,11 @@ public:
 	};
 public:
 	void Init();
-	inline size_t BufferSize() const;
-	inline void BufferSize(size_t _size);
+	
+	void BufferType(BUFFER_TYPE _type);
+	BUFFER_TYPE BufferType() const;
+	size_t BufferSize() const;
+	void BufferSize(size_t _size);
 
 
 	void BindBuffer();
@@ -40,6 +43,9 @@ public:
 	void Init();
 
 	void CreateUBO(UBO::BUFFER_TYPE _bufferType, size_t _size = 100);
+
+	UBO* GetUBO(UBO::BUFFER_TYPE _bufferType);
+	const UBO* GetUBO(UBO::BUFFER_TYPE _bufferType) const;
 
 private:
 	std::map<UBO::BUFFER_TYPE, UBO> m_uboMap;
