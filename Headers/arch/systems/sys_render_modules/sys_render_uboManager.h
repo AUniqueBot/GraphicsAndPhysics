@@ -21,8 +21,10 @@ public:
 	size_t BufferSize() const;
 	void BufferSize(size_t _size);
 
+	GLuint GetID() const { return m_bufferId; };
 
 	void BindBuffer();
+	void SetBinding(GLuint _program);
 
 	void FillBufferData(const void* _data);
 

@@ -17,3 +17,6 @@ constexpr const char* U_METALNESS			{ "u_metalness" };
 constexpr const char* U_ROUGHNESS			{ "u_roughness" };
 
 constexpr const char* U_EMISIVE				{ "u_emissive" };
+
+// - other ------------------------------------------------------
+constexpr const char* U_DELTATIME			{ "u_deltaTime" };

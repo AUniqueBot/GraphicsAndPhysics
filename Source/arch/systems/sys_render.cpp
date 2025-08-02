@@ -22,25 +22,18 @@ struct LightUBOData {
 
 
 
-void APIENTRY GLDebugCallback(GLenum source,
+void GLAPIENTRY
+MessageCallback(GLenum source,
 	GLenum type,
 	GLuint id,
 	GLenum severity,
 	GLsizei length,
 	const GLchar* message,
-	const void* userParam
-) {
-	// Filter out non-significant messages if you want, e.g., id == 131185 on NVIDIA
-	std::ostringstream oss;
-	oss << "\n// -------------------------------------------------------- //\n";
-	oss << "[GL DEBUG] id = " << id << '\n'
-		<< "source = " << source << '\n'
-		<< "type = " << type << '\n'
-		<< "severity=" << severity << '\n'
-		<< ">> message = " << message << '\n';
-	oss << "// -------------------------------------------------------- //\n";
-	// You can refine formatting / map enums to strings for readability.
-	LOG_INFO(oss.str());
+	const void* userParam)
+{
+	fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
+		(type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
+		type, severity, message);
 }
 
 void SetupGLDebug() {
@@ -50,7 +43,7 @@ void SetupGLDebug() {
 		LOG_INFO("GEN");
 		glEnable(GL_DEBUG_OUTPUT);
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS); // easier for debugging (makes callback synchronous)
-		glDebugMessageCallback(GLDebugCallback, nullptr);
+		glDebugMessageCallback(MessageCallback, nullptr);
 		// Optional: control which messages come through
 		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 	}
@@ -128,6 +121,7 @@ void RenderSystem::Update() {
 
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 		glClear(clearFlags);
+		//glClearDepth(0.0f);
 		Render(currentViewport); // replace with a single viewport.
 	}	
 }
@@ -159,18 +153,12 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	std::vector<LightData> culledLights = CullLights(_viewport);
 	// set into UBO here.
 	
-	UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
-	LightUBOData lightUBO{};
-	lightUBO.m_count = 3;
-	lightUBO.var2 = 1;
 
+	//for (size_t i = 0; i < lightUBO.m_count; ++i) {
+	//	//lightUBO.m_lightData[i] = culledLights[i]; // or whatever data source
+	//}
 
-	lightUBO.m_count = 0;
-	for (size_t i = 0; i < lightUBO.m_count; ++i) {
-		//lightUBO.m_lightData[i] = culledLights[i]; // or whatever data source
-	}
-
-
+	// lightBuffer.FillBufferData(&lightBuffer);
 
 
 
@@ -202,6 +190,18 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			int size{};
 			int binding{};
 			int blockId = glGetUniformBlockIndex(program, "LightBlock");
+
+			UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
+			LightUBOData lightUBO{};
+			lightUBO.m_count = 1;
+			lightUBO.var2 = 1;
+			lightUBO.m_count = 0;
+
+			lightBuffer.FillBufferData(&lightUBO);
+
+			
+
+
 
 			glm::mat4 objMat{ 1.f };
 

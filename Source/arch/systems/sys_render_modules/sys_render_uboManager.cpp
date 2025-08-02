@@ -10,20 +10,31 @@ struct LightUBOData {
 
 
 void UBO::Init() {
-	auto GetError = GraphicsDebug::GetError;
+	using namespace GraphicsDebug;
+	GetError();
 	if (m_bufferType == _COUNT) {
 		LOG_ERROR("Unspecified Buffer Type. Ignoring.");
 		return;
 	}
+
+	LOG_INFO("INIT START");
 	glGenBuffers(1, &m_bufferId);
+	GetError();
+	if (GL_INVALID_INDEX == m_bufferId) {
+		LOG_ERROR("BAD INDEX GENERATED");
+	}
+	else {
+
+	}
 	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);
-	GraphicsDebug::GetError();
+	GetError();
 	glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, NULL, GL_DYNAMIC_DRAW);
 	GetError();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_bufferId);
 	GetError();
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	LOG_INFO("INIT END");
 }
 
 void UBO::BufferType(BUFFER_TYPE _type) {
@@ -51,18 +62,19 @@ void UBO::BindBuffer() {
 
 }
 
+void UBO::SetBinding(GLuint _program) {
+	const int uniformIndex = glGetUniformBlockIndex(_program, "LightBlock");
+	glUniformBlockBinding(_program, uniformIndex, 0);
+}
+
 void UBO::FillBufferData(const void* _data) {
-	auto GetError = GraphicsDebug::GetError;
 	if (!_data) {
 		LOG_ERROR("nullptr provided, no data filled");
 		return;
 	}
 	BindBuffer();
-	GetError();
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
-	GetError();
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	GetError();
 }
 
 

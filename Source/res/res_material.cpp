@@ -138,6 +138,11 @@ void Material::UpdateColorTexture(const GLuint& _id, const glm::vec4& _col) {
 
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	const GLenum errCode = glGetError();
+	if (errCode != GL_NO_ERROR) {
+		LOG_ERROR("Bind texture failure.");
+	}
+	
 }
 
 std::array<GLubyte, 4> Material::ColorToBytes(const glm::vec4& col) {
@@ -164,11 +169,15 @@ void Material::InitUniformLocations() {
 			GLenum type{};
 			glGetActiveUniform(programId, i, name.size(), &nameLen, &size, &type, &name[0]);
 			name.resize(nameLen);
-			
+			GLint location = glGetUniformLocation(programId, name.c_str());
+			if (-1 == location) {
+				LOG_WARN("Uniform '" << name << "' location is -1 (probably optimized out or inactive)");
+				continue;
+			}
 
 			// data here
 			UniformData u_data{};
-			u_data.m_uniformLocation = i;
+			u_data.m_uniformLocation = location;
 			u_data.m_type = type;
 			LOG_INFO("Uniform name: " << name);
 			LOG_INFO("Uniform type: " << type);
@@ -199,9 +208,43 @@ void Material::Render(
 	glUseProgram(shaderId);
 
 
+	GLint uniformLocation{};
+	auto GetUniform = [this](const char* _uniformName) {
+		auto it = m_uniformData.find(_uniformName);
+		if (it == m_uniformData.end()) {
+			LOG_WARN("Uniform '" << _uniformName << "' not found.");
+			return -1; // invalid location
+		}
+		return it->second.m_uniformLocation;
+		
+	
+	};
 
-	glUniformMatrix4fv(m_uniformData.at(U_OBJECT_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
-	glUniformMatrix4fv(m_uniformData.at(U_PROJECTION_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
-	glUniformMatrix4fv(m_uniformData.at(U_CAMERA_MATRIX).m_uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+
+	uniformLocation = GetUniform(U_DELTATIME);
+	if (-1 != uniformLocation) {
+		static float timer{};
+		static bool downward{};
+
+		timer += downward ? -Core::DeltaTime() : Core::DeltaTime();
+		timer = std::clamp(timer, 0.f, 1.f);
+		downward = timer == 1 ? true : (timer == 0 ? false: downward);
+
+		glUniform1f(uniformLocation, timer);
+	}
+	uniformLocation = GetUniform(U_OBJECT_MATRIX);
+	if (-1 != uniformLocation) {
+		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
+	}
+	uniformLocation = GetUniform(U_PROJECTION_MATRIX);
+	if (-1 != uniformLocation) {
+		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
+	}
+	uniformLocation = GetUniform(U_CAMERA_MATRIX);
+	if (-1 != uniformLocation) {
+		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+	}
+
+
 	glGetError();
 }
