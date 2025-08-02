@@ -1,12 +1,9 @@
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <util/util_graphics_debugging.h>
+#include <arch/components/comp_light.h>
 
+#include <util/util_ostreamOverrides.h>
 
-struct LightUBOData {
-	int m_count{};
-	int var2{};
-	int _pad[2]{};
-};
 
 
 void UBO::Init() {
@@ -20,7 +17,7 @@ void UBO::Init() {
 	LOG_INFO("INIT START");
 	glGenBuffers(1, &m_bufferId);
 	GetError();
-	if (GL_INVALID_INDEX == m_bufferId) {
+	if (!m_bufferId) {
 		LOG_ERROR("BAD INDEX GENERATED");
 	}
 	else {
@@ -30,7 +27,7 @@ void UBO::Init() {
 	GetError();
 	glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, NULL, GL_DYNAMIC_DRAW);
 	GetError();
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, m_bufferId);
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_bufferType, m_bufferId);
 	GetError();
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -56,9 +53,8 @@ void UBO::BufferSize(size_t _size) {
 
 
 void UBO::BindBuffer() {
-	auto GetError = GraphicsDebug::GetError;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);	
-	GetError();
+	GraphicsDebug::GetError();
 
 }
 
@@ -73,7 +69,22 @@ void UBO::FillBufferData(const void* _data) {
 		return;
 	}
 	BindBuffer();
+
+
+	LightUBOData culledLights = *(LightUBOData*)(_data);
+
+	for (unsigned i{}; i < culledLights.m_count; ++i) {
+
+		LOG_SPLITTER();
+		LOG_INFO("type:  " << culledLights.m_lightData[i].m_position_type.w);
+		LOG_INFO("power: " << culledLights.m_lightData[i].m_color_power.w);
+		LOG_INFO("color: " << culledLights.m_lightData[i].m_color_power);
+		LOG_INFO("count: " << culledLights.m_count);
+		LOG_SPLITTER();
+	}
+
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
+	GraphicsDebug::GetError();
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

@@ -2,7 +2,7 @@
 #include <pch.h>
 #include <variant>
 
-constexpr unsigned C_MAX_LIGHTS { 8 };
+
 
 // idk
 struct UniformData  {

@@ -13,12 +13,7 @@
 
 // Some other todos - make a shader editor! How hard can it be? :')
 
-constexpr size_t C_PAD_SIZE { sizeof(glm::vec4) };
-struct LightUBOData {
-	int m_count	{};
-	int var2	{};
-	int _pad[2]	{};
-};
+
 
 
 
@@ -121,7 +116,7 @@ void RenderSystem::Update() {
 
 		glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
 		glClear(clearFlags);
-		//glClearDepth(0.0f);
+		glClearDepth(1.0f);
 		Render(currentViewport); // replace with a single viewport.
 	}	
 }
@@ -153,13 +148,14 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	std::vector<LightData> culledLights = CullLights(_viewport);
 	// set into UBO here.
 	
+	LightUBOData lightData{};
+	lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(culledLights.size()));
+	for (size_t i = 0; i < lightData.m_count; ++i) {
+		lightData.m_lightData[i] = culledLights[i]; // or whatever data source
+	}
 
-	//for (size_t i = 0; i < lightUBO.m_count; ++i) {
-	//	//lightUBO.m_lightData[i] = culledLights[i]; // or whatever data source
-	//}
-
-	// lightBuffer.FillBufferData(&lightBuffer);
-
+	UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
+	lightBuffer.FillBufferData(&lightData);
 
 
 	auto& entityList = registry.GetEntityList();
@@ -187,17 +183,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			GLuint program = mr->GetDefaultMaterial().GetShader();
 			glUseProgram(program);	
 
-			int size{};
-			int binding{};
-			int blockId = glGetUniformBlockIndex(program, "LightBlock");
 
-			UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
-			LightUBOData lightUBO{};
-			lightUBO.m_count = 1;
-			lightUBO.var2 = 1;
-			lightUBO.m_count = 0;
-
-			lightBuffer.FillBufferData(&lightUBO);
 
 			
 
@@ -265,7 +251,7 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 	for (const auto& light : lightComponentData) {
 
 		EntityView entity = registry.Get(light.GetEntityID());
-		if (entity) continue;
+		if (!entity) continue;
 
 		//
 		if (!LightCollisionTest(light, _viewport)) {
@@ -278,7 +264,9 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 		LightData lightData = light.GetLightData();
 		glm::vec3 position = trs->Position();
 		lightData.SetPosition(position);
-		LOG_INFO("Position: " << position);
+		LOG_INFO("position: " << position);
+		LOG_INFO("power: " << lightData.m_color_power.w);
+		LOG_INFO("type: " << lightData.m_position_type.w);
 		potentialLights.push_back(lightData);
 	}
 	return potentialLights;

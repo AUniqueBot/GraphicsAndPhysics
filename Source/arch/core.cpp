@@ -35,7 +35,7 @@ void Core::Init() {
 	cam.AddComponent<Camera>();			// cameara
 
 	Light& light = *(obj2.GetComponent<Light>());
-	light.Power(5);
+	light.Power(0.5);
 	light.Type(LightType::AMBIENT);
 
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
@@ -44,7 +44,7 @@ void Core::Init() {
 	
 	LambertMaterial& mat = static_cast<LambertMaterial&>(obj1.GetComponent<MeshRenderer>()->GetDefaultMaterial());
 	mat.Color(0xaaaaeeff);
-	
+ 	
 
 	// initialise here.
 	for (System* s : m_systemInstances) {

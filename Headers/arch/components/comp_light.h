@@ -33,6 +33,14 @@ struct alignas(sizeof(glm::vec4)) LightData {
 };
 
 
+constexpr unsigned C_MAX_LIGHTS{ 50 };
+struct alignas(sizeof(glm::vec4)) LightUBOData {
+	int m_count{};
+	int _pad[3]{};
+	LightData m_lightData[C_MAX_LIGHTS];
+};
+
+
 
 class Light : public Component {
 
