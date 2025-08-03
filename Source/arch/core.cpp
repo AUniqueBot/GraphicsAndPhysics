@@ -25,23 +25,33 @@ void Core::Init() {
 
 
 	Entity& obj1 = *(m_registry.Instantiate());
-	Entity& obj2 = *(m_registry.Instantiate());
+	Entity& ambientLight = *(m_registry.Instantiate());
+	Entity& dirLight = *(m_registry.Instantiate());
 	Entity& cam =  *(m_registry.Instantiate());
 
 
 	
 	obj1.AddComponent<MeshRenderer>();	// object
-	obj2.AddComponent<Light>();			// light
+	ambientLight.AddComponent<Light>();			// ambient light
+	dirLight.AddComponent<Light>();			// directional light
 	cam.AddComponent<Camera>();			// cameara
 
-	Light& light = *(obj2.GetComponent<Light>());
-	light.Power(0.5);
-	light.Type(LightType::AMBIENT);
+	Light& _ambientLight = *(ambientLight.GetComponent<Light>());
+	_ambientLight.Power(0.3);
+	_ambientLight.Type(LightType::AMBIENT);
 
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
-	obj2.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
+	ambientLight.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
 	cam.GetComponent<Transform>()->Position(glm::vec3(3, 4, -5));
 	
+	Light& _dirLight = *(dirLight.GetComponent<Light>());
+
+	_dirLight.Type(DIRECTIONAL);
+	_dirLight.Power(1);
+
+	dirLight.GetComponent<Transform>()->Forward(glm::vec3(0.5, 1, -1));
+
+
 	LambertMaterial& mat = static_cast<LambertMaterial&>(obj1.GetComponent<MeshRenderer>()->GetDefaultMaterial());
 	mat.Color(0xaaaaeeff);
  	

@@ -152,6 +152,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(culledLights.size()));
 	for (size_t i = 0; i < lightData.m_count; ++i) {
 		lightData.m_lightData[i] = culledLights[i]; // or whatever data source
+		
+
 	}
 
 	UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
@@ -264,9 +266,11 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 		LightData lightData = light.GetLightData();
 		glm::vec3 position = trs->Position();
 		lightData.SetPosition(position);
-		LOG_INFO("position: " << position);
-		LOG_INFO("power: " << lightData.m_color_power.w);
-		LOG_INFO("type: " << lightData.m_position_type.w);
+		// direction of 0, -1, 0, * quat.
+		lightData.SetDirection(trs->Forward());
+
+
+
 		potentialLights.push_back(lightData);
 	}
 	return potentialLights;
@@ -286,6 +290,7 @@ bool RenderSystem::LightCollisionTest(const Light& _lightComponent, const Viewpo
 		testCase = SpotLightCollisionTest(_lightComponent, _viewport);
 		break;
 	case DIRECTIONAL:
+		testCase = true;
 		break;
 	case AMBIENT:
 		testCase = true;

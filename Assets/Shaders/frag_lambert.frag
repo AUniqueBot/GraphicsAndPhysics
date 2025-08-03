@@ -21,8 +21,8 @@ layout (std140, binding=2) uniform LightBlock {
 	LightData m_lightData[50];
 };
 
-vec4 CalculateAmbient() {
-    vec4 ambientValue = vec4(0);
+vec3 CalculateAmbient() {
+    vec3 ambientValue = vec3(0);
 
     for (int i = 0; i < m_count; ++i) {
         LightData currentData = m_lightData[i];
@@ -32,7 +32,7 @@ vec4 CalculateAmbient() {
         vec3 lightColor = currentData.m_color_power.xyz;
         float power = currentData.m_color_power.w;
 
-        ambientValue = ambientValue + vec4(lightColor * power, 1.0);
+        ambientValue = ambientValue + vec3(lightColor * power);
     }
 
     // Optionally clamp to prevent overbright
@@ -41,10 +41,35 @@ vec4 CalculateAmbient() {
     return ambientValue;
 }
 
-void main() {
 
+vec3 CalculateDirectionalLighting(vec3 fragNormal) {
+    vec3 N = normalize(fragNormal);
+    vec3 result = vec3(0.0);
+
+    for (int i = 0; i < m_count; ++i) {
+        LightData currentData = m_lightData[i];
+        if (currentData.m_position_type.w != 3.0) {
+            continue;
+        }
+
+        // Direction is assumed to be the light direction (e.g., from which light comes)
+        vec3 lightDir = normalize(currentData.m_direction_roll.xyz);
+        float NdotL = max(dot(N, lightDir), 0.0);
+
+        vec3 lightColor = currentData.m_color_power.xyz;
+        float power = currentData.m_color_power.w;
+
+        // Lambert: albedo * lightColor * power * cos(theta)
+        result += lightColor * power * NdotL;
+    }
+    return result;
+}
+
+
+
+void main() {
 	vec4 color = texture(u_albedo, frag_uv);
-    out_color = color * CalculateAmbient();
+    out_color = color * vec4(CalculateDirectionalLighting(frag_normal) + CalculateAmbient(), 1);
 }
 
 

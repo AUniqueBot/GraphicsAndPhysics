@@ -20,11 +20,12 @@ out vec3 frag_normal;
 out vec2 frag_uv;
 
 void main(){
-    // do something here
-    gl_Position = U_PROJECTION_MATRIX * U_CAMERA_MATRIX * U_OBJECT_MATRIX * vec4(a_position, 1.0);
+    vec4 worldPos = U_OBJECT_MATRIX * vec4(a_position, 1.0);
+    gl_Position = U_PROJECTION_MATRIX * U_CAMERA_MATRIX * worldPos;
 
-    frag_position = vec3(gl_Position);
-    frag_normal = a_normal;
+    mat3 normalMatrix = transpose(inverse(mat3(U_OBJECT_MATRIX)));
+    frag_normal = normalize(normalMatrix * a_normal);
+
+    frag_position = worldPos.xyz; // world-space position
     frag_uv = a_uv;
-    
 }
