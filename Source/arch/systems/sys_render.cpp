@@ -66,6 +66,7 @@ void RenderSystem::Init() {
 	m_uboManager.Init();
 	m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
 
+	m_vaoManager.Init();
 
 }
 
@@ -174,7 +175,24 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
 		// assigns this buffer to mesh.
 		const Mesh& mesh = mr->GetMesh();
-		mesh.UseVAO();
+
+		// set up vao data
+		VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh.VAOIdentifier()) };
+		if (!vaoHandler) continue;
+
+		VAOHandler& currentVAO = *vaoHandler;
+		currentVAO.BindVAO();
+		currentVAO.LogDebug();
+
+
+		unsigned vertexCount = mesh.GetVertexCount();
+		currentVAO.SetData("position", mesh.GetVertexData(), mesh.GetVertexDataSize());
+		currentVAO.SetData("normal", mesh.GetNormalData(), mesh.GetNormalDataSize());
+		currentVAO.SetData("uv", mesh.GetUVData(), mesh.GetUVDataSize());
+		currentVAO.SetVertexIndices(mesh.GetIndexData(), mesh.GetIndexDataSize());
+
+
+
 
 		if (false) {
 			// go through each material
@@ -184,11 +202,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			const Material& mat = mr->GetDefaultMaterial();
 			GLuint program = mr->GetDefaultMaterial().GetShader();
 			glUseProgram(program);	
-
-
-
-			
-
 
 
 			glm::mat4 objMat{ 1.f };
@@ -219,8 +232,9 @@ void RenderSystem::Render(const Viewport& _viewport) {
 		}
 
 		// for now, position the frag shader
-		glDrawElements(GL_TRIANGLES, mesh.IndexCount(), GL_UNSIGNED_INT, 0);
-
+		glDrawElements(GL_TRIANGLES, mesh.GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+		m_vaoManager.UnbindVAO();
+		glBindTexture(GL_TEXTURE_2D, 0);
 		
 
 	}

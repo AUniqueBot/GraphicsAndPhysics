@@ -16,16 +16,9 @@ void MeshRenderer::Init() {
 }
 
 void MeshRenderer::End() {
-	//
+	
 }
 
-int MeshRenderer::VAO() const {
-	return m_mesh.VAO();
-}
-
-int MeshRenderer::VBO() const {
-	return 0;
-}
 
 void MeshRenderer::Render(
 	const glm::vec4& _objectMatrix, 

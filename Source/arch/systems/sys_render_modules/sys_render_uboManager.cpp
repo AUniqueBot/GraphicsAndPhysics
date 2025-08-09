@@ -73,16 +73,6 @@ void UBO::FillBufferData(const void* _data) {
 
 	LightUBOData culledLights = *(LightUBOData*)(_data);
 
-	for (unsigned i{}; i < culledLights.m_count; ++i) {
-
-		LOG_SPLITTER();
-		LOG_INFO("type:  " << culledLights.m_lightData[i].m_position_type.w);
-		LOG_INFO("power: " << culledLights.m_lightData[i].m_color_power.w);
-		LOG_INFO("color: " << culledLights.m_lightData[i].m_color_power);
-		LOG_INFO("count: " << culledLights.m_count);
-		LOG_SPLITTER();
-	}
-
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
 	GraphicsDebug::GetError();
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);

@@ -15,9 +15,9 @@
 #endif
 
 
-#define LOG_INFO(message)  std::cout  << "[INFO] -    <" << FUNC_SIG << ">: " << message << '\n'
-#define LOG_WARN(message)  std::cout  << "[WARNING] - <" << FUNC_SIG << ">: " << message << '\n'
-#define LOG_ERROR(message) std::cout  << "[ERROR] -   <" << FUNC_SIG << ">: " << message << '\n'
+#define LOG_INFO(message)  if (_DEBUG) std::cout  << "[INFO] -    <" << FUNC_SIG << ">: " << message << '\n'
+#define LOG_WARN(message)  if (_DEBUG) std::cout  << "[WARNING] - <" << FUNC_SIG << ">: " << message << '\n'
+#define LOG_ERROR(message) if (_DEBUG) std::cout  << "[ERROR] -   <" << FUNC_SIG << ">: " << message << '\n'
 
 #define LOG_SPLITTER() std::cout << "// --------------------------------------------------------- //\n"
 

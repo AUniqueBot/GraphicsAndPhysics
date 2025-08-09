@@ -1,44 +1,10 @@
 #include <pch.h>
 #include <arch/resources/res_mesh.h>
+#include <assimp/Importer.hpp>      // C++ importer interface
+#include <assimp/scene.h>           // Output data structure
+#include <assimp/postprocess.h>     // Post processing flags
 
 // - statics -------------------------------------------
-
-static float vtxData[] = {
-	// positions		// normal			// uv
-
-	// x y z.
-
-	// back face
-	-0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,    0.0f, 0.0f, -1.0f,    1.0f, 1.0f,
-
-	-0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,    0.0f, 0.0f,  1.0f,    1.0f, 1.0f,
-    
-	-0.5f, -0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
-    -0.5f, -0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
-    -0.5f,  0.5f, -0.5f,    -1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
-    -0.5f,  0.5f,  0.5f,    -1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
-	
-	 0.5f, -0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 0.0f,
-	 0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,    1.0f, 1.0f,
-	
-	-0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f, -0.5f, -0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 0.0f,
-	-0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,    0.0f, -1.0f, 0.0f,    1.0f, 1.0f,
-	
-	-0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 0.0f,
-	 0.5f,  0.5f, -0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 0.0f,
-	-0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,    0.0f,  1.0f, 0.0f,    1.0f, 1.0f  
-};
 
 static float positionData[] = {
 	// x y z.
@@ -163,56 +129,124 @@ void Mesh::Load() {
 
 	Init();
 
+	// general flow
+	Assimp::Importer importer;
+	std::string path{};
+	const aiScene* scene = importer.ReadFile(
+		path,
+		aiProcess_CalcTangentSpace |
+		aiProcess_Triangulate |
+		aiProcess_JoinIdenticalVertices |
+		aiProcess_SortByPType
+
+	);
+
+
+	if (!scene || !scene->HasMeshes()) return;
+	
+	
+	unsigned meshCount	= scene->mNumMeshes;
+	aiMesh** meshList	= scene->mMeshes;
+	
+	
+	// loading models
+	std::vector<std::vector<glm::vec3>> meshVertexList(meshCount);
+	std::vector<std::vector<glm::vec3>> meshNormalsList(meshCount);
+	std::vector<std::vector<glm::vec3>> meshUVsList(meshCount);
+	for (unsigned meshIndex = 0; meshIndex < meshCount; ++meshIndex) {
+		const aiMesh* currentMesh = meshList[meshIndex];
+
+		std::vector<glm::vec3>& vertexListGLM	= meshVertexList[meshIndex];
+		std::vector<glm::vec3>& normalsListGLM	= meshNormalsList[meshIndex];
+		std::vector<glm::vec3>& uvListGLM		= meshUVsList[meshIndex];
+		
+		vertexListGLM.reserve(currentMesh->mNumVertices);
+		normalsListGLM.reserve(currentMesh->mNumVertices);
+		uvListGLM.reserve(currentMesh->mNumVertices);
+
+		
+		
+		
+		for (unsigned vtxIndex = 0; vtxIndex < currentMesh->mNumVertices; ++vtxIndex) {
+			const aiVector3D& pos = currentMesh->mVertices[vtxIndex];
+			const aiVector3D& nml = currentMesh->mNormals[vtxIndex];
+			vertexListGLM.emplace_back(pos.x, pos.y, pos.z);
+			normalsListGLM.emplace_back(nml.x, nml.y, nml.z);
+		}
+	}
+
+	
+
+	// loading mats
+	unsigned matCount	= scene->mNumMaterials;
+	aiMaterial** matList = scene->mMaterials;
+	
+
+	
+
 }
 
-void Mesh::Init() {
-	/*
-		initialises a mesh.
-	
-	*/
+void Mesh::Init() {}
 
-	// generate buffers
-	glGenVertexArrays(1, &m_vao);
-	glGenBuffers(3, m_vbo);
-	glGenBuffers(1, &m_ebo);
 
-	
 
-	UseVAO();
 
-	// filling vertex data
-	
-	// position data
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]); // replace with vertex buffer by assimp.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(positionData), positionData, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glEnableVertexAttribArray(0); // at position 0
 
-	// normal data
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(normalData), normalData, GL_STATIC_DRAW);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glEnableVertexAttribArray(1); // at position 1
 
-	// uv data
-	glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(uvData), uvData, GL_STATIC_DRAW);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glEnableVertexAttribArray(2); // at position 2
+unsigned Mesh::GetVertexCount() const {
+	//LOG_INFO("Vertex Count: "<< (sizeof(positionData) / 3 / sizeof(float)));
+	return sizeof(positionData)/(3 * sizeof(float)); // pos = vec3 = 3x float
+}
 
-	// filling vertex to face data
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(idxList), idxList, GL_STATIC_DRAW);
 
-	// unbind 
-	glBindVertexArray(0);
-	m_indexCount = sizeof(idxList) / sizeof(unsigned);
-	
+const float* Mesh::GetVertexData() const {
+	return positionData;
+}
+
+
+const size_t Mesh::GetVertexDataSize() const {
+	return sizeof(positionData);
+}
+
+const size_t Mesh::GetNormalDataSize() const {
+	return sizeof(normalData);
+}
+const float* Mesh::GetNormalData() const {
+	return normalData;
+}
+
+const size_t Mesh::GetUVDataSize() const {
+	return sizeof(uvData);
+}
+
+const float* Mesh::GetUVData() const {
+	return uvData;
+}
+
+const size_t Mesh::GetIndexDataSize() const {
+	return sizeof(idxList);
+}
+
+const unsigned* Mesh::GetIndexData() const {
+	return idxList;
+}
+
+const unsigned Mesh::GetIndexDataCount() const {
+	return sizeof(idxList)/sizeof(unsigned);
+}
+
+
+std::string Mesh::VAOIdentifier() const {
+	return m_vaoName;
+}
+
+void Mesh::VAOIdentifier(std::string& _newIdentifier) {
+	if (m_vaoName == _newIdentifier) return;
+	m_vaoName = _newIdentifier;
 }
 
 
 
-void Mesh::UseVAO() const {
-	glBindVertexArray(m_vao);
-}
+
+
 

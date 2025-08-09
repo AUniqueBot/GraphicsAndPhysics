@@ -156,6 +156,9 @@
     <ClCompile Include="Source\util\util_graphics_debugging.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_vaoManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">
@@ -324,6 +327,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\util\util_graphics_debugging.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

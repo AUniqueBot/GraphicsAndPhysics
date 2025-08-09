@@ -27,9 +27,6 @@ public:
 
 
 
-	int VAO() const;
-	int VBO() const;
-
 
 	const Mesh& GetMesh() const	{ return m_mesh; };
 	Mesh& GetMesh()				{ return m_mesh; };

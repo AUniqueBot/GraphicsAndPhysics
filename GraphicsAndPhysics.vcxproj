@@ -67,7 +67,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)Extern\lib\glfw\glfw3.lib;$(ProjectDir)Extern\lib\glew\glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Extern\lib\glfw\glfw3.lib;$(ProjectDir)Extern\lib\glew\glew32.lib;$(ProjectDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>
@@ -94,7 +94,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(ProjectDir)Extern\lib\glfw\glfw3.lib;$(ProjectDir)Extern\lib\glew\glew32.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(ProjectDir)Extern\lib\glfw\glfw3.lib;$(ProjectDir)Extern\lib\glew\glew32.lib;$(ProjectDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -108,6 +108,7 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewportManager.cpp" />
     <ClCompile Include="Source\res\res_material.cpp" />
     <ClCompile Include="Source\res\res_material_uniform\res_material_ubo.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_vaoManager.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\core\core_coordinatesystem.cpp" />
@@ -154,6 +155,9 @@
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_lambert.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewportManager.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
