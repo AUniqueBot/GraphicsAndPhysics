@@ -5,6 +5,9 @@
 #include <assimp/postprocess.h>     // Post processing flags
 
 
+
+
+
 // - class methods -------------------------------------
 
 void Mesh::Load() {
@@ -85,8 +88,7 @@ void Mesh::Load() {
 }
 
 void Mesh::Init() {
-
-
+	Load();
 }
 
 
@@ -95,7 +97,6 @@ void Mesh::Init() {
 
 
 unsigned Mesh::GetVertexCount() const {
-	//LOG_INFO("Vertex Count: "<< (sizeof(positionData) / 3 / sizeof(float)));
 	return m_vertexPositions.size(); // pos = vec3 = 3x float
 }
 
@@ -117,7 +118,7 @@ const float* Mesh::GetNormalData() const {
 }
 
 const unsigned Mesh::GetUVCount() const {
-	return 0;
+	return m_uvs.size();
 }
 
 const size_t Mesh::GetUVDataSize(unsigned _index) const {
@@ -126,7 +127,7 @@ const size_t Mesh::GetUVDataSize(unsigned _index) const {
 }
 
 const float* Mesh::GetUVData(unsigned _index) const {
-	if (_index >= m_uvs.size()) return 0;
+	if (_index >= m_uvs.size()) return nullptr;
 	return reinterpret_cast<const float*>(m_uvs[_index].data());
 }
 

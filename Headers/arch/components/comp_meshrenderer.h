@@ -28,8 +28,8 @@ public:
 
 
 
-	const Mesh& GetMesh() const	{ return m_mesh; };
-	Mesh& GetMesh()				{ return m_mesh; };
+	std::shared_ptr<const Mesh> GetMesh() const	{ return m_mesh; };
+	std::shared_ptr<Mesh> GetMesh()				{ return m_mesh; };
 	
 
 	/*
@@ -57,7 +57,7 @@ private:
 	// Needs Mesh.
 	// model resource
 	
-	Mesh m_mesh							{};
+	std::shared_ptr<Mesh> m_mesh		{};
 	std::vector<Material> m_materials;
 	bool m_castShadow					{ true };
 	bool m_staticShadow					{};

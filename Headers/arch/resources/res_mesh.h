@@ -23,19 +23,16 @@ public:
 	// - mesh data ----------------------------------
 	unsigned GetVertexCount() const;
 	
-	const size_t GetVertexDataSize() const;
-	const float* GetVertexData() const;
-
-	const size_t GetNormalDataSize() const;
-	const float* GetNormalData() const;
-	
-	const unsigned GetUVCount() const;
-	const size_t GetUVDataSize(unsigned _index) const;
-	const float* GetUVData(unsigned _index) const;
-
-	const size_t GetIndexDataSize() const;
-	const unsigned* GetIndexData() const;
-	const unsigned GetIndexDataCount() const;
+	virtual const size_t GetVertexDataSize() const;
+	virtual const float* GetVertexData() const;
+	virtual const size_t GetNormalDataSize() const;
+	virtual const float* GetNormalData() const;
+	virtual const unsigned GetUVCount() const;
+	virtual const size_t GetUVDataSize(unsigned _index) const;
+	virtual const float* GetUVData(unsigned _index) const;
+	virtual const size_t GetIndexDataSize() const;
+	virtual const unsigned* GetIndexData() const;
+	virtual const unsigned GetIndexDataCount() const;
 
 
 	std::string VAOIdentifier() const;

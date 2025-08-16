@@ -171,14 +171,15 @@ void RenderSystem::Render(const Viewport& _viewport) {
 		auto trs = e.GetComponent<Transform>();
 
 
-		const Mesh& mesh = mr->GetMesh();
-		VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh.VAOIdentifier()) };
+		std::shared_ptr<Mesh> mesh = mr->GetMesh();
+		if (!mesh) continue;
+		VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
 		if (!vaoHandler) continue;
 		VAOHandler& currentVAO = *vaoHandler;
 		currentVAO.BindVAO();
 		//currentVAO.LogDebug();
-		currentVAO.UseMesh(mesh);
+		currentVAO.UseMesh(*mesh);
 
 
 		if (false) {
@@ -218,9 +219,9 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			GetError();
 		}
 
-		glDrawElements(GL_TRIANGLES, mesh.GetIndexDataCount(), GL_UNSIGNED_INT, 0);
-		
-		
+
+		glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+	
 		
 		m_vaoManager.UnbindVAO();
 		glBindTexture(GL_TEXTURE_2D, 0);

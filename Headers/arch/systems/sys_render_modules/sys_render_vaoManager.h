@@ -13,6 +13,7 @@ struct AttributeProps {
 	GLenum			m_type;
 	unsigned		m_featureCount; // how many features per element
 	bool			m_normalised;
+	bool			m_isActive		{ true };
 };
 
 

@@ -1,6 +1,6 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <util/util_serialisation.h>
-
+#include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/resources/res_material_presets/res_material_lambert.h>
 
 
@@ -13,7 +13,8 @@ MeshRenderer::MeshRenderer() {
 void MeshRenderer::Init() {
 	LOG_INFO("Running Init");
 	//m_mesh.Init();
-	m_mesh.Load();
+	m_mesh = std::make_shared<Cube>(Cube{});
+	m_mesh->Init();
 }
 
 void MeshRenderer::End() {

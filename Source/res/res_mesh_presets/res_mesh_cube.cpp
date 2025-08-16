@@ -122,10 +122,52 @@ static unsigned int idxList[] = { // note that we start from 0!
 
 void Cube::Init() {
 	// init vertex positions
-//m_vertexPositions.assign(, );
-
+	// m_vertexPositions.assign(, );
+	std::cout << "cubie " << std::endl;
 	size_t vtxCount = sizeof(positionData) / (sizeof(positionData[0]) * 3);
 	AssignVertexPositions(positionData, vtxCount);
 	AssignVertexNormals(normalData, vtxCount);
 	AssignIndices(idxList, sizeof(idxList) / sizeof(unsigned));
+}
+
+const size_t Cube::GetVertexDataSize() const {
+	return sizeof(positionData);
+}
+
+const float* Cube::GetVertexData() const {
+	return positionData;
+}
+
+const size_t Cube::GetNormalDataSize() const {
+	return sizeof(normalData);
+}
+
+const float* Cube::GetNormalData() const {
+	return normalData;
+}
+
+const unsigned Cube::GetUVCount() const {
+	return 1;
+}
+
+const size_t Cube::GetUVDataSize(unsigned _index) const {
+	(void)_index;
+	return  sizeof(uvData);
+}
+
+const float* Cube::GetUVData(unsigned _index) const {
+	return uvData;
+	return nullptr;
+}
+
+const size_t Cube::GetIndexDataSize() const {
+	return sizeof(idxList);
+}
+
+const unsigned* Cube::GetIndexData() const {
+	return idxList;
+}
+
+const unsigned Cube::GetIndexDataCount() const {
+	return sizeof(idxList) / sizeof(idxList[0]);
 }

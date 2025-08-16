@@ -33,6 +33,7 @@ void VAOHandler::UseMesh(const Mesh& _mesh) {
 	if (_mesh.GetUVCount()) {
 		SetData("uv", _mesh.GetUVData(0), _mesh.GetUVDataSize(0));
 	}
+
 	if (_mesh.GetIndexDataSize()) {
 		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
 	}
@@ -66,7 +67,7 @@ void VAOHandler::SetAttribute(
 	attr.m_type = _type;
 	attr.m_featureCount = _featureCount;
 	attr.m_normalised = _normalised;
-
+	attr.m_isActive = true;
 
 	const int normalised = _normalised ? GL_TRUE : GL_FALSE;
 	glBindBuffer(GL_ARRAY_BUFFER, _buffer);
@@ -108,20 +109,23 @@ void VAOHandler::SetData(
 	}
 	// get the buffer via
 
-	const AttributeProps& attribute = m_attributeBuffers.at(_name);
+	AttributeProps& attribute = m_attributeBuffers.at(_name);
+	const unsigned pos = attribute.m_bindingPosition;
 	
-	//LOG_SPLITTER();
-	//LOG_INFO("Setting data " << _name);
-	//LOG_INFO("size: " << _dataSize);
-	//LOG_INFO("Setting data addr " << _data);
-	//LOG_INFO("Setting data id: " << attribute.m_bufferID);
-	//LOG_SPLITTER();
+	if (attribute.m_isActive != !_data) {
+		if (!_data || !_dataSize) {
+			glDisableVertexAttribArray(pos);
+		}
+		else {
+			glEnableVertexAttribArray(pos);
+		}
+		attribute.m_isActive = !attribute.m_isActive;
+	}
+	if (!attribute.m_isActive) return;
 
-	//BindVAO();
 	glBindBuffer(GL_ARRAY_BUFFER, attribute.m_bufferID);
 	glBufferData(GL_ARRAY_BUFFER, _dataSize, _data, _usage);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	//UnbindVAO();
 
 }
 
