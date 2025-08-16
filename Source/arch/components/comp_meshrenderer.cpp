@@ -12,7 +12,8 @@ MeshRenderer::MeshRenderer() {
 
 void MeshRenderer::Init() {
 	LOG_INFO("Running Init");
-	m_mesh.Init();
+	//m_mesh.Init();
+	m_mesh.Load();
 }
 
 void MeshRenderer::End() {
