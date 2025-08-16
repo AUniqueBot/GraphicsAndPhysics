@@ -6,6 +6,7 @@ class Cube : public Mesh {
 private:
 public:
 	
+	void Init() override;
 
 
 private:

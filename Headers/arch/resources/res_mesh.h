@@ -15,7 +15,7 @@ public:
 	/// @brief loads the mesh into gpu memory.
 	void Load();
 
-	void Init();
+	virtual void Init();
 
 
 
@@ -29,8 +29,9 @@ public:
 	const size_t GetNormalDataSize() const;
 	const float* GetNormalData() const;
 	
-	const size_t GetUVDataSize() const;
-	const float* GetUVData() const;
+	const unsigned GetUVCount() const;
+	const size_t GetUVDataSize(unsigned _index) const;
+	const float* GetUVData(unsigned _index) const;
 
 	const size_t GetIndexDataSize() const;
 	const unsigned* GetIndexData() const;
@@ -41,7 +42,7 @@ public:
 	void VAOIdentifier(std::string& _newIdentifier);
 
 
-private:
+protected:
 	void ClearMeshInformation();
 
 
@@ -53,7 +54,7 @@ private:
 	void AssignVertexUVs(const float* _pointer, unsigned _vertexCount);
 	void AssignVertexColors(const float _pointer, unsigned _vertexCount);
 
-private:
+protected:
 	std::string m_vaoName		{ "vao_static" }; // vao identifier
 	
 

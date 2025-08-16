@@ -1,10 +1,10 @@
 #pragma once
 #include <pch.h>
 
-
 // strict enforce SOA.
 
 
+class Mesh;
 // attribute thing - only worried about how to read data.
 struct AttributeProps {
 	std::string		m_name;
@@ -28,6 +28,7 @@ public:
 
 	unsigned GetVAO() const;
 
+	void UseMesh(const Mesh& _mesh);
 
 	static void UnbindVAO();
 	static std::vector<GLuint> GenerateBuffers(unsigned _bufferCount);

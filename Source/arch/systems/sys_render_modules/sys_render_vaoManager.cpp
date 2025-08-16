@@ -1,5 +1,5 @@
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
-
+#include <arch/resources/res_mesh.h>
 
 // - vaohandler ----------------------------------------------------------------
 
@@ -8,7 +8,7 @@ void VAOHandler::Init() {
 }
 
 void VAOHandler::BindVAO() const {
-	LOG_INFO("Binding Buffer " << m_vao); /// correct.
+	//LOG_INFO("Binding Buffer " << m_vao); /// correct.
 	glBindVertexArray(m_vao);
 }
 
@@ -22,6 +22,20 @@ void VAOHandler::SetVAO(unsigned _vao) {
 
 unsigned VAOHandler::GetVAO() const {
 	return m_vao; 
+}
+
+void VAOHandler::UseMesh(const Mesh& _mesh) {
+	if (!_mesh.GetVertexDataSize()) return;
+	SetData("position", _mesh.GetVertexData(), _mesh.GetVertexDataSize());
+	if (_mesh.GetNormalDataSize()) {
+		SetData("normal", _mesh.GetNormalData(), _mesh.GetNormalDataSize());
+	}
+	if (_mesh.GetUVCount()) {
+		SetData("uv", _mesh.GetUVData(0), _mesh.GetUVDataSize(0));
+	}
+	if (_mesh.GetIndexDataSize()) {
+		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
+	}
 }
 
 
@@ -44,7 +58,7 @@ void VAOHandler::SetAttribute(
 	bool _normalised
 ) {
 	//BindVAO();
-	LOG_INFO("Adding Attribute - " << _name);
+	//LOG_INFO("Adding Attribute - " << _name);
 	AttributeProps& attr = m_attributeBuffers[_name];
 	attr.m_name = _name;
 	attr.m_bindingPosition = _bindingPosition;
@@ -96,12 +110,12 @@ void VAOHandler::SetData(
 
 	const AttributeProps& attribute = m_attributeBuffers.at(_name);
 	
-	LOG_SPLITTER();
-	LOG_INFO("Setting data " << _name);
-	LOG_INFO("size: " << _dataSize);
-	LOG_INFO("Setting data addr " << _data);
-	LOG_INFO("Setting data id: " << attribute.m_bufferID);
-	LOG_SPLITTER();
+	//LOG_SPLITTER();
+	//LOG_INFO("Setting data " << _name);
+	//LOG_INFO("size: " << _dataSize);
+	//LOG_INFO("Setting data addr " << _data);
+	//LOG_INFO("Setting data id: " << attribute.m_bufferID);
+	//LOG_SPLITTER();
 
 	//BindVAO();
 	glBindBuffer(GL_ARRAY_BUFFER, attribute.m_bufferID);
@@ -117,7 +131,8 @@ void VAOHandler::CreateEBO() {
 }
 
 void VAOHandler::SetVertexIndices(const void* _data, unsigned _dataSize) {
-	LOG_INFO(_data);
+	//LOG_INFO(_data);
+	glBindVertexArray(m_vao);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ebo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, _dataSize, _data, GL_STATIC_DRAW);
 }
@@ -128,7 +143,7 @@ void VAOHandler::SetVertexIndices(const void* _data, unsigned _dataSize) {
 
 void VAOManager::Init() {
 	VAOHandler staticVAO;
-	LOG_INFO("Initialising Static VAO");
+	//LOG_INFO("Initialising Static VAO");
 
 	staticVAO.Init();
 	staticVAO.BindVAO();
@@ -183,7 +198,7 @@ void VAOManager::UnbindVAO() const {
 
 
 void VAOManager::AddVAO(const std::string& _name, const VAOHandler& _vao) {
-	LOG_INFO("Adding a new VAO " << _name);
+	//LOG_INFO("Adding a new VAO " << _name);
 	if (m_vaoMap.contains(_name)) {
 		LOG_WARN("VAO: "<< _name << " exists, overwriting");
 	}

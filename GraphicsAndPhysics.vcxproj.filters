@@ -159,6 +159,9 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_vaoManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_cube.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\pch.h">

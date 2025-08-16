@@ -11,7 +11,7 @@
 
 
 void TransformSystem::Start() {
-	LOG_INFO("Start");
+	//LOG_INFO("Start");
 }
 
 void TransformSystem::Update() {

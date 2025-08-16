@@ -5,6 +5,7 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 // components
 #include <arch/components/comp_meshrenderer.h>
+#include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_camera.h>
 #include <arch/components/comp_transform.h>`
 #include <util/util_ostreamOverrides.h>
@@ -164,34 +165,20 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	auto& entityList = registry.GetEntityList();
 	for (Entity& e : entityList) {
 		const auto& mr = e.GetComponent<MeshRenderer>();
-		if (!mr) {
-			continue;
-		}
+		if (!mr) { continue; }
 		
-		
-
 		auto matHandle = 0;	// pls get the material now.
 		auto trs = e.GetComponent<Transform>();
 
-		// assigns this buffer to mesh.
+
 		const Mesh& mesh = mr->GetMesh();
-
-		// set up vao data
 		VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh.VAOIdentifier()) };
-		if (!vaoHandler) continue;
 
+		if (!vaoHandler) continue;
 		VAOHandler& currentVAO = *vaoHandler;
 		currentVAO.BindVAO();
-		currentVAO.LogDebug();
-
-
-		unsigned vertexCount = mesh.GetVertexCount();
-		currentVAO.SetData("position", mesh.GetVertexData(), mesh.GetVertexDataSize());
-		currentVAO.SetData("normal", mesh.GetNormalData(), mesh.GetNormalDataSize());
-		currentVAO.SetData("uv", mesh.GetUVData(), mesh.GetUVDataSize());
-		currentVAO.SetVertexIndices(mesh.GetIndexData(), mesh.GetIndexDataSize());
-
-
+		//currentVAO.LogDebug();
+		currentVAO.UseMesh(mesh);
 
 
 		if (false) {
@@ -231,8 +218,10 @@ void RenderSystem::Render(const Viewport& _viewport) {
 			GetError();
 		}
 
-		// for now, position the frag shader
 		glDrawElements(GL_TRIANGLES, mesh.GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+		
+		
+		
 		m_vaoManager.UnbindVAO();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		

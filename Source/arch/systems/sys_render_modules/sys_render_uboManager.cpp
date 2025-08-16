@@ -14,7 +14,7 @@ void UBO::Init() {
 		return;
 	}
 
-	LOG_INFO("INIT START");
+	//LOG_INFO("INIT START");
 	glGenBuffers(1, &m_bufferId);
 	GetError();
 	if (!m_bufferId) {
