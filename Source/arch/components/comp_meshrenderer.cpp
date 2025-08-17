@@ -13,7 +13,7 @@ MeshRenderer::MeshRenderer() {
 void MeshRenderer::Init() {
 	LOG_INFO("Running Init");
 	//m_mesh.Init();
-	m_mesh = std::make_shared<Cube>(Cube{});
+	m_mesh = std::make_shared<Mesh>(Mesh{});
 	m_mesh->Init();
 }
 

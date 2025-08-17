@@ -39,6 +39,7 @@ public:
 	void VAOIdentifier(std::string& _newIdentifier);
 
 
+
 protected:
 	void ClearMeshInformation();
 
@@ -50,6 +51,7 @@ protected:
 	// - wip
 	void AssignVertexUVs(const float* _pointer, unsigned _vertexCount);
 	void AssignVertexColors(const float _pointer, unsigned _vertexCount);
+
 
 protected:
 	std::string m_vaoName		{ "vao_static" }; // vao identifier

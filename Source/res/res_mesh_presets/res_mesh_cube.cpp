@@ -157,7 +157,7 @@ const size_t Cube::GetUVDataSize(unsigned _index) const {
 
 const float* Cube::GetUVData(unsigned _index) const {
 	return uvData;
-	return nullptr;
+	//return nullptr;
 }
 
 const size_t Cube::GetIndexDataSize() const {

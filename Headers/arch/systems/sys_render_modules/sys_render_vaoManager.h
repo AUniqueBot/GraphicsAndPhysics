@@ -14,6 +14,12 @@ struct AttributeProps {
 	unsigned		m_featureCount; // how many features per element
 	bool			m_normalised;
 	bool			m_isActive		{ true };
+
+
+
+
+	void SetAttributeEnabled(bool _isEnabled);
+	bool GetAttributeEnabled() const; 
 };
 
 
@@ -33,12 +39,33 @@ public:
 
 	static void UnbindVAO();
 	static std::vector<GLuint> GenerateBuffers(unsigned _bufferCount);
+
+
+
 	void SetData(
 		std::string _name, 
 		const void* _data, 
-		unsigned _dataSize,
+		unsigned _dataCount,
+		unsigned _typeSize,
 		GLenum _dataUsage = GL_STATIC_DRAW
 	);
+
+
+	void FillVertexAttributeData(
+		unsigned _bufferID,
+		const void* _data,
+		unsigned _dataCount,
+		unsigned _typeSize,
+		GLenum _dataUsage
+	);
+	
+	void FillEmptyVertexAttributeData(
+		unsigned _attribPosition, 
+		unsigned _typeSize
+	);
+
+
+
 
 	// - ebo ----------
 	void CreateEBO();

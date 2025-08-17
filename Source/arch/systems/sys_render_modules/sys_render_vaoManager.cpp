@@ -1,6 +1,28 @@
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/resources/res_mesh.h>
 
+
+
+
+
+
+void AttributeProps::SetAttributeEnabled(bool _isEnabled) {
+	if (_isEnabled == m_isActive) return;
+	m_isActive = _isEnabled;
+	if (m_isActive) {
+		glEnableVertexAttribArray(m_bindingPosition);
+	}
+	else {
+		glDisableVertexAttribArray(m_bindingPosition);
+	}
+}
+
+bool AttributeProps::GetAttributeEnabled() const {
+	return m_isActive;
+}
+
+
+
 // - vaohandler ----------------------------------------------------------------
 
 void VAOHandler::Init() {
@@ -26,17 +48,10 @@ unsigned VAOHandler::GetVAO() const {
 
 void VAOHandler::UseMesh(const Mesh& _mesh) {
 	if (!_mesh.GetVertexDataSize()) return;
-	SetData("position", _mesh.GetVertexData(), _mesh.GetVertexDataSize());
-	if (_mesh.GetNormalDataSize()) {
-		SetData("normal", _mesh.GetNormalData(), _mesh.GetNormalDataSize());
-	}
-	if (_mesh.GetUVCount()) {
-		SetData("uv", _mesh.GetUVData(0), _mesh.GetUVDataSize(0));
-	}
-
-	if (_mesh.GetIndexDataSize()) {
-		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
-	}
+	SetData("position", _mesh.GetVertexData(), _mesh.GetVertexCount(), sizeof(glm::vec3));
+	SetData("normal", _mesh.GetNormalData(), _mesh.GetVertexCount(), sizeof(glm::vec3));
+	SetData("uv", _mesh.GetUVData(0), _mesh.GetVertexCount(), sizeof(glm::vec2));
+	SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
 }
 
 
@@ -100,8 +115,9 @@ void VAOHandler::LogDebug() const {
 void VAOHandler::SetData(
 	std::string _name, 
 	const void* _data, 
-	unsigned _dataSize, 
-	GLenum _usage
+	unsigned _dataCount,
+	unsigned _typeSize,
+	GLenum _dataUsage
 ) {
 	if (!m_attributeBuffers.contains(_name)) {
 		LOG_ERROR("Attempting to get invalid buffer: \'" << _name << '\'');
@@ -112,22 +128,62 @@ void VAOHandler::SetData(
 	AttributeProps& attribute = m_attributeBuffers.at(_name);
 	const unsigned pos = attribute.m_bindingPosition;
 	
-	if (attribute.m_isActive != !_data) {
-		if (!_data || !_dataSize) {
-			glDisableVertexAttribArray(pos);
-		}
-		else {
-			glEnableVertexAttribArray(pos);
-		}
-		attribute.m_isActive = !attribute.m_isActive;
+	bool isEnabled = _data != nullptr && _dataCount > 0;
+	attribute.SetAttributeEnabled(isEnabled);
+	if (isEnabled) {
+		FillVertexAttributeData(
+			attribute.m_bufferID,
+			_data,
+			_dataCount,
+			_typeSize,
+			_dataUsage
+		);
 	}
-	if (!attribute.m_isActive) return;
-
-	glBindBuffer(GL_ARRAY_BUFFER, attribute.m_bufferID);
-	glBufferData(GL_ARRAY_BUFFER, _dataSize, _data, _usage);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+	else {
+		FillEmptyVertexAttributeData(
+			attribute.m_bindingPosition,
+			_typeSize
+		);
+	}
 }
+
+void VAOHandler::FillVertexAttributeData(
+	unsigned _bufferID,
+	const void* _data, 
+	unsigned _dataCount, 
+	unsigned _typeSize, 
+	GLenum _dataUsage
+) {
+	size_t dataSize { _dataCount * _typeSize };
+	glBindBuffer(GL_ARRAY_BUFFER, _bufferID);
+	glBufferData(GL_ARRAY_BUFFER, dataSize, nullptr, _dataUsage);
+	glBufferSubData(GL_ARRAY_BUFFER, 0, dataSize, _data);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+}
+
+void VAOHandler::FillEmptyVertexAttributeData(
+	unsigned _attribPosition, 
+	unsigned _typeSize
+) {
+	switch (_typeSize) {
+		case sizeof(float) : 
+			glVertexAttrib1f(_attribPosition, 0.0f); 
+			break;
+		case sizeof(glm::vec2) : 
+			glVertexAttrib2f(_attribPosition, 0.0f, 0.0f); 
+			break;
+		case sizeof(glm::vec3) : 
+			glVertexAttrib3f(_attribPosition, 0.0f, 0.0f, 0.0f); 
+			break;
+		case sizeof(glm::vec4) : 
+			glVertexAttrib4f(_attribPosition, 0.0f, 0.0f, 0.0f, 0.0f); 
+			break;
+		default: 
+			break; // optional error handling
+	}
+}
+
+
 
 void VAOHandler::CreateEBO() {
 	if (!m_ebo) glGenBuffers(1, &m_ebo);
@@ -228,4 +284,5 @@ const VAOHandler* VAOManager::GetVAO(const std::string& _name) const {
 	auto it = m_vaoMap.find(_name);
 	return (it == m_vaoMap.end()) ? nullptr : &it->second;
 }
+
 
