@@ -193,18 +193,18 @@ void Viewport::OnInput() {
 	// check for inputs
 	glm::vec3 inputVector			{ 0.0f, 0.0f, 0.0f };
 
-
+	
 	inputVector.x  = static_cast<float>(static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left)));
-	inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
-	inputVector.z  = static_cast<float>(static_cast<int>(is.IsKeyHeld(up)) - static_cast<int>(is.IsKeyHeld(down)));
+	inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(up)) - static_cast<int>(is.IsKeyHeld(down)));
+	inputVector.z  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
 
 	if (inputVector.x || inputVector.y || inputVector.z) {
 		inputVector = glm::normalize(inputVector);
-		inputVector = m_rotation * inputVector;
+		inputVector = inputVector * m_rotation;
 
 		m_position.x += inputVector.x * moveSpeed * dt;
-		m_position.z += inputVector.y * moveSpeed * dt;
-		m_position.y += inputVector.z * moveSpeed * dt;
+		m_position.y += inputVector.y * moveSpeed * dt;
+		m_position.z += inputVector.z * moveSpeed * dt;
 
 		m_transformDirty = true;
 	}

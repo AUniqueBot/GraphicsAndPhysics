@@ -145,8 +145,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	pos = glm::translate(glm::mat4{ 1.f }, glm::vec3());
 	rot = glm::mat4{ 1.f };
 
-	
-
 	std::vector<LightData> culledLights = CullLights(_viewport);
 	// set into UBO here.
 	
@@ -154,8 +152,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
 	lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(culledLights.size()));
 	for (size_t i = 0; i < lightData.m_count; ++i) {
 		lightData.m_lightData[i] = culledLights[i]; // or whatever data source
-		
-
 	}
 
 	UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
@@ -181,52 +177,34 @@ void RenderSystem::Render(const Viewport& _viewport) {
 		//currentVAO.LogDebug();
 		currentVAO.UseMesh(*mesh);
 
+		const Material* mat{ &mr->GetDefaultMaterial() };
+		GLuint program = mr->GetDefaultMaterial().GetShader();
+		const unsigned matCount = mr->GetMaterialList().size();
+		const unsigned loopCount = matCount ? matCount : 1;
 
-		if (false) {
-			// go through each material
-			glUseProgram(mr->GetMaterialList()[0].GetShader());
-		}
-		else {
-			const Material& mat = mr->GetDefaultMaterial();
-			GLuint program = mr->GetDefaultMaterial().GetShader();
-			glUseProgram(program);	
-
-
+		for (unsigned i{}; i < loopCount; ++i) {
+			if (matCount) {
+				mat = &mr->GetMaterialList().at(i);
+				program = mat->GetShader();
+			}
+		
+			if (!mat) continue;
+		
+			glUseProgram(program);
 			glm::mat4 objMat{ 1.f };
 
-			static glm::vec3 rot_v	{};
-			double deltaTime		{ Core::DeltaTime() };
-
-
-			rot_v[0] += static_cast<float>(deltaTime * 50);
-			rot_v[1] += static_cast<float>(deltaTime * 50);
-			rot_v[2] += static_cast<float>(deltaTime * 50);
-
-			trs->RotationEuler(rot_v);
-			pos = glm::translate(objMat, trs->Position());
-			rot = glm::mat4(trs->Rotation());
-			scl = glm::scale(objMat, trs->Scale());
-			objMat = pos * rot * scl;
-
-
-			
-
-			mat.Render(
+			mat->Render(
 				objMat,
 				_projectionMatrix,
 				_cameraMatrix
 			);
-			GetError();
-		}
 
-
-		glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+			glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
 	
 		
-		m_vaoManager.UnbindVAO();
-		glBindTexture(GL_TEXTURE_2D, 0);
-		
-
+			m_vaoManager.UnbindVAO();
+			glBindTexture(GL_TEXTURE_2D, 0);
+		}
 	}
 	glBindVertexArray(0);
 

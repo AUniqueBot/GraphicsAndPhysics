@@ -57,7 +57,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>opengl32.lib;$(ProjectDir)Extern\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>opengl32.lib;$(ProjectDir)Extern\inc;$(ProjectDir)Extern\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -82,7 +82,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>opengl32.lib;$(ProjectDir)Extern\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>opengl32.lib;$(ProjectDir)Extern\inc;$(ProjectDir)Extern\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Create</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
@@ -98,6 +98,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Extern\src\imgui\imgui.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_demo.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_draw.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_tables.cpp" />
+    <ClCompile Include="Extern\src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Headers\arch\resources\res_resource.cpp" />
     <ClCompile Include="Source\arch\components\comp_light.cpp" />
     <ClCompile Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp" />
@@ -132,6 +140,15 @@
     <ClCompile Include="Source\util\util_serialisation.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Extern\src\imgui\imconfig.h" />
+    <ClInclude Include="Extern\src\imgui\imgui.h" />
+    <ClInclude Include="Extern\src\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="Extern\src\imgui\imgui_internal.h" />
+    <ClInclude Include="Extern\src\imgui\imstb_rectpack.h" />
+    <ClInclude Include="Extern\src\imgui\imstb_textedit.h" />
+    <ClInclude Include="Extern\src\imgui\imstb_truetype.h" />
     <ClInclude Include="Headers\arch\arch_headers.h" />
     <ClInclude Include="Headers\arch\common\component.h" />
     <ClInclude Include="Headers\arch\common\sparseSetViewHandles.h" />

@@ -10,7 +10,7 @@
 
 // - class methods -------------------------------------
 
-void Mesh::Load() {
+void Mesh::Load(std::filesystem::path _pathToModel) {
 
 	// Init();
 
@@ -27,7 +27,10 @@ void Mesh::Load() {
 	);
 
 
-	if (!scene || !scene->HasMeshes()) return;
+	if (!scene || !scene->HasMeshes()) {
+		LOG_INFO("Model failed to load");
+		return;
+	}
 	LOG_INFO("Loading Model.");
 	
 	unsigned meshCount	= scene->mNumMeshes;
@@ -88,7 +91,7 @@ void Mesh::Load() {
 }
 
 void Mesh::Init() {
-	Load();
+	Load("./Assets/Models/sampleModel.obj");
 }
 
 
@@ -151,6 +154,9 @@ std::string Mesh::VAOIdentifier() const {
 void Mesh::VAOIdentifier(std::string& _newIdentifier) {
 	if (m_vaoName == _newIdentifier) return;
 	m_vaoName = _newIdentifier;
+}
+
+void Mesh::UploadModel() {
 }
 
 void Mesh::ClearMeshInformation() {

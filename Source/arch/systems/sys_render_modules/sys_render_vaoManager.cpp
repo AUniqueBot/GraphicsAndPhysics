@@ -64,6 +64,17 @@ std::vector<GLuint> VAOHandler::GenerateBuffers(unsigned _bufferCount) {
 	return buffers;
 }
 
+void VAOHandler::SetData(std::string _name, const Mesh& _mesh) {
+	if (!m_attributeBuffers.contains(_name)) {
+		// LOG_WARN();
+		return;
+	}
+	AttributeProps& attr = m_attributeBuffers.at(_name);
+
+	// load mesh to data
+
+}
+
 
 void VAOHandler::SetAttribute(
 	std::string _name,
@@ -109,6 +120,10 @@ void VAOHandler::LogDebug() const {
 	
 	LOG_SPLITTER();
 }
+
+
+
+
 
 
 

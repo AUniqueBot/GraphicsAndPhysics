@@ -3,7 +3,10 @@
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
 #include <arch/resources/res_mesh.h>
+#include <imgui/imgui.h>
 
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 
 
 
@@ -36,9 +39,26 @@ int main() {
 		glfwTerminate();
 		return -1;
 	}
-
-
 	glfwMakeContextCurrent(mainWindow);
+
+
+
+	
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+
+	// Setup style
+	ImGui::StyleColorsDark();
+
+	// Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(mainWindow, true);
+	ImGui_ImplOpenGL3_Init("#version 460");
+	
+
+
+
+
 
 	// - GLEW Initialisation -------------------------------------------------------
 	GLenum glewStatus = glewInit();
@@ -53,15 +73,35 @@ int main() {
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
-		
-		
 		glfwPollEvents();
+		
+
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
+		ImGui::Begin("Resource Manager");
+		ImGui::Text("Hello from ImGui!");
+		ImGui::End();
 		c.Run();
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+
 		glfwSwapBuffers(mainWindow);
+
 	}
+
+
+
 
 	c.Stop();
 	c.Cleanup();
+
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 
 	glfwTerminate();
 

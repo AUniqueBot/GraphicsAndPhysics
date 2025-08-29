@@ -13,7 +13,7 @@ public:
 
 
 	/// @brief loads the mesh into gpu memory.
-	void Load();
+	void Load(std::filesystem::path _pathToModel = "");
 
 	virtual void Init();
 
@@ -38,6 +38,7 @@ public:
 	std::string VAOIdentifier() const;
 	void VAOIdentifier(std::string& _newIdentifier);
 
+	void UploadModel();
 
 
 protected:
@@ -51,6 +52,7 @@ protected:
 	// - wip
 	void AssignVertexUVs(const float* _pointer, unsigned _vertexCount);
 	void AssignVertexColors(const float _pointer, unsigned _vertexCount);
+
 
 
 protected:
@@ -71,7 +73,7 @@ protected:
 	std::vector<glm::ivec4> m_boneIndices;
 
 
-
+	std::unordered_map<std::string, GLuint> m_bufferIDs;
 };
 
 

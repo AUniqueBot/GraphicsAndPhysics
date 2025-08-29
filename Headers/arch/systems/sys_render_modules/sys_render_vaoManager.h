@@ -40,7 +40,7 @@ public:
 	static void UnbindVAO();
 	static std::vector<GLuint> GenerateBuffers(unsigned _bufferCount);
 
-
+	void SetData(std::string _name, const Mesh& _mesh);
 
 	void SetData(
 		std::string _name, 
