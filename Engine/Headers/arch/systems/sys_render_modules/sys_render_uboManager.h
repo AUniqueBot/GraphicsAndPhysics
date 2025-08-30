@@ -4,11 +4,9 @@
 
 
 
-class UBO;
-class UBOManager;
 
 class UBO {
-	friend class UBOManager;
+
 public:
 	enum BUFFER_TYPE {
 		TRANSFORMS,				// transform buffer - contains camera, projection, and object transform

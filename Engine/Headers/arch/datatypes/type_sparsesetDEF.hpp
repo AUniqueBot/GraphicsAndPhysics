@@ -2,7 +2,6 @@
 #include <arch/datatypes/type_sparseset.h>
 
 
-
 template <typename IDType, typename T>
 bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 

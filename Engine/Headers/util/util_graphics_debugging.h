@@ -3,5 +3,4 @@
 
 namespace GraphicsDebug {
 	void GetError();
-
 }

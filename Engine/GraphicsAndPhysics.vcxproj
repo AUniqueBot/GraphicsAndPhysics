@@ -47,10 +47,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <IncludePath>$(ProjectDir)Headers</IncludePath>
     <LibraryPath>$(SolutionDir)Extern\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <IncludePath>$(ProjectDir)Headers</IncludePath>
     <LibraryPath>$(SolutionDir)Extern\lib;$(LibraryPath)</LibraryPath>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -71,7 +75,9 @@
       <AdditionalDependencies>$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR</Command>
+      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
+xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
+</Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>
@@ -105,7 +111,9 @@
       </Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR</Command>
+      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
+xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
+</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

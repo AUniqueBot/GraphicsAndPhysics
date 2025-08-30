@@ -15,9 +15,16 @@
 #endif
 
 
-#define LOG_INFO(message)  if (_DEBUG) std::cout  << "[INFO] -    <" << FUNC_SIG << ">: " << message << '\n'
-#define LOG_WARN(message)  if (_DEBUG) std::cout  << "[WARNING] - <" << FUNC_SIG << ">: " << message << '\n'
-#define LOG_ERROR(message) if (_DEBUG) std::cout  << "[ERROR] -   <" << FUNC_SIG << ">: " << message << '\n'
+#ifdef _DEBUG
+	#define DEBUG_MODE 1
+#else
+	#define DEBUG_MODE 0
+#endif
+
+#define LOG_INFO(message)  if (DEBUG_MODE) std::cout << "[INFO] -    <" << FUNC_SIG << ">: " << message << '\n'
+#define LOG_WARN(message)  if (DEBUG_MODE) std::cout << "[WARNING] - <" << FUNC_SIG << ">: " << message << '\n'
+#define LOG_ERROR(message) if (DEBUG_MODE) std::cout << "[ERROR] -   <" << FUNC_SIG << ">: " << message << '\n'
+
 
 #define LOG_SPLITTER() std::cout << "// --------------------------------------------------------- //\n"
 

@@ -2,14 +2,14 @@
 	@brief contains the sparsemap type - a data type that allows you to lookup <T> based on <IDType>.
 */
 #pragma once
-
-#include <pch.h>
-#include <arch/common/sparseSetViewHandles.h>
-
-
 #ifndef TYPE_SPARSESET
 #define TYPE_SPARSESET
 
+
+
+
+#include <pch.h>
+#include <arch/common/sparseSetViewHandles.h>
 
 
 
