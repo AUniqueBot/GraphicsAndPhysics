@@ -1,0 +1,5 @@
+Projects are a bit disorganised, a need to set up projects correctly will go a long way to making this work.
+
+1. Organise solution to 2 applications
+	- Editor
+	- Game (better to make a compiler)
