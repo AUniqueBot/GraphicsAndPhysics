@@ -68,6 +68,7 @@
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/wd4101 /external:W0 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +77,7 @@
     </Link>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
-xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
+FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"
 </Command>
     </PreBuildEvent>
     <PostBuildEvent>
@@ -98,6 +99,7 @@ xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
       <PrecompiledHeaderOutputFile>$(IntDir)$(TargetName).pch</PrecompiledHeaderOutputFile>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalOptions>/wd4101 /external:W0 %(AdditionalOptions)</AdditionalOptions>
+      <ShowIncludes>true</ShowIncludes>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -112,7 +114,7 @@ xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
     </PostBuildEvent>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
-xcopy "$(SolutionDir)Extern\lib\*.dll" "$(OutDir)" /S /Y /D
+FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"
 </Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
