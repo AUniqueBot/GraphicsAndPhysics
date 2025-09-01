@@ -16,10 +16,9 @@
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 	Core& c = Core::GetInstance();
-	UI_Core uic {};
+	//UI_Core uic {};
 	// core to also initialise the timer
 	// - GLFW Initialisation ------------------------------------------------------
-	
 	// abstract to window.
 	glfwInit();
 	// setting up opengl version (opengl 4.)
@@ -44,16 +43,17 @@ int main() {
 		return -1;
 	}
 	glfwMakeContextCurrent(mainWindow);
+	glfwSetInputMode(mainWindow, GLFW_STICKY_KEYS, GLFW_TRUE);
 
 
 
 	// - GLEW Initialisation -------------------------------------------------------
 	GLenum glewStatus = glewInit();
-	uic.Init(4, 6, mainWindow);
+	//uic.Init(4, 6, mainWindow);
 	
 	if (glewStatus != GLEW_OK) {
 		LOG_ERROR("Bad GLEW Init.");
-		uic.Exit();
+		//uic.Exit();
 		glfwTerminate();
 		return -1;
 	}
@@ -63,12 +63,12 @@ int main() {
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
-		
+		c.PreUpdate();
 		glfwPollEvents();
 		c.Update();
-		uic.Update();
+		//uic.Update();
 		glfwSwapBuffers(mainWindow);
-
+		c.PostUpdate();
 	}
 
 
@@ -76,7 +76,7 @@ int main() {
 
 	c.Stop();
 	c.Cleanup();
-	uic.Exit();
+	//uic.Exit();
 
 	glfwTerminate();
 

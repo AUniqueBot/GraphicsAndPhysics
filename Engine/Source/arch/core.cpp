@@ -133,6 +133,9 @@ void Core::CoreInit() {
 	glfwSetWindowUserPointer(m_window, this);
 	m_inputSystem.Init(m_window);
 
+
+
+
 }
 
 

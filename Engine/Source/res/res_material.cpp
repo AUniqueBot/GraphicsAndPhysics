@@ -212,7 +212,7 @@ void Material::Render(
 	auto GetUniform = [this](const char* _uniformName) {
 		auto it = m_uniformData.find(_uniformName);
 		if (it == m_uniformData.end()) {
-			LOG_WARN("Uniform '" << _uniformName << "' not found.");
+			//LOG_WARN("Uniform '" << _uniformName << "' not found.");
 			return -1; // invalid location
 		}
 		return it->second.m_uniformLocation;

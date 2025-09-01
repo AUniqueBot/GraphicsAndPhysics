@@ -6,6 +6,7 @@
 namespace GraphicsDebug {
 
 	void GetError() {
+		return;
 		GLenum _errCode = glGetError();
 
 		switch (_errCode) {

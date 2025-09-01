@@ -39,6 +39,7 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 		}
 	);
 
+
 }
 
 void InputSystem::Update() {
