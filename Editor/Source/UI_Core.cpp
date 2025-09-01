@@ -21,8 +21,15 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window) {
 	ImGui_ImplGlfw_InitForOpenGL(_window, true);
 	std::stringstream ss{};
 
-	ss << "#version " << _major << _minor << 0;
-	ImGui_ImplOpenGL3_Init(ss.str().c_str());
+	ss << "#version " << _major << _minor << 0 << " core";
+	std::cout << ss.str() << std::endl;
+	bool success = ImGui_ImplOpenGL3_Init("#version 460 core");
+	if (success) {
+		std::cout << "GOOD CALL" << std::endl;
+		return;
+	}
+	std::cout << "BAD CALL" << std::endl;
+
 
 }
 
