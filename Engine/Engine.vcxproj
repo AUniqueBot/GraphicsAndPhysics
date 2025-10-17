@@ -213,6 +213,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\entity.h" />
     <ClInclude Include="Headers\arch\common\entityDEF.hpp" />
     <ClInclude Include="Headers\arch\common\entityid.h" />
+    <ClInclude Include="Headers\arch\common\eventSystem.h" />
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\common\sparseSetViewHandles.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
