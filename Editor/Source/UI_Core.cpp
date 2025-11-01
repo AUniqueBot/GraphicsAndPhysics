@@ -7,6 +7,8 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 
+#include <Widgets/UIWidget_Outliner.h>
+
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window) {
 
@@ -31,10 +33,19 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window) {
 	std::cout << "BAD CALL" << std::endl;
 
 
+	// init windows here.
+	
+
 }
 
 
+
+
+
 void UI_Core::Update() {
+
+	
+
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
@@ -42,6 +53,8 @@ void UI_Core::Update() {
 	ImGui::Begin("Resource Manager");
 	ImGui::Text("Hello from ImGui!");
 	ImGui::End();
+
+	m_outliner.Draw();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
