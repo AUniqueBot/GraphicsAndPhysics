@@ -1,6 +1,7 @@
 #pragma once
-#include <Widgets/UIWidget_Outliner.h>
 #include <UI_Widget.h>
+#include <unordered_map>
+#include <memory>
 
 struct GLFWwindow;
 
@@ -17,24 +18,13 @@ public:
 
 
 	// ------------------------------------------------------------------
-	void AddWidget() {};
-	void RemoveWidget() {};
+	std::string AddWidget(std::shared_ptr<UIWidget> _widget);
+	void RemoveWidget(std::string _id);
 
 private:
-	void DrawWidget(std::shared_ptr<UIWidget> _widget) {
-		if (!_widget) {
-			std::cerr << "no widget data\n";
-			return;
-		}
-
-		const UIWidget& widget = *_widget;
-		std::string ss = widget.WidgetName() + "##" + std::to_string(widget.WidgetID());
-		ImGui::Begin(ss.c_str());
-		widget.Draw();
-		ImGui::End();
-	}
+	void DrawWidget(std::shared_ptr<UIWidget> _widget);
 
 
 private:
-	const UIWidget_Outliner m_outliner{ "Outliner" };
+	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;
 };

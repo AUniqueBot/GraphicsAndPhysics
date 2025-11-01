@@ -59,12 +59,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc\assimp;$(SolutionDir)Extern\inc\GL;$(SolutionDir)Extern\inc\GLFW;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -74,12 +79,17 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc\assimp;$(SolutionDir)Extern\inc\GL;$(SolutionDir)Extern\inc\GLFW;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />

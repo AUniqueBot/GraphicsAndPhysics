@@ -1,8 +1,8 @@
 
+#include <UI_Core.h>
 #include <iostream>
 #include <sstream>
-#include <UI_Core.h>
-#include <imgui/imgui.h>
+//#include <imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
@@ -54,7 +54,6 @@ void UI_Core::Update() {
 	ImGui::Text("Hello from ImGui!");
 	ImGui::End();
 
-	m_outliner.Draw();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -67,4 +66,33 @@ void UI_Core::Exit() {
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
+}
+
+std::string UI_Core::AddWidget(std::shared_ptr<UIWidget> _widget) {
+	if (!_widget) return "";
+	const UIWidget& w {*_widget};
+	std::string widgetId = w.WidgetName() + "##" + std::to_string(w.WidgetID());
+
+	m_widgetStorage.emplace(widgetId, _widget);
+
+}
+
+void UI_Core::RemoveWidget(std::string _id) {
+	m_widgetStorage.erase(_id);
+}
+
+
+
+void UI_Core::DrawWidget(std::shared_ptr<UIWidget> _widget) {
+	if (!_widget) {
+		std::cerr << "no widget data\n";
+		return;
+	}
+
+	const UIWidget& widget = *_widget;
+	std::string ss = widget.WidgetName() + "##" + std::to_string(widget.WidgetID());
+	ImGui::Begin(ss.c_str());
+	widget.Draw();
+	ImGui::End();
+	
 }
