@@ -11,7 +11,7 @@
 #include <typeindex>
 #include <functional>
 
-
+#include <arch/common/entity.h>
 
 class Entity;
 class EntityID;

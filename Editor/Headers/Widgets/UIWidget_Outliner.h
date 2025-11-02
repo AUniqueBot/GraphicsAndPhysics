@@ -1,6 +1,6 @@
-
 #pragma once
 #include <UI_Widget.h>
+#include <arch/ecs/ecs_registry.h>
 
 
 class UIWidget_Outliner : public UIWidget {
@@ -10,13 +10,18 @@ public:
 	UIWidget_Outliner(std::string _widgetName);
 	~UIWidget_Outliner() override;
 
-	void Init() const override;
+	void Init() override;
 	void Draw() const override;
-	void Exit() const override;
+	void Exit() override;
+
 
 	void OnSelect();
+	void OnUnselect();
+
+
+	void SetEntityRegistry(EntityRegistry* _registry);
 
 private:
-	
+	EntityRegistry* m_entityRegistry{};
 
 };

@@ -11,9 +11,9 @@ public:
 
 
 
-	virtual void Init() const {};
+	virtual void Init() {};
 	virtual void Draw() const = 0;
-	virtual void Exit() const {};
+	virtual void Exit() {};
 
 
 	std::string WidgetName() const { return m_widgetName; }

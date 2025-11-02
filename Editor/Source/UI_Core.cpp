@@ -25,16 +25,17 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window) {
 
 	ss << "#version " << _major << _minor << 0 << " core";
 	std::cout << ss.str() << std::endl;
-	bool success = ImGui_ImplOpenGL3_Init("#version 460 core");
-	if (success) {
-		std::cout << "GOOD CALL" << std::endl;
+	bool success = ImGui_ImplOpenGL3_Init(ss.str().c_str());
+	if (!success) {
+		std::cout << "BAD CALL" << std::endl;
 		return;
 	}
-	std::cout << "BAD CALL" << std::endl;
 
+	std::cout << "GOOD CALL" << std::endl;
 
-	// init windows here.
-	
+	// -- widget initialisation --------------------------------
+	LOG_INFO("Adding Widgets here...");
+	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
 
 }
 
@@ -52,6 +53,12 @@ void UI_Core::Update() {
 
 	ImGui::Begin("Resource Manager");
 	ImGui::Text("Hello from ImGui!");
+
+	for (const auto& [_, widget]:m_widgetStorage) {
+		if (widget) DrawWidget(widget);
+	}
+
+
 	ImGui::End();
 
 
@@ -62,6 +69,8 @@ void UI_Core::Update() {
 
 void UI_Core::Exit() {
 
+	m_widgetStorage.clear();// remove all widgets from storage
+
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -69,12 +78,17 @@ void UI_Core::Exit() {
 }
 
 std::string UI_Core::AddWidget(std::shared_ptr<UIWidget> _widget) {
-	if (!_widget) return "";
-	const UIWidget& w {*_widget};
+	std::cout << "Adding a new widget...\n";
+	if (!_widget) {
+		std::cout << "widget not added as there is no reference.\n";
+		return "";
+	}
+	
+	UIWidget& w {*_widget};
+	w.Init();
 	std::string widgetId = w.WidgetName() + "##" + std::to_string(w.WidgetID());
-
 	m_widgetStorage.emplace(widgetId, _widget);
-
+	return widgetId;
 }
 
 void UI_Core::RemoveWidget(std::string _id) {
