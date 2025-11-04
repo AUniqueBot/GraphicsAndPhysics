@@ -105,6 +105,9 @@
     <ClCompile Include="Source\util\util_serialisation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -288,6 +291,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\pch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

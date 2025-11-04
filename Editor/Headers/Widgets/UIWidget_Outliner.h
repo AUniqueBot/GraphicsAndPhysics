@@ -7,21 +7,25 @@ class UIWidget_Outliner : public UIWidget {
 
 
 public:
-	UIWidget_Outliner(std::string _widgetName);
-	~UIWidget_Outliner() override;
+    UIWidget_Outliner(std::string _widgetName);
+    ~UIWidget_Outliner() override;
 
-	void Init() override;
-	void Draw() const override;
-	void Exit() override;
-
-
-	void OnSelect();
-	void OnUnselect();
+    void Init() override;
+    void Draw() const override;
+    void Exit() override;
 
 
-	void SetEntityRegistry(EntityRegistry* _registry);
+    void OnSelect();
+    void OnUnselect();
+
+
+    void SetEntityRegistry(EntityRegistry* _registry);
 
 private:
-	EntityRegistry* m_entityRegistry{};
+    void Table() const;
+
+
+private:
+    EntityRegistry* m_entityRegistry{};
 
 };

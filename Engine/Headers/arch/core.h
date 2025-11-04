@@ -30,6 +30,7 @@ public:
 	void Cleanup();
 	
 	EntityRegistry& Registry()					{  return m_registry; }
+	const EntityRegistry& Registry() const		{  return m_registry; }
 
 	// - window -------------------------------------
 	void SetWindow(GLFWwindow* _window);

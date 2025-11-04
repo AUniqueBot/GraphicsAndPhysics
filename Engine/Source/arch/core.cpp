@@ -29,7 +29,10 @@ void Core::Init() {
 	Entity& dirLight = *(m_registry.Instantiate());
 	Entity& cam =  *(m_registry.Instantiate());
 
-
+	obj1.Name("Mesh Object");
+	ambientLight.Name("Ambient Light");
+	dirLight.Name("Directional Light");
+	cam.Name("Camera");
 	
 	obj1.AddComponent<MeshRenderer>();	// object
 	ambientLight.AddComponent<Light>();			// ambient light

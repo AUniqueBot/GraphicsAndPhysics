@@ -92,5 +92,11 @@
     <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

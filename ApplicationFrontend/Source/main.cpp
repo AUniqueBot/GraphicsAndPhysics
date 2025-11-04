@@ -57,7 +57,7 @@ int main() {
 
 	c.Init();
 	UI_Core uic{};
-	uic.Init(C_VERSION_MAJOR, C_VERSION_MINOR, mainWindow);
+	uic.Init(C_VERSION_MAJOR, C_VERSION_MINOR, mainWindow, c);
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
