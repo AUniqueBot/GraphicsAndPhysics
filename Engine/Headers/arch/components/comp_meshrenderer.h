@@ -27,9 +27,9 @@ public:
 
 
 
-
-	std::shared_ptr<const Mesh> GetMesh() const	{ return m_mesh; };
-	std::shared_ptr<Mesh> GetMesh()				{ return m_mesh; };
+	void SetMesh(std::shared_ptr<Mesh> _mesh);
+	std::shared_ptr<const Mesh> GetMesh() const;
+	std::shared_ptr<Mesh> GetMesh();
 	
 
 	/*
@@ -48,6 +48,7 @@ public:
 
 
 	static Material& GetDefaultMaterial();
+
 
 
 public:

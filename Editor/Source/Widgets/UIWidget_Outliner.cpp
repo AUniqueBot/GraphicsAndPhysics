@@ -4,6 +4,7 @@
 #include <Widgets/UIWidget_Inspector.h>
 
 
+#include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/components/comp_transform.h>
 
@@ -35,7 +36,18 @@ void UIWidget_Outliner::Draw() const {
         if (Button("Add Cube")) {
             Entity& cubeObject = *registry.Instantiate();
             cubeObject.AddComponent<MeshRenderer>();
+            ComponentView<MeshRenderer> mr = cubeObject.GetComponent<MeshRenderer>();
+            if (mr) {
+
+                // by right a mesh should be instantiated.
+                Cube cubeMesh = Cube{};
+                cubeMesh.Init();
+                mr->SetMesh(std::make_shared<Cube>(cubeMesh));
+            }
+
             cubeObject.Name("Cube");
+
+            
 
             cubeObject.GetComponent<Transform>()->Position(glm::vec3(5, 5, 5));
         }
