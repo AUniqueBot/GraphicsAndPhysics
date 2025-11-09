@@ -173,7 +173,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
         
         auto matHandle = 0;	// pls get the material now.
         auto trs = e.GetComponent<Transform>();
-
+        const glm::mat4 trsMtx = trs->LocalTransformMtx();
 
         std::shared_ptr<Mesh> mesh = mr->GetMesh();
         if (!mesh) continue;
@@ -190,6 +190,11 @@ void RenderSystem::Render(const Viewport& _viewport) {
         const unsigned matCount = mr->GetMaterialList().size();
         const unsigned loopCount = matCount ? matCount : 1;
 
+
+
+
+
+
         for (unsigned i{}; i < loopCount; ++i) {
             if (matCount) {
                 mat = &mr->GetMaterialList().at(i);
@@ -201,8 +206,10 @@ void RenderSystem::Render(const Viewport& _viewport) {
             glUseProgram(program);
             glm::mat4 objMat{ 1.f };
 
+            
+
             mat->Render(
-                objMat,
+                trsMtx,
                 _projectionMatrix,
                 _cameraMatrix
             );

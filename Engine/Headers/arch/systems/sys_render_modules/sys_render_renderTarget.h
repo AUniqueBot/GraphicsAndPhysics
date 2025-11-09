@@ -5,7 +5,10 @@
 #include <GL/glew.h>
 
 
-
+/*
+	class to handle render targets - where the gpu pastes it's render data to 
+	basically render layers
+*/
 class RenderTarget	 {
 public:
 	RenderTarget() = default;
@@ -18,8 +21,9 @@ public:
 	void Resize(glm::ivec2 _newDimensions);
 	void Resize(unsigned _width, unsigned _height);
 	
-	void CreateTexture(unsigned& texID, GLenum internalFormat, GLenum format, GLenum type);
-
+	unsigned GetColorAttachment(unsigned index = 0) const;
+	unsigned GetDepthAttachment() const;
+	glm::ivec2 GetSize() const { return m_dimensions; }
 
 	unsigned FBO() const;
 

@@ -83,6 +83,7 @@ void RenderTarget::Resize(glm::ivec2 _newDimensions) {
 		glBindTexture(GL_TEXTURE_2D, m_fboDepth);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	}
+	//glBindTexture(GL_TEXTURE_2D, 0);
 	m_isValid = VerifyFBOCompleteness();
 	Unbind();
 	if (!m_isValid) {
@@ -96,13 +97,17 @@ void RenderTarget::Resize(unsigned _width, unsigned _height) {
 	Resize({ _width, _height });
 }
 
-void RenderTarget::CreateTexture(unsigned& texID, GLenum internalFormat, GLenum format, GLenum type) {
-	glGenTextures(1, &texID);
-	glBindTexture(GL_TEXTURE_2D, texID);
-	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_dimensions.x, m_dimensions.y, 0, format, type, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-}
+//void RenderTarget::CreateTexture(unsigned& texID, GLenum internalFormat, GLenum format, GLenum type) {
+//	glGenTextures(1, &texID);
+//	glBindTexture(GL_TEXTURE_2D, texID);
+//	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, m_dimensions.x, m_dimensions.y, 0, format, type, nullptr);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+//	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//}
+
+//void RenderTarget::DestroyTexture(unsigned& texID) {
+//	// stub function for now
+//}
 
 unsigned RenderTarget::FBO() const {
 	return m_fbo;

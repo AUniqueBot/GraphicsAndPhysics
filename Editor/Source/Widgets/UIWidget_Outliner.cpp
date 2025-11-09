@@ -4,6 +4,9 @@
 #include <Widgets/UIWidget_Inspector.h>
 
 
+#include <arch/components/comp_meshrenderer.h>
+#include <arch/components/comp_transform.h>
+
 
 UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) : UIWidget(_widgetName) {
     
@@ -22,14 +25,22 @@ void UIWidget_Outliner::Draw() const {
     using namespace ImGui;
 
     if (!m_entityRegistry) return;
-    
+    EntityRegistry& registry = *m_entityRegistry;
 
     if (CollapsingHeader("Outliner")) {
         Table();
     }
     if (CollapsingHeader("Add Objects")) {
         //
-        Button("Add Cube");
+        if (Button("Add Cube")) {
+            Entity& cubeObject = *registry.Instantiate();
+            cubeObject.AddComponent<MeshRenderer>();
+            cubeObject.Name("Cube");
+
+            cubeObject.GetComponent<Transform>()->Position(glm::vec3(5, 5, 5));
+        }
+        
+
     }
 
 
