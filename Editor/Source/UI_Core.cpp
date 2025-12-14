@@ -10,6 +10,7 @@
 
 
 #include <Widgets/UIWidget_Outliner.h>
+#include <Widgets/UIWidget_AssetHandler.h>
 
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
@@ -44,6 +45,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	// -- widget initialisation --------------------------------
 	LOG_INFO("Adding Widgets here...");
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
+	AddWidget(std::make_shared<UIWidget_AssetManager>("AssetManager"));
 
 }
 

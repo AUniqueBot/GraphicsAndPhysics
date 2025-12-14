@@ -19,7 +19,7 @@ UIWidget_Outliner::~UIWidget_Outliner() {
 void UIWidget_Outliner::Init() {
     Core& c = Core::GetInstance(); // only on init.
     SetEntityRegistry(&c.Registry()); // setup aliases
-    std::cout << "Initialisation Complete!\n";
+    LOG_INFO("Outliner Init.");
 }
 
 void UIWidget_Outliner::Draw() const {
