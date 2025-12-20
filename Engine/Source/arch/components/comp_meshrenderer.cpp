@@ -21,6 +21,17 @@ void MeshRenderer::End() {
 	
 }
 
+void MeshRenderer::SetMesh(std::shared_ptr<Mesh> _mesh) {
+	m_mesh = _mesh;
+
+}
+
+std::shared_ptr<const Mesh> MeshRenderer::GetMesh() const { 
+	return m_mesh; 
+}
+std::shared_ptr<Mesh> MeshRenderer::GetMesh() { 
+	return m_mesh; 
+}
 
 void MeshRenderer::Render(
 	const glm::vec4& _objectMatrix, 

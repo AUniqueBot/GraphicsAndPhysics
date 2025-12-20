@@ -212,7 +212,7 @@ void Viewport::OnInput() {
 
 	if (inputVector.x || inputVector.y || inputVector.z) {
 		inputVector = glm::normalize(inputVector);
-		inputVector = inputVector * m_rotation;
+		inputVector = m_rotation * inputVector;
 
 		m_position.x += inputVector.x * moveSpeed * dt;
 		m_position.y += inputVector.y * moveSpeed * dt;

@@ -92,6 +92,7 @@ void Mesh::Load(std::filesystem::path _pathToModel) {
 
 void Mesh::Init() {
 	Load("./Assets/Models/sampleModel.obj");
+	LOG_INFO("Mesh: Initialisation Complete.");
 }
 
 

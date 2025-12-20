@@ -11,7 +11,7 @@
 #include <typeindex>
 #include <functional>
 
-
+#include <arch/common/entity.h>
 
 class Entity;
 class EntityID;
@@ -106,6 +106,7 @@ public:
 	
 
 	EntityView Get(const EntityID& _id)					{ return m_entityList.At(_id); };
+	EntityViewConst Get(const EntityID& _id)	const   { return m_entityList.At(_id); };
 
 	
 	// component handling.

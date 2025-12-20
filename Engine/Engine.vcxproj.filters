@@ -105,7 +105,10 @@
     <ClCompile Include="Source\util\util_serialisation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\main.cpp">
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTargetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -293,7 +296,16 @@
     <ClInclude Include="Headers\pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\common\eventSystem.h">
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderLayer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

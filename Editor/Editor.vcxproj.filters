@@ -48,10 +48,10 @@
     <ClInclude Include="Extern\src\imgui\misc\cpp\imgui_stdlib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Extern\src\imgui\misc\freetype\imgui_freetype.h">
+    <ClInclude Include="Headers\UI_Widget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Extern\src\imgui\misc\single_file\imgui_single_file.h">
+    <ClInclude Include="Headers\Widgets\UIWidget_AssetHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -83,10 +83,25 @@
     <ClCompile Include="Extern\src\imgui\misc\fonts\binary_to_compressed_c.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Extern\src\imgui\misc\freetype\imgui_freetype.cpp">
+    <ClCompile Include="Source\UI_Core.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\UI_Core.cpp">
+    <ClCompile Include="Source\Widgets\UIWidget_Outliner.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI_Widget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_AssetHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

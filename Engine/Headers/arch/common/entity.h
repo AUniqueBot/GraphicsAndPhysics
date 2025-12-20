@@ -23,6 +23,13 @@ public:
 	bool Active() const											{ return m_active; }
 	void Active(bool _s)										{ m_active = _s; }
 
+	bool IsVisible() const										{ return m_visible; }
+	void IsVisible(bool _s)										{ m_visible = _s; }
+
+
+	std::string Name() const									{ return m_name; };
+	void Name(std::string _newName)								{ m_name = _newName; };
+
 	
 	template <typename T>
 	void AddComponent();
@@ -42,7 +49,9 @@ private:
 
 	EntityRegistry* m_registry									{};
 	EntityID m_id;
+	std::string m_name											{};
 	std::bitset<ComponentType::COUNT> m_flags;
 	bool m_active												{ true };
+	bool m_visible												{ true };
 
 };

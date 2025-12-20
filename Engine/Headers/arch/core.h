@@ -8,6 +8,8 @@
 #include <arch/core/core_clock.h>
 #include <arch/core/core_input.h>
 
+#include <arch/resources/res_resourceManager.h>
+
 
 class Core : public Singleton<Core> {
 	
@@ -30,6 +32,7 @@ public:
 	void Cleanup();
 	
 	EntityRegistry& Registry()					{  return m_registry; }
+	const EntityRegistry& Registry() const		{  return m_registry; }
 
 	// - window -------------------------------------
 	void SetWindow(GLFWwindow* _window);
@@ -75,6 +78,7 @@ private:
 	// - modules ------------------------------------
 	InputSystem m_inputSystem;
 	EntityRegistry m_registry;
+	ResourceManager m_resourceManager;
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;
 
