@@ -25,9 +25,14 @@ public:
 
 
 
-	void PackResources();
 	
 
+	// registration
+	void RegisterFileExtension(std::string _extension, Resource::RESOURCE_TYPE _type);
+	void DeregisterFileExtension(std::string _extension);
+	
+	// file packing
+	void PackResources();
 
 public:
 	void LoadPaths();
