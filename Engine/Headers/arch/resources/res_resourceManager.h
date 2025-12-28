@@ -22,6 +22,7 @@ public:
 	void AddResource(std::shared_ptr<Resource>  _resource, std::filesystem::path _path = ""); 
 	void RemoveResource(RES_ID _id); 
 	void GetResource(RES_ID _id);
+	void GetResource(std::string _resName);
 
 
 
@@ -37,7 +38,10 @@ public:
 public:
 	void LoadPaths();
 
+	void LoadDefaultResources();
 
+
+	void LoadResource(std::filesystem::path _filePath);
 private:
 	static RES_ID GenerateID(Resource::RESOURCE_TYPE _rsc);
 	inline static std::unordered_map<Resource::RESOURCE_TYPE, unsigned> m_nextID {};

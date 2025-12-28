@@ -13,8 +13,8 @@ MeshRenderer::MeshRenderer() {
 void MeshRenderer::Init() {
 	LOG_INFO("Running Init");
 	//m_mesh.Init();
-	m_mesh = std::make_shared<Mesh>(Mesh{});
-	m_mesh->Init();
+	//m_mesh = std::make_shared<Mesh>(Mesh{});
+	//m_mesh->Init();
 }
 
 void MeshRenderer::End() {
@@ -34,11 +34,38 @@ std::shared_ptr<Mesh> MeshRenderer::GetMesh() {
 }
 
 void MeshRenderer::Render(
-	const glm::vec4& _objectMatrix, 
-	const glm::vec4& _projectionMatrix, 
-	const glm::vec4& _cameraMatrix
+	const glm::mat4& _objectMatrix, 
+	const glm::mat4& _projectionMatrix, 
+	const glm::mat4& _cameraMatrix
 ) {
-	
+
+	// use the default material and render.
+	if (m_materials.size() == 0) {
+		const Material& mat = GetDefaultMaterial();
+		mat.Render(
+			_objectMatrix,
+			_projectionMatrix,
+			_cameraMatrix
+		);
+
+		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+		return;
+	}
+	// go through all materials
+	for (const std::shared_ptr<Material> matPtr: m_materials) {
+		matPtr->Render(
+			_objectMatrix,
+			_projectionMatrix,
+			_cameraMatrix
+		);
+		
+
+		// TODO - render based on materials indices.
+
+
+		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+
+	}
 }
 
 Material& MeshRenderer::GetDefaultMaterial() {

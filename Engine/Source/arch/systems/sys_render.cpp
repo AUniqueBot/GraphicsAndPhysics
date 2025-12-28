@@ -171,7 +171,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
         const auto& mr = e.GetComponent<MeshRenderer>();
         if (!mr) { continue; }
         
-        auto matHandle = 0;	// pls get the material now.
         auto trs = e.GetComponent<Transform>();
         const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
@@ -185,37 +184,15 @@ void RenderSystem::Render(const Viewport& _viewport) {
         //currentVAO.LogDebug();
         currentVAO.UseMesh(*mesh);
 
-        const Material* mat{ &mr->GetDefaultMaterial() };
-        GLuint program = mr->GetDefaultMaterial().GetShader();
-        const unsigned matCount = mr->GetMaterialList().size();
-        const unsigned loopCount = matCount ? matCount : 1;
+        mr->Render(
+            objectTransformMatrix,
+            _projectionMatrix,
+            _cameraMatrix
+        );
 
 
-        for (unsigned i{}; i < loopCount; ++i) {
-            if (matCount) {
-                mat = &mr->GetMaterialList().at(i);
-                program = mat->GetShader();
-            }
-        
-            if (!mat) continue;
-        
-            glUseProgram(program);
-            glm::mat4 objMat{ 1.f };
-
-            
-
-            mat->Render(
-                objectTransformMatrix,
-                _projectionMatrix,
-                _cameraMatrix
-            );
-
-            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
-    
-        
-            m_vaoManager.UnbindVAO();
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
+        glBindTexture(GL_TEXTURE_2D, 0);
+        m_vaoManager.UnbindVAO();
     }
     glBindVertexArray(0);
 

@@ -10,20 +10,17 @@
 
 // - class methods -------------------------------------
 
-void Mesh::Load(std::filesystem::path _pathToModel) {
+void Mesh::Load() {
 
-	// Init();
 
 	// general flow
 	Assimp::Importer importer;
-	std::string path{ "./Assets/Models/sampleModel.obj" };
 	const aiScene* scene = importer.ReadFile(
-		path,
+		m_pathToAsset.string(),
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType
-
 	);
 
 
@@ -91,8 +88,23 @@ void Mesh::Load(std::filesystem::path _pathToModel) {
 }
 
 void Mesh::Init() {
-	Load("./Assets/Models/sampleModel.obj");
-	LOG_INFO("Mesh: Initialisation Complete.");
+	LoadAsset();
+}
+
+void Mesh::LoadAsset() {
+	if (!Resource::IsAssetLoaded()) {
+		Resource::LoadAsset();
+		Load();
+		LOG_INFO("mesh loaded asset.");
+	}
+}
+
+void Mesh::UseMeshFromPath(std::filesystem::path _pathToModel) {
+	if (Resource::IsAssetLoaded()) {
+		Resource::UnloadAsset();	
+	}
+	ResourcePath(_pathToModel);
+	Load();
 }
 
 

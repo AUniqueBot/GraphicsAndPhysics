@@ -36,6 +36,9 @@ public:
 
 
 private:
+	/*!
+		@brief checks which lights to calculate from.
+	*/
 	std::vector<LightData> CullLights(const Viewport& _viewport);
 
 

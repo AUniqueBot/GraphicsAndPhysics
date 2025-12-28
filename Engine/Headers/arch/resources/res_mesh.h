@@ -13,11 +13,12 @@ public:
 
 
 	/// @brief loads the mesh into gpu memory.
-	void Load(std::filesystem::path _pathToModel = "");
+	void Load();
 
 	virtual void Init();
 
-
+	void LoadAsset() override;
+	void UseMeshFromPath(std::filesystem::path _pathToModel);
 
 
 	// - mesh data ----------------------------------
@@ -56,8 +57,7 @@ protected:
 
 
 protected:
-	std::string m_vaoName		{ "vao_static" }; // vao identifier
-	
+	std::string m_vaoName				{ "vao_static" }; // vao identifier
 
 	std::vector<glm::vec3> m_vertexPositions;
 	std::vector<glm::vec3> m_vertexNormals;

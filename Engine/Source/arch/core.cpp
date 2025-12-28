@@ -35,6 +35,19 @@ void Core::Init() {
 	cam.Name("Camera");
 	
 	obj1.AddComponent<MeshRenderer>();	// object
+	const auto& component = obj1.GetComponent<MeshRenderer>();
+	if (component) {
+
+		Mesh mesh = Mesh{};
+		mesh.UseMeshFromPath("./Assets/Models/sampleModel.obj");
+
+
+		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
+		component->SetMesh(std::make_shared<Mesh>(mesh));
+		
+	}
+
+
 	ambientLight.AddComponent<Light>();			// ambient light
 	dirLight.AddComponent<Light>();			// directional light
 	cam.AddComponent<Camera>();			// cameara

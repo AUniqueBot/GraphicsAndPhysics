@@ -35,8 +35,8 @@ public:
 	RESOURCE_TYPE ResourceType() const	{ return m_resType; }
 
 
-	void LoadAsset();
-	void UnloadAsset();
+	virtual void LoadAsset();
+	virtual void UnloadAsset();
 	bool IsAssetLoaded() const;
 
 	RES_ID ResourceID() const;
@@ -54,12 +54,14 @@ private:
 	// 8 Bits - 3 Digits for asset type
 	// 24 bits - something idk 
 
-private:
 
 
-	RESOURCE_TYPE m_resType				{ _COUNT };
-	bool m_isLoaded						{ false };
-	unsigned m_referenceCount			{};
+protected:
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
+
+private:
 	RES_ID m_resourceId					{ RES_ID_INVALID };
+	RESOURCE_TYPE m_resType				{ _COUNT };
+	unsigned m_referenceCount			{};
+	bool m_isLoaded						{ false };
 };
