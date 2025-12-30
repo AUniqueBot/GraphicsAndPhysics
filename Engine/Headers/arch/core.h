@@ -48,6 +48,11 @@ public:
 	static double DeltaTime();
 
 
+	ResourceManager& ResManager() { return m_resourceManager; };
+	const ResourceManager& ResManager() const { return m_resourceManager; };
+
+
+
 
 public:
 	// - public parameters --------------------------

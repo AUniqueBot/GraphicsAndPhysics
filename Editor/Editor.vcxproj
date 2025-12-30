@@ -96,7 +96,7 @@
     <ClInclude Include="Extern\src\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Headers\UI_Core.h" />
     <ClInclude Include="Headers\UI_Widget.h" />
-    <ClInclude Include="Headers\Widgets\UIWidget_AssetHandler.h" />
+    <ClInclude Include="Headers\Widgets\UIWidget_AssetBrowser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Extern\src\imgui\imgui.cpp" />
@@ -108,7 +108,7 @@
     <ClCompile Include="Extern\src\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\fonts\binary_to_compressed_c.cpp" />
-    <ClCompile Include="Source\Widgets\UIWidget_AssetHandler.cpp" />
+    <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp" />
     <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h" />
     <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h" />
     <ClCompile Include="Source\UI_Core.cpp" />

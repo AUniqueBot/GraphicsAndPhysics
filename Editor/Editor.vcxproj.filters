@@ -51,7 +51,7 @@
     <ClInclude Include="Headers\UI_Widget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Widgets\UIWidget_AssetHandler.h">
+    <ClInclude Include="Headers\Widgets\UIWidget_AssetBrowser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,7 +101,7 @@
     <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Widgets\UIWidget_AssetHandler.cpp">
+    <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

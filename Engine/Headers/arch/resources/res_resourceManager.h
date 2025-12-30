@@ -19,10 +19,12 @@ public:
 	void ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive = true);
 	
 	// optional path.
-	void AddResource(std::shared_ptr<Resource>  _resource, std::filesystem::path _path = ""); 
+	RES_ID AddResource(std::shared_ptr<Resource> _resource, std::filesystem::path _path);
 	void RemoveResource(RES_ID _id); 
-	void GetResource(RES_ID _id);
-	void GetResource(std::string _resName);
+	std::shared_ptr<Resource> GetResource(RES_ID _id);
+
+
+	//void RemoveResource(std::string _name); 
 
 
 
@@ -31,6 +33,7 @@ public:
 	// registration
 	void RegisterFileExtension(std::string _extension, Resource::RESOURCE_TYPE _type);
 	void DeregisterFileExtension(std::string _extension);
+	Resource::RESOURCE_TYPE GetResourceType(std::string _extension) const;
 	
 	// file packing
 	void PackResources();
@@ -51,7 +54,14 @@ private:
 	
 	std::vector<std::filesystem::path> m_assetPaths;
 	std::unordered_map<std::string, RESOURCE_TYPE> m_fileExtensions;
-	std::unordered_map<RESOURCE_TYPE, std::vector<std::shared_ptr<Resource>>> m_resourcePool;
+
+
+
+	// resource pool identifiers
+
+	//std::unordered_map<RESOURCE_TYPE, std::vector<std::shared_ptr<Resource>>> m_resourcePool;
+	std::unordered_map<RES_ID, std::shared_ptr<Resource>> m_resourcePoolIDLookup;
+	std::unordered_map<std::string, std::shared_ptr<Resource>> m_resourcePoolNameLookup;
 };
 
 

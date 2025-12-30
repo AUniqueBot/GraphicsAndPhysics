@@ -25,7 +25,8 @@ public:
 		AUDIO,
 		PREFAB,
 		SCENE,
-		_COUNT
+		_COUNT,
+		_UNKNOWN
 	};
 
 	

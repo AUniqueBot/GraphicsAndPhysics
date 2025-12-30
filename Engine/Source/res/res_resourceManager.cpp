@@ -34,6 +34,8 @@ void ResourceManager::Init() {
 	
 }
 
+
+
 void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive) {
 	// scans the path provided.
 	namespace fs = std::filesystem ;
@@ -48,7 +50,6 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 	if (_recursive) {
 		for (const fs::directory_entry& entry : fs::recursive_directory_iterator(_filePath)) {
-			
 			LOG_INFO(entry.path());
 			if (entry.is_directory()) {
 				LOG_INFO("Scanning path: "<< entry.path());
@@ -60,23 +61,21 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 			// grab normalized extension.
 			std::string extension = entry.path().extension().string();
-
 			if (extension.length() == 0) {
 				LOG_INFO("file has no extension: " << entry.path().filename());
 				continue;
 			}
-
-
 			LoadResource(entry);
-
-			
-
 		}
 	}
 	else {
 		for (const fs::directory_entry& entry : fs::directory_iterator(_filePath)) {
-
-
+			std::string extension = entry.path().extension().string();
+			if (extension.length() == 0) {
+				LOG_INFO("file has no extension: " << entry.path().filename());
+				continue;
+			}
+			LoadResource(entry);
 		}
 	}
 
@@ -87,27 +86,29 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 
 
-void ResourceManager::AddResource(std::shared_ptr<Resource> _resource, std::filesystem::path _path) {
-	m_resourcePool[_resource->ResourceType()].push_back(_resource);
-
-
-	_resource->ResourceID(GenerateID(_resource->ResourceType()));
-
-
-	LOG_INFO("Total items in resource pool: " << m_resourcePool[_resource->ResourceType()].size());
+RES_ID ResourceManager::AddResource(std::shared_ptr<Resource> _resource, std::filesystem::path _path) {
+	const RES_ID resId = GenerateID(_resource->ResourceType());
+	_resource->ResourceID(resId);
+	//m_resourcePool[_resource->ResourceType()].push_back(_resource);
+	m_resourcePoolIDLookup[resId] =_resource;
+	m_resourcePoolNameLookup[_resource->m_pathToAsset.filename().string()] = _resource;
+	return resId;
 }
 
 
 void ResourceManager::RemoveResource(RES_ID _id) {
-
+	// get the resource
+	const std::shared_ptr<Resource>& res = m_resourcePoolIDLookup.at(_id);
+	//m_resourcePoolNameLookup.erase(res->m_pathToAsset.filename().string());
+	m_resourcePoolIDLookup.erase(_id);
 }
 
-void ResourceManager::GetResource(RES_ID _id) {
-
+std::shared_ptr<Resource> ResourceManager::GetResource(RES_ID _id) {
+	return m_resourcePoolIDLookup.at(_id);
 }
-void ResourceManager::GetResource(std::string _resName) {
-
-}
+//std::shared_ptr<Resource> ResourceManager::GetResource(std::string _resName) {
+//	return m_resourcePoolNameLookup.at(_resName);
+//}
 
 void ResourceManager::LoadDefaultResources() {
 	// load the cube here.
@@ -131,6 +132,14 @@ void ResourceManager::RegisterFileExtension(std::string _extension, Resource::RE
 void ResourceManager::DeregisterFileExtension(std::string _extension) {
 	m_fileExtensions.erase(_extension);
 }
+
+Resource::RESOURCE_TYPE ResourceManager::GetResourceType(std::string _extension) const {
+	return 
+		m_fileExtensions.find(_extension) != m_fileExtensions.end() ? 
+		m_fileExtensions.at(_extension) : 
+		Resource::_UNKNOWN;
+}
+
 
 void ResourceManager::LoadPaths() {
 	// this function will load from the specified files listed in the json if available
@@ -171,15 +180,18 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 
 	switch (resType) {
 	case RESOURCE_TYPE::MESH:
+	{
+
 		Mesh newMesh{};
 		newMesh.UseMeshFromPath(_filePath);
 		AddResource(std::make_shared<Mesh>(newMesh), _filePath);
 		break;
 	}
-
-
-
-
+	case RESOURCE_TYPE::TEXTURE:
+		// do nothing for now.
+		
+		break;
+	}
 
 }
 

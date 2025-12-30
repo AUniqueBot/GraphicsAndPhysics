@@ -10,7 +10,7 @@
 
 
 #include <Widgets/UIWidget_Outliner.h>
-#include <Widgets/UIWidget_AssetHandler.h>
+#include <Widgets/UIWidget_AssetBrowser.h>
 
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
@@ -45,7 +45,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	// -- widget initialisation --------------------------------
 	LOG_INFO("Adding Widgets here...");
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
-	AddWidget(std::make_shared<UIWidget_AssetManager>("AssetManager"));
+	AddWidget(std::make_shared<UIWidget_AssetBrowser>("AssetBrowser"));
 
 }
 
@@ -59,15 +59,11 @@ void UI_Core::Update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("Resource Manager");
-	ImGui::Text("Hello from ImGui!");
-
 	for (const auto& [_, widget]:m_widgetStorage) {
 		if (widget) DrawWidget(widget);
 	}
 
 
-	ImGui::End();
 
 
 	ImGui::Render();
