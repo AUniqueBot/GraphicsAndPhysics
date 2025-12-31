@@ -43,7 +43,7 @@ void Core::Init() {
 
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
-		component->SetMesh(std::make_shared<Mesh>(mesh));
+		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
 		
 	}
 

@@ -61,9 +61,12 @@ void RenderSystem::Init() {
     // - init viewport manager ------------------
 
     Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
-    Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
+    Viewport& viewport			{ *m_viewportManager.GetViewport(vpId)	};
+    RenderTargetManager::RenderTargetID rtId { m_renderTargetManager.AddRenderTarget("Viewport", glm::vec2(1280, 720)) };
+    RenderTarget& renderTarget  { *m_renderTargetManager.GetRenderTarget(rtId) };
+    viewport.SetRenderTarget(std::make_shared<RenderTarget>(renderTarget));
 
-    
+
     SetupGLDebug();
     m_uboManager.Init();
     m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
@@ -98,28 +101,22 @@ void RenderSystem::Update() {
     
     
     */
-    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
+    
 
 
 
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_SCISSOR_TEST);
     glClearColor(0, 0, 0, 1);
-    glClear(clearFlags);
-
-    glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
     for (const Viewport::ViewportID& id : vpRenderOrder) {
-        Viewport& currentViewport	{ viewportMap.at(id ) };
-
-
+        Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
-
-
-        glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-        glClear(clearFlags);
-        glClearDepth(1.0f);
         Render(currentViewport); // replace with a single viewport.
     }	
 }
@@ -133,14 +130,22 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
     const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
     const glm::mat4 & _projectionMatrix		{ _viewport.ProjectionMatrix() };;
-
+    
     EntityRegistry& registry = Core::GetInstance().Registry();
     // use the current camera for projection matrix.
 
     // set to wireframe
+    if (_viewport.GetRenderTarget()) {
+        _viewport.GetRenderTarget()->Bind();
+    }
+
+    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
+    glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
+    glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+    glClear(clearFlags);
+    glClearDepth(1.0f);
+
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
     glm::mat4 pos, rot, scl{ 1.f };
     glm::mat4 viewMtx{ 1.f };
     pos = glm::translate(glm::mat4{ 1.f }, glm::vec3());
@@ -196,10 +201,19 @@ void RenderSystem::Render(const Viewport& _viewport) {
     }
     glBindVertexArray(0);
 
+    if (_viewport.GetRenderTarget()) {
+        _viewport.GetRenderTarget()->Unbind();
+    }
 
     //LOG_SPLITTER();
 }
 
+ViewportManager& RenderSystem::GetViewportManager() {
+    return m_viewportManager;
+}
+const ViewportManager& RenderSystem::GetViewportManager() const {
+    return m_viewportManager;
+}
 
 
 std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {

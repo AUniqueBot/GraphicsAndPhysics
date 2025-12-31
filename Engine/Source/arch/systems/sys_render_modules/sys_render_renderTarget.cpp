@@ -97,6 +97,14 @@ void RenderTarget::Resize(unsigned _width, unsigned _height) {
 	Resize({ _width, _height });
 }
 
+unsigned RenderTarget::GetColorAttachment(unsigned index) const {
+	return m_fboColor[index];
+}
+
+unsigned RenderTarget::GetDepthAttachment() const {
+	return m_fboDepth;
+}
+
 //void RenderTarget::CreateTexture(unsigned& texID, GLenum internalFormat, GLenum format, GLenum type) {
 //	glGenTextures(1, &texID);
 //	glBindTexture(GL_TEXTURE_2D, texID);
@@ -115,10 +123,12 @@ unsigned RenderTarget::FBO() const {
 
 void RenderTarget::Bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	LOG_INFO("Target Bound");
 }
 
 void RenderTarget::Unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	LOG_INFO("Target Unbound");
 }
 
 bool RenderTarget::VerifyFBOCompleteness() const {

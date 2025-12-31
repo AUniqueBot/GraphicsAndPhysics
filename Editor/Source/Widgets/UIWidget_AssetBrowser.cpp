@@ -25,6 +25,7 @@ void UIWidget_AssetBrowser::Init() {
 
 void UIWidget_AssetBrowser::Draw() const {
 	using namespace ImGui;
+
 	bool reload = false;
 
 	const bool goUpOneDir = ArrowButton("GoUp1Dir", ImGuiDir_Up);
@@ -38,6 +39,9 @@ void UIWidget_AssetBrowser::Draw() const {
 
 
 	Separator();
+	EngineInputDisabled();
+
+	
 
 
 	const ImGuiTableFlags tableFlags = 
@@ -50,10 +54,10 @@ void UIWidget_AssetBrowser::Draw() const {
 
 	BeginTable("DirectoryContents", 3, tableFlags);
 
-	ImGui::TableSetupColumn("Name");
-	ImGui::TableSetupColumn("File Type");
-	ImGui::TableSetupColumn("Last Modified");
-	ImGui::TableHeadersRow();
+	TableSetupColumn("Name");
+	TableSetupColumn("File Type");
+	TableSetupColumn("Last Modified");
+	TableHeadersRow();
 
 
 
@@ -86,12 +90,18 @@ void UIWidget_AssetBrowser::Draw() const {
 
 		ImGuiSelectableFlags selectableFlags = 
 			ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
-			ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns
+			ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns 
 			;
 
 		TableSetColumnIndex(0);
 		const bool clicked = Selectable(label.c_str(), m_selectedPath == path, selectableFlags);
-		
+		if (BeginDragDropSource()) {
+			// You can set any payload type you want, e.g., "ASSET_MESH"
+			ImGui::SetDragDropPayload("ASSET", path.string().c_str(), path.string().size() + 1);
+			ImGui::Text("Dragging %s", label.c_str());
+			ImGui::EndDragDropSource();
+		}
+
 		if (clicked) {
 			// path is ALWAYS absolute.
 			std::filesystem::path currentPathAbs = std::filesystem::absolute(path);
@@ -138,6 +148,8 @@ void UIWidget_AssetBrowser::Draw() const {
 
 		std::time_t cftime = system_clock::to_time_t(sctp);
 		std::tm localTime;
+
+
 #ifdef _WIN32
 		localtime_s(&localTime, &cftime);
 #else
@@ -157,7 +169,6 @@ void UIWidget_AssetBrowser::Draw() const {
 	if (reload) {
 		LoadEntries();
 	}
-
 }
 
 void UIWidget_AssetBrowser::Exit() {

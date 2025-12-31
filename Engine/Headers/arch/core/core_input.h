@@ -166,6 +166,8 @@ public:
     glm::vec2 GetMousePosition() const;
     glm::vec2 GetMouseDelta() const;
 
+    bool InputIsDisabled() const;
+    void InputIsDisabled(bool _setting);
 
 public:
 
@@ -191,10 +193,12 @@ private:
 
 
     std::bitset<_MOUSE_COUNT> m_activatedMouseButtons       { false };
-    std::bitset<_MOUSE_COUNT> m_activatedMouseButtonsPrev   { false }; //  history
+    std::bitset<_MOUSE_COUNT> m_activatedMouseButtonsPrev   { false }; // history
 
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtons      { false };
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtonsPrev  { false }; // history
+
+    bool m_disableInputs                                    { false }; // fla
 
 
 private:

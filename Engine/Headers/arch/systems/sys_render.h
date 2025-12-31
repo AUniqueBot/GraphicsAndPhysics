@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/system.h>
+#include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
@@ -34,6 +35,10 @@ public:
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
 
+public:
+	ViewportManager& GetViewportManager();
+	const ViewportManager& GetViewportManager() const;
+
 
 private:
 	/*!
@@ -50,9 +55,13 @@ private:
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	
+
+	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;
+
+
 
 };
 

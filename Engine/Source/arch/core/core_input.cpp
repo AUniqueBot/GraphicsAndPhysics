@@ -39,7 +39,6 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 		}
 	);
 
-
 }
 
 void InputSystem::Update() {
@@ -96,22 +95,33 @@ glm::vec2 InputSystem::GetMouseDelta() const {
 	return glm::vec2{m_mouseX - m_prevMouseX, m_mouseY - m_prevMouseY};
 }
 
+bool InputSystem::InputIsDisabled() const {
+	return m_disableInputs;
+}
+
+void InputSystem::InputIsDisabled(bool _setting) {
+	m_disableInputs = _setting;
+}
+
 
 
 // - callbacks -------------------------------------
 
 void InputSystem::_onMouseMove(double _xpos, double _ypos) {
+	if (m_disableInputs) return; // ignore if disabled
+
 	m_mouseX = _xpos;
 	m_mouseY = _ypos;
 }
 
 void InputSystem::_onMouseButton(int _button, int _action, int _mods) {
+	if (m_disableInputs) return;
+
 	if (_button < 0 || _button > GLFW_MOUSE_BUTTON_MIDDLE) return;
 
 	if (!GLFW_TO_MOUSE_BUTTON_MAP.contains(_button)) return;
 
 	INPUT_MOUSE_BUTTON currentKey = GLFW_TO_MOUSE_BUTTON_MAP.at(_button);
-
 
 	m_activatedMouseButtons[currentKey] =
 		_action == GLFW_PRESS ? true :
@@ -120,11 +130,14 @@ void InputSystem::_onMouseButton(int _button, int _action, int _mods) {
 }
 
 void InputSystem::_onScroll(double _xoffset, double _yoffset) {
+	if (m_disableInputs) return;
+
 	m_scrollOffsetX += _xoffset;
 	m_scrollOffsetY += _yoffset;
 }
 
 void InputSystem::_onKey(int _key, int _scancode, int _action, int _mods) {
+	if (m_disableInputs) return;
 
 	if (_key < 0 || _key > GLFW_KEY_LAST) return;
 	if (!GLFW_TO_KEY_MAP.contains(_key)) return;

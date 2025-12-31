@@ -54,6 +54,8 @@ public:
 
 
 
+
+
 public:
 	// - public parameters --------------------------
 
@@ -65,6 +67,16 @@ public:
 		m_systemInstances.push_back(&T::GetInstance());
 	}
 
+
+	template <typename T>
+	std::enable_if_t<std::is_base_of_v<System, T>, T*> GetSystem() {
+		for (System* sys : m_systemInstances) {
+			if (auto* casted = dynamic_cast<T*>(sys)) {
+				return casted;
+			}
+		}
+		return nullptr;
+	}
 
 private:
 

@@ -1,6 +1,7 @@
 
 #include <UI_Core.h>
 #include <UI_Widget.h>
+#include <UI_Menu.h>
 
 #include <iostream>
 #include <sstream>
@@ -9,8 +10,12 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 
+
+
 #include <Widgets/UIWidget_Outliner.h>
 #include <Widgets/UIWidget_AssetBrowser.h>
+#include <Widgets/UIWidget_Viewport.h>
+#include <arch/systems/sys_render.h>
 
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
@@ -46,6 +51,16 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	LOG_INFO("Adding Widgets here...");
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
 	AddWidget(std::make_shared<UIWidget_AssetBrowser>("AssetBrowser"));
+	// needs a viewport arg.
+	const RenderSystem* rs = GetCore()->GetSystem<RenderSystem>();
+	const auto& viewportList = rs->GetViewportManager().ViewportList();
+
+	for (const auto& [vpId, viewport] : viewportList) {
+		std::string vpName	{"Viewport"};
+		vpName += "##" + vpId;
+		LOG_INFO("Generated Viewport with ID", vpId);
+		AddWidget(std::make_shared<UIWidget_Viewport>(vpName, viewport));
+	}
 
 }
 
@@ -59,11 +74,25 @@ void UI_Core::Update() {
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	for (const auto& [_, widget]:m_widgetStorage) {
-		if (widget) DrawWidget(widget);
+
+
+	ImGuiIO& uiIO = ImGui::GetIO();
+	uiIO.WantCaptureKeyboard;
+	uiIO.WantCaptureMouse;
+
+	const bool uiCapturingInputs = 
+		uiIO.WantCaptureKeyboard ||
+		uiIO.WantCaptureMouse
+		;
+
+	
+	if (GetCore()) {
+		Core& c = *GetCore();
+		c.GetInputSystem().InputIsDisabled(uiCapturingInputs);
 	}
 
-
+	RenderTopBar();
+	RenderWidgets();
 
 
 	ImGui::Render();
@@ -102,6 +131,19 @@ void UI_Core::RemoveWidget(std::string _id) {
 	m_widgetStorage.erase(_id);
 }
 
+std::string UI_Core::AddMenuItem(std::shared_ptr<UIMenu> _menu) {
+
+	UIMenu& menu = *_menu;
+	std::string menuId = menu.MenuLabel() + "##" + std::to_string(menu.MenuItemID());
+	m_menuStorage.emplace(menuId, _menu);
+
+	return std::string();
+}
+
+void UI_Core::RemoveMenuItem(std::string _id)
+{
+}
+
 
 
 EntityID UI_Core::SelectedEntity() const {
@@ -116,20 +158,20 @@ Core* UI_Core::GetCore() const {
 	return m_applicationCore;
 }
 
-void UI_Core::TopBar() const {
 
+void UI_Core::RenderWidgets() const {
+	for (const auto& [_, widget] : m_widgetStorage) {
+		if (widget) widget->DrawWidget();
+	}
 }
-
-void UI_Core::DrawWidget(std::shared_ptr<UIWidget> _widget) {
-	if (!_widget) {
-		std::cerr << "no widget data\n";
-		return;
+void UI_Core::RenderTopBar() const {
+	if (ImGui::BeginMainMenuBar()) {
+		for (const auto& [_,menu] : m_menuStorage) {
+			if (menu) menu->Draw();
+		}
+		ImGui::EndMainMenuBar();
 	}
 
-	const UIWidget& widget = *_widget;
-	std::string ss = widget.WidgetName() + "##" + std::to_string(widget.WidgetID());
-	ImGui::Begin(ss.c_str());
-	widget.Draw();
-	ImGui::End();
-	
 }
+
+

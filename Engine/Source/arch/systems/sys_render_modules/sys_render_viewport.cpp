@@ -227,6 +227,19 @@ Viewport::ViewportID Viewport::ID() const {
 	return m_vpId;
 }
 
+std::shared_ptr<RenderTarget> Viewport::GetRenderTarget() {
+	return m_renderTarget;
+}
+
+std::shared_ptr<const RenderTarget> Viewport::GetRenderTarget() const {
+	return m_renderTarget;
+}
+
+void Viewport::SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget) {
+	m_renderTarget = _renderTarget;
+}
+
+
 
 
 // - camera transform -------------------------------------------------

@@ -26,8 +26,6 @@ public:
 
 
 
-
-
 	void SortItemsBy(SORTMETHOD _sortMethod, bool _inversed = false) const;
 
 

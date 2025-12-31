@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
 class Viewport {
 public:
 	using ViewportID = uint32_t;
@@ -67,6 +67,13 @@ public:
 
 	ViewportID ID() const;
 
+
+	// - render target handling -----------------------
+	std::shared_ptr<RenderTarget> GetRenderTarget();
+	std::shared_ptr<const RenderTarget> GetRenderTarget() const;
+	void SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget);
+
+
 private:
 	void UpdateAttributes();
 
@@ -82,6 +89,9 @@ private:
 	glm::ivec2 m_viewportDimensions	{ 1280, 720 };
 
 	ViewportID m_vpId;
+	// - render target ----------------------------------
+	std::shared_ptr<RenderTarget> m_renderTarget{};
+
 private:
 
 	bool m_vpIsMovable				{ true };
@@ -108,7 +118,6 @@ private:
 
 	bool m_projectionDirty			{ true };
 	glm::mat4 m_projectionMatrix	{ 1.f };
-
 
 
 };
