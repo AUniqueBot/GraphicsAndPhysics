@@ -47,7 +47,7 @@ void MeshRenderer::Render(
 			_projectionMatrix,
 			_cameraMatrix
 		);
-
+ 
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
 		return;
 	}
@@ -58,7 +58,7 @@ void MeshRenderer::Render(
 			_projectionMatrix,
 			_cameraMatrix
 		);
-		
+
 
 		// TODO - render based on materials indices.
 

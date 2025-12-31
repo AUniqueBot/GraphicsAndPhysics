@@ -19,7 +19,8 @@
 
 
 void GLAPIENTRY
-MessageCallback(GLenum source,
+MessageCallback(
+    GLenum source,
     GLenum type,
     GLuint id,
     GLenum severity,
@@ -27,7 +28,19 @@ MessageCallback(GLenum source,
     const GLchar* message,
     const void* userParam)
 {
-    return;
+    // GL CALLBACK: ** GL ERROR ** type = 0x824c, severity = 0x9146, message = GL_INVALID_OPERATION error generated. <location> is invalid.
+    std::string msg(message);
+    std::set<std::string> blackListSet = {
+        "<location> is invalid",
+        "Buffer detailed info"
+    };
+
+    for (const std::string& str : blackListSet) {
+        if (msg.find(str) != std::string::npos) {
+            return;
+        }
+    }
+
     fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
         (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
         type, severity, message);
@@ -55,14 +68,13 @@ void RenderSystem::Init() {
 
     // - initialise gl settings -----------------
     glEnable(GL_DEPTH_TEST);
-
-
-
     // - init viewport manager ------------------
 
     Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
     Viewport& viewport			{ *m_viewportManager.GetViewport(vpId)	};
-    RenderTargetManager::RenderTargetID rtId { m_renderTargetManager.AddRenderTarget("Viewport", glm::vec2(1280, 720)) };
+    RenderTargetManager::RenderTargetID rtId{ m_renderTargetManager.AddRenderTarget("Viewport",
+        viewport.ViewportDimensions()
+        ) };
     RenderTarget& renderTarget  { *m_renderTargetManager.GetRenderTarget(rtId) };
     viewport.SetRenderTarget(std::make_shared<RenderTarget>(renderTarget));
 
@@ -135,16 +147,26 @@ void RenderSystem::Render(const Viewport& _viewport) {
     // use the current camera for projection matrix.
 
     // set to wireframe
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR) {
+        //LOG_ERROR("GL error: [" << err << "] ");
+    }
+
     if (_viewport.GetRenderTarget()) {
         _viewport.GetRenderTarget()->Bind();
     }
 
     GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
+    
+
+    // viewport set.
     glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClear(clearFlags);
     glClearDepth(1.0f);
 
+
+    // rendering
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     glm::mat4 pos, rot, scl{ 1.f };
     glm::mat4 viewMtx{ 1.f };
@@ -188,6 +210,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
         currentVAO.BindVAO();
         //currentVAO.LogDebug();
         currentVAO.UseMesh(*mesh);
+        // check if there is data here...
 
         mr->Render(
             objectTransformMatrix,
@@ -196,9 +219,12 @@ void RenderSystem::Render(const Viewport& _viewport) {
         );
 
 
-        glBindTexture(GL_TEXTURE_2D, 0);
+        //glBindTexture(GL_TEXTURE_2D, 0);
+
+
         m_vaoManager.UnbindVAO();
     }
+       
     glBindVertexArray(0);
 
     if (_viewport.GetRenderTarget()) {
@@ -207,6 +233,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
     //LOG_SPLITTER();
 }
+
+
 
 ViewportManager& RenderSystem::GetViewportManager() {
     return m_viewportManager;

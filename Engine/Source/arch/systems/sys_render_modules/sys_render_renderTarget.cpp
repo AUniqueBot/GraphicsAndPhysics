@@ -47,7 +47,11 @@ void RenderTarget::Create(glm::ivec2 _dimensions, unsigned numColorAttachments, 
 
 	m_isValid = VerifyFBOCompleteness();
 	if (!m_isValid) {
+		LOG_ERROR("FBO Generated is incomplete; destroying");
 		Destroy();
+	}
+	else {
+		LOG_INFO("FBO Generated");
 	}
 	Unbind();
 }
@@ -65,7 +69,6 @@ void RenderTarget::Destroy() {
 		glDeleteTextures(1, &m_fboDepth);
 		m_fboDepth = 0;
 	}
-
 }
 
 
@@ -87,7 +90,11 @@ void RenderTarget::Resize(glm::ivec2 _newDimensions) {
 	m_isValid = VerifyFBOCompleteness();
 	Unbind();
 	if (!m_isValid) {
+		LOG_ERROR("FBO Generated is incomplete; destroying");
 		Destroy();
+	}
+	else {
+		LOG_INFO("FBO Generated");
 	}
 }
 
@@ -123,13 +130,31 @@ unsigned RenderTarget::FBO() const {
 
 void RenderTarget::Bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	LOG_INFO("Target Bound");
 }
 
 void RenderTarget::Unbind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	LOG_INFO("Target Unbound");
+	//LOG_INFO("Target Unbound");
 }
+
+void RenderTarget::LogBindErrors() const {
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	if (status != GL_FRAMEBUFFER_COMPLETE) {
+		switch (status) {
+		case GL_FRAMEBUFFER_UNDEFINED:           std::cerr << "GL_FRAMEBUFFER_UNDEFINED\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER\n"; break;
+		case GL_FRAMEBUFFER_UNSUPPORTED:        std::cerr << "GL_FRAMEBUFFER_UNSUPPORTED\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE\n"; break;
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS: std::cerr << "GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS\n"; break;
+		default: std::cerr << "Unknown FBO error\n"; break;
+		}
+	}
+
+}
+
 
 bool RenderTarget::VerifyFBOCompleteness() const {
 	bool framebufferComplete = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;

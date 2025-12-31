@@ -7,12 +7,12 @@
 
 Viewport::ViewportID ViewportManager::CreateViewport() {
 	Viewport::ViewportID id	{ m_nextId };
-	Viewport newVP			{ id };
+	std::shared_ptr<Viewport> newVP			{ std::make_shared<Viewport>(id) };
 	++m_nextId;
 
-	newVP.Init();
+	newVP->Init();
 	m_viewportIndexRenderOrder.push_back(id);
-	m_viewports.emplace( id, std::make_shared<Viewport>(std::move(newVP)));
+	m_viewports.emplace( id, newVP);
 
 	return id;
 }

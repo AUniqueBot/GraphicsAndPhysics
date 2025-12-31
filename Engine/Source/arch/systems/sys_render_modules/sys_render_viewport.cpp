@@ -80,7 +80,9 @@ const glm::mat4& Viewport::ProjectionMatrix() const {
 // - viewport management ----------------------------------------------
 
 void Viewport::ViewportDimensions(const glm::ivec2& _dimensions) {
+	if (m_viewportDimensions == _dimensions) return;
 	m_viewportDimensions = _dimensions;
+	Resize();
 }
 
 const glm::ivec2& Viewport::ViewportDimensions() const {
@@ -335,6 +337,9 @@ const float& Viewport::AspectRatio() const {
 // - dynamic hidden functions ------------------------------------------
 
 void Viewport::Resize() {
+	if (!m_renderTarget) return;
+	RenderTarget& rt = *m_renderTarget;
+	rt.Resize(m_viewportDimensions);
 }
 
 void Viewport::Move() {

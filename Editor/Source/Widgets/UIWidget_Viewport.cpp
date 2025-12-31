@@ -4,33 +4,73 @@
 
 
 
-UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
-	: UIWidget(_widgetName), m_viewportPointer{_target} {
+	UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
+		: UIWidget(_widgetName), m_viewportPointer{_target} {
 
-}
+	}
 
-void UIWidget_Viewport::Init() {
+	void UIWidget_Viewport::Init() {
 
-}
+	}
 
-void UIWidget_Viewport::Draw() const {
-	// only contains the render target.
-	using namespace ImGui;
-	if (!m_viewportPointer) return;
-	Viewport & vp = *m_viewportPointer.get();
-	if (!vp.GetRenderTarget()) return;
-	RenderTarget& rt = *vp.GetRenderTarget();
-	const glm::ivec2& sizeGL = rt.GetSize();
-	ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
-	ImGui::Image((void*)(rt.FBO()), sizeIm);
+	void UIWidget_Viewport::Draw() const {
 
-}
 
-void UIWidget_Viewport::Exit() {
-}
+		// only contains the render target.
+		using namespace ImGui;
+		
+		// aliases and early exits.
+		if (!m_viewportPointer) return;
+		Viewport & vp = *m_viewportPointer.get();
+		if (!vp.GetRenderTarget()) return;
+		RenderTarget& rt = *vp.GetRenderTarget();
 
-void UIWidget_Viewport::ResizeCallback() {
-	// get the new window resolution.
-	if (!m_viewportPointer || !m_viewportPointer->GetRenderTarget()) return;
-	m_viewportPointer->GetRenderTarget()->Resize(1, 2);
-}
+		ResizeCallback();
+		if (!rt.VerifyFBOCompleteness()) return;
+		
+
+
+
+		// unlike the other widgets, clicking here is allowed.
+
+
+
+
+		const glm::ivec2& sizeGL = vp.ViewportDimensions();
+		ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
+		if (!sizeIm.x || !sizeIm.y) return;
+
+			
+		const unsigned col = rt.GetColorAttachment(0);
+		assert(glIsTexture(col));
+		ImGui::Image(
+			(void*)(intptr_t)col, 
+			sizeIm, 
+			// image is flipped
+			ImVec2(0, 1), // top-left in texture
+			ImVec2(1, 0)  // bottom-right in texture
+		);
+
+
+		// onresize, call the viewport to change along with it's rendertarget.
+		
+	}
+
+	void UIWidget_Viewport::Exit() {
+	}
+
+	void UIWidget_Viewport::ResizeCallback() const {
+		// get the new window resolution.
+		if (!m_viewportPointer || !m_viewportPointer->GetRenderTarget()) return;
+		Viewport& vp	{ *m_viewportPointer };
+		
+		static ImVec2 lastSize{};
+		ImVec2 currentSize = ImGui::GetContentRegionAvail();
+		if (!currentSize.x || !currentSize.y) return;// resize to dims 0 willl result in an empty buffer.
+
+		if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
+			vp.ViewportDimensions({ currentSize.x, currentSize.y });
+			lastSize = currentSize;
+		}
+
+	}

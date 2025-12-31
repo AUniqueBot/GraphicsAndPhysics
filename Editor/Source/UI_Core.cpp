@@ -58,7 +58,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	for (const auto& [vpId, viewport] : viewportList) {
 		std::string vpName	{"Viewport"};
 		vpName += "##" + vpId;
-		LOG_INFO("Generated Viewport with ID", vpId);
+		LOG_INFO("Generated Viewport with ID"<< vpId);
 		AddWidget(std::make_shared<UIWidget_Viewport>(vpName, viewport));
 	}
 
@@ -90,7 +90,6 @@ void UI_Core::Update() {
 		Core& c = *GetCore();
 		c.GetInputSystem().InputIsDisabled(uiCapturingInputs);
 	}
-
 	RenderTopBar();
 	RenderWidgets();
 
@@ -161,7 +160,25 @@ Core* UI_Core::GetCore() const {
 
 void UI_Core::RenderWidgets() const {
 	for (const auto& [_, widget] : m_widgetStorage) {
-		if (widget) widget->DrawWidget();
+		if (!widget) continue;
+		if (!GetCore()) continue;
+
+
+		const UIWidget* widgetPtr	{ widget.get() };
+		Core& c = *GetCore();
+
+		bool isViewport{ dynamic_cast<const UIWidget_Viewport*>(widgetPtr) != nullptr };
+		bool originalState = c.GetInputSystem().InputIsDisabled();
+
+
+		if (isViewport) {
+			c.GetInputSystem().InputIsDisabled(true);
+			LOG_INFO(widget->WidgetName());
+		}
+		widget->DrawWidget();
+		if (isViewport) {
+			c.GetInputSystem().InputIsDisabled(originalState);
+		}
 	}
 }
 void UI_Core::RenderTopBar() const {

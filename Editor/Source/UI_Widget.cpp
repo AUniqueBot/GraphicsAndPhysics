@@ -76,6 +76,7 @@ void UIWidget::DrawWidget() const {
     std::string ss = WidgetName() + "##" + std::to_string(WidgetID());
     ImGui::Begin(ss.c_str());
 
+    Draw();
 
     // - adjust flags ---------------------------
     m_widgetBitset[0] = ImGui::IsWindowHovered();
@@ -83,7 +84,6 @@ void UIWidget::DrawWidget() const {
     m_widgetBitset[2] = ImGui::IsWindowAppearing();
     m_widgetBitset[3] = ImGui::IsWindowCollapsed();
     
-    Draw();
     
     ImGui::End();
 }

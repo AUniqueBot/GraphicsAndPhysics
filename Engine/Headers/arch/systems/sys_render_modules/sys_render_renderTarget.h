@@ -29,8 +29,11 @@ public:
 
 	void Bind() const;
 	void Unbind() const;
-private:
+
+
+	void LogBindErrors() const;
 	bool VerifyFBOCompleteness() const;
+private:
 private:
 
 	unsigned m_fbo						{}; // frame buffer identifier 

@@ -207,8 +207,9 @@ void Material::Render(
 	if (!shaderId) return;
 	glUseProgram(shaderId);
 
-
 	GLint uniformLocation{};
+
+	// lambda function
 	auto GetUniform = [this](const char* _uniformName) {
 		auto it = m_uniformData.find(_uniformName);
 		if (it == m_uniformData.end()) {
@@ -221,7 +222,9 @@ void Material::Render(
 	};
 
 
+
 	uniformLocation = GetUniform(U_DELTATIME);
+
 	if (-1 != uniformLocation) {
 		static float timer{};
 		static bool downward{};
@@ -246,5 +249,8 @@ void Material::Render(
 	}
 
 
-	glGetError();
+		GLenum err;
+		while ((err = glGetError()) != GL_NO_ERROR) {
+			LOG_ERROR("GL error: [" << err << "] ");
+		}
 }
