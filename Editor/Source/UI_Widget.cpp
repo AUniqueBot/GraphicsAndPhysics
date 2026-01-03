@@ -20,6 +20,9 @@ unsigned UIWidget::WidgetID() const {
     return m_widgetId; 
 }
 
+void UIWidget::Update() {
+}
+
 
 // -- flags -----------------------------------------
 bool UIWidget::WidgetIsHoveredOver() const{
@@ -67,6 +70,7 @@ bool UIWidget::EngineInputDisabled() const {
 }
 
 
+
 void UIWidget::UICore(UI_Core* _uiCore) {
     LOG_INFO("Setting UI Core...");
     m_uiCore = _uiCore;
@@ -77,7 +81,7 @@ void UIWidget::DrawWidget() const {
     ImGui::Begin(ss.c_str());
 
     Draw();
-
+    
     // - adjust flags ---------------------------
     m_widgetBitset[0] = ImGui::IsWindowHovered();
     m_widgetBitset[1] = ImGui::IsWindowFocused();

@@ -1,6 +1,8 @@
 #pragma once
 #include <UI_Widget.h>
 
+
+
 class UIWidget_AssetBrowser : public UIWidget {
 public:
 	enum SORTMETHOD {
@@ -27,6 +29,7 @@ public:
 
 
 	void SortItemsBy(SORTMETHOD _sortMethod, bool _inversed = false) const;
+
 
 
 private:

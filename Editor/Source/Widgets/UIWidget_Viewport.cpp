@@ -32,10 +32,6 @@
 
 
 		// unlike the other widgets, clicking here is allowed.
-
-
-
-
 		const glm::ivec2& sizeGL = vp.ViewportDimensions();
 		ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
 		if (!sizeIm.x || !sizeIm.y) return;
@@ -74,3 +70,4 @@
 		}
 
 	}
+

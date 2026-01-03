@@ -18,6 +18,7 @@ public:
 
 	void ResizeCallback() const;
 
+
 private:
 	std::shared_ptr<Viewport> m_viewportPointer;
 };

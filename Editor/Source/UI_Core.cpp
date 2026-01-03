@@ -52,9 +52,12 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
 	AddWidget(std::make_shared<UIWidget_AssetBrowser>("AssetBrowser"));
 	// needs a viewport arg.
+
+
+	
+
 	const RenderSystem* rs = GetCore()->GetSystem<RenderSystem>();
 	const auto& viewportList = rs->GetViewportManager().ViewportList();
-
 	for (const auto& [vpId, viewport] : viewportList) {
 		std::string vpName	{"Viewport"};
 		vpName += "##" + vpId;
@@ -77,8 +80,7 @@ void UI_Core::Update() {
 
 
 	ImGuiIO& uiIO = ImGui::GetIO();
-	uiIO.WantCaptureKeyboard;
-	uiIO.WantCaptureMouse;
+
 
 	const bool uiCapturingInputs = 
 		uiIO.WantCaptureKeyboard ||
@@ -163,22 +165,9 @@ void UI_Core::RenderWidgets() const {
 		if (!widget) continue;
 		if (!GetCore()) continue;
 
-
-		const UIWidget* widgetPtr	{ widget.get() };
-		Core& c = *GetCore();
-
-		bool isViewport{ dynamic_cast<const UIWidget_Viewport*>(widgetPtr) != nullptr };
-		bool originalState = c.GetInputSystem().InputIsDisabled();
-
-
-		if (isViewport) {
-			c.GetInputSystem().InputIsDisabled(true);
-			LOG_INFO(widget->WidgetName());
-		}
 		widget->DrawWidget();
-		if (isViewport) {
-			c.GetInputSystem().InputIsDisabled(originalState);
-		}
+
+
 	}
 }
 void UI_Core::RenderTopBar() const {

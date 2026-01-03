@@ -92,14 +92,21 @@ void UIWidget_AssetBrowser::Draw() const {
 			ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
 			ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns 
 			;
-
+			
 		TableSetColumnIndex(0);
 		const bool clicked = Selectable(label.c_str(), m_selectedPath == path, selectableFlags);
+
+
+
+	
+
 		if (BeginDragDropSource()) {
 			// You can set any payload type you want, e.g., "ASSET_MESH"
-			ImGui::SetDragDropPayload("ASSET", path.string().c_str(), path.string().size() + 1);
-			ImGui::Text("Dragging %s", label.c_str());
-			ImGui::EndDragDropSource();
+
+			// send the data of the thing here.
+			SetDragDropPayload("ASSET", path.string().c_str(), path.string().size() + 1);
+			Text("Dragging %s", label.c_str());
+			EndDragDropSource();
 		}
 
 		if (clicked) {
@@ -136,7 +143,7 @@ void UIWidget_AssetBrowser::Draw() const {
 				fileType = "UNKNOWN";
 			}
 		}
-		TableSetColumnIndex(1);
+		ImGui::TableSetColumnIndex(1);
 		Text(fileType.c_str());
 
 		// last modified
@@ -249,4 +256,5 @@ void UIWidget_AssetBrowser::SortItemsBy(SORTMETHOD _sortMethod, bool _inversed) 
 		std::sort(m_directoryPaths.begin(), m_directoryPaths.end(),sortFunction);
 	}
 }
+
 

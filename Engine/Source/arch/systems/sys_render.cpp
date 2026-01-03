@@ -146,21 +146,16 @@ void RenderSystem::Render(const Viewport& _viewport) {
     EntityRegistry& registry = Core::GetInstance().Registry();
     // use the current camera for projection matrix.
 
-    // set to wireframe
-    GLenum err;
-    while ((err = glGetError()) != GL_NO_ERROR) {
-        //LOG_ERROR("GL error: [" << err << "] ");
-    }
+
 
     if (_viewport.GetRenderTarget()) {
         _viewport.GetRenderTarget()->Bind();
+        glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
     }
 
     GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
     
-
     // viewport set.
-    glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClear(clearFlags);
     glClearDepth(1.0f);
