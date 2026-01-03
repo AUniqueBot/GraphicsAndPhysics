@@ -10,6 +10,8 @@
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
 
+#include <arch/resources/res_material_presets/res_material_lambert.h>
+
 
 
 UIWidget_Inspector::UIWidget_Inspector(std::string _widgetName) : UIWidget(_widgetName) {
@@ -116,7 +118,27 @@ void UIWidget_Inspector::Draw() {
 	
 	auto meshV = obj.GetComponent<MeshRenderer>();
 	if (meshV) {
+		MeshRenderer& mr = *meshV;
 
+		LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
+		float colBuffer[4]{
+			mat.Color()[0],
+			mat.Color()[1],
+			mat.Color()[2],
+			mat.Color()[3],
+		};
+
+		if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
+			mat.Color(glm::vec4(
+				colBuffer[0], 
+				colBuffer[1], 
+				colBuffer[2], 
+				colBuffer[3] 
+				));
+		}
+
+
+		mr.GetMesh();
 	}
 
 	auto camV = obj.GetComponent<Camera>();
