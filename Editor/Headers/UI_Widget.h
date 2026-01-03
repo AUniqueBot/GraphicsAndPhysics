@@ -16,7 +16,7 @@ public:
 
 
 	virtual void Init() {};
-	virtual void Draw() const = 0;
+	virtual void Draw() = 0;
 	virtual void Update(); 
 	virtual void Exit() {};
 
@@ -75,7 +75,7 @@ protected:
 
 protected:
 	void UICore(UI_Core* _uiCore);
-	void DrawWidget() const; 
+	void DrawWidget(); 
 
 protected:
 	UI_Core* m_uiCore								{};

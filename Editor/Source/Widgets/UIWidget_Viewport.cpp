@@ -13,7 +13,7 @@
 
 	}
 
-	void UIWidget_Viewport::Draw() const {
+	void UIWidget_Viewport::Draw() {
 
 
 		// only contains the render target.

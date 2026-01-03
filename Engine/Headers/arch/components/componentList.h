@@ -1,5 +1,8 @@
 #pragma once
 
+
+
+// hard list not required anymore :)
 enum ComponentType {
 
 	TRANSFORM,

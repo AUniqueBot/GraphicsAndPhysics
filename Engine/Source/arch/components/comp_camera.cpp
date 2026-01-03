@@ -44,7 +44,8 @@ int Camera::ActiveCameraID() {
 
 // - clip distance -----------------------------------------------------
 void Camera::SetClipPlaneDistance(glm::vec2 _dist) {
-    SetClipPlaneDistance(_dist);
+    //SetClipPlaneDistance(_dist);
+    (void)_dist;
 }
 
 void Camera::SetClipPlaneDistance(float _a, float _b) {

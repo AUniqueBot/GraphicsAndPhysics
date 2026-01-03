@@ -45,12 +45,19 @@ public:
 	EntityRegistry* GetRegistry()								{ return m_registry; }
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
-private:
 
+protected:
+	friend class EntityRegistry;
+	using ComponentID = unsigned;
+	std::set<ComponentID> m_componentFlags;
+
+
+private:
 	EntityRegistry* m_registry									{};
 	EntityID m_id;
 	std::string m_name											{};
-	std::bitset<ComponentType::COUNT> m_flags;
+
+
 	bool m_active												{ true };
 	bool m_visible												{ true };
 

@@ -76,7 +76,7 @@ void UIWidget::UICore(UI_Core* _uiCore) {
     m_uiCore = _uiCore;
 }
 
-void UIWidget::DrawWidget() const {
+void UIWidget::DrawWidget() {
     std::string ss = WidgetName() + "##" + std::to_string(WidgetID());
     ImGui::Begin(ss.c_str());
 

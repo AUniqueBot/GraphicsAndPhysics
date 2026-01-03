@@ -86,7 +86,7 @@ private:
 	void RegisterSystems();
 	
 
-	GLFWwindow* m_window;
+	GLFWwindow* m_window{};
 
 	std::vector<System*> m_systemInstances;
 

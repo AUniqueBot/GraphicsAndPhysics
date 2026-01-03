@@ -31,11 +31,11 @@ public:
 
 	// -- object selection -----------------------------------------
 	EntityID SelectedEntity() const;
+	void SelectedEntity(EntityID _id) const;
 
 	Core* GetCore() const;
 
 protected:
-	void SelectedEntity(EntityID _id);
 
 
 
@@ -51,6 +51,8 @@ private:
 	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;
 	std::unordered_map<std::string, std::shared_ptr<UIMenu>> m_menuStorage;
 	EntityRegistry* m_entityRegistry			{};
-	EntityID m_selectedEntity					{ EntityID::ENTITYID_INVALID };
 	std::vector<EntityID> m_selectedEntityList	{};
+	
+	
+	mutable EntityID m_selectedEntity			{ EntityID::ENTITYID_INVALID };
 };

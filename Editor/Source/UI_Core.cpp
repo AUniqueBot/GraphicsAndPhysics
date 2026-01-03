@@ -15,6 +15,7 @@
 #include <Widgets/UIWidget_Outliner.h>
 #include <Widgets/UIWidget_AssetBrowser.h>
 #include <Widgets/UIWidget_Viewport.h>
+#include <Widgets/UIWidget_Inspector.h>
 #include <arch/systems/sys_render.h>
 
 
@@ -51,6 +52,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	LOG_INFO("Adding Widgets here...");
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
 	AddWidget(std::make_shared<UIWidget_AssetBrowser>("AssetBrowser"));
+	AddWidget(std::make_shared<UIWidget_Inspector>("Inspector"));
 	// needs a viewport arg.
 
 
@@ -151,7 +153,7 @@ EntityID UI_Core::SelectedEntity() const {
 	return m_selectedEntity;
 }
 
-void UI_Core::SelectedEntity(EntityID _id) {
+void UI_Core::SelectedEntity(EntityID _id)  const {
 	m_selectedEntity = _id;
 }
 

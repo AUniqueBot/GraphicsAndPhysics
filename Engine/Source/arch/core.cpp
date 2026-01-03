@@ -53,7 +53,7 @@ void Core::Init() {
 	cam.AddComponent<Camera>();			// cameara
 
 	Light& _ambientLight = *(ambientLight.GetComponent<Light>());
-	_ambientLight.Power(0.3);
+	_ambientLight.Power(0.3f);
 	_ambientLight.Type(LightType::AMBIENT);
 
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));

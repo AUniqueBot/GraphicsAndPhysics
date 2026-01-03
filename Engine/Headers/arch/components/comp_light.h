@@ -50,7 +50,6 @@ public:
 
 
 public:
-	Light() { Component::SetComponentID(LIGHT); }
 	void Init() override {}
 
 	LightType Type() const;
