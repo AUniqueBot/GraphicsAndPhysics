@@ -55,11 +55,11 @@ protected:
 
 
 private:
+
 	EntityRegistry* m_registry									{};
 	EntityID m_id;
 	std::string m_name											{};
-
-
+	std::bitset<ComponentType::COUNT> m_flags;
 	bool m_active												{ true };
 	bool m_visible												{ true };
 
