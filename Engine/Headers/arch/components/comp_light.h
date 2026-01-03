@@ -58,7 +58,7 @@ public:
 	float Power() const;
 	void Power(float _value);
 
-	glm::vec3 Color() const;
+	const glm::vec3& Color() const;
 	void Color(glm::vec3 _col);
 
 	LightData GetLightData() const;

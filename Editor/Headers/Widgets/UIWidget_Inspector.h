@@ -17,5 +17,11 @@ public:
     
 private:
 
+    void RenderComponents() {
+
+    }
+
+
+
     // selected object.
 };

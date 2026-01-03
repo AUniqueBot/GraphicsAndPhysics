@@ -27,10 +27,10 @@ public:
 
 	// - transform attributes -----------------
 	void Position(glm::vec3 _pos)					{ m_pos = _pos; };
-	glm::vec3 Position() const						{ return m_pos; };
+	const glm::vec3& Position() const				{ return m_pos; };
 
 	void Rotation(glm::quat _rot)					{ m_rot = _rot; };
-	glm::quat Rotation() const						{ return m_rot; };
+	const glm::quat& Rotation() const				{ return m_rot; };
 	
 	void RotationEuler(glm::vec3);
 	glm::vec3 RotationEuler() const;
@@ -39,7 +39,7 @@ public:
 	ROTATION_ORDER RotationOrder() const			{ return m_rotOrder; }
 
 	void Scale(glm::vec3 _scale)					{ m_scl = _scale; };
-	glm::vec3 Scale() const							{ return m_scl; };
+	const glm::vec3& Scale() const					{ return m_scl; };
 
 	
 	// - orientation vectors ------------------
@@ -51,7 +51,7 @@ public:
 
 	// - transform matrix ----------------------
 	glm::mat4 LocalTransformMtx() const;
-	glm::mat4 WorldTransformdMtx() const;
+	glm::mat4 WorldTransformMtx() const;
 	void LocalTransformMtx(glm::mat4 _newMtx);
 	void WorldTransformdMtx(glm::mat4 _newMtx);
 
@@ -74,7 +74,7 @@ private:
 private:
 	glm::vec3 m_pos					{};
 	glm::quat m_rot					{ 1.0f, 0.0f, 0.0f, 0.0f };
-	glm::vec3 m_scl					{1.0f, 1.0f, 1.0f };
+	glm::vec3 m_scl					{ 1.0f, 1.0f, 1.0f };
 
 	glm::mat4 m_transformMtx		{ 1.f };
 

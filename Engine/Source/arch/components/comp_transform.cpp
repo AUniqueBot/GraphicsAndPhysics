@@ -52,12 +52,11 @@ void Transform::RotationEuler(glm::vec3 _rotation) {
 glm::vec3 Transform::RotationEuler() const {
 	return
 		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		glm::vec3();
+		m_rotOrder == ROTATION_ORDER::XZY ? QuatToXZY() :
+		m_rotOrder == ROTATION_ORDER::YXZ ? QuatToYXZ() :
+		m_rotOrder == ROTATION_ORDER::YZX ? QuatToYZX() :
+		m_rotOrder == ROTATION_ORDER::ZXY ? QuatToZXY() :
+		m_rotOrder == ROTATION_ORDER::ZYX ? QuatToZYX() : QuatToXYZ();
 }
 
 

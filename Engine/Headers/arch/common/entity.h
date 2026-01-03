@@ -46,12 +46,12 @@ public:
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
 
-	const std::set<ComponentMetadata::CompTypeID>& 
+	const std::set<unsigned>&
 		GetAttachedComponents() const							{ return m_componentsAttached; };
 
 protected:
 	friend class EntityRegistry;
-	std::set<ComponentMetadata::CompTypeID> m_componentsAttached;
+	std::set<unsigned> m_componentsAttached;
 
 
 private:
