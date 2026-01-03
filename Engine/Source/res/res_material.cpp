@@ -162,12 +162,12 @@ void Material::InitUniformLocations() {
 		GLint uniformCount{};
 		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-		for (unsigned i{}; i < uniformCount; ++i) {
+		for (int i{}; i < uniformCount; ++i) {
 			std::string name(256, '\0');
 			GLint nameLen{};
 			GLint size{};
 			GLenum type{};
-			glGetActiveUniform(programId, i, name.size(), &nameLen, &size, &type, &name[0]);
+			glGetActiveUniform(programId, i, static_cast<GLsizei>(name.size()), &nameLen, &size, &type, &name[0]);
 			name.resize(nameLen);
 			GLint location = glGetUniformLocation(programId, name.c_str());
 			if (-1 == location) {
@@ -229,7 +229,7 @@ void Material::Render(
 		static float timer{};
 		static bool downward{};
 
-		timer += downward ? -Core::DeltaTime() : Core::DeltaTime();
+		timer += static_cast<float>(downward ? -Core::DeltaTime() : Core::DeltaTime());
 		timer = std::clamp(timer, 0.f, 1.f);
 		downward = timer == 1 ? true : (timer == 0 ? false: downward);
 
@@ -249,8 +249,10 @@ void Material::Render(
 	}
 
 
-		GLenum err;
-		while ((err = glGetError()) != GL_NO_ERROR) {
-			LOG_ERROR("GL error: [" << err << "] ");
-		}
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+
+		// got annoyed by this.
+		//LOG_ERROR("GL error: [" << err << "] ");
+	}
 }

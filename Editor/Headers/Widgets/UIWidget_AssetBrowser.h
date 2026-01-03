@@ -18,7 +18,7 @@ public:
 
 
 	void Init() override;
-	void Draw() const override;
+	void Draw() override;
 	void Exit() override;
 
 

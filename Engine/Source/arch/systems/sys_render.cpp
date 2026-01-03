@@ -7,7 +7,7 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_camera.h>
-#include <arch/components/comp_transform.h>`
+#include <arch/components/comp_transform.h>
 #include <util/util_ostreamOverrides.h>
 #include <util/util_logging.h>
 #include <util/util_graphics_debugging.h>

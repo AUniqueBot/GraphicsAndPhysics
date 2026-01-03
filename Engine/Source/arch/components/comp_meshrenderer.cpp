@@ -7,7 +7,6 @@
 // - method function ------------------------
 
 MeshRenderer::MeshRenderer() {
-	SetComponentID(ComponentType::RENDER);
 }
 
 void MeshRenderer::Init() {

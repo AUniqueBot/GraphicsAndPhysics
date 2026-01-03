@@ -23,7 +23,7 @@ void UIWidget_AssetBrowser::Init() {
 	LOG_INFO("Asset Manager Init.");
 }
 
-void UIWidget_AssetBrowser::Draw() const {
+void UIWidget_AssetBrowser::Draw() {
 	using namespace ImGui;
 
 	bool reload = false;

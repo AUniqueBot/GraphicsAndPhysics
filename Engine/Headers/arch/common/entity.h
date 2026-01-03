@@ -45,12 +45,21 @@ public:
 	EntityRegistry* GetRegistry()								{ return m_registry; }
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
-private:
 
+	const std::set<ComponentMetadata::CompTypeID>& 
+		GetAttachedComponents() const							{ return m_componentsAttached; };
+
+protected:
+	friend class EntityRegistry;
+	std::set<ComponentMetadata::CompTypeID> m_componentsAttached;
+
+
+private:
 	EntityRegistry* m_registry									{};
 	EntityID m_id;
 	std::string m_name											{};
-	std::bitset<ComponentType::COUNT> m_flags;
+
+
 	bool m_active												{ true };
 	bool m_visible												{ true };
 

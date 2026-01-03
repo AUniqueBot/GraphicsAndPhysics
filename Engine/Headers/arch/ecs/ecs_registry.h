@@ -18,6 +18,10 @@ class EntityID;
 
 
 
+
+
+
+
 // component pool class
 // ------------------------------------------------------------------------------------
 // base class to utilise polymorphism
@@ -62,6 +66,47 @@ public:
 
 };
 
+
+// metadata component info class.
+struct ComponentMetadata {
+public:
+	using CompType = std::type_index;
+	using CompTypeID = unsigned;
+public:
+	ComponentMetadata(
+		std::string _name,
+		CompType _compId,
+		CompTypeID _id,
+		std::shared_ptr<IComponentPool> _pool,
+		std::function<void()> _registerFunction
+	) :
+		m_componentName		{ _name },
+		m_componentType		{ _compId },
+		m_componentPool		{ _pool },
+		m_registerFunction	{ _registerFunction },
+		m_componentTypeID	{_id}
+	{}
+
+	const std::string& GetComponentName() const						{ return m_componentName; }
+	const CompType& GetComponentType() const						{ return m_componentType; };
+	const CompTypeID& GetComponentTypeID() const						{ return m_componentTypeID; };
+
+	std::shared_ptr<IComponentPool> GetComponentPool()				{ return m_componentPool; }
+	std::shared_ptr<const IComponentPool> GetComponentPool() const	{ return m_componentPool; }
+
+
+	std::function<void()> GetComponentRegisterFunction()			{ return m_registerFunction; }
+
+private:
+	CompTypeID	m_componentTypeID;
+	CompType	m_componentType;
+	std::string m_componentName;
+	std::shared_ptr<IComponentPool> m_componentPool;
+	std::function<void()> m_registerFunction;
+};
+
+
+
 // ------------------------------------------------------------------------------------
 class EntityRegistry {
 
@@ -79,18 +124,41 @@ public:
 	template<typename T, std::enable_if_t<std::is_base_of_v<Component, T>, bool> = true>
 	void RegisterType() {
 		// create a sparse set of type T
-		CompType currentComponent{ typeid(T) };
-		m_componentPool.insert({ currentComponent,   std::make_shared<ComponentPool<T>>() });
-		m_compRegisterFunctions.insert({ currentComponent, T::Register });
+		
 
+		CompTypeID componentId{ typeid(T) };
+		std::string componentName = componentId.name();
+		std::shared_ptr<IComponentPool> pool = std::make_shared<ComponentPool<T>>();
+		std::function<void()> registerFunction = T::Register;
+
+		// setup to lookup and metadata.
+		ComponentMetadata::CompTypeID id = ++s_componentIdxId;
+		m_componentIDLookup.Add(typeid(T), id);
+		m_componentMetadataMap.insert({ 
+			componentId, ComponentMetadata(
+				componentName, 
+				componentId, id, 
+				pool, 
+				registerFunction
+			) }
+		);
+
+
+
+
+		ComponentMetadata& compInfo = m_componentMetadataMap.at(componentId);
 		std::string log{"Registering Component: "};
-		log += currentComponent.name();
+		log += componentId.name();
+		
+
 		LOG_INFO(log);
 	}
 
 	void RegisterComponentsForSerialisation() {
-		for (auto& [UNUSED, func] : m_compRegisterFunctions)
-			func();
+		for (auto& [UNUSED, info] : m_componentMetadataMap) {
+			std::function<void()> fn = info.GetComponentRegisterFunction();
+			fn();
+		}
 	}
 
 	void PrintDebugInfo() const;
@@ -140,16 +208,18 @@ public:
 private:
 
 	void Clear();
-
-
 	// map would be a better idea
 	SparseSet<EntityID, Entity> m_entityList; // 
 
 private:
-	using CompType = std::type_index;
-	std::unordered_map<CompType, std::function<void()>> m_compRegisterFunctions;
-	std::unordered_map<CompType, std::shared_ptr<IComponentPool>> m_componentPool;
+	using CompTypeID = std::type_index;
+	using CompID = unsigned;
 
+	// 1 lookup integer mapped to 1 
+	SparseSet<CompID, CompTypeID> m_componentIDLookup;
+	std::unordered_map<CompTypeID, ComponentMetadata> m_componentMetadataMap;
+
+	inline static CompID s_componentIdxId{ 0 }; // 0 is invalid.
 
 };
 

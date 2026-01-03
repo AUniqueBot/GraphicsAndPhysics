@@ -189,7 +189,7 @@ void Viewport::OnInput() {
 	const InputSystem::INPUT_KEY down		{ InputSystem::KEYBOARD_LCONTROL };
 
 	float moveSpeed					{ 10.0f };
-	double dt						{ Core::DeltaTime() };
+	float dt						{ static_cast<float>(Core::DeltaTime()) };
 
 
 	// check for inputs

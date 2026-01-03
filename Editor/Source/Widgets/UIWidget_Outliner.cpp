@@ -22,7 +22,7 @@ void UIWidget_Outliner::Init() {
     LOG_INFO("Outliner Init.");
 }
 
-void UIWidget_Outliner::Draw() const {
+void UIWidget_Outliner::Draw() {
     using namespace ImGui;
 
     if (!m_entityRegistry) return;
@@ -113,31 +113,49 @@ void UIWidget_Outliner::Table() const {
     TableHeadersRow();
     // -- aliases -------------------------
     EntityRegistry& registry = *m_entityRegistry;
+
+    const UI_Core& uic = *UICore();
     for (Entity& entity : registry.GetEntityList()) {
         TableNextRow();
-        for (unsigned columnIdx{}; columnIdx < columns; ++columnIdx) {
-            TableSetColumnIndex(columnIdx);
-            switch (columnIdx) {
-            case 0: {
-                Text(entity.Name().c_str());
-                break;
-            }
-            case 1: {
-                std::string entityIsActiveStr = "##" + entity.Name() + "IsActive" + std::to_string(entity.GetID().GetID());
-                bool entityIsActiveState{ entity.Active() };
-                Checkbox(entityIsActiveStr.c_str(), &entityIsActiveState);
-                entity.Active(entityIsActiveState);
-                break;
-            }
-            case 2: {
-                std::string entityIsVisibleStr = "##" + entity.Name() + "IsVisible" + std::to_string(entity.GetID().GetID());
-                bool entityIsVisibleState{ entity.IsVisible() };
-                Checkbox(entityIsVisibleStr.c_str(), &entityIsVisibleState);
-                entity.IsVisible(entityIsVisibleState);
-                break;
-            }
-            }
+
+        ImGuiSelectableFlags selectableFlags =
+            ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns
+            ;
+
+
+        TableSetColumnIndex(0);
+        const bool clicked = Selectable(
+            (entity.Name() + "##").c_str(), 
+            uic.SelectedEntity() == entity.GetID(),
+            selectableFlags
+        );
+        //Text(entity.Name().c_str());
+
+
+        TableSetColumnIndex(1);
+        std::string entityIsActiveStr = "##" + entity.Name() + "IsActive" + std::to_string(entity.GetID().GetID());
+        bool entityIsActiveState{ entity.Active() };
+        Checkbox(entityIsActiveStr.c_str(), &entityIsActiveState);
+        entity.Active(entityIsActiveState);
+
+
+
+        TableSetColumnIndex(2);
+        std::string entityIsVisibleStr = "##" + entity.Name() + "IsVisible" + std::to_string(entity.GetID().GetID());
+        bool entityIsVisibleState{ entity.IsVisible() };
+        Checkbox(entityIsVisibleStr.c_str(), &entityIsVisibleState);
+        entity.IsVisible(entityIsVisibleState);
+
+
+        if (clicked) {
+            // do something
+            uic.SelectedEntity(
+                uic.SelectedEntity() == entity.GetID() ?
+                EntityID::ENTITYID_INVALID : entity.GetID()
+            );
+
         }
+        
     }
 
 

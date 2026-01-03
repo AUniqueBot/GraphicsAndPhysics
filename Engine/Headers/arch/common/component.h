@@ -30,6 +30,7 @@ protected:
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 private:
 	ComponentType m_type						{ __INVALID };
+	inline static unsigned s_compIdCounter		{ 0 }; // 0 is invalid.
 	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
 };
 
