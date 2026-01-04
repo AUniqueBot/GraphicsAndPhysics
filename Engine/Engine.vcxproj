@@ -175,7 +175,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\arch\resources\res_resource.cpp" />
+    <ClCompile Include="Source\res\res_resource.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\components\comp_light.cpp" />
     <ClCompile Include="Source\arch\components\comp_meshrenderer.cpp" />
@@ -230,6 +230,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\core\core_coordinatesystem.h" />
     <ClInclude Include="Headers\arch\core\core_input.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
+    <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseset.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
@@ -247,6 +248,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />
     <ClInclude Include="Headers\arch\resources\res_resource.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />
+    <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_scene.h" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
     <ClInclude Include="Headers\arch\resources\res_texture.h" />

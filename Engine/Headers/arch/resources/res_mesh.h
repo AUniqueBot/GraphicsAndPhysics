@@ -4,12 +4,11 @@
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 
 
-class Mesh : public Resource {
+class Mesh : public Resource<Mesh> {
 
 private:
 
 public:
-	Mesh() : Resource{ MESH } {} //
 
 
 	/// @brief loads the mesh into gpu memory.
@@ -18,7 +17,7 @@ public:
 	virtual void Init();
 
 	void LoadAsset() override;
-	void UseMeshFromPath(std::filesystem::path _pathToModel);
+	void LoadMeshFromPath(std::filesystem::path _pathToModel);
 
 
 	// - mesh data ----------------------------------

@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\arch\resources\res_resource.cpp">
+    <ClCompile Include="Source\res\res_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\components\comp_camera.cpp">
@@ -306,6 +306,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

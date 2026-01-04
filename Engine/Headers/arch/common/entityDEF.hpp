@@ -6,7 +6,7 @@ void Entity::AddComponent() {
 	if (m_registry == nullptr) return;
 	bool res = m_registry->AddComponent<T>(m_id);
 	std::stringstream ss;
-	ss << "Adding Component <"<< typeid(T).name() << ">: " << (res? "Pass" : "FAIL") << std::endl;
+	ss << "Adding Component <" << Reflection::TypeName<T>() << ">: " << (res ? "Pass" : "FAIL") << std::endl;
 	if (res) {
 		LOG_INFO(ss.str());
 	}
@@ -35,7 +35,7 @@ void Entity::RemoveComponent() {
 	bool res = m_registry->RemoveComponent<T>(m_id);
 
 	std::stringstream ss;
-	ss << "Removing Component <" << typeid(T).name() << ">: " << (res ? "Pass" : "FAIL") << std::endl;
+	ss << "Removing Component <" << Reflection::TypeName<T>() << ">: " << (res ? "Pass" : "FAIL") << std::endl;
 	if (res) {
 		LOG_INFO(ss.str());
 	}

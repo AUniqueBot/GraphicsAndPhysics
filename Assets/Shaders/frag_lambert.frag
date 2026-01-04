@@ -1,6 +1,9 @@
 ﻿in vec3 frag_position;
 in vec3 frag_normal;
 in vec2 frag_uv;
+
+
+uniform bool u_hasAlbedo;
 uniform sampler2D u_albedo;
 uniform float u_deltaTime;
 out vec4 out_color;

@@ -140,6 +140,7 @@ void Material::UpdateColorTexture(const GLuint& _id, const glm::vec4& _col) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	const GLenum errCode = glGetError();
 	if (errCode != GL_NO_ERROR) {
+
 		LOG_ERROR("Bind texture failure.");
 	}
 	

@@ -11,7 +11,7 @@ class Component {
 	
 public:
 	
-	template <typename T>
+	template <std::derived_from<Component> T>
 	friend class ComponentPool;
 
 	virtual void Init() { LOG_INFO("Initialised Component"); };

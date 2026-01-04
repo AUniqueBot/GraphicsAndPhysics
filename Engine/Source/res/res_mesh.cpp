@@ -92,16 +92,16 @@ void Mesh::Init() {
 }
 
 void Mesh::LoadAsset() {
-	if (!Resource::IsAssetLoaded()) {
-		Resource::LoadAsset();
+	if (!BaseResource::IsAssetLoaded()) {
+		BaseResource::LoadAsset();
 		Load();
 		LOG_INFO("mesh loaded asset.");
 	}
 }
 
-void Mesh::UseMeshFromPath(std::filesystem::path _pathToModel) {
-	if (Resource::IsAssetLoaded()) {
-		Resource::UnloadAsset();	
+void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
+	if (BaseResource::IsAssetLoaded()) {
+		BaseResource::UnloadAsset();	
 	}
 	ResourcePath(_pathToModel);
 	Load();

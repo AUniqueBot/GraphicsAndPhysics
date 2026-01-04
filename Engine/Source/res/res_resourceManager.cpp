@@ -4,7 +4,11 @@
 #include <random>
 #include <algorithm>
 #include <cctype>
+
+
 #include <arch/resources/res_mesh.h>
+#include <arch/resources/res_shader.h>
+
 
 ResourceManager::ResourceManager() {
 	
@@ -20,10 +24,10 @@ void ResourceManager::Init() {
 	
 	
 	// registering the default file extensions
-	RegisterFileExtension(".stl", Resource::MESH);
-	RegisterFileExtension(".obj", Resource::MESH);
-	RegisterFileExtension(".frag", Resource::SHADER);
-	RegisterFileExtension(".vert", Resource::SHADER);
+	RegisterFileExtension(".stl", Mesh::GetResourceTypeID());
+	RegisterFileExtension(".obj", Mesh::GetResourceTypeID());
+	RegisterFileExtension(".frag", ShaderProgram::GetResourceTypeID());
+	RegisterFileExtension(".vert", ShaderProgram::GetResourceTypeID());
 	
 	LoadDefaultResources();
 
@@ -86,29 +90,52 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 
 
-RES_ID ResourceManager::AddResource(std::shared_ptr<Resource> _resource, std::filesystem::path _path) {
+ResourceIdentifier ResourceManager::AddResource(std::shared_ptr<BaseResource> _resource, std::filesystem::path _path) {
 	const RES_ID resId = GenerateID(_resource->ResourceType());
+	const std::string name = _resource->m_pathToAsset.filename().string();
+	const ResourceIdentifier ret {
+		resId,
+		name
+	};
 	_resource->ResourceID(resId);
-	//m_resourcePool[_resource->ResourceType()].push_back(_resource);
 	m_resourcePoolIDLookup[resId] =_resource;
-	m_resourcePoolNameLookup[_resource->m_pathToAsset.filename().string()] = _resource;
-	return resId;
+	m_resourceNameToID[name] = resId;
+	return ret;
 }
 
+
+
+void ResourceManager::RemoveResource(std::string _name) {
+	RemoveResource(m_resourceNameToID[_name]);
+}
 
 void ResourceManager::RemoveResource(RES_ID _id) {
 	// get the resource
-	const std::shared_ptr<Resource>& res = m_resourcePoolIDLookup.at(_id);
-	//m_resourcePoolNameLookup.erase(res->m_pathToAsset.filename().string());
+	const std::shared_ptr<BaseResource>& res = m_resourcePoolIDLookup.at(_id);
+	const std::string name = res->m_pathToAsset.filename().string();
 	m_resourcePoolIDLookup.erase(_id);
+	m_resourceNameToID.erase(name);
 }
 
-std::shared_ptr<Resource> ResourceManager::GetResource(RES_ID _id) {
+
+
+
+std::shared_ptr<BaseResource> ResourceManager::GetResource(RES_ID _id) {
+	if (m_resourcePoolIDLookup.find(_id) == m_resourcePoolIDLookup.end()) return nullptr;
 	return m_resourcePoolIDLookup.at(_id);
 }
-//std::shared_ptr<Resource> ResourceManager::GetResource(std::string _resName) {
-//	return m_resourcePoolNameLookup.at(_resName);
-//}
+std::shared_ptr<BaseResource> ResourceManager::GetResource(std::string _resName) {
+	return GetResource(m_resourceNameToID[_resName]);
+}
+
+std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
+	return m_resourcePoolIDLookup;
+}
+
+const std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
+	return m_resourcePoolIDLookup;
+}
+
 
 void ResourceManager::LoadDefaultResources() {
 	// load the cube here.
@@ -123,7 +150,7 @@ void ResourceManager::PackResources() {
 	LOG_INFO("Stub Function.");
 }
 
-void ResourceManager::RegisterFileExtension(std::string _extension, Resource::RESOURCE_TYPE _type) {
+void ResourceManager::RegisterFileExtension(std::string _extension, RESTYPE_ID _type) {
 	LOG_INFO("Extension registered: ["<< _extension<<"]");
 	m_fileExtensions[_extension] = _type;
 }
@@ -133,11 +160,11 @@ void ResourceManager::DeregisterFileExtension(std::string _extension) {
 	m_fileExtensions.erase(_extension);
 }
 
-Resource::RESOURCE_TYPE ResourceManager::GetResourceType(std::string _extension) const {
+RESTYPE_ID ResourceManager::GetResourceType(std::string _extension) const {
 	return 
 		m_fileExtensions.find(_extension) != m_fileExtensions.end() ? 
 		m_fileExtensions.at(_extension) : 
-		Resource::_UNKNOWN;
+		0;
 }
 
 
@@ -172,37 +199,30 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 
 	// add the resource here.
 	LOG_INFO("Registering file " << _filePath);
-	const Resource::RESOURCE_TYPE resType = m_fileExtensions.at(extension);
+	const RESTYPE_ID resType = m_fileExtensions.at(extension);
 	// for now just load immediately.
 	// TODO - figure out how to load on need.
 
 
 
-	switch (resType) {
-	case RESOURCE_TYPE::MESH:
-	{
 
-		Mesh newMesh{};
-		newMesh.UseMeshFromPath(_filePath);
-		AddResource(std::make_shared<Mesh>(newMesh), _filePath);
-		break;
+	if (resType == Mesh::GetResourceTypeID()) {
+		std::shared_ptr<Mesh> mesh	{ std::make_shared<Mesh>(Mesh()) };
+		mesh->LoadMeshFromPath(_filePath);
+		AddResource(mesh, _filePath);
 	}
-	case RESOURCE_TYPE::TEXTURE:
-		// do nothing for now.
-		
-		break;
-	}
+
 
 }
 
-RES_ID ResourceManager::GenerateID(Resource::RESOURCE_TYPE _rsc) {
+RES_ID ResourceManager::GenerateID(RESTYPE_ID _rsc) {
 	unsigned idx = ++m_nextID[_rsc];
-	RESOURCE_TYPE rst = _rsc;
+	RESTYPE_ID rst = _rsc;
 	
 	// [8-bit rst][24-bit index]
 	// guid
 
-	return idx;
+	return 0; // return nothing for now.
 }
 
 

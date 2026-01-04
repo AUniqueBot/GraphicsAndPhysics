@@ -41,7 +41,7 @@ void UIWidget_AssetBrowser::Draw() {
 	Separator();
 	EngineInputDisabled();
 
-	
+	;
 
 
 	const ImGuiTableFlags tableFlags = 
@@ -52,11 +52,12 @@ void UIWidget_AssetBrowser::Draw() {
 		ImGuiTableFlags_::ImGuiTableFlags_Reorderable
 		;
 
-	BeginTable("DirectoryContents", 3, tableFlags);
+	BeginTable("DirectoryContents", 4, tableFlags);
 
 	TableSetupColumn("Name");
 	TableSetupColumn("File Type");
 	TableSetupColumn("Last Modified");
+	TableSetupColumn("Asset ID");
 	TableHeadersRow();
 
 
@@ -127,20 +128,16 @@ void UIWidget_AssetBrowser::Draw() {
 		std::string fileType{isDir ? "Directory" : ""};
 
 		if (m_resourceManager && !isDir) {
-			Resource::RESOURCE_TYPE type = m_resourceManager->GetResourceType(path.extension().string());
-			switch (type) {
-
-			case Resource::MESH:
-				fileType = "Mesh";
-				break;
-			case Resource::SHADER:
-				fileType = "Shader";
-				break;
-			case Resource::TEXTURE:
-				fileType = "Texture";
-				break;
-			default:
-				fileType = "UNKNOWN";
+			RESTYPE_ID type = m_resourceManager->GetResourceType(path.extension().string());
+			
+			if (type == 0) {
+				//fileType = "Mesh";
+			}
+			if (type == 1) {
+				//fileType = "Shader";
+			}
+			else {
+				//fileType = "UNKNOWN";
 			}
 		}
 		ImGui::TableSetColumnIndex(1);
@@ -168,6 +165,23 @@ void UIWidget_AssetBrowser::Draw() {
 		TableSetColumnIndex(2);
 		ImGui::Text(oss.str().c_str());
 
+
+
+		
+		if (!m_resourceManager) {
+			continue;
+		}
+		//auto& rsPool = m_resourceManager->GetResourcePool();
+		ResourceManager& resm = *m_resourceManager;
+		std::string fname = path.filename().string();
+		std::shared_ptr<BaseResource> resPoint = resm.GetResource(fname);
+		if (!resPoint) continue;
+		BaseResource& res = *resPoint;
+		// find if item is already loaded.
+		std::stringstream ss{ };
+		ss << res.ResourceID();
+		TableSetColumnIndex(3);
+		Text(ss.str().c_str()); // looks ok.
 	}
 	EndTable();
 

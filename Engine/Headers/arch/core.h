@@ -62,14 +62,14 @@ public:
 public:
 	// static void AddSystem(System* newSys);
 
-	template <typename T>
-	std::enable_if_t<std::is_base_of_v<System, T>, void> RegisterSystem() {
+	template <std::derived_from<System> T>
+	void RegisterSystem() {
 		m_systemInstances.push_back(&T::GetInstance());
 	}
 
 
-	template <typename T>
-	std::enable_if_t<std::is_base_of_v<System, T>, T*> GetSystem() {
+	template <std::derived_from<System> T>
+	T* GetSystem() {
 		for (System* sys : m_systemInstances) {
 			if (auto* casted = dynamic_cast<T*>(sys)) {
 				return casted;

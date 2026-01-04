@@ -116,6 +116,8 @@ void UIWidget_Inspector::Draw() {
 
 	}
 	
+
+
 	auto meshV = obj.GetComponent<MeshRenderer>();
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
@@ -139,6 +141,14 @@ void UIWidget_Inspector::Draw() {
 
 
 		mr.GetMesh();
+
+
+		// dropdown list.
+
+
+
+
+
 	}
 
 	auto camV = obj.GetComponent<Camera>();

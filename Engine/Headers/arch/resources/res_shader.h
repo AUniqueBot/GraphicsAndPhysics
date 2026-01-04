@@ -6,7 +6,7 @@
 
 
 
-class ShaderProgram {
+class ShaderProgram : public Resource<ShaderProgram> {
 /*
 	@brief
 		contains the shader program

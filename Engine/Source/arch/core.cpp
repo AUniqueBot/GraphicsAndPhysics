@@ -39,7 +39,7 @@ void Core::Init() {
 	if (component) {
 
 		Mesh mesh = Mesh{};
-		mesh.UseMeshFromPath("./Assets/Models/sampleModel.obj");
+		mesh.LoadMeshFromPath("./Assets/Models/sampleModel.obj");
 
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
@@ -157,11 +157,11 @@ void Core::CoreInit() {
 
 
 void Core::RegisterComponents() {
-	m_registry.RegisterType<Transform>();
-	m_registry.RegisterType<RigidBody>();
-	m_registry.RegisterType<Camera>();
-	m_registry.RegisterType<MeshRenderer>();
-	m_registry.RegisterType<Light>();
+	m_registry.RegisterComponent<Transform>();
+	m_registry.RegisterComponent<RigidBody>();
+	m_registry.RegisterComponent<Camera>();
+	m_registry.RegisterComponent<MeshRenderer>();
+	m_registry.RegisterComponent<Light>();
 
 
 	// register all types here.

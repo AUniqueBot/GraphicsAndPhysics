@@ -47,6 +47,10 @@
 			ImVec2(1, 0)  // bottom-right in texture
 		);
 
+		if (BeginDragDropTarget()) {
+			EndDragDropTarget();
+		}
+
 
 		// onresize, call the viewport to change along with it's rendertarget.
 		

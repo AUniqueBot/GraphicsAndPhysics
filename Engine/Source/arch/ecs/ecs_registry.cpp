@@ -13,9 +13,9 @@ void EntityRegistry::PrintDebugInfo() const {
 	ss << typeid(EntityRegistry).name() << "::Debug Info\n";
 	ss << "=============================================================\n\n";
 	ss << "  entity count:    " << m_entityList.size() << "\n";
-	ss << "  component count: " << m_componentMetadataMap.size() << "\n";
-	for (auto& [compType, info] : m_componentMetadataMap) {
-		const auto& pool = info.GetComponentPool();
+	ss << "  component count: " << m_componentData.size() << "\n";
+	for (auto& [compType, packedData] : m_componentData) {
+		const auto& pool = packedData.m_componentPool;
 		
 		ss << "    ----------------\n";
 		ss << "    component type: " << compType.name() << "\n";
@@ -48,6 +48,6 @@ EntityView EntityRegistry::Instantiate() {
 
 void EntityRegistry::Clear() {
 	// ensure no dangling references.
-	m_componentMetadataMap.clear();
+	m_componentData.clear();
 }
 
