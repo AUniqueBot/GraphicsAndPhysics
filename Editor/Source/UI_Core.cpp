@@ -23,7 +23,10 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiIO& io = ImGui::GetIO(); 
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // optional (multi-window)
+
 
 	// Setup style
 	ImGui::StyleColorsDark();

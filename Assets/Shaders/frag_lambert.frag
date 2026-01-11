@@ -3,7 +3,6 @@ in vec3 frag_normal;
 in vec2 frag_uv;
 
 
-uniform bool u_hasAlbedo;
 uniform sampler2D u_albedo;
 uniform float u_deltaTime;
 out vec4 out_color;
@@ -21,7 +20,7 @@ struct LightData {
 layout (std140, binding=2) uniform LightBlock {
 	int m_count;
 	// int _pad[3];                // pad to 16 bytes so next comes at offset 16
-	LightData m_lightData[50];
+	LightData m_lightData[10];
 };
 
 vec3 CalculateAmbient() {

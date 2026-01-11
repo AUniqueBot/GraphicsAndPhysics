@@ -178,8 +178,8 @@ void Material::InitUniformLocations() {
 
 			// data here
 			UniformData u_data{};
-			u_data.m_uniformLocation = location;
 			u_data.m_type = type;
+			u_data.m_uniformLocation = location;
 			LOG_INFO("Uniform name: " << name);
 			LOG_INFO("Uniform type: " << type);
 			m_uniformData.emplace(name, u_data);
