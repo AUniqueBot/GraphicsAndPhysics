@@ -58,8 +58,6 @@ void UIWidget_Inspector::Draw() {
 	if (InputText("Object Name", &s) && EnterOrTabPressed()) {
 		obj.Name(s);
 	}
-	
-	
 
 	// render components here.
 
@@ -115,12 +113,12 @@ void UIWidget_Inspector::Draw() {
 		}
 
 	}
-	
 
 
 	auto meshV = obj.GetComponent<MeshRenderer>();
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
+		ResourceManager& resmgr = papc->ResManager();
 
 		LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
 		float colBuffer[4]{
@@ -140,8 +138,29 @@ void UIWidget_Inspector::Draw() {
 		}
 
 
-		mr.GetMesh();
+		const auto& selectedMesh = mr.GetMesh();
+		std::string selectedMeshName = selectedMesh->ResourcePath().filename().string();
+		RES_ID selectedMeshID = selectedMesh->ResourceID();
+		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
+			const auto& resPool = resmgr.GetResourcePool();
+			const auto& meshIDs = resmgr.GetResourcePoolManifest(Mesh::GetResourceTypeID());
+			
+			for (const RES_ID& id : meshIDs) {
+				std::string imguiMeshID	{ "##meshID" };
+				imguiMeshID += id;
+				PushID(imguiMeshID.c_str());
 
+				const auto& mesh = std::dynamic_pointer_cast<Mesh>(resPool.at(id));
+				std::string name { mesh->ResourcePath().filename().string()  };
+
+				bool isSelected = selectedMeshID == id;
+				if (Selectable(name.c_str(), isSelected)) {
+					mr.SetMesh(mesh);
+				}
+				PopID();
+			}
+			EndCombo();
+		}
 
 		// dropdown list.
 

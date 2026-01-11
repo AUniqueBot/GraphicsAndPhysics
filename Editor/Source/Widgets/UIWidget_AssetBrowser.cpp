@@ -129,15 +129,9 @@ void UIWidget_AssetBrowser::Draw() {
 
 		if (m_resourceManager && !isDir) {
 			RESTYPE_ID type = m_resourceManager->GetResourceType(path.extension().string());
-			
-			if (type == 0) {
-				//fileType = "Mesh";
-			}
-			if (type == 1) {
-				//fileType = "Shader";
-			}
-			else {
-				//fileType = "UNKNOWN";
+			if (type != 0) {
+				const ResourceTypeMetadata& rtm	{ m_resourceManager->GetResourceTypeMetadata(type) } ;
+				fileType = rtm.GetName();
 			}
 		}
 		ImGui::TableSetColumnIndex(1);

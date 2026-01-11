@@ -22,6 +22,11 @@ void ResourceManager::Init() {
 	// loads a json (if any) of all possible asset paths configured by the engine.
 	
 	
+
+
+	RegisterResourceType<Mesh>();
+	RegisterResourceType<ShaderProgram>();
+
 	
 	// registering the default file extensions
 	RegisterFileExtension(".stl", Mesh::GetResourceTypeID());
@@ -90,7 +95,10 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 
 
-ResourceIdentifier ResourceManager::AddResource(std::shared_ptr<BaseResource> _resource, std::filesystem::path _path) {
+ResourceIdentifier ResourceManager::AddResourceInternal(
+	std::shared_ptr<BaseResource> _resource, 
+	RESTYPE_ID _type,
+	std::filesystem::path _path) {
 	const RES_ID resId = GenerateID(_resource->ResourceType());
 	const std::string name = _resource->m_pathToAsset.filename().string();
 	const ResourceIdentifier ret {
@@ -100,6 +108,7 @@ ResourceIdentifier ResourceManager::AddResource(std::shared_ptr<BaseResource> _r
 	_resource->ResourceID(resId);
 	m_resourcePoolIDLookup[resId] =_resource;
 	m_resourceNameToID[name] = resId;
+	m_resourceTypeManifest[_type].push_back(resId);
 	return ret;
 }
 
@@ -113,8 +122,25 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 	// get the resource
 	const std::shared_ptr<BaseResource>& res = m_resourcePoolIDLookup.at(_id);
 	const std::string name = res->m_pathToAsset.filename().string();
+	
+	
+	// caches to clear
+	RESTYPE_ID typeId = res->ResourceType();
+
+	// erasing from primary containers
 	m_resourcePoolIDLookup.erase(_id);
 	m_resourceNameToID.erase(name);
+
+	// erasing from secondary containers
+	auto& resIdVector{ m_resourceTypeManifest[typeId] };
+	
+
+	// rotate and pop
+	const auto& itr{ std::find_if(resIdVector.begin(), resIdVector.end(), [_id](RES_ID& a) {return a == _id; }) };
+	if (itr == resIdVector.end()) return;
+
+	std::rotate(itr, itr + 1, resIdVector.end());
+	resIdVector.pop_back();
 }
 
 
@@ -148,6 +174,10 @@ void ResourceManager::LoadDefaultResources() {
 
 void ResourceManager::PackResources() {
 	LOG_INFO("Stub Function.");
+}
+
+const std::vector<RES_ID>& ResourceManager::GetResourcePoolManifest(RESTYPE_ID _typeId) const {
+	return m_resourceTypeManifest.at(_typeId);
 }
 
 void ResourceManager::RegisterFileExtension(std::string _extension, RESTYPE_ID _type) {
@@ -208,7 +238,9 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 
 	if (resType == Mesh::GetResourceTypeID()) {
 		std::shared_ptr<Mesh> mesh	{ std::make_shared<Mesh>(Mesh()) };
+		
 		mesh->LoadMeshFromPath(_filePath);
+		LOG_INFO("Loading mesh from "<< _filePath);
 		AddResource(mesh, _filePath);
 	}
 
@@ -222,7 +254,7 @@ RES_ID ResourceManager::GenerateID(RESTYPE_ID _rsc) {
 	// [8-bit rst][24-bit index]
 	// guid
 
-	return 0; // return nothing for now.
+	return idx; // return nothing for now.
 }
 
 

@@ -12,6 +12,32 @@ struct ResourceIdentifier {
 	const std::string m_resourceName;
 };
 
+
+template <std::derived_from<BaseResource> T>
+struct ResourceSlot {
+
+
+	void GetPointerHandle() {
+		// returns a class
+	}
+
+	std::unique_ptr<T> m_resourcePointer;
+};
+
+
+template <std::derived_from<BaseResource> T>
+struct ResourceHandler {
+	ResourceHandler() {
+
+	}
+	~ResourceHandler() {
+
+	}
+
+	
+};
+
+
 class ResourceManager {
 
 private:
@@ -24,8 +50,12 @@ public:
 	
 	void ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive = true);
 	
-	// optional path.
-	ResourceIdentifier AddResource(std::shared_ptr<BaseResource> _resource, std::filesystem::path _path);
+
+	// internal thing
+	template <std::derived_from<BaseResource> T>
+	ResourceIdentifier AddResource(std::shared_ptr<T> _resource, std::filesystem::path _path);
+	
+
 	void RemoveResource(RES_ID _id); 
 	void RemoveResource(std::string _name); 
 
@@ -36,7 +66,19 @@ public:
 	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool();
 	const std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool() const;
 
+	const std::vector<RES_ID>& GetResourcePoolManifest(RESTYPE_ID _typeId) const;
 	
+	
+	
+	const ResourceTypeMetadata& GetResourceTypeMetadata(RESTYPE_ID _typeId) const {
+		return m_resourceTypeMetadata.at(_typeId);
+	}
+
+	template <std::derived_from<BaseResource>>
+	void GetResourceTypeMetadata()const {
+
+	}
+
 
 	// registration
 	void RegisterFileExtension(std::string _extension, RESTYPE_ID _type);
@@ -49,7 +91,7 @@ public:
 
 public:
 	template <std::derived_from<BaseResource> T>
-	void RegisterResourceType();
+	ResourceTypeMetadata RegisterResourceType();
 
 public:
 	void LoadPaths();
@@ -58,6 +100,14 @@ public:
 
 
 	void LoadResource(std::filesystem::path _filePath);
+private:
+	// optional path.
+	ResourceIdentifier AddResourceInternal(
+		std::shared_ptr<BaseResource> _resource, 
+		RESTYPE_ID _type, 
+		std::filesystem::path _path
+	);
+
 private:
 	static RES_ID GenerateID(RESTYPE_ID _rsc);
 	
@@ -81,10 +131,16 @@ private:
 
 
 	// secondary identifiers.
-	std::unordered_map<unsigned, std::vector<RES_ID>>			m_resourceTypeManifest;
+	std::unordered_map<RESTYPE_ID, ResourceTypeMetadata>		m_resourceTypeMetadata;
+	std::unordered_map<RESTYPE_ID, std::vector<RES_ID>>			m_resourceTypeManifest;
 
 
 };
+
+
+
+
+
 
 #include <arch/resources/res_resourceManagerDEF.hpp>
 

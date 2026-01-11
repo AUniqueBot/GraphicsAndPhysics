@@ -1,0 +1,13 @@
+# Blender 4.5.3 LTS MTL File: 'None'
+# www.blender.org
+
+newmtl mtl_m1garand_action
+Ns 0.000000
+Ka 1.000000 1.000000 1.000000
+Ke 0.000000 0.000000 0.000000
+Ni 1.500000
+d 1.000000
+illum 2
+map_Kd C:/Users/Aaron Goh/Desktop/Game Ripping/IW Engine/____Greyhound/exported_files/advanced_warfare/xmodels/_ar/_vm_wpn_ar_m1garand/_images/tex_m1garand_action_base_col.png
+map_Ks C:/Users/Aaron Goh/Desktop/Game Ripping/IW Engine/____Greyhound/exported_files/advanced_warfare/xmodels/_ar/_vm_wpn_ar_m1garand/_images/~tex_m1garand_action_base_spc~fd25b4be.png
+map_Bump C:/Users/Aaron Goh/Desktop/Game Ripping/IW Engine/____Greyhound/exported_files/advanced_warfare/xmodels/_ar/_vm_wpn_ar_m1garand/_images/tex_m1garand_action_base_nml.png
