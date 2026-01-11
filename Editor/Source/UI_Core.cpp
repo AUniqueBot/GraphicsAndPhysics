@@ -24,6 +24,8 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	ImGuiConfigFlags_::ImGuiConfigFlags_IsSRGB
+
 
 	// Setup style
 	ImGui::StyleColorsDark();
