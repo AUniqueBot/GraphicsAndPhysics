@@ -69,7 +69,9 @@
 		if (!currentSize.x || !currentSize.y) return;// resize to dims 0 willl result in an empty buffer.
 
 		if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
+
 			vp.ViewportDimensions({ currentSize.x, currentSize.y });
+			vp.AspectRatio(currentSize.x / currentSize.y);
 			lastSize = currentSize;
 		}
 

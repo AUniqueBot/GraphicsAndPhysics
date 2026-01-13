@@ -39,7 +39,7 @@ void UIWidget_AssetBrowser::Draw() {
 
 
 	Separator();
-	EngineInputDisabled();
+	//EngineInputEnabled();
 
 	;
 

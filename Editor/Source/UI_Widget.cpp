@@ -55,18 +55,18 @@ const Core* UIWidget::ApplicationCore() const {
     return m_uiCore ? m_uiCore->GetCore() : nullptr;
 }
 
-void UIWidget::EngineInputDisabled(bool _setting) {
+void UIWidget::EngineInputEnabled(bool _setting) {
     if (!m_uiCore) return;
     Core* c = m_uiCore->GetCore();
     if (!c) return;
-    c->GetInputSystem().InputIsDisabled(_setting);
+    c->GetInputSystem().InputIsAllowed(_setting);
 
 }
-bool UIWidget::EngineInputDisabled() const {
+bool UIWidget::EngineInputEnabled() const {
     if (!m_uiCore) return false;
     Core* c = m_uiCore->GetCore();
     if (!c) return false;
-    return c->GetInputSystem().InputIsDisabled();
+    return c->GetInputSystem().InputIsAllowed();
 }
 
 

@@ -41,8 +41,8 @@ public:
 	const Core* ApplicationCore() const;
 
 
-	void EngineInputDisabled(bool _setting);
-	bool EngineInputDisabled() const;
+	void EngineInputEnabled(bool _setting);
+	bool EngineInputEnabled() const;
 
 
 protected:

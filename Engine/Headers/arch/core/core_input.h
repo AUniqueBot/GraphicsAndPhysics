@@ -150,27 +150,61 @@ public:
 
 public:
     void Init(GLFWwindow* _window);
+    void PreUpdate();
     void Update();
     void PostUpdate();
 
     // - query --------------------------
     
+
     bool IsKeyPressed(INPUT_KEY) const;
     bool IsKeyHeld(INPUT_KEY) const;
     bool IsKeyReleased(INPUT_KEY) const;
+
+
 
     bool IsMouseButtonClicked(INPUT_MOUSE_BUTTON _button) const;
     bool IsMouseButtonHeld(INPUT_MOUSE_BUTTON _button) const;
     bool IsMouseButtonReleased(INPUT_MOUSE_BUTTON _button) const;
 
+
     glm::vec2 GetMousePosition() const;
     glm::vec2 GetMouseDelta() const;
 
-    bool InputIsDisabled() const;
-    void InputIsDisabled(bool _setting);
+
+
+    // - flags ---------------------------
+    bool InputIsAllowed() const;
+    void InputIsAllowed(bool _setting);
+
+
+    bool AllowKeyboardInput() const;
+    void AllowKeyboardInput(bool _setting);
+
+    bool AllowMouseInput() const;
+    void AllowMouseInput(bool _setting);
+
 
 public:
 
+
+private:
+    // raw versions of input queries.
+
+    bool IsKeyPressed_Internal(INPUT_KEY) const;
+    bool IsKeyHeld_Internal(INPUT_KEY) const;
+    bool IsKeyReleased_Internal(INPUT_KEY) const;
+
+    bool IsMouseButtonClicked_Internal(INPUT_MOUSE_BUTTON _button) const;
+    bool IsMouseButtonHeld_Internal(INPUT_MOUSE_BUTTON _button) const;
+    bool IsMouseButtonReleased_Internal(INPUT_MOUSE_BUTTON _button) const;
+    
+    
+    glm::vec2 GetMousePosition_Internal() const;
+    glm::vec2 GetMouseDelta_Internal() const;
+
+
+    void ClearInputs();
 
 private:
     void SetupCallbacks(GLFWwindow* _window);
@@ -198,8 +232,11 @@ private:
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtons      { false };
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtonsPrev  { false }; // history
 
-    bool m_disableInputs                                    { false }; // fla
 
+    // - flags ----------------------------------
+    bool m_allowInputs                                      { true }; 
+    bool m_allowMouse                                       { true };
+    bool m_allowKeyboard                                    { true };
 
 private:
     // - mappings -------------------------------

@@ -36,7 +36,7 @@ public:
 	Core* GetCore() const;
 
 protected:
-
+	void BeginDockSpace();
 
 
 	void RenderTopBar() const;
