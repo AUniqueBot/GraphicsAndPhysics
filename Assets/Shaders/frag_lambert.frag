@@ -74,7 +74,8 @@ vec3 CalculateDirectionalLighting(vec3 fragNormal) {
 
 void main() {
 	vec4 color = texture(u_albedo, frag_uv);
-    out_objectId = u_objectId * 1000;
+    out_objectId = u_objectId;
+    // out_color = float(u_objectId % 256u) / 255.0; // testing
     out_color = color * vec4(CalculateDirectionalLighting(frag_normal) + CalculateAmbient(), 1);
 }
 

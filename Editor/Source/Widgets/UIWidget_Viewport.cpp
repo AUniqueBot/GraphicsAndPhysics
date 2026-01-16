@@ -35,7 +35,7 @@
 		if (!sizeIm.x || !sizeIm.y) return;
 
 			
-		const unsigned col = rt.GetColorAttachment(0);
+		const unsigned col = rt.GetColorAttachmentTextureID(0);
 		assert(glIsTexture(col));
 		ImGui::Image(
 			(void*)(intptr_t)col, 
@@ -89,7 +89,32 @@
 		if (!m_viewportPointer || !m_viewportPointer->GetRenderTarget()) return;
 		Viewport& vp{ *m_viewportPointer };
 		
-		unsigned picked = vp.GetRenderTarget()->PickPixel(glm::vec2());
+		// mouse position to image position
+
+		ImVec2 mouse = ImGui::GetMousePos();
+		ImVec2 viewportMin = ImGui::GetItemRectMin();
+		ImVec2 viewportMax = ImGui::GetItemRectMax();
+		glm::vec2 local{};
+		local.x = mouse.x - viewportMin.x;
+		local.y = mouse.y - viewportMin.y;
+		if (local.x < 0 || local.y < 0 ||
+			local.x >(viewportMax.x - viewportMin.x) ||
+			local.y >(viewportMax.y - viewportMin.y))
+		{
+			return;
+		}
+		local.y = (viewportMax.y - viewportMin.y) - local.y;
+		glm::vec2 framebufferSize = vp.GetRenderTarget()->Resolution();
+		glm::vec2 viewportSize = {
+			viewportMax.x - viewportMin.x,
+			viewportMax.y - viewportMin.y
+		};
+		glm::vec2 pixel{};
+		pixel.x = local.x * (framebufferSize.x / viewportSize.x);
+		pixel.y = local.y * (framebufferSize.y / viewportSize.y);
+
+
+		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, 1);
 
 		LOG_INFO("Value received from read: " << picked);
 

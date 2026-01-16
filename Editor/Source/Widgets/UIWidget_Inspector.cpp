@@ -59,6 +59,8 @@ void UIWidget_Inspector::Draw() {
 		obj.Name(s);
 	}
 
+	Text("ID: [%i]", obj.GetID());
+
 	// render components here.
 
 	//ImGui::

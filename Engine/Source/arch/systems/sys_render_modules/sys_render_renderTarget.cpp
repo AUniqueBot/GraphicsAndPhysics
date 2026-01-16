@@ -85,11 +85,15 @@ void RenderTarget::Resize(unsigned _width, unsigned _height) {
 	Resize({ _width, _height });
 }
 
-unsigned RenderTarget::GetColorAttachment(unsigned index) const {
-	return m_colorAttachments[index].m_textureId;
+const ColorAttachment& RenderTarget::GetColorAttachment(unsigned _index) const {
+	return m_colorAttachments[_index];
 }
 
-unsigned RenderTarget::GetDepthAttachment() const {
+unsigned RenderTarget::GetColorAttachmentTextureID(unsigned _index) const {
+	return m_colorAttachments[_index].m_textureId;
+}
+
+unsigned RenderTarget::GetDepthAttachmentTextureID() const {
 	return m_fboDepth;
 }
 
@@ -117,7 +121,7 @@ void RenderTarget::AddInitialColorAttachments() {
 
 	// must be added in sequence.
 	AddColorAttachment(outColor);
-	//AddColorAttachment(outObjectId);
+	AddColorAttachment(outObjectId);
 	
 	
 	LOG_INFO(m_colorAttachments.size());
@@ -296,8 +300,14 @@ unsigned RenderTarget::PickPixel(
 	unsigned _colorAttachment, 
 	glm::vec2 _pixelResolution
 ) const {
-	Bind();
-	glReadBuffer(GetColorAttachment(_colorAttachment));
+	if (_pixelResolution.x == 0 || _pixelResolution.y == 0) {
+		LOG_WARN("Resoution provided is 0 on one or both dimensions");
+		return 0;
+	};
+
+	Bind(); 
+	const ColorAttachment& colAttach{ GetColorAttachment(_colorAttachment) };
+	glReadBuffer(GL_COLOR_ATTACHMENT0 + colAttach.m_attachmentIndex);
 
 
 	GLuint readBuffer{};

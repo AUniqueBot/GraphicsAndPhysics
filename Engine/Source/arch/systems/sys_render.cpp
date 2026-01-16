@@ -151,6 +151,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
     if (_viewport.GetRenderTarget()) {
         _viewport.GetRenderTarget()->Bind();
         glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
+
+
     }
 
     GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
@@ -160,6 +162,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
     glClear(clearFlags);
     glClearDepth(1.0f);
 
+    GLuint clearID = 0;
+    glClearBufferuiv(GL_COLOR, 1, &clearID);
 
     // rendering
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

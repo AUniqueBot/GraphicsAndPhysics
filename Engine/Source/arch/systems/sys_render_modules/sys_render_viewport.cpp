@@ -344,7 +344,7 @@ const float& Viewport::AspectRatio() const {
 void Viewport::Resize() {
 	if (!m_renderTarget) return;
 	RenderTarget& rt = *m_renderTarget;
-	rt.Resize(m_viewportDimensions);
+	rt.Resolution(m_viewportDimensions);
 }
 
 void Viewport::Move() {

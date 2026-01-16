@@ -32,8 +32,7 @@ public:
 	// 1 == object id
 
 
-	void Resize(glm::ivec2 _newDimensions);
-	void Resize(unsigned _width, unsigned _height);
+
 
 	void Resolution(glm::ivec2 _res);
 	void Resolution(unsigned _width, unsigned _height);
@@ -45,9 +44,9 @@ public:
 	void Name(const std::string& _name) { m_renderTargetName = _name; }
 
 
-	
-	unsigned GetColorAttachment(unsigned _index = C_RENDER_MATERIAL) const;
-	unsigned GetDepthAttachment() const;
+	const ColorAttachment& GetColorAttachment(unsigned _index) const;
+	unsigned GetColorAttachmentTextureID(unsigned _index = C_RENDER_MATERIAL) const;
+	unsigned GetDepthAttachmentTextureID() const;
 
 	
 
@@ -66,7 +65,7 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	unsigned PickPixel(
+	unsigned	PickPixel(
 		glm::vec2 _vec, 
 		unsigned _colorAttachment = C_RENDER_MATERIAL,
 		glm::vec2 _readResolution = glm::vec2(1, 1)
@@ -77,7 +76,8 @@ public:
 	void LogBindErrors() const;
 	bool VerifyFBOCompleteness() const;
 private:
-
+	void Resize(glm::ivec2 _newDimensions);
+	void Resize(unsigned _width, unsigned _height);
 
 
 private:
