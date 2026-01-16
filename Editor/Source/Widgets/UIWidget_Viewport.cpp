@@ -14,8 +14,6 @@
 	}
 
 	void UIWidget_Viewport::Draw() {
-
-
 		// only contains the render target.
 		using namespace ImGui;
 		
@@ -51,6 +49,11 @@
 			EndDragDropTarget();
 		}
 
+		if (WidgetIsHoveredOver()) {
+			LOG_INFO("Hovering over viewport widget");
+			PickObjectFromScreen();
+		}
+
 
 		// onresize, call the viewport to change along with it's rendertarget.
 		
@@ -74,6 +77,22 @@
 			vp.AspectRatio(currentSize.x / currentSize.y);
 			lastSize = currentSize;
 		}
+
+	}
+
+	void UIWidget_Viewport::PickObjectFromScreen() const {
+		// call the viewport to pick from screen.
+				// get the new window resolution.
+		
+		// on click pick.
+		// this function does not care about
+		if (!m_viewportPointer || !m_viewportPointer->GetRenderTarget()) return;
+		Viewport& vp{ *m_viewportPointer };
+		
+		unsigned picked = vp.GetRenderTarget()->PickPixel(glm::vec2());
+
+		LOG_INFO("Value received from read: " << picked);
+
 
 	}
 

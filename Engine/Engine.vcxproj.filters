@@ -314,5 +314,8 @@
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

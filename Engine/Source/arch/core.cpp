@@ -95,9 +95,6 @@ void Core::PreUpdate() {
 	for (auto s : m_systemInstances) {
 		s->PreUpdate();
 	}
-
-	// m_inputSystem to poll for updates before doing anything.
-
 	m_inputSystem.PreUpdate();
 }
 

@@ -64,11 +64,12 @@ void LambertMaterial::UpdateTextureID() {
 void LambertMaterial::Render(
     const glm::mat4& _objectMatrix,
     const glm::mat4& _projectionMatrix,
-    const glm::mat4& _cameraMatrix
+    const glm::mat4& _cameraMatrix,
+    const EntityID& _objId
 ) const {
 
     //return;
-    Material::Render(_objectMatrix, _projectionMatrix, _cameraMatrix);
+    Material::Render(_objectMatrix, _projectionMatrix, _cameraMatrix, _objId);
 
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glActiveTexture(GL_TEXTURE0);

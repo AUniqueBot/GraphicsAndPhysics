@@ -148,7 +148,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
       <AdditionalLibraryDirectories>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
+      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -170,7 +170,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
       <AdditionalLibraryDirectories>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
+      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -257,6 +257,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderLayer.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />

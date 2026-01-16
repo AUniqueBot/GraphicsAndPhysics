@@ -24,7 +24,8 @@ public:
 	void Render(
 		const glm::mat4& _objectMatrix,
 		const glm::mat4& _projectionMatrix,
-		const glm::mat4& _cameraMatrix
+		const glm::mat4& _cameraMatrix,
+		const EntityID& _objId
 	) const override;
 
 	// need a resource manager for textures

@@ -142,7 +142,7 @@ void UI_Core::BeginDockSpace() {
 void UI_Core::Exit() {
 
 	m_widgetStorage.clear();// remove all widgets from storage
-
+	ImGui::DestroyPlatformWindows();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
@@ -193,6 +193,58 @@ void UI_Core::SelectedEntity(EntityID _id)  const {
 	m_selectedEntity = _id;
 }
 
+
+
+
+
+bool UI_Core::InputIsAllowed() const {
+	return m_inputAllowed;
+}
+
+void UI_Core::InputIsAllowed(bool _setting) {
+	if (m_inputAllowed == _setting) return;
+	m_inputAllowed = _setting;
+
+	UpdateAllowedInputs();
+}
+
+bool UI_Core::AllowKeyboardInput() const {
+	return m_keyboardInputAllowed;
+}
+
+void UI_Core::AllowKeyboardInput(bool _setting) {
+	if (m_keyboardInputAllowed != _setting) return;
+	m_keyboardInputAllowed = _setting;
+	UpdateAllowedInputs();
+}
+
+bool UI_Core::AllowMouseInput() const {
+	return m_mouseInputAllowed;
+}
+
+void UI_Core::AllowMouseInput(bool _setting) {
+	if (m_mouseInputAllowed != _setting) return;
+	m_mouseInputAllowed = _setting;
+	UpdateAllowedInputs();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Core* UI_Core::GetCore() const {
 	return m_applicationCore;
 }
@@ -207,6 +259,10 @@ void UI_Core::RenderWidgets() const {
 
 
 	}
+}
+void UI_Core::UpdateAllowedInputs() {
+	ImGui::GetIO().WantCaptureKeyboard = m_inputAllowed && m_keyboardInputAllowed;
+	ImGui::GetIO().WantCaptureMouse = m_inputAllowed && m_mouseInputAllowed;
 }
 void UI_Core::RenderTopBar() const {
 	if (ImGui::BeginMainMenuBar()) {

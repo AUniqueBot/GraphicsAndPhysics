@@ -9,7 +9,10 @@ RenderTargetManager::~RenderTargetManager() {
 RenderTargetManager::RenderTargetID RenderTargetManager::AddRenderTarget(std::string _name, glm::ivec2 _dimensions) {
 	const unsigned id = m_renderTargetIdCounter++;
 	std::shared_ptr<RenderTarget> renderTarget = std::make_shared<RenderTarget>();
-	renderTarget->Create(_dimensions);
+	renderTarget->Resolution(_dimensions);
+	// build here or something.
+	renderTarget->Build();
+	//renderTarget->Create_DEC(_dimensions); // to be deprecated.
 	m_renderTargetMap.emplace(id, renderTarget);
 	return id;
 }

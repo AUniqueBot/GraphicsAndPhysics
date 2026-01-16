@@ -1,7 +1,11 @@
 #pragma once
 #include <UI_Widget.h>
 
+
+// - declaration only ------------------
 class Viewport;
+class EntityID;
+
 
 class UIWidget_Viewport : public UIWidget {
 public:
@@ -17,6 +21,8 @@ public:
 	//
 
 	void ResizeCallback() const;
+
+	void PickObjectFromScreen() const;
 
 
 private:

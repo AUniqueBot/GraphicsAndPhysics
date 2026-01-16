@@ -33,7 +33,24 @@ public:
 	EntityID SelectedEntity() const;
 	void SelectedEntity(EntityID _id) const;
 
+
+
+
+	// -- inputs ---------------------------------------------------
+	bool InputIsAllowed() const;
+	void InputIsAllowed(bool _setting);
+
+	bool AllowKeyboardInput() const;
+	void AllowKeyboardInput(bool _setting);
+	
+	bool AllowMouseInput() const;
+	void AllowMouseInput(bool _setting);
+
+
+
+
 	Core* GetCore() const;
+
 
 protected:
 	void BeginDockSpace();
@@ -44,8 +61,13 @@ protected:
 
 private:
 
-
+	void UpdateAllowedInputs();
 private:
+
+	bool m_inputAllowed							{ true };
+	bool m_keyboardInputAllowed					{ true };
+	bool m_mouseInputAllowed					{ true };
+
 	Core* m_applicationCore						{};
 
 	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;

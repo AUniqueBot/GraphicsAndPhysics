@@ -37,14 +37,15 @@ void MeshRenderer::Render(
 	const glm::mat4& _projectionMatrix, 
 	const glm::mat4& _cameraMatrix
 ) {
-
+	
 	// use the default material and render.
 	if (m_materials.size() == 0) {
 		const Material& mat = GetDefaultMaterial();
 		mat.Render(
 			_objectMatrix,
 			_projectionMatrix,
-			_cameraMatrix
+			_cameraMatrix,
+			GetEntityID()
 		);
  
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
@@ -55,7 +56,8 @@ void MeshRenderer::Render(
 		matPtr->Render(
 			_objectMatrix,
 			_projectionMatrix,
-			_cameraMatrix
+			_cameraMatrix,
+			GetEntityID()
 		);
 
 

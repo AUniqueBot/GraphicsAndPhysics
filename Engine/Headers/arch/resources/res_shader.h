@@ -41,8 +41,8 @@ public:
 
 	int ShaderID() const { return m_programId; };
 
-
-
+	// a list of inputs from vertex buffers, uniforms from (???), and outputs from render targets
+	std::string GenerateShader();
 
 
 private:

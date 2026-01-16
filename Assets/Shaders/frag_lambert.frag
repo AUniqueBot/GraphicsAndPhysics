@@ -5,8 +5,11 @@ in vec2 frag_uv;
 
 uniform sampler2D u_albedo;
 uniform float u_deltaTime;
-out vec4 out_color;
+uniform uint u_objectId;
 
+layout(location = 0) out vec4 out_color;
+layout(location = 1) out uint out_objectId;
+// out vec4 (location = 1) out_objectId;
 /*
 */
 
@@ -71,6 +74,7 @@ vec3 CalculateDirectionalLighting(vec3 fragNormal) {
 
 void main() {
 	vec4 color = texture(u_albedo, frag_uv);
+    out_objectId = u_objectId * 1000;
     out_color = color * vec4(CalculateDirectionalLighting(frag_normal) + CalculateAmbient(), 1);
 }
 

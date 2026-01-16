@@ -140,7 +140,6 @@ void Material::UpdateColorTexture(const GLuint& _id, const glm::vec4& _col) {
 	glBindTexture(GL_TEXTURE_2D, 0);
 	const GLenum errCode = glGetError();
 	if (errCode != GL_NO_ERROR) {
-
 		LOG_ERROR("Bind texture failure.");
 	}
 	
@@ -201,7 +200,8 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 void Material::Render(
 	const glm::mat4& _objectMatrix,
 	const glm::mat4& _projectionMatrix,
-	const glm::mat4& _cameraMatrix
+	const glm::mat4& _cameraMatrix,
+	const EntityID& _objId
 ) const {
 
 	const int shaderId{ GetShader() };
@@ -218,7 +218,6 @@ void Material::Render(
 			return -1; // invalid location
 		}
 		return it->second.m_uniformLocation;
-		
 	
 	};
 
@@ -247,6 +246,10 @@ void Material::Render(
 	uniformLocation = GetUniform(U_CAMERA_MATRIX);
 	if (-1 != uniformLocation) {
 		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
+	}
+	uniformLocation = GetUniform(U_OBJECTID);
+	if (-1 != uniformLocation) {
+		glUniform1ui(uniformLocation, _objId.GetID());
 	}
 
 
