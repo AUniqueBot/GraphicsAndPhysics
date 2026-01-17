@@ -86,7 +86,9 @@ glm::mat4 Transform::LocalTransformMtx() const {
 
 	return pos * rot * scl;
 }
-
+glm::mat4 Transform::WorldTransformMtx() const {
+	return LocalTransformMtx();
+}
 
 
 

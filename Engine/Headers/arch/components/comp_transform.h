@@ -53,7 +53,7 @@ public:
 	glm::mat4 LocalTransformMtx() const;
 	glm::mat4 WorldTransformMtx() const;
 	void LocalTransformMtx(glm::mat4 _newMtx);
-	void WorldTransformdMtx(glm::mat4 _newMtx);
+	void WorldTransformMtx(glm::mat4 _newMtx);
 
 
 

@@ -1,5 +1,6 @@
 #pragma once
 #include <UI_Widget.h>
+#include <ImGuizmo.h>
 
 
 // - declaration only ------------------
@@ -25,7 +26,16 @@ public:
 
 	void PickObjectFromScreen() const;
 
+	void UpdateGizmo();
+
 
 private:
 	std::shared_ptr<Viewport> m_viewportPointer;
+
+
+	double m_clickDeltaTime	{};
+	double m_clickTime		{ 0.01 };
+	
+	ImGuizmo::OPERATION m_currentGizmoOperation		{ ImGuizmo::TRANSLATE };
+
 };
