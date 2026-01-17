@@ -1,6 +1,8 @@
 #pragma once
 #include <pch.h>
 #include <functional>
+#include <imgui.h>
+
 // TODO - Create a ui menu item.
 
 class UI_MenuItem {

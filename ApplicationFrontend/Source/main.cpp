@@ -17,6 +17,7 @@ const unsigned C_VERSION_MINOR = 6;
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 	Core& c = Core::GetInstance();
+	UI_Core uic{};
 
 	// core to also initialise the timer
 	// - GLFW Initialisation ------------------------------------------------------
@@ -58,7 +59,7 @@ int main() {
 	}
 
 	c.Init();
-	UI_Core uic{};
+	
 	uic.Init(C_VERSION_MAJOR, C_VERSION_MINOR, mainWindow, c);
 
 	// - Main Loop -----------------------------------------------------------------

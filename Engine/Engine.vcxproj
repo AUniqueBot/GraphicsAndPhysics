@@ -231,8 +231,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\core\core_input.h" />
     <ClInclude Include="Headers\arch\core\core_window.h" />
     <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h" />
-    <ClInclude Include="Headers\arch\datatypes\type_sparseset.h" />
-    <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp" />
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSetDEF.hpp" />
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />

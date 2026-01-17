@@ -18,7 +18,8 @@ public:
 	void Draw() override;
 	void Exit() override;
 
-	//
+
+	void Update() override;
 
 	void ResizeCallback() const;
 

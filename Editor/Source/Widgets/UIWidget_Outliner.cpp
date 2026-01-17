@@ -1,6 +1,5 @@
 #include <Widgets/UIWidget_Outliner.h>
 #include <arch/core.h>
-#include <imgui.h>
 #include <Widgets/UIWidget_Inspector.h>
 
 

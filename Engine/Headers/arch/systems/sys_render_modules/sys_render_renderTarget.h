@@ -65,16 +65,18 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	unsigned	PickPixel(
+	unsigned PickPixel(
 		glm::vec2 _vec, 
 		unsigned _colorAttachment = C_RENDER_MATERIAL,
 		glm::vec2 _readResolution = glm::vec2(1, 1)
 	) const;
 
-	//std::unordered_map<std::string, ColorAttachment> GetOutputs() const;
 
 	void LogBindErrors() const;
 	bool VerifyFBOCompleteness() const;
+
+
+
 private:
 	void Resize(glm::ivec2 _newDimensions);
 	void Resize(unsigned _width, unsigned _height);

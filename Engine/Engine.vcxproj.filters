@@ -170,10 +170,10 @@
     <ClInclude Include="Headers\arch\core\core_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\datatypes\type_sparseset.h">
+    <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp">
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSetDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h">
@@ -308,13 +308,13 @@
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

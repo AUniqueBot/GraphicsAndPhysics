@@ -1,8 +1,6 @@
 #include <Widgets/UIWidget_Viewport.h>
 #include <arch/systems/sys_render_modules/sys_render_viewport.h>
-#include <imgui.h>
-
-
+#include <ImGuizmo.h>
 
 	UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
 		: UIWidget(_widgetName), m_viewportPointer{_target} {
@@ -15,8 +13,9 @@
 
 	void UIWidget_Viewport::Draw() {
 		// only contains the render target.
+		//ImGuizmo::SetOrthographic(false);
+		ImGuizmo::BeginFrame();
 		using namespace ImGui;
-		
 		// aliases and early exits.
 		if (!m_viewportPointer) return;
 		Viewport & vp = *m_viewportPointer.get();
@@ -45,17 +44,21 @@
 			ImVec2(1, 0)  // bottom-right in texture
 		);
 
+
+
 		if (BeginDragDropTarget()) {
 			EndDragDropTarget();
 		}
+
+
+
+
 
 		if (WidgetIsHoveredOver()) {
 			LOG_INFO("Hovering over viewport widget");
 			PickObjectFromScreen();
 		}
 
-
-		// onresize, call the viewport to change along with it's rendertarget.
 		
 	}
 
@@ -80,6 +83,11 @@
 
 	}
 
+	void UIWidget_Viewport::Update() {
+
+	}
+
+
 	void UIWidget_Viewport::PickObjectFromScreen() const {
 		// call the viewport to pick from screen.
 				// get the new window resolution.
@@ -98,8 +106,8 @@
 		local.x = mouse.x - viewportMin.x;
 		local.y = mouse.y - viewportMin.y;
 		if (local.x < 0 || local.y < 0 ||
-			local.x >(viewportMax.x - viewportMin.x) ||
-			local.y >(viewportMax.y - viewportMin.y))
+			local.x > (viewportMax.x - viewportMin.x) ||
+			local.y > (viewportMax.y - viewportMin.y))
 		{
 			return;
 		}
@@ -114,10 +122,17 @@
 		pixel.y = local.y * (framebufferSize.y / viewportSize.y);
 
 
-		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, 1);
+		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
 
+		EntityViewConst entity = ApplicationCore()->Registry().Get(picked);
 		LOG_INFO("Value received from read: " << picked);
+		if (entity) {
+			LOG_INFO("Object Picked: " << entity->Name());
 
+		}
+		if (ImGui::IsMouseDown(0)) {
+			UICore()->SelectedEntity(picked);
+		}
 
 	}
 

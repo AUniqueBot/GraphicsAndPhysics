@@ -4,7 +4,6 @@
 
 
 
-class Entity;
 
 template <typename T>
 class SparseSetView {
@@ -19,6 +18,7 @@ public:
 	T* operator->() const { return &m_ref->get(); }
 };
 
+class Entity;
 
 using EntityView = SparseSetView<Entity>;
 using EntityViewConst = SparseSetView<const Entity>;

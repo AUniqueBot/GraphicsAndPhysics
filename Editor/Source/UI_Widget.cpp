@@ -1,5 +1,4 @@
 #include <UI_Widget.h>
-#include <imgui.h>
 
 UIWidget::UIWidget(std::string _widgetName) : 
     m_widgetName{ _widgetName }, 
@@ -21,6 +20,7 @@ unsigned UIWidget::WidgetID() const {
 }
 
 void UIWidget::Update() {
+    
 }
 
 
@@ -81,7 +81,7 @@ void UIWidget::DrawWidget() {
     ImGui::Begin(ss.c_str());
 
     Draw();
-    
+    Update();
     // - adjust flags ---------------------------
     m_widgetBitset[0] = ImGui::IsWindowHovered();
     m_widgetBitset[1] = ImGui::IsWindowFocused();

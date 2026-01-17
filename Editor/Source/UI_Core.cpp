@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include <sstream>
-//#include <imgui.h>
+
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
 
@@ -83,18 +83,12 @@ void UI_Core::Update() {
 
 
 	ImGui::NewFrame();
+
 	ImGuiIO& uiIO = ImGui::GetIO();
 
 
-	const bool uiCapturingInputs = 
-		uiIO.WantCaptureKeyboard ||
-		uiIO.WantCaptureMouse
-		;
-
-	
 	if (GetCore()) {
 		Core& c = *GetCore();
-		c.GetInputSystem().InputIsAllowed(uiCapturingInputs);
 	}
 
 	BeginDockSpace();

@@ -75,7 +75,6 @@ public:
 	std::shared_ptr<RenderTarget> GetRenderTarget();
 	std::shared_ptr<const RenderTarget> GetRenderTarget() const;
 	void SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget);
-	void PickFromViewport(glm::vec2 _position) const;
 
 private:
 	void UpdateAttributes();

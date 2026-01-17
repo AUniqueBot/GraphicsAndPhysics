@@ -241,10 +241,7 @@ void Viewport::SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget) {
 	m_renderTarget = _renderTarget;
 }
 
-void Viewport::PickFromViewport(glm::vec2 _position) const {
-	
-	
-}
+
 
 
 

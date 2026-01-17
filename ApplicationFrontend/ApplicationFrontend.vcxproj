@@ -94,10 +94,6 @@
   <ItemGroup>
     <ClCompile Include="Source\main.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Headers\App_InputRouter.h" />
-    <ClInclude Include="Source\App_InputRouter.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

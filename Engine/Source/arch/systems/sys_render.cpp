@@ -16,10 +16,32 @@
 
 
 
+const char* GLDebugTypeToString(GLenum type) {
+    switch (type) {
+    case GL_DEBUG_TYPE_ERROR:               return "ERROR";
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "UNDEFINED_BEHAVIOR";
+    case GL_DEBUG_TYPE_PORTABILITY:         return "PORTABILITY";
+    case GL_DEBUG_TYPE_PERFORMANCE:         return "PERFORMANCE";
+    case GL_DEBUG_TYPE_MARKER:              return "MARKER";
+    case GL_DEBUG_TYPE_PUSH_GROUP:          return "PUSH_GROUP";
+    case GL_DEBUG_TYPE_POP_GROUP:           return "POP_GROUP";
+    case GL_DEBUG_TYPE_OTHER:               return "OTHER";
+    default:                                return "UNKNOWN";
+    }
+}
 
+const char* GLDebugSeverityToString(GLenum severity) {
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_HIGH:         return "HIGH";
+    case GL_DEBUG_SEVERITY_MEDIUM:       return "MEDIUM";
+    case GL_DEBUG_SEVERITY_LOW:          return "LOW";
+    case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
+    default:                             return "UNKNOWN";
+    }
+}
 
-void GLAPIENTRY
-MessageCallback(
+void GLAPIENTRY MessageCallback(
     GLenum source,
     GLenum type,
     GLuint id,
@@ -28,23 +50,68 @@ MessageCallback(
     const GLchar* message,
     const void* userParam)
 {
-    // GL CALLBACK: ** GL ERROR ** type = 0x824c, severity = 0x9146, message = GL_INVALID_OPERATION error generated. <location> is invalid.
     std::string msg(message);
-    std::set<std::string> blackListSet = {
-        "<location> is invalid",
-        "Buffer detailed info"
-    };
 
+    // Messages we want to ignore
+    static const std::set<std::string> blackListSet = {
+        "<location> is invalid",
+        "Buffer detailed info",
+        "Rasterization usage warning:"
+    };
     for (const std::string& str : blackListSet) {
-        if (msg.find(str) != std::string::npos) {
-            return;
-        }
+        if (msg.find(str) != std::string::npos) return;
     }
 
-    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-        type, severity, message);
+    // Convert type enum to string
+    const char* typeStr = "UNKNOWN";
+    switch (type) {
+    case GL_DEBUG_TYPE_ERROR:              typeStr = "ERROR"; break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:typeStr = "DEPRECATED_BEHAVIOR"; break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: typeStr = "UNDEFINED_BEHAVIOR"; break;
+    case GL_DEBUG_TYPE_PORTABILITY:        typeStr = "PORTABILITY"; break;
+    case GL_DEBUG_TYPE_PERFORMANCE:        typeStr = "PERFORMANCE"; break;
+    case GL_DEBUG_TYPE_MARKER:             typeStr = "MARKER"; break;
+    case GL_DEBUG_TYPE_PUSH_GROUP:         typeStr = "PUSH_GROUP"; break;
+    case GL_DEBUG_TYPE_POP_GROUP:          typeStr = "POP_GROUP"; break;
+    case GL_DEBUG_TYPE_OTHER:              typeStr = "OTHER"; break;
+    }
+
+    // Convert severity enum to string
+    const char* severityStr = "UNKNOWN";
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_HIGH:         severityStr = "HIGH"; break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       severityStr = "MEDIUM"; break;
+    case GL_DEBUG_SEVERITY_LOW:          severityStr = "LOW"; break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: severityStr = "NOTIFICATION"; break;
+    }
+
+    // Choose appropriate log macro
+    if (type == GL_DEBUG_TYPE_ERROR) {
+        LOG_ERROR("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
+    else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR ||
+        type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR ||
+        type == GL_DEBUG_TYPE_PORTABILITY ||
+        type == GL_DEBUG_TYPE_PERFORMANCE) {
+        LOG_WARN("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
+    else { // OTHER, MARKER, PUSH_GROUP, POP_GROUP
+        LOG_INFO("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
 }
+
+
+
+
 
 void SetupGLDebug() {
     GLint flags = 0;
