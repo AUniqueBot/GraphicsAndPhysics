@@ -42,7 +42,7 @@ void UIWidget_Viewport::Draw() {
 		ImVec2(1, 0)  // bottom-right in texture
 	);
 
-	
+	RenderGizmo();
 	if (BeginDragDropTarget()) {
 		EndDragDropTarget();
 	}
@@ -70,12 +70,37 @@ void UIWidget_Viewport::ResizeCallback() const {
 
 }
 
-void UIWidget_Viewport::Update() {
-	if (WidgetIsHoveredOver()) {
-		LOG_INFO("Hovering over viewport widget");
-		PickObjectFromScreen();
-	}
+void UIWidget_Viewport::RenderGizmo() const {
+	ImGuizmo::SetGizmoSizeClipSpace(0.15f);
+	ImGuizmo::BeginFrame();  // Call this before using ImGuizmo
 
+	ImGuizmo::SetOrthographic(false);  // Set to true if using orthographic projection
+	ImGuizmo::SetDrawlist();
+	// Get the size of the child window
+	ImVec2 viewportMin{ ImGui::GetItemRectMin() };
+	ImVec2 viewportMax{ ImGui::GetItemRectMax() };
+
+
+	ImVec2 panelSize{
+		(viewportMax.x - viewportMin.x),
+		(viewportMax.y - viewportMin.y)
+	};
+	ImGuizmo::SetRect(
+		viewportMin.x,
+		viewportMin.y,
+		panelSize.x,
+		panelSize.y
+	);
+
+	LOG_INFO(
+		"viewport pos: [" << viewportMin.x << ", " << viewportMin.y << "] " <<
+		"viewport size: [" << panelSize.x << ", " << panelSize.y << "] ");
+}
+
+void UIWidget_Viewport::Update() {
+	if (!WidgetIsHoveredOver()) return;	
+
+	PickObjectFromScreen();
 	UpdateGizmo();
 }
 
@@ -128,6 +153,11 @@ void UIWidget_Viewport::PickObjectFromScreen() const {
 
 }
 
+void UIWidget_Viewport::ManageInput() const {
+	// if the mouse is hovering over the gizmo or is interacting with the gizmo, all input is routed through 
+
+}
+
 void UIWidget_Viewport::UpdateGizmo() {
 
 	if (!m_viewportPointer) return;
@@ -139,33 +169,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 	bool objectIsSelected				{ uic.SelectedEntity() != EntityID::ENTITYID_INVALID };
 	if (!objectIsSelected) return;
 
-	ImGuizmo::SetGizmoSizeClipSpace(0.15f);
-	ImGuizmo::BeginFrame();  // Call this before using ImGuizmo
 
-	ImGuizmo::SetOrthographic(false);  // Set to true if using orthographic projection
-	ImGuizmo::SetDrawlist();
-	// Get the size of the child window
-	ImVec2 viewportMin	{ ImGui::GetItemRectMin() };
-	ImVec2 viewportMax	{ ImGui::GetItemRectMax() };
-
-
-	ImVec2 panelSize{
-		(viewportMax.x - viewportMin.x),
-		(viewportMax.y - viewportMin.y)
-	};
-	ImGuizmo::SetRect(
-		viewportMin.x,
-		viewportMin.y,
-		panelSize.x,
-		panelSize.y
-	);
-
-
-
-
-	LOG_INFO(
-		"viewport pos: ["<< viewportMin.x <<", " << viewportMin.y <<"] " << 
-		"viewport size: [" << panelSize.x << ", " << panelSize.y << "] ");
 
 
 	ImGuizmo::Enable(objectIsSelected);
@@ -183,7 +187,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 	
 	
 	ImGuizmo::Manipulate(
-		glm::value_ptr(vp.CameraMatrix()),
+		glm::value_ptr(glm::inverse(vp.CameraMatrix())),
 		glm::value_ptr(vp.ProjectionMatrix()),
 		m_currentGizmoOperation, ImGuizmo
 		::WORLD, 

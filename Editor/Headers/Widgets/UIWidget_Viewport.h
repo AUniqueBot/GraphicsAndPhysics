@@ -23,11 +23,13 @@ public:
 	void Update() override;
 
 	void ResizeCallback() const;
+	void RenderGizmo() const;
 
-	void PickObjectFromScreen() const;
+
 
 	void UpdateGizmo();
-
+	void PickObjectFromScreen() const;
+	void ManageInput() const;
 
 private:
 	std::shared_ptr<Viewport> m_viewportPointer;
