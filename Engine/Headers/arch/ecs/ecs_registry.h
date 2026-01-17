@@ -6,7 +6,7 @@
 #include <arch/datatypes/type_sparseset.h>
 #include <arch/components/componentList.h>
 #include <arch/common/component.h>
-#include <arch/common/sparseSetViewHandles.h>
+#include <arch/datatypes/type_sparseSet_viewHandle.h>
 
 #include <typeindex>
 #include <functional>

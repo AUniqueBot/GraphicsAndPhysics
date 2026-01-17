@@ -1,5 +1,5 @@
 #include "ecs_registry.h"
-#include <arch/common/sparseSetViewHandles.h>
+#include <arch/datatypes/type_sparseSet_viewHandle.h>
 #pragma once
 
 template<std::derived_from<Component> T>

@@ -128,7 +128,7 @@
     <ClInclude Include="Headers\arch\common\singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\common\sparseSetViewHandles.h">
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\system.h">

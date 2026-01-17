@@ -2,7 +2,7 @@
 
 #include <bitset>
 #include <arch/common/entityid.h>
-#include <arch/common/sparseSetViewHandles.h>
+#include <arch/datatypes/type_sparseSet_viewHandle.h>
 #include <arch/components/componentList.h>
 
 
