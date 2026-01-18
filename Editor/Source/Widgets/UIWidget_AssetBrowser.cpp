@@ -51,133 +51,131 @@ void UIWidget_AssetBrowser::Draw() {
 		ImGuiTableFlags_::ImGuiTableFlags_Reorderable
 		;
 
-	BeginTable("DirectoryContents", 4, tableFlags);
+	bool tableBegin = BeginTable("DirectoryContents", 4, tableFlags);
+	if (tableBegin) {
 
-	TableSetupColumn("Name");
-	TableSetupColumn("File Type");
-	TableSetupColumn("Last Modified");
-	TableSetupColumn("Asset ID");
-	TableHeadersRow();
+		TableSetupColumn("Name");
+		TableSetupColumn("File Type");
+		TableSetupColumn("Last Modified");
+		TableSetupColumn("Asset ID");
+		TableHeadersRow();
 
-
-
-
-	if (ImGuiTableSortSpecs* sortSpecs = ImGui::TableGetSortSpecs()) {
-		if (sortSpecs->SpecsDirty) {
-			const auto& sortSpec = sortSpecs->Specs[0]; // only primary sort
-			SORTMETHOD method = NONE;
-			switch (sortSpec.ColumnIndex) {
-			case 0: method = NAME; break;
-			case 1: method = TYPE; break;
-			case 2: method = MODIFIED; break; // could implement last modified sort
-			}
-			bool inversed = (sortSpec.SortDirection == ImGuiSortDirection_Descending);
-			SortItemsBy(method, inversed);
-			sortSpecs->SpecsDirty = false; // mark as handled
-		}
-	}
-
-
-	for (const std::filesystem::path& path : m_directoryPaths) {
-		TableNextRow();
-		/* [name | extension | last modified]*/
-		bool isDir = std::filesystem::is_directory(path);
-		std::string label = isDir
-			? "[DIR] " + path.filename().string()
-			: path.filename().string();
-
-		PushID(path.c_str());
-
-		ImGuiSelectableFlags selectableFlags = 
-			ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
-			ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns 
-			;
-			
-		TableSetColumnIndex(0);
-		const bool clicked = Selectable(label.c_str(), m_selectedPath == path, selectableFlags);
-
-
-
-	
-
-		if (BeginDragDropSource()) {
-			// You can set any payload type you want, e.g., "ASSET_MESH"
-
-			// send the data of the thing here.
-			SetDragDropPayload("ASSET", path.string().c_str(), path.string().size() + 1);
-			Text("Dragging %s", label.c_str());
-			EndDragDropSource();
-		}
-
-		if (clicked) {
-			// path is ALWAYS absolute.
-			std::filesystem::path currentPathAbs = std::filesystem::absolute(path);
-			m_selectedPath = currentPathAbs;
-			// Double-click to enter directory
-
-			if (isDir && ImGui::IsMouseDoubleClicked(0)) {
-				m_currentDir /= path.filename();
-				reload = true;
+		if (ImGuiTableSortSpecs* sortSpecs = ImGui::TableGetSortSpecs()) {
+			if (sortSpecs->SpecsDirty) {
+				const auto& sortSpec = sortSpecs->Specs[0]; // only primary sort
+				SORTMETHOD method = NONE;
+				switch (sortSpec.ColumnIndex) {
+				case 0: method = NAME; break;
+				case 1: method = TYPE; break;
+				case 2: method = MODIFIED; break; // could implement last modified sort
+				}
+				bool inversed = (sortSpec.SortDirection == ImGuiSortDirection_Descending);
+				SortItemsBy(method, inversed);
+				sortSpecs->SpecsDirty = false; // mark as handled
 			}
 		}
-		PopID();
 
-		// file type
 
-		std::string fileType{isDir ? "Directory" : ""};
+		for (const std::filesystem::path& path : m_directoryPaths) {
+			TableNextRow();
+			/* [name | extension | last modified]*/
+			bool isDir = std::filesystem::is_directory(path);
+			std::string label = isDir
+				? "[DIR] " + path.filename().string()
+				: path.filename().string();
 
-		if (m_resourceManager && !isDir) {
-			RESTYPE_ID type = m_resourceManager->GetResourceType(path.extension().string());
-			if (type != 0) {
-				const ResourceTypeMetadata& rtm	{ m_resourceManager->GetResourceTypeMetadata(type) } ;
-				fileType = rtm.GetName();
+			PushID(path.c_str());
+
+			ImGuiSelectableFlags selectableFlags =
+				ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
+				ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns
+				;
+
+			TableSetColumnIndex(0);
+			const bool clicked = Selectable(label.c_str(), m_selectedPath == path, selectableFlags);
+
+
+
+
+
+			if (BeginDragDropSource()) {
+				// You can set any payload type you want, e.g., "ASSET_MESH"
+
+				// send the data of the thing here.
+				SetDragDropPayload("ASSET", path.string().c_str(), path.string().size() + 1);
+				Text("Dragging %s", label.c_str());
+				EndDragDropSource();
 			}
-		}
-		ImGui::TableSetColumnIndex(1);
-		Text(fileType.c_str());
 
-		// last modified
-		using namespace std::chrono;
-		std::filesystem::file_time_type ftime = std::filesystem::last_write_time(path);
-		auto sctp = time_point_cast<system_clock::duration>(
-			ftime - decltype(ftime)::clock::now() + system_clock::now()
-		);
+			if (clicked) {
+				// path is ALWAYS absolute.
+				std::filesystem::path currentPathAbs = std::filesystem::absolute(path);
+				m_selectedPath = currentPathAbs;
+				// Double-click to enter directory
 
-		std::time_t cftime = system_clock::to_time_t(sctp);
-		std::tm localTime;
+				if (isDir && ImGui::IsMouseDoubleClicked(0)) {
+					m_currentDir /= path.filename();
+					reload = true;
+				}
+			}
+			PopID();
+
+			// file type
+
+			std::string fileType{ isDir ? "Directory" : "" };
+
+			if (m_resourceManager && !isDir) {
+				RESTYPE_ID type = m_resourceManager->GetResourceType(path.extension().string());
+				if (type != 0) {
+					const ResourceTypeMetadata& rtm{ m_resourceManager->GetResourceTypeMetadata(type) };
+					fileType = rtm.GetName();
+				}
+			}
+			ImGui::TableSetColumnIndex(1);
+			Text(fileType.c_str());
+
+			// last modified
+			using namespace std::chrono;
+			std::filesystem::file_time_type ftime = std::filesystem::last_write_time(path);
+			auto sctp = time_point_cast<system_clock::duration>(
+				ftime - decltype(ftime)::clock::now() + system_clock::now()
+			);
+
+			std::time_t cftime = system_clock::to_time_t(sctp);
+			std::tm localTime;
 
 
 #ifdef _WIN32
-		localtime_s(&localTime, &cftime);
+			localtime_s(&localTime, &cftime);
 #else
-		localtime_r(&cftime, &localTime);
+			localtime_r(&cftime, &localTime);
 #endif
-		std::ostringstream oss;
-		oss << std::put_time(&localTime, "%d/%m/%Y %H:%M:%S");
-		
-		TableSetColumnIndex(2);
-		ImGui::Text(oss.str().c_str());
+			std::ostringstream oss;
+			oss << std::put_time(&localTime, "%d/%m/%Y %H:%M:%S");
+
+			TableSetColumnIndex(2);
+			ImGui::Text(oss.str().c_str());
 
 
 
-		
-		if (!m_resourceManager) {
-			continue;
+
+			if (!m_resourceManager) {
+				continue;
+			}
+			//auto& rsPool = m_resourceManager->GetResourcePool();
+			ResourceManager& resm = *m_resourceManager;
+			std::string fname = path.filename().string();
+			std::shared_ptr<BaseResource> resPoint = resm.GetResource(fname);
+			if (!resPoint) continue;
+			BaseResource& res = *resPoint;
+			// find if item is already loaded.
+			std::stringstream ss{ };
+			ss << res.ResourceID();
+			TableSetColumnIndex(3);
+			Text(ss.str().c_str()); // looks ok.
 		}
-		//auto& rsPool = m_resourceManager->GetResourcePool();
-		ResourceManager& resm = *m_resourceManager;
-		std::string fname = path.filename().string();
-		std::shared_ptr<BaseResource> resPoint = resm.GetResource(fname);
-		if (!resPoint) continue;
-		BaseResource& res = *resPoint;
-		// find if item is already loaded.
-		std::stringstream ss{ };
-		ss << res.ResourceID();
-		TableSetColumnIndex(3);
-		Text(ss.str().c_str()); // looks ok.
+		EndTable();
 	}
-	EndTable();
-
 
 	// reload entries when the directory changes
 	if (reload) {

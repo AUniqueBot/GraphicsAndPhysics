@@ -7,8 +7,11 @@
 #include <arch/core/core_coordinatesystem.h>
 #include <arch/core/core_clock.h>
 #include <arch/core/core_input.h>
+#include <arch/core/core_inputRouter.h>
 
 #include <arch/resources/res_resourceManager.h>
+
+
 
 
 class Core : public Singleton<Core> {
@@ -43,6 +46,10 @@ public:
 
 	// - input system -------------------------------
 	InputSystem& GetInputSystem()				{ return m_inputSystem; }
+	const InputSystem& GetInputSystem()	const	{ return m_inputSystem; }
+
+	InputRouter& GetInputRouter()				{ return m_inputRouter; }
+	const InputRouter& GetInputRouter()	const	{ return m_inputRouter; }
 
 	// - delta time ---------------------------------
 	static double DeltaTime();
@@ -94,6 +101,7 @@ private:
 
 	// - modules ------------------------------------
 	InputSystem m_inputSystem;
+	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	ResourceManager m_resourceManager;
 	CoordinateSystem m_coordinateSystem;

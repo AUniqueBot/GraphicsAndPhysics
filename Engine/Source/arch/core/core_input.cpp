@@ -10,7 +10,7 @@ void InputSystem::Init(GLFWwindow* _window) {
 
 
 void InputSystem::SetupCallbacks(GLFWwindow* _window) {
-	
+	m_window = _window;
 	glfwSetCursorPosCallback(
 		_window, [](GLFWwindow* _w, double _x, double _y) {
 			static_cast<Core*>(glfwGetWindowUserPointer(_w))->GetInputSystem()._onMouseMove(_x, _y);
@@ -43,11 +43,15 @@ void InputSystem::SetupCallbacks(GLFWwindow* _window) {
 
 
 void InputSystem::PreUpdate() {
+	m_prevMouseX = m_mouseX;
+	m_prevMouseY = m_mouseY;
+
+	m_deltaMouseX = 0;
+	m_deltaMouseY = 0;
+
 	m_activatedMouseButtonsPrev = m_activatedMouseButtons;
 	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
 
-	m_prevMouseX = m_mouseX;
-	m_prevMouseY = m_mouseY;
 }
 
 void InputSystem::Update() {
@@ -55,7 +59,9 @@ void InputSystem::Update() {
 }
 
 void InputSystem::PostUpdate() {
-	
+	if (m_freezeMousePosition) {
+		MoveMouse(m_prevMouseX, m_prevMouseY);
+	}
 }
 
 // - query -----------------------------------------
@@ -129,12 +135,48 @@ glm::vec2 InputSystem::GetMouseDelta() const {
 	return (m_allowInputs && m_allowMouse) ? GetMouseDelta_Internal() : glm::vec2{};
 }
 
+bool& InputSystem::CursorPositionFrozen() {
+	return m_freezeMousePosition;
+}
+
+const bool& InputSystem::CursorPositionFrozen() const {
+	return m_freezeMousePosition;
+}
+
+void InputSystem::CursorPositionFrozen(bool _setting) {
+	m_freezeMousePosition = _setting;
+}
+
+bool InputSystem::DisplayMouse() const {
+	return m_mouseVisible;
+}
+
+void InputSystem::DisplayMouse(bool _setting) {
+	m_mouseVisible = _setting;
+	glfwSetInputMode(m_window, GLFW_CURSOR, m_mouseVisible ? GLFW_CURSOR_DISABLED : GLFW_CURSOR_NORMAL);
+}
+
+void InputSystem::MoveMouse(glm::vec2 _pos) {
+	m_prevMouseX = m_mouseX;
+	m_prevMouseY = m_mouseY;
+	m_mouseX = _pos.x;
+	m_mouseY = _pos.y;
+
+	if (m_window) {
+		glfwSetCursorPos(m_window, m_mouseX, m_mouseY);
+	}
+}
+
+void InputSystem::MoveMouse(float _x, float _y) {
+	MoveMouse({_x, _y});
+}
+
 glm::vec2 InputSystem::GetMousePosition_Internal() const {
 	return glm::vec2(m_mouseX, m_mouseY);
 }
 
 glm::vec2 InputSystem::GetMouseDelta_Internal() const {
-	return glm::vec2{m_mouseX - m_prevMouseX, m_mouseY - m_prevMouseY};
+	return glm::vec2{ m_deltaMouseX, m_deltaMouseY };
 }
 
 void InputSystem::ClearInputs() {
@@ -175,10 +217,11 @@ void InputSystem::AllowMouseInput(bool _setting) {
 // - callbacks -------------------------------------
 
 void InputSystem::_onMouseMove(double _xpos, double _ypos) {
-	//if (m_disableInputs) return; // ignore if disabled
 
 	m_mouseX = _xpos;
 	m_mouseY = _ypos;
+	m_deltaMouseX = m_mouseX - m_prevMouseX;
+	m_deltaMouseY = m_mouseY - m_prevMouseY;
 }
 
 void InputSystem::_onMouseButton(int _button, int _action, int _mods) {

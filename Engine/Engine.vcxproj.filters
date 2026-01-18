@@ -111,6 +111,9 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTargetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\core\core_inputRouter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -315,6 +318,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_inputRouter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

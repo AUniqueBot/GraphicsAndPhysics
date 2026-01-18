@@ -1,7 +1,7 @@
 #include <Widgets/UIWidget_Viewport.h>
 #include <arch/systems/sys_render_modules/sys_render_viewport.h>
 #include <arch/components/comp_transform.h>
-
+#include <glm/gtx/matrix_decompose.hpp>
 
 UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
 	: UIWidget(_widgetName), m_viewportPointer{_target} {
@@ -92,16 +92,24 @@ void UIWidget_Viewport::RenderGizmo() const {
 		panelSize.y
 	);
 
-	LOG_INFO(
-		"viewport pos: [" << viewportMin.x << ", " << viewportMin.y << "] " <<
-		"viewport size: [" << panelSize.x << ", " << panelSize.y << "] ");
+	//LOG_INFO(
+	//	"viewport pos: [" << viewportMin.x << ", " << viewportMin.y << "] " <<
+	//	"viewport size: [" << panelSize.x << ", " << panelSize.y << "] ");
 }
 
 void UIWidget_Viewport::Update() {
-	if (!WidgetIsHoveredOver()) return;	
+	if (!ApplicationCore()) return;
+	Core& core{ *ApplicationCore() };
+	UpdateGizmo();
+	
 
 	PickObjectFromScreen();
-	UpdateGizmo();
+
+	if (WidgetIsHoveredOver() && ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
+		core.GetInputRouter().ReleaseOwnership("UI");
+	}	
+
+
 }
 
 
@@ -112,6 +120,9 @@ void UIWidget_Viewport::PickObjectFromScreen() const {
 	// on click pick.
 	// this function does not care about
 	if (!m_viewportPointer || !m_viewportPointer->GetRenderTarget()) return;
+	// disable when gizmo is being hovered to disable selection when attempting to 
+	// click over a gizmo at a spot where there is no object.
+	if (m_isInteractingGizmo) return; 
 	Viewport& vp{ *m_viewportPointer };
 		
 	// mouse position to image position
@@ -142,11 +153,7 @@ void UIWidget_Viewport::PickObjectFromScreen() const {
 	unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
 
 	EntityViewConst entity = ApplicationCore()->Registry().Get(picked);
-	LOG_INFO("Value received from read: " << picked);
-	if (entity) {
-		LOG_INFO("Object Picked: " << entity->Name());
 
-	}
 	if (ImGui::IsMouseClicked(0)) {
 		UICore()->SelectedEntity(picked);
 	}
@@ -170,7 +177,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 	if (!objectIsSelected) return;
 
 
-
+	
 
 	ImGuizmo::Enable(objectIsSelected);
 	m_currentGizmoOperation = 
@@ -184,31 +191,31 @@ void UIWidget_Viewport::UpdateGizmo() {
 	Transform&	trsComponent	{ *e->GetComponent<Transform>() };
 	glm::mat4 trsMtx			{ trsComponent.WorldTransformMtx() };
 	
-	
-	
+
+
 	ImGuizmo::Manipulate(
 		glm::value_ptr(glm::inverse(vp.CameraMatrix())),
 		glm::value_ptr(vp.ProjectionMatrix()),
-		m_currentGizmoOperation, ImGuizmo
-		::WORLD, 
+		m_currentGizmoOperation, 
+		ImGuizmo::WORLD, 
 		glm::value_ptr(trsMtx)
 	);
-
-
+	m_isInteractingGizmo = ImGuizmo::IsUsing() || ImGuizmo::IsOver();
 	if (ImGuizmo::IsUsing()) {
+
 		glm::vec3 pos {};
 		glm::quat rot {};
 		glm::vec3 scl {};
 
-		glm::vec3 skew {};
+		glm::vec3 skew{};
 		glm::vec4 perspective{};
-	
 
-		ImGuizmo::DecomposeMatrixToComponents(
-			glm::value_ptr(trsMtx), 
-			glm::value_ptr(pos), 
-			glm::value_ptr(rot), 
-			glm::value_ptr(scl)
+
+		// ImGuizmo version is broken.
+		glm::decompose(
+			trsMtx, 
+			scl, rot, pos, 
+			skew, perspective
 		);
 
 		trsComponent.Position(pos);

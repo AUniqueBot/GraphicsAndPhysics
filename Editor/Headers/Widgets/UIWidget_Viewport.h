@@ -10,6 +10,13 @@ class EntityID;
 
 class UIWidget_Viewport : public UIWidget {
 public:
+	enum class GizmoState {
+		IsHovering,
+		IsHandling,
+		NONE
+	};
+
+
 public:
 	UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target);
 	~UIWidget_Viewport() = default;
@@ -33,10 +40,9 @@ public:
 
 private:
 	std::shared_ptr<Viewport> m_viewportPointer;
-
-
-	double m_clickDeltaTime	{};
-	double m_clickTime		{ 0.01 };
+	bool m_isInteractingGizmo						{ false };
+	double m_clickDeltaTime							{};
+	double m_clickTime								{ 0.01 };
 	
 	ImGuizmo::OPERATION m_currentGizmoOperation		{ ImGuizmo::TRANSLATE };
 

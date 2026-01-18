@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-
+#include <glm/glm.hpp>
 
 // contains macros for logging functions.
 // standardised logging to quickly pinpoint places to debug.
@@ -56,6 +56,33 @@
 #define LOG_SPLITTER() std::cout << "// --------------------------------------------------------- //\n"
 
 
+template <unsigned N, typename T, glm::qualifier Q>
+std::ostream& operator<<(std::ostream & os, const glm::vec<N,T,Q> & v) {
+    os << "[" << v.x << ", " << v.y << ", " << v.z << "]";
+    return os;
+}
+
+
+
+template <typename T, glm::qualifier Q>
+std::ostream& operator<<(std::ostream & os, const glm::qua<T, Q> & q) {
+    os << "[" << q.w << ", " << q.x << ", " << q.y << ", " << q.z << "]";
+    return os;
+}
+
+
+
+template <unsigned R, unsigned C, typename T, glm::qualifier Q>
+std::ostream& operator<<(std::ostream & os, const glm::mat<R, C, T, Q> & m) {
+    for (int i = 0; i < R; ++i) {
+        os << "| ";
+        for (int j = 0; j < C; ++j) {
+            os << m[j][i] << " ";
+        }
+        os << "|\n";
+    }
+    return os;
+}
 
 
 

@@ -89,6 +89,7 @@ void UI_Core::Update() {
 
 	if (GetCore()) {
 		Core& c = *GetCore();
+		c.GetInputRouter().RequestOwnership("UI", 60);
 	}
 
 	BeginDockSpace();

@@ -95,6 +95,7 @@ void Core::PreUpdate() {
 	for (auto s : m_systemInstances) {
 		s->PreUpdate();
 	}
+	m_inputRouter.RequestOwnership("Core", 50);
 	m_inputSystem.PreUpdate();
 }
 

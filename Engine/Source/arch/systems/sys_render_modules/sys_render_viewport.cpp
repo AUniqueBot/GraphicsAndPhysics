@@ -134,12 +134,20 @@ void Viewport::OnMouseMove() {
 
 
 	InputSystem::INPUT_MOUSE_BUTTON actionButton = InputSystem::MOUSE_LEFT;
+	InputSystem::INPUT_MOUSE_BUTTON panButton = InputSystem::MOUSE_RIGHT;
 	if (is.IsMouseButtonClicked(actionButton)) {
 		//LOG_INFO("LMB Clicked");
 	}
 	if (is.IsMouseButtonReleased(actionButton)) {
 		//LOG_INFO("LMB Released");
 	}
+
+	bool leftClick = is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT);
+
+	is.CursorPositionFrozen(leftClick);
+	is.DisplayMouse(leftClick);
+
+
 	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
 		return;
 	}
@@ -177,8 +185,8 @@ void Viewport::OnInput() {
 	
 	if (!m_vpIsMovable) return;
 
-
 	InputSystem& is = Core::GetInstance().GetInputSystem();
+	
 	
 	// aliases here.
 	const InputSystem::INPUT_KEY fwd		{ InputSystem::KEYBOARD_W };
@@ -198,18 +206,13 @@ void Viewport::OnInput() {
 
 	if (is.IsKeyHeld(right) || is.IsKeyHeld(left)) {
 		inputVector.x  = static_cast<float>(static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left)));
-		LOG_INFO("keyboard input detected! lateral");
 	}
 
 	if (is.IsKeyHeld(up) || is.IsKeyHeld(down)) {
 		inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(up)) - static_cast<int>(is.IsKeyHeld(down)));
-
-		LOG_INFO("keyboard input detected! vertical");
 	}
 	if (is.IsKeyHeld(fwd) || is.IsKeyHeld(back)) {
 		inputVector.z  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
-
-		LOG_INFO("keyboard input detected! directional");
 	}
 
 	if (inputVector.x || inputVector.y || inputVector.z) {

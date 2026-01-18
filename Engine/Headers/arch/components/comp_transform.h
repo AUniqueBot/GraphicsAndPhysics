@@ -6,6 +6,9 @@
 
 
 
+
+
+
 class Transform : public Component {
 public:
 	enum class ROTATION_ORDER {
@@ -29,7 +32,7 @@ public:
 	void Position(glm::vec3 _pos)					{ m_pos = _pos; };
 	const glm::vec3& Position() const				{ return m_pos; };
 
-	void Rotation(glm::quat _rot)					{ m_rot = _rot; };
+	void Rotation(glm::quat _rot)					{ m_rot = glm::normalize(_rot); };
 	const glm::quat& Rotation() const				{ return m_rot; };
 	
 	void RotationEuler(glm::vec3);

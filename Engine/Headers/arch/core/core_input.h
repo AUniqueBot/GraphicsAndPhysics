@@ -170,6 +170,13 @@ public:
 
     glm::vec2 GetMousePosition() const;
     glm::vec2 GetMouseDelta() const;
+    bool& CursorPositionFrozen();
+    const bool& CursorPositionFrozen() const;
+    void CursorPositionFrozen(bool _setting);
+    bool DisplayMouse() const;
+    void DisplayMouse(bool _setting);
+    void MoveMouse(glm::vec2 _pos);
+    void MoveMouse(float _x, float _y);
 
 
 
@@ -216,10 +223,17 @@ private:
 
 private:
 
+    GLFWwindow* m_window                                     {};
+
+    bool m_freezeMousePosition                              { false };
+    bool m_mouseVisible                                     { false };
     double m_mouseX                                         { 0 };
     double m_mouseY                                         { 0 };
     double m_prevMouseX                                     { 0 };
     double m_prevMouseY                                     { 0 };
+    double m_deltaMouseX                                    { 0 };
+    double m_deltaMouseY                                    { 0 };
+
 
 
     double m_scrollOffsetX                                  { 0 };
