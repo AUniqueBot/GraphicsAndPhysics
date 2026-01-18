@@ -138,8 +138,8 @@ public:
 public:
 	DepthAttachment(
 		const std::string& _name = "",
-		const DepthChannelLayout& _layout = DepthChannelLayout::DEPTH,
-		const ScalarType& _scalarType = ScalarType::FLOAT,
+		const DepthChannelLayout& _layout = DepthChannelLayout::DEPTH_STENCIL,
+		const ScalarType& _scalarType = ScalarType::UINT,
 		const TextureFilter& _filter = TextureFilter::LINEAR,
 		const GLenum& _wrapBehaviour = GL_WRAP_BORDER,
 		const bool& _enableDrawToLocation = true
@@ -263,7 +263,5 @@ inline const std::unordered_map<DepthChannelCastData, GLFormat, DepthChannelKeyH
 	// DEPTH + STENCIL
 	// =========================
 	{{DepthChannelLayout::DEPTH_STENCIL, ScalarType::UINT}, {GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, false}},
-
-
 
 };

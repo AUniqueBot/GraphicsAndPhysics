@@ -60,12 +60,8 @@ public:
 	
 	bool IsViewportMovable() const;
 	void SetViewportMovable(bool _setting);
-	void OnScroll();
 	void OnMouseMove();
 	void OnInput();
-
-
-
 
 
 	ViewportID ID() const;

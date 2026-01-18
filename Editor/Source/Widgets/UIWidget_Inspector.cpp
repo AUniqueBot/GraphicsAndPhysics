@@ -44,7 +44,7 @@ void UIWidget_Inspector::Draw() {
 	UI_Core& uic = *puic;
 	Core& core = *papc;
 
-	EntityID selectedID = uic.SelectedEntity();
+	EntityID selectedID = core.Registry().SelectedEntity();
 	EntityView selectedObj = core.Registry().Get(selectedID);
 	if (!selectedObj) {
 		Text("No object selected with ID [%i]", selectedID);

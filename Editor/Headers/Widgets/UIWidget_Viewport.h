@@ -35,7 +35,7 @@ public:
 
 
 	void UpdateGizmo();
-	void PickObjectFromScreen() const;
+	void PickObjectFromScreen();
 	void ManageInput() const;
 
 private:

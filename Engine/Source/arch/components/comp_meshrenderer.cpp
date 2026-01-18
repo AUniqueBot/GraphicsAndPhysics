@@ -41,7 +41,7 @@ void MeshRenderer::Render(
 	// use the default material and render.
 	if (m_materials.size() == 0) {
 		const Material& mat = GetDefaultMaterial();
-		mat.Render(
+		mat.ApplyUniforms(
 			_objectMatrix,
 			_projectionMatrix,
 			_cameraMatrix,
@@ -53,7 +53,7 @@ void MeshRenderer::Render(
 	}
 	// go through all materials
 	for (const std::shared_ptr<Material> matPtr: m_materials) {
-		matPtr->Render(
+		matPtr->ApplyUniforms(
 			_objectMatrix,
 			_projectionMatrix,
 			_cameraMatrix,

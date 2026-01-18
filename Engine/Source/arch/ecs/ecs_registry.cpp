@@ -45,6 +45,56 @@ EntityView EntityRegistry::Instantiate() {
 
 
 
+void EntityRegistry::SelectEntity(EntityID _selectedObject, bool _additive) {
+	if (!_selectedObject.IsValid() && !_additive) {
+		ClearSelection();
+		return;
+	}
+
+
+	if (!_additive) {
+		m_selectedEntitiesList.clear();
+		m_selectedEntitiesList.push_back(_selectedObject);
+		return;
+	}
+
+	// search if object is inside.
+	auto itr = std::find(m_selectedEntitiesList.begin(), m_selectedEntitiesList.end(), _selectedObject);
+	if (itr != m_selectedEntitiesList.end()) {
+		// rotate to end.
+		std::rotate(itr, std::next(itr), m_selectedEntitiesList.end());
+	}
+	else {
+		m_selectedEntitiesList.push_back(_selectedObject);
+	}
+}
+
+const std::vector<EntityID>& EntityRegistry::SelectedEntities() const {
+	return m_selectedEntitiesList;
+}
+
+EntityID EntityRegistry::SelectedEntity() const {
+	return m_selectedEntitiesList.size() > 0 ? m_selectedEntitiesList.back() : EntityID::ENTITYID_INVALID;
+}
+
+void EntityRegistry::ClearSelection() {
+	m_selectedEntitiesList.clear();
+}
+
+bool EntityRegistry::EntityIsSelected(EntityID _id, bool _isCurrentSelection) const {
+	if (!m_selectedEntitiesList.size()) {
+		return false;
+	}
+	
+	if (_isCurrentSelection) {
+		return *m_selectedEntitiesList.end() == _id;
+	}
+
+	auto itr = std::find(m_selectedEntitiesList.begin(), m_selectedEntitiesList.end(), _id);
+	return itr != m_selectedEntitiesList.end();
+}
+
+
 void EntityRegistry::Clear() {
 	// ensure no dangling references.
 	m_componentData.clear();

@@ -200,11 +200,18 @@ void RenderSystem::Update() {
     }	
 }
 
+/*
+    to render -> 
 
+
+*/
 
 
 
 void RenderSystem::Render(const Viewport& _viewport) {
+    const glm::vec2 vpDims  { _viewport.ViewportDimensions() };
+    if (!vpDims.x || !vpDims.y) return;
+
     auto GetError = GraphicsDebug::GetError;
 
     const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
@@ -218,16 +225,16 @@ void RenderSystem::Render(const Viewport& _viewport) {
     if (_viewport.GetRenderTarget()) {
         _viewport.GetRenderTarget()->Bind();
         glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
-
-
     }
 
-    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
+    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
     
     // viewport set.
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClear(clearFlags);
     glClearDepth(1.0f);
+    glClearStencil(0x00);
+    glStencilMask(0xff);
 
     GLuint clearID = 0;
     glClearBufferuiv(GL_COLOR, 1, &clearID);
@@ -253,12 +260,17 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
 
     auto& entityList = registry.GetEntityList();
+    auto& selectedEntityList = registry.SelectedEntities();
+    
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
     for (Entity& e : entityList) {
         if (!e.Active() || !e.IsVisible()) {
 
             // to skip hidden ones as well.
             continue;
         }
+        
 
 
         const auto& mr = e.GetComponent<MeshRenderer>();
@@ -272,8 +284,15 @@ void RenderSystem::Render(const Viewport& _viewport) {
         VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
         if (!vaoHandler) continue;
+        
+        bool isSelected{ registry.EntityIsSelected(e.GetID()) };
+        GLenum stencilOp{ isSelected ? GL_ALWAYS : GL_KEEP };
+        glStencilFunc(stencilOp, 1, 0xFF);
+        glStencilMask(0xff);
+        
+        
         VAOHandler& currentVAO = *vaoHandler;
-        currentVAO.BindVAO();
+        currentVAO.BindVAO(); 
         //currentVAO.LogDebug();
         currentVAO.UseMesh(*mesh);
         // check if there is data here...
@@ -283,9 +302,6 @@ void RenderSystem::Render(const Viewport& _viewport) {
             _projectionMatrix,
             _cameraMatrix
         );
-
-
-        //glBindTexture(GL_TEXTURE_2D, 0);
 
 
         m_vaoManager.UnbindVAO();

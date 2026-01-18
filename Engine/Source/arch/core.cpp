@@ -19,9 +19,7 @@ void Core::Init() {
 
 
 
-	// test out this stuff.
-	m_registry.name = "hi"; // for debugging purposes.
-	
+	// test out this stuff.	
 
 
 	Entity& obj1 = *(m_registry.Instantiate());

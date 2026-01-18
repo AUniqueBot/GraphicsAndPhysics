@@ -203,11 +203,15 @@ bool RenderTarget::Build() {
 	if (m_depthAttachment.m_channelLayout != DepthChannelLayout::NONE) {
 		// do something idk.
 
-		LOG_INFO("Build with depth enabled");
 		const unsigned depthAttachmentType = 
-			m_depthAttachment.m_channelLayout == DepthChannelLayout::DEPTH ? GL_DEPTH_ATTACHMENT: GL_DEPTH_STENCIL;
+			m_depthAttachment.m_channelLayout == DepthChannelLayout::DEPTH ? GL_DEPTH_ATTACHMENT :
+			m_depthAttachment.m_channelLayout == DepthChannelLayout::DEPTH_STENCIL ? GL_DEPTH_STENCIL_ATTACHMENT : 
+			GL_DEPTH_ATTACHMENT;
 		
+		LOG_INFO("Building with depth" << (m_depthAttachment.m_channelLayout == DepthChannelLayout::DEPTH_STENCIL ? "and Stencil "  : " ") << "enabled");
+
 		const DepthChannelCastData key{ m_depthAttachment.m_channelLayout, m_depthAttachment.m_scalarType };
+
 		if (C_DEPTH_FORMAT_LOOKUPTABLE.find(key) != C_DEPTH_FORMAT_LOOKUPTABLE.end()) {
 			const GLFormat& data = C_DEPTH_FORMAT_LOOKUPTABLE.at(key); 
 			glGenTextures(1, &m_depthAttachment.m_textureId);

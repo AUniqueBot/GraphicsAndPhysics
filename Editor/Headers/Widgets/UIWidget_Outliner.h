@@ -22,7 +22,7 @@ public:
     void SetEntityRegistry(EntityRegistry* _registry);
 
 private:
-    void Table() const;
+    void Table();
 
 
 private:

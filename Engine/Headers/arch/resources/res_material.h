@@ -36,7 +36,7 @@ public:
 
 	int GetShader() const;
 
-	virtual void Render(
+	virtual void ApplyUniforms(
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 
 		const glm::mat4& _cameraMatrix,

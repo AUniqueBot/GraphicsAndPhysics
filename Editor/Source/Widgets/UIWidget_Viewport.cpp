@@ -85,6 +85,10 @@ void UIWidget_Viewport::RenderGizmo() const {
 		(viewportMax.x - viewportMin.x),
 		(viewportMax.y - viewportMin.y)
 	};
+
+	if (!panelSize.x || !panelSize.y) return;
+
+
 	ImGuizmo::SetRect(
 		viewportMin.x,
 		viewportMin.y,
@@ -92,9 +96,6 @@ void UIWidget_Viewport::RenderGizmo() const {
 		panelSize.y
 	);
 
-	//LOG_INFO(
-	//	"viewport pos: [" << viewportMin.x << ", " << viewportMin.y << "] " <<
-	//	"viewport size: [" << panelSize.x << ", " << panelSize.y << "] ");
 }
 
 void UIWidget_Viewport::Update() {
@@ -113,7 +114,7 @@ void UIWidget_Viewport::Update() {
 }
 
 
-void UIWidget_Viewport::PickObjectFromScreen() const {
+void UIWidget_Viewport::PickObjectFromScreen() {
 	// call the viewport to pick from screen.
 			// get the new window resolution.
 		
@@ -151,11 +152,19 @@ void UIWidget_Viewport::PickObjectFromScreen() const {
 
 
 	unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
+	
+	if (!ApplicationCore()) {
+		return;
+	}
 
-	EntityViewConst entity = ApplicationCore()->Registry().Get(picked);
+	EntityRegistry& registry = ApplicationCore()->Registry();
+	EntityView entity = registry.Get(picked);
 
 	if (ImGui::IsMouseClicked(0)) {
-		UICore()->SelectedEntity(picked);
+		ApplicationCore()->Registry().SelectEntity(
+			entity ? entity->GetID() : 
+			EntityID::ENTITYID_INVALID
+		);
 	}
 
 }
@@ -168,12 +177,13 @@ void UIWidget_Viewport::ManageInput() const {
 void UIWidget_Viewport::UpdateGizmo() {
 
 	if (!m_viewportPointer) return;
-	auto& uic							{ *UICore() };
-	auto& c								{ *ApplicationCore() };
+	Core* c								{ ApplicationCore() };
+	if (!c) return;
+	EntityRegistry registry = c->Registry();
 
 	Viewport& vp						{ *m_viewportPointer };
-	EntityID selectedEntityID			{ uic.SelectedEntity() };
-	bool objectIsSelected				{ uic.SelectedEntity() != EntityID::ENTITYID_INVALID };
+	EntityID selectedEntityID			{ registry.SelectedEntity() };
+	bool objectIsSelected				{ selectedEntityID != EntityID::ENTITYID_INVALID };
 	if (!objectIsSelected) return;
 
 
@@ -187,7 +197,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 		m_currentGizmoOperation;
 
 
-	EntityView e				{ c.Registry().Get(selectedEntityID) };
+	EntityView e				{ registry.Get(selectedEntityID) };
 	Transform&	trsComponent	{ *e->GetComponent<Transform>() };
 	glm::mat4 trsMtx			{ trsComponent.WorldTransformMtx() };
 	

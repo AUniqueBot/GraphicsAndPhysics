@@ -48,7 +48,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	// -- entity registry registration -------------------------
 	m_applicationCore = &_core;
 	m_entityRegistry = &_core.Registry();
-	m_selectedEntity = EntityID::ENTITYID_INVALID;
+
 
 
 	// -- widget initialisation --------------------------------
@@ -179,14 +179,6 @@ void UI_Core::RemoveMenuItem(std::string _id)
 }
 
 
-
-EntityID UI_Core::SelectedEntity() const {
-	return m_selectedEntity;
-}
-
-void UI_Core::SelectedEntity(EntityID _id)  const {
-	m_selectedEntity = _id;
-}
 
 
 

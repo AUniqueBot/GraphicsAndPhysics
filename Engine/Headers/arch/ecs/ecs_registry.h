@@ -201,13 +201,19 @@ public:
 	bool ComponentPoolExists();
 
 
-	std::string name;
+	void SelectEntity(EntityID _selectedObject, bool _additive = false);
+	const std::vector<EntityID>& SelectedEntities() const;
+	EntityID SelectedEntity() const;
+	void ClearSelection();
+	bool EntityIsSelected(EntityID _id, bool _isCurrentSelection = true) const;
+
+
 private:
 
 	void Clear();
 	// map would be a better idea
 	SparseSet<EntityID, Entity> m_entityList; // 
-
+	std::vector<EntityID> m_selectedEntitiesList;
 private:
 	using CompTypeID = std::type_index;
 	using CompID = unsigned;

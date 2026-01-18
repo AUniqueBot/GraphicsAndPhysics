@@ -77,7 +77,7 @@ void UIWidget_Outliner::SetEntityRegistry(EntityRegistry* _registry) {
     LOG_INFO("Registry updated!");
 }
 
-void UIWidget_Outliner::Table() const {
+void UIWidget_Outliner::Table() {
 
 
     /* --------------------------------------------------------- */
@@ -113,7 +113,7 @@ void UIWidget_Outliner::Table() const {
     // -- aliases -------------------------
     EntityRegistry& registry = *m_entityRegistry;
 
-    const UI_Core& uic = *UICore();
+    Core& c = *ApplicationCore();
     for (Entity& entity : registry.GetEntityList()) {
         TableNextRow();
 
@@ -125,7 +125,7 @@ void UIWidget_Outliner::Table() const {
         TableSetColumnIndex(0);
         const bool clicked = Selectable(
             (entity.Name() + "##").c_str(), 
-            uic.SelectedEntity() == entity.GetID(),
+            c.Registry().SelectedEntity() == entity.GetID(),
             selectableFlags
         );
         //Text(entity.Name().c_str());
@@ -147,9 +147,10 @@ void UIWidget_Outliner::Table() const {
 
 
         if (clicked) {
+            
             // do something
-            uic.SelectedEntity(
-                uic.SelectedEntity() == entity.GetID() ?
+            m_entityRegistry->SelectEntity(
+                m_entityRegistry->SelectedEntity() == entity.GetID() ?
                 EntityID::ENTITYID_INVALID : entity.GetID()
             );
 

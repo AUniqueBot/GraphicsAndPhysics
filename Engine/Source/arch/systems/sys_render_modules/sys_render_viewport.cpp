@@ -26,7 +26,7 @@ void Viewport::Render() {
 void Viewport::Update() {
 	OnInput();
 	OnMouseMove();
-	OnScroll();
+	//OnScroll();
 	UpdateAttributes();
 }
 
@@ -119,11 +119,6 @@ bool Viewport::IsViewportMovable() const {
 
 void Viewport::SetViewportMovable(bool _setting) {
 	m_vpIsMovable = _setting;
-}
-
-void Viewport::OnScroll() {
-	if (!m_vpIsMovable) return;
-
 }
 
 void Viewport::OnMouseMove() {

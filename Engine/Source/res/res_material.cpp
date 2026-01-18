@@ -197,7 +197,7 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::Render(
+void Material::ApplyUniforms(
 	const glm::mat4& _objectMatrix,
 	const glm::mat4& _projectionMatrix,
 	const glm::mat4& _cameraMatrix,

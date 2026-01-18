@@ -32,11 +32,6 @@ public:
 	void RemoveMenuItem(std::string _id);
 
 
-	// -- object selection -----------------------------------------
-	EntityID SelectedEntity() const;
-	void SelectedEntity(EntityID _id) const;
-
-
 
 
 	// -- inputs ---------------------------------------------------
