@@ -26,7 +26,7 @@ void Viewport::Render() {
 void Viewport::Update() {
 	OnInput();
 	OnMouseMove();
-
+	OnScroll();
 	UpdateAttributes();
 }
 
@@ -133,52 +133,72 @@ void Viewport::OnMouseMove() {
 	InputSystem& is = Core::GetInstance().GetInputSystem();
 
 
-	InputSystem::INPUT_MOUSE_BUTTON actionButton = InputSystem::MOUSE_LEFT;
+	InputSystem::INPUT_MOUSE_BUTTON lookButton = InputSystem::MOUSE_LEFT;
 	InputSystem::INPUT_MOUSE_BUTTON panButton = InputSystem::MOUSE_RIGHT;
-	if (is.IsMouseButtonClicked(actionButton)) {
+	if (is.IsMouseButtonClicked(lookButton)) {
 		//LOG_INFO("LMB Clicked");
 	}
-	if (is.IsMouseButtonReleased(actionButton)) {
+	if (is.IsMouseButtonReleased(lookButton)) {
 		//LOG_INFO("LMB Released");
 	}
 
-	bool leftClick = is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT);
+	bool leftClick = is.IsMouseButtonHeld(lookButton);
+	bool rightClick = is.IsMouseButtonHeld(panButton) || is.IsMouseButtonHeld(InputSystem::MOUSE_MIDDLE);
+	double scrollWheelY = is.ScrollYOffset();
+	double scrollWheelX = is.ScrollXOffset();
 
-	is.CursorPositionFrozen(leftClick);
-	is.DisplayMouse(leftClick);
+	bool mouseActive	{ leftClick || rightClick };
+	is.CursorPositionFrozen(mouseActive);
+	is.DisplayMouse(mouseActive);
 
 
-	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
+	if (!mouseActive && abs(scrollWheelY) <= DBL_EPSILON) {
 		return;
 	}
 
-
-
 	glm::vec2 delta = is.GetMouseDelta();
 
-	if (!delta.x && !delta.y) return;
 
 	const glm::vec3 forwardVec	{ 0, 0, 1 };
 	const glm::vec3 upVec		{ 0, 1, 0 };
 
-	// sensitivity tuning (adjust as needed)
-	float sensitivity = 0.002f;
-	float yaw			= -delta.x * sensitivity;
-	float pitch			= -delta.y * sensitivity;
+	glm::vec3 forward = m_rotation * forwardVec;
+	glm::vec3 right = glm::normalize(glm::cross(forward, upVec));
 
-	glm::vec3 forward	= m_rotation * forwardVec; 
-	glm::vec3 right		= glm::normalize(glm::cross(forward, upVec));
+	// pan and look
+	if (delta.x || delta.y) {
+		if (leftClick) {
+			// sensitivity tuning (adjust as needed)
+			float sensitivity = 0.002f;
+			float yaw			= -delta.x * sensitivity;
+			float pitch			= -delta.y * sensitivity;
 
-	glm::quat yawRot	= glm::angleAxis(yaw, upVec);
-	glm::quat pitchRot	= glm::angleAxis(pitch, right);
+			glm::quat yawRot	= glm::angleAxis(yaw, upVec);
+			glm::quat pitchRot	= glm::angleAxis(pitch, right);
 
-	m_rotation			= glm::normalize(yawRot * pitchRot * m_rotation);
+			m_rotation			= glm::normalize(yawRot * pitchRot * m_rotation);
 
-	glm::vec3 newForward = m_rotation * glm::vec3(0, 0, 1);
+			glm::vec3 newForward = m_rotation * glm::vec3(0, 0, 1);
+		}
+		else if (rightClick) {
+			float distanceMultiplier = 0.025f;
+			glm::vec3 panDelta = 
+				(upVec * delta.y) + 
+				(right * delta.x);
+			panDelta *= distanceMultiplier;
+			m_position += panDelta;
+		}
+	}
+	// dolly
+	if (scrollWheelY) {
+		float distanceMultiplier = 10.f;
+		glm::vec3 fwdOffset = forward * (distanceMultiplier * static_cast<float>(scrollWheelY));
+		m_position += fwdOffset;
+	}
+
+
 
 	m_transformDirty = true;
-
-	
 }
 
 void Viewport::OnInput() {

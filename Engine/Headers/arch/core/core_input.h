@@ -167,6 +167,9 @@ public:
     bool IsMouseButtonHeld(INPUT_MOUSE_BUTTON _button) const;
     bool IsMouseButtonReleased(INPUT_MOUSE_BUTTON _button) const;
 
+    double ScrollXOffset() const;
+    double ScrollYOffset() const;
+
 
     glm::vec2 GetMousePosition() const;
     glm::vec2 GetMouseDelta() const;
@@ -238,6 +241,8 @@ private:
 
     double m_scrollOffsetX                                  { 0 };
     double m_scrollOffsetY                                  { 0 };
+    double m_scrollOffsetPrevX                              { 0 };
+    double m_scrollOffsetPrevY                              { 0 };
 
 
     std::bitset<_MOUSE_COUNT> m_activatedMouseButtons       { false };

@@ -49,6 +49,10 @@ void InputSystem::PreUpdate() {
 	m_deltaMouseX = 0;
 	m_deltaMouseY = 0;
 
+	m_scrollOffsetPrevX = m_scrollOffsetX;
+	m_scrollOffsetPrevY = m_scrollOffsetY;
+
+
 	m_activatedMouseButtonsPrev = m_activatedMouseButtons;
 	m_activatedKeyboardButtonsPrev = m_activatedKeyboardButtons;
 
@@ -108,6 +112,14 @@ bool InputSystem::IsMouseButtonHeld(INPUT_MOUSE_BUTTON _button) const {
 
 bool InputSystem::IsMouseButtonReleased(INPUT_MOUSE_BUTTON _button) const {
 	return IsMouseButtonReleased_Internal(_button) && m_allowInputs && m_allowMouse;
+}
+
+double InputSystem::ScrollXOffset() const {
+	return m_scrollOffsetX - m_scrollOffsetPrevX;
+}
+
+double InputSystem::ScrollYOffset() const {
+	return m_scrollOffsetY - m_scrollOffsetPrevY;
 }
 
 

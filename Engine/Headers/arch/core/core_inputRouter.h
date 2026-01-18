@@ -63,6 +63,7 @@ struct InputPriorityNode {
 	std::string m_clientName;
 	int m_priority;
 	bool m_aliveThisFrame;
+	bool m_suspendedThisFrame;
 };
 
 struct InputPriorityNodeCompare {
