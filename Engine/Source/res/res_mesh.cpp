@@ -155,7 +155,7 @@ const glm::uvec3* Mesh::GetIndexData() const {
 	return m_indices.data();
 }
 
-const unsigned Mesh::GetIndexDataCount() const {
+const size_t Mesh::GetIndexDataCount() const {
 	return m_indices.size();
 }
 

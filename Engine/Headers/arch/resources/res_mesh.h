@@ -32,7 +32,7 @@ public:
 	virtual const float* GetUVData(unsigned _index) const;
 	virtual const size_t GetIndexDataSize() const;
 	virtual const glm::uvec3* GetIndexData() const;
-	virtual const unsigned GetIndexDataCount() const;
+	virtual const size_t GetIndexDataCount() const;
 
 
 	std::string VAOIdentifier() const;
