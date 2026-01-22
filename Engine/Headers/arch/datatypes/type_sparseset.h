@@ -61,8 +61,8 @@ public:
 	
 	///! @brief provides the iterator to the beginning of the sparse set.
 	///! @return iterator to the beginning of the sparse set. (stored as a vector)
-	auto begin()							{ return m_typeContainer.begin(); }
-	auto begin() const				{ return m_typeContainer.begin(); }
+	auto begin()						{ return m_typeContainer.begin(); }
+	auto begin() const					{ return m_typeContainer.begin(); }
 
 	///! @brief provides the iterator to the end of the sparse set.
 	///! @return iterator to the end of the iterator. (stored as a vector)

@@ -3,6 +3,7 @@
 #include <arch/common/system.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
+#include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/components/comp_light.h>
@@ -36,8 +37,17 @@ public:
 	void Render(const Viewport& _viewport);
 
 public:
+
+
 	ViewportManager& GetViewportManager();
 	const ViewportManager& GetViewportManager() const;
+
+	RenderTargetManager& GetRenderTargetManager();
+	const RenderTargetManager& GetRenderTargetManager() const;
+
+	Compositor& GetCompositor();
+	const Compositor& GetCompositor() const;
+
 
 
 private:
@@ -58,6 +68,7 @@ private:
 
 	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;
+	Compositor m_compositor;
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;
 

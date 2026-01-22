@@ -148,10 +148,10 @@ const float* Mesh::GetUVData(unsigned _index) const {
 }
 
 const size_t Mesh::GetIndexDataSize() const {
-	return m_indices.size() * sizeof(unsigned);
+	return m_indices.size() * sizeof(glm::ivec3);
 }
 
-const unsigned* Mesh::GetIndexData() const {
+const glm::uvec3* Mesh::GetIndexData() const {
 	return m_indices.data();
 }
 
@@ -196,6 +196,10 @@ void Mesh::AssignVertexPositions(const float* _pointer, unsigned _vertexCount) {
 
 }
 
+void Mesh::AssignVertexPositions(const glm::vec3* _pointer, unsigned _vertexCount) {
+	m_vertexPositions.assign(_pointer, _pointer + _vertexCount);
+}
+
 void Mesh::AssignVertexNormals(const float* _pointer, unsigned _vertexCount) {
 	m_vertexNormals.resize(_vertexCount);
 	for (unsigned i{}; i < _vertexCount; ++i) {
@@ -208,8 +212,29 @@ void Mesh::AssignVertexNormals(const float* _pointer, unsigned _vertexCount) {
 	}
 }
 
-void Mesh::AssignIndices(const unsigned* _pointer, unsigned _indexCount) {	
-	m_indices.assign(_pointer, _pointer + _indexCount);
+void Mesh::AssignVertexNormals(const glm::vec3* _pointer, unsigned _vertexCount) {
+	m_vertexNormals.assign(_pointer, _pointer + _vertexCount);
+}
+
+void Mesh::AssignIndices(const unsigned* _pointer, unsigned _indexCount) {
+	// 1 face == 3 verts.
+	size_t faceGrpCount{ _indexCount / 3  };
+	m_indices.resize(faceGrpCount);
+	for (unsigned i{}; i < faceGrpCount; ++i) {
+		unsigned offset{ i * 3 };
+		m_indices[i] = glm::uvec3{
+			_pointer[offset + 0],
+			_pointer[offset + 1],
+			_pointer[offset + 2]
+		};
+	}
+
+	m_indices;
+
+}
+
+void Mesh::AssignIndices(const glm::uvec3* _pointer, unsigned _indexGroupCount) {
+	m_indices.assign(_pointer, _pointer + _indexGroupCount);
 }
 
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -91,6 +91,8 @@
     <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="Extern\src\imgui\imgui_internal.h" />
+    <ClInclude Include="Extern\src\imgui\imnodes.h" />
+    <ClInclude Include="Extern\src\imgui\imnodes_internal.h" />
     <ClInclude Include="Extern\src\imgui\imstb_rectpack.h" />
     <ClInclude Include="Extern\src\imgui\imstb_textedit.h" />
     <ClInclude Include="Extern\src\imgui\imstb_truetype.h" />
@@ -110,13 +112,16 @@
     <ClCompile Include="Extern\src\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_tables.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Extern\src\imgui\imnodes.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\fonts\binary_to_compressed_c.cpp" />
+    <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h" />
     <ClCompile Include="Source\UI_Menu.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp" />
     <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h" />
     <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h" />
     <ClCompile Include="Source\UI_Core.cpp" />
+    <ClCompile Include="Source\Widgets\UIWidget_Compositor.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_Outliner.cpp" />
     <ClCompile Include="Source\UI_Widget.cpp" />

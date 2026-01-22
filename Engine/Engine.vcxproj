@@ -176,6 +176,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
     <ClCompile Include="Source\res\res_resource.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\components\comp_light.cpp" />
@@ -256,6 +258,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_texture.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_render.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionEffect.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionNode.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositor.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderLayer.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h" />

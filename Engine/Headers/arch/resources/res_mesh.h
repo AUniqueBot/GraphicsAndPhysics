@@ -31,7 +31,7 @@ public:
 	virtual const size_t GetUVDataSize(unsigned _index) const;
 	virtual const float* GetUVData(unsigned _index) const;
 	virtual const size_t GetIndexDataSize() const;
-	virtual const unsigned* GetIndexData() const;
+	virtual const glm::uvec3* GetIndexData() const;
 	virtual const unsigned GetIndexDataCount() const;
 
 
@@ -46,8 +46,11 @@ protected:
 
 
 	void AssignVertexPositions(const float* _pointer, unsigned _vertexCount);
+	void AssignVertexPositions(const glm::vec3* _pointer, unsigned _vertexCount);
 	void AssignVertexNormals(const float* _pointer, unsigned _vertexCount);
-	void AssignIndices(const unsigned* _pointer, unsigned _indexCount);
+	void AssignVertexNormals(const glm::vec3* _pointer, unsigned _vertexCount);
+	void AssignIndices(const unsigned* _pointer, unsigned _indexGroupCount);
+	void AssignIndices(const glm::uvec3* _pointer, unsigned _indexGroupCount);
 
 	// - wip
 	void AssignVertexUVs(const float* _pointer, unsigned _vertexCount);
@@ -64,7 +67,7 @@ protected:
 	std::vector<std::vector<glm::vec2>> m_uvs;
 	std::vector<glm::vec4> m_vertexColor;
 
-	std::vector<unsigned> m_indices;
+	std::vector<glm::uvec3> m_indices;
 
 
 	// - animation -----------------------

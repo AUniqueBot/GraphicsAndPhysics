@@ -8,8 +8,9 @@
 #include <arch/components/comp_transform.h>
 
 
-UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) : UIWidget(_widgetName) {
-    
+UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) 
+    : UIWidget(_widgetName) {
+    m_flags = {ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar};
 }
 
 UIWidget_Outliner::~UIWidget_Outliner() {
@@ -26,10 +27,10 @@ void UIWidget_Outliner::Draw() {
 
     if (!m_entityRegistry) return;
     EntityRegistry& registry = *m_entityRegistry;
-
-    if (CollapsingHeader("Outliner")) {
-        Table();
-    }
+    Menu();
+    //if (CollapsingHeader("Outliner")) {
+    //}
+    Table();
     if (CollapsingHeader("Add Objects")) {
         //
         if (Button("Add Cube")) {
@@ -37,21 +38,16 @@ void UIWidget_Outliner::Draw() {
             cubeObject.AddComponent<MeshRenderer>();
             ComponentView<MeshRenderer> mr = cubeObject.GetComponent<MeshRenderer>();
             if (mr) {
-
                 // by right a mesh should be instantiated.
                 Cube cubeMesh = Cube{};
                 cubeMesh.Init();
                 mr->SetMesh(std::make_shared<Cube>(cubeMesh));
             }
-
             cubeObject.Name("Cube");
-
             
-
             cubeObject.GetComponent<Transform>()->Position(glm::vec3(5, 5, 5));
         }
         
-
     }
 
 
@@ -69,6 +65,42 @@ void UIWidget_Outliner::OnSelect() {
 
 void UIWidget_Outliner::OnUnselect() {
 
+}
+
+void UIWidget_Outliner::Menu() {
+    /* --------------------------------------------------------- */
+    /*
+        preview
+        [primitive] [light] [type] [type]
+    
+    */
+    /* --------------------------------------------------------- */
+
+    if (!ImGui::BeginMenuBar()) return;
+
+    //
+    if (ImGui::BeginMenu("Primitives")) {
+        ImGui::MenuItem("Cube");
+        ImGui::MenuItem("Sphere");
+        ImGui::MenuItem("Cone");
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Light")) {
+        ImGui::MenuItem("Point Light");
+        ImGui::MenuItem("Directional Light");
+        ImGui::MenuItem("Ambient Light");
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Other")) {
+        ImGui::MenuItem("Game Object");
+        ImGui::MenuItem("Camera");
+        ImGui::EndMenu();
+    }
+
+
+    ImGui::EndMenuBar();
 }
 
 void UIWidget_Outliner::SetEntityRegistry(EntityRegistry* _registry) {

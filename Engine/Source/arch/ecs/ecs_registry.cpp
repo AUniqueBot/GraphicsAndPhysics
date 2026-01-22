@@ -87,7 +87,7 @@ bool EntityRegistry::EntityIsSelected(EntityID _id, bool _isCurrentSelection) co
 	}
 	
 	if (_isCurrentSelection) {
-		return *m_selectedEntitiesList.end() == _id;
+		return m_selectedEntitiesList.back() == _id;
 	}
 
 	auto itr = std::find(m_selectedEntitiesList.begin(), m_selectedEntitiesList.end(), _id);

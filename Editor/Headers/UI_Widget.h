@@ -77,11 +77,12 @@ protected:
 	void UICore(UI_Core* _uiCore);
 	void DrawWidget(); 
 
+
+	ImGuiWindowFlags m_flags						{};
 protected:
 	UI_Core* m_uiCore								{};
 	std::string m_widgetName;
 	unsigned m_widgetId;
-
 
 	/* 
 		0 = hovered over, 

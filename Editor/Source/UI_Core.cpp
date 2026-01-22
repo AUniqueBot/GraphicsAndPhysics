@@ -8,7 +8,7 @@
 
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
-
+#include <imnodes.h>
 
 
 
@@ -16,17 +16,20 @@
 #include <Widgets/UIWidget_AssetBrowser.h>
 #include <Widgets/UIWidget_Viewport.h>
 #include <Widgets/UIWidget_Inspector.h>
+#include <Widgets/UIWidget_Compositor.h>
 #include <arch/systems/sys_render.h>
+
 
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
 
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
+	ImNodes::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); 
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	//io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // optional (multi-window)
-
+	// init 
 
 	// Setup style
 	ImGui::StyleColorsDark();
@@ -56,6 +59,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	AddWidget(std::make_shared<UIWidget_Outliner>("Outliner"));
 	AddWidget(std::make_shared<UIWidget_AssetBrowser>("AssetBrowser"));
 	AddWidget(std::make_shared<UIWidget_Inspector>("Inspector"));
+	AddWidget(std::make_shared<UIWidget_Compositor>("Compositor"));
 	// needs a viewport arg.
 
 
@@ -137,6 +141,7 @@ void UI_Core::BeginDockSpace() {
 void UI_Core::Exit() {
 
 	m_widgetStorage.clear();// remove all widgets from storage
+	ImNodes::DestroyContext();
 	ImGui::DestroyPlatformWindows();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();

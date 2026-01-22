@@ -99,31 +99,30 @@ static float uvData[] = {
 	1.0f, 1.0f
 };
 
-static unsigned int idxList[] = { // note that we start from 0!
-	0, 1, 3, // first triangle
-	0, 2, 3, // second triangle
+static glm::uvec3 idxList[] = { // note that we start from 0!
+	glm::uvec3(0, 1, 3), // first triangle
+	glm::uvec3(0, 2, 3), // second triangle
 
-	4, 5, 7,
-	4, 6, 7,
+	glm::uvec3(4, 5, 7),
+	glm::uvec3(4, 6, 7),
 
-	8, 9, 11,
-	8, 10, 11,
+	glm::uvec3(8, 9, 11),
+	glm::uvec3(8, 10, 11),
 
-	12, 13, 15,
-	12, 14, 15,
+	glm::uvec3(12, 13, 15),
+	glm::uvec3(12, 14, 15),
 
-	16, 17, 19,
-	16, 18, 19,
+	glm::uvec3(16, 17, 19),
+	glm::uvec3(16, 18, 19),
 
-	20, 21, 23,
-	20, 22, 23
+	glm::uvec3(20, 21, 23),
+	glm::uvec3(20, 22, 23)
 };
 
 
 void Cube::Init() {
 	// init vertex positions
 	// m_vertexPositions.assign(, );
-	std::cout << "cubie " << std::endl;
 	size_t vtxCount = sizeof(positionData) / (sizeof(positionData[0]) * 3);
 	AssignVertexPositions(positionData, vtxCount);
 	AssignVertexNormals(normalData, vtxCount);
@@ -152,7 +151,7 @@ const unsigned Cube::GetUVCount() const {
 
 const size_t Cube::GetUVDataSize(unsigned _index) const {
 	(void)_index;
-	return  sizeof(uvData);
+	return sizeof(uvData);
 }
 
 const float* Cube::GetUVData(unsigned _index) const {
@@ -164,10 +163,113 @@ const size_t Cube::GetIndexDataSize() const {
 	return sizeof(idxList);
 }
 
-const unsigned* Cube::GetIndexData() const {
+const glm::uvec3* Cube::GetIndexData() const {
 	return idxList;
 }
 
 const unsigned Cube::GetIndexDataCount() const {
 	return sizeof(idxList) / sizeof(idxList[0]);
+}
+
+void Cube::GenerateVertexData() {
+
+
+	// forward/backward.
+	for (unsigned sign{}; sign < 2; ++sign) {
+		for (unsigned side{}; side < 3; ++side) {
+			// 0 = x (lr)
+			// 1 = y (fb)
+			// 2 = z (ud)
+		
+		
+			// do 2 sides at once.
+			glm::vec3 startOffset	{ m_dimensions.x, m_dimensions.y, m_dimensions.z };
+			startOffset *= -0.5f;
+			
+			glm::vec3 vertexOffsetWidth			{};
+			glm::vec3 vertexOffsetHeight		{};
+			glm::vec3 vertexNormal				{};
+			unsigned segmentU					{};
+			unsigned segmentV					{};
+			bool flipped						{ sign == 1 };
+			
+
+			switch (side) {
+			case 0:
+				vertexNormal = { 1, 0, 0 };
+				if (flipped) startOffset.x *= -1;
+				segmentU = (m_subdivisions.y + 1);
+				segmentV = (m_subdivisions.z + 1);
+				vertexOffsetWidth.y = m_dimensions.y / segmentU;
+				vertexOffsetHeight.z = m_dimensions.z / segmentV;
+				break;
+		
+			case 1:
+				vertexNormal = { 0, 1, 0 };
+				if (flipped) startOffset.y *= -1;
+				segmentU = (m_subdivisions.x + 1);
+				segmentV = (m_subdivisions.z + 1);
+				vertexOffsetWidth.x = m_dimensions.x / segmentU;
+				vertexOffsetHeight.z = m_dimensions.z / segmentV;
+				break;
+
+			case 2:
+				vertexNormal = { 0, 0, 1 };
+				if (flipped) startOffset.z *= -1;
+				segmentU = (m_subdivisions.x + 1);
+				segmentV = (m_subdivisions.y + 1);
+				vertexOffsetWidth.x = m_dimensions.x / segmentU;
+				vertexOffsetHeight.y = m_dimensions.y / segmentV;
+				break;
+			}
+			if (flipped) vertexNormal *= -1;
+
+			unsigned faceNo		{ (side + 1) * (sign + 1) };
+			unsigned baseIndex	{ (faceNo - 1) * segmentU * segmentV };
+
+			// row priority
+			for (int v{}; v < segmentV; ++v) {
+				for (int u{}; u < segmentU; ++u) {
+					m_positionList.push_back({ 
+						startOffset 
+						+ (vertexOffsetWidth * static_cast<float>(u)) 
+						+ (vertexOffsetHeight * static_cast<float>(v))
+						});
+					m_normalList.push_back(vertexNormal);
+					
+
+
+
+					if (v < segmentV - 1 && u < segmentU - 1) {
+						/*
+						   0		  1
+							+--------+
+							|		 |
+							|		 |
+							|		 |
+							|		 |
+							|		 |
+							+--------+
+						   2		  3
+						*/
+
+
+						unsigned i0 = baseIndex + u + segmentU * v;
+						unsigned i1 = i0 + 1;
+						unsigned i2 = i0 + segmentU;
+						unsigned i3 = i2 + 1;
+						
+						if (flipped) {
+							m_indexList.push_back({ i0, i2, i1 });
+							m_indexList.push_back({ i1, i2, i3 });
+						}
+						else {
+							m_indexList.push_back({ i0, i1, i2 });
+							m_indexList.push_back({ i1, i3, i2 });
+						}
+					}
+				}
+			}
+		}
+	}
 }

@@ -187,7 +187,7 @@ void RenderSystem::Update() {
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
 
-
+    // this segment is renderint the entire frame.
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_SCISSOR_TEST);
     glClearColor(0, 0, 0, 1);
@@ -197,7 +197,10 @@ void RenderSystem::Update() {
         Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
         Render(currentViewport); // replace with a single viewport.
-    }	
+    }
+
+
+
 }
 
 /*
@@ -261,8 +264,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
     auto& entityList = registry.GetEntityList();
     auto& selectedEntityList = registry.SelectedEntities();
-    
-    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+
 
     for (Entity& e : entityList) {
         if (!e.Active() || !e.IsVisible()) {
@@ -286,9 +288,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
         if (!vaoHandler) continue;
         
         bool isSelected{ registry.EntityIsSelected(e.GetID()) };
-        GLenum stencilOp{ isSelected ? GL_ALWAYS : GL_KEEP };
-        glStencilFunc(stencilOp, 1, 0xFF);
-        glStencilMask(0xff);
+
+
         
         
         VAOHandler& currentVAO = *vaoHandler;
@@ -323,6 +324,21 @@ ViewportManager& RenderSystem::GetViewportManager() {
 }
 const ViewportManager& RenderSystem::GetViewportManager() const {
     return m_viewportManager;
+}
+
+
+RenderTargetManager& RenderSystem::GetRenderTargetManager() {
+    return m_renderTargetManager;
+}
+const RenderTargetManager& RenderSystem::GetRenderTargetManager() const {
+    return m_renderTargetManager;
+}
+
+Compositor& RenderSystem::GetCompositor() {
+    return m_compositor;
+}
+const Compositor& RenderSystem::GetCompositor() const {
+    return m_compositor;
 }
 
 

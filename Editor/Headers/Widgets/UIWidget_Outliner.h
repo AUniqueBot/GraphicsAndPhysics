@@ -18,6 +18,7 @@ public:
     void OnSelect();
     void OnUnselect();
 
+    void Menu();
 
     void SetEntityRegistry(EntityRegistry* _registry);
 

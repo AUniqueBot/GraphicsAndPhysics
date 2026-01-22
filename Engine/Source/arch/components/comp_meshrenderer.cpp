@@ -48,7 +48,7 @@ void MeshRenderer::Render(
 			GetEntityID()
 		);
  
-		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
 		return;
 	}
 	// go through all materials
@@ -64,7 +64,7 @@ void MeshRenderer::Render(
 		// TODO - render based on materials indices.
 
 
-		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
 
 	}
 }
