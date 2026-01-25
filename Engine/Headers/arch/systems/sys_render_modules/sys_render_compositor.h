@@ -42,11 +42,19 @@ public:
 	void RemoveNode(NodeID _toRemove);
 
 
+
+	SparseSetView<CompositionNode> GetNode(NodeID _id);
+	SparseSetView<const CompositionNode> GetNode(NodeID _id) const;
+
 	SparseSet<NodeID, CompositionNode>& GetNodeList();
 	const SparseSet<NodeID, CompositionNode>& GetNodeList() const;
 
-	void AddLink(NodeID _fromNode, SlotID _fromSlot, NodeID _toNode, SlotID _toSlot);
-	void RemoveLink();
+
+	// pin ids.
+	LinkID AddLink(PinID _from, PinID _to);
+	void RemoveLink(LinkID _id);
+	const SparseSet<LinkID, CompositionLink> GetLinkList() const;
+	SparseSet<LinkID, CompositionLink> GetLinkList();
 
 
 	CompositorNodeFactory& GetNodeFactory();
@@ -62,8 +70,8 @@ private:
 	
 	std::vector<std::unique_ptr<CompositionEffect>> m_compositionEffectsList;
 	SparseSet<NodeID, CompositionNode> m_compositionNodes;
+	SparseSet<LinkID, CompositionLink> m_compositionLinks;
 
-	std::unordered_map<NodeID, CompositionLink> m_compositionLinks; // group by source.
 	
 	NodeID m_nodeCount						{};
 	std::vector<NodeID> m_freeNodeIDList	{};

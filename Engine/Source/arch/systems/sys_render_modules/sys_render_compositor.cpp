@@ -68,9 +68,39 @@ NodeID Compositor::AddNode(std::string _name) {
 	m_compositionNodes.Add(std::move(cn), id);
 	return id;
 }
+
 void Compositor::RemoveNode(NodeID _toRemove) {
 	m_compositionNodes.Remove(_toRemove);
-	m_compositionLinks.erase(_toRemove);
+}
+
+
+LinkID Compositor::AddLink(PinID _from, PinID _to) {
+	CompositionLink link{};
+	link.SetPins(_from, _to);
+	LinkID id { link.GetLinkID() };
+	m_compositionLinks.Add(std::move(link),id);
+	return id;
+}
+
+SparseSet<LinkID, CompositionLink> Compositor::GetLinkList() {
+	return m_compositionLinks;
+}
+
+const SparseSet<LinkID, CompositionLink> Compositor::GetLinkList() const {
+	return m_compositionLinks;
+}
+
+
+
+
+
+
+SparseSetView<CompositionNode> Compositor::GetNode(NodeID _id) {
+	return m_compositionNodes.At(_id);
+}
+
+SparseSetView<const CompositionNode> Compositor::GetNode(NodeID _id) const {
+	return m_compositionNodes.At(_id);
 }
 
 
@@ -92,6 +122,7 @@ const CompositorNodeFactory& Compositor::GetNodeFactory() const {
 NodeID Compositor::GenerateNodeID() {
 	if (m_freeNodeIDList.size()) {
 		NodeID id{m_freeNodeIDList.back()};
+		m_freeNodeIDList.pop_back();
 		return id;
 	}
 	return ++m_nodeCount;

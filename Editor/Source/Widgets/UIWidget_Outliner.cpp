@@ -6,8 +6,7 @@
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/components/comp_transform.h>
-
-
+    
 UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) 
     : UIWidget(_widgetName) {
     m_flags = {ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar};

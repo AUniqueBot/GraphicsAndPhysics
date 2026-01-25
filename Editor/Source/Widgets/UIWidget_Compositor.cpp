@@ -24,26 +24,110 @@ void UIWidget_Compositor::Draw() {
 	Compositor& comp{ *m_compositor };
 	// on right show the editor.
 	MenuBar();
+	LeftSideDrawerMenu();
 
-	float totalWidth { ImGui::GetContentRegionAvail().x };
-	static float menuWidth			{ 240.f };
-	constexpr float minMenuWidth	{ 120.f };
+	
+	ImGui::SameLine();
+	CompositorGrid();
+	 
+}
+
+void UIWidget_Compositor::CompositorGrid() {
+	ImNodes::BeginNodeEditor();
+
+	ImGui::Dummy(ImGui::GetContentRegionAvail());
+	if (ImGui::BeginDragDropTarget()) {
+		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CompositorNodeMetadata")) {
+			const char* nodeName = (const char*)payload->Data;
+			LOG_INFO("Dropping Node with name: \""<< nodeName<<'\"');
+
+			Compositor& c { *m_compositor };
+			if (c.DoesNodeTypeExist(nodeName)) {
+				NodeID id = c.AddNode(nodeName);
+				auto nodeView{ c.GetNode(id) };
+				if (nodeView) {
+					ImVec2 mouseScreenPos = ImGui::GetMousePos();
+					ImNodes::SetNodeScreenSpacePos(id, mouseScreenPos);
+				}
+			}
+			LOG_INFO(c.GetNodeList().size());
+		}
+		ImGui::EndDragDropTarget();
+	}
+	
+	
+	DrawNodes(); 
+	DrawLinks();
+	ImNodes::EndNodeEditor();
+
+}
+
+void UIWidget_Compositor::DrawNodes() {
+	Compositor& c{ *m_compositor };
+	for (auto& node : c.GetNodeList()) {
+		NodeID nid{ node.GetID() };
+		ImNodes::BeginNode(nid);
+		
+		//ImNodes::SetNodeGridSpacePos(nid, { node.Position().x , node.Position().y });
+		ImNodes::BeginNodeTitleBar();
+		ImGui::Text(node.Name().c_str());
+		ImGui::SameLine();
+		ImGui::Text("(%i)", nid);
+		ImNodes::EndNodeTitleBar();
+		
+		for (auto& input : node.GetInputs()) {
+			ImNodes::BeginInputAttribute(input.GetPinID());
+			ImGui::Text(input.Name().c_str());
+			ImNodes::EndInputAttribute();
+		}
+
+		for (auto& output : node.GetOutputs()) {
+			ImNodes::BeginOutputAttribute(output.GetPinID());
+			ImGui::Text(output.Name().c_str());
+			ImNodes::EndOutputAttribute();
+		}
+
+		ImNodes::EndNode();
+
+	}
+}
+
+void UIWidget_Compositor::DrawLinks() {
+	Compositor& c	{ *m_compositor };
+	auto links = c.GetLinkList();
+
+	for (auto& link : links) {
+		ImNodes::Link(link.GetLinkID(), link.m_fromPin, link.m_toPin);
+	}
+
+}
+
+void UIWidget_Compositor::MenuBar() {
+	if (!ImGui::BeginMenuBar()) return;
+
+	ImGui::EndMenuBar();
+}
+
+void UIWidget_Compositor::LeftSideDrawerMenu() {
+	float totalWidth{ ImGui::GetContentRegionAvail().x };
+	static float menuWidth{ 240.f };
+	constexpr float minMenuWidth{ 120.f };
 	menuWidth = glm::clamp(
 		menuWidth,
 		minMenuWidth,
 		totalWidth - minMenuWidth - 4.f
 	);
 
-
+	Compositor& comp{ *m_compositor };
 
 	if (ImGui::BeginChild("Compositor Menu", ImVec2(menuWidth, 0), ImGuiChildFlags_ResizeX)) {
 		auto& list{ comp.GetNodeFactory().GetNodeDefinitionsList() };
-		
-	const ImGuiTableFlags tableFlags = 
-		ImGuiTableFlags_::ImGuiTableFlags_Resizable | 
-		ImGuiTableFlags_::ImGuiTableFlags_Sortable |
-		ImGuiTableFlags_::ImGuiTableFlags_Reorderable
-		;
+
+		const ImGuiTableFlags tableFlags =
+			ImGuiTableFlags_::ImGuiTableFlags_Resizable |
+			ImGuiTableFlags_::ImGuiTableFlags_Sortable |
+			ImGuiTableFlags_::ImGuiTableFlags_Reorderable
+			;
 		if (ImGui::BeginTable("Node Table", 2, tableFlags)) {
 			ImGui::TableSetupColumn("Name");
 			ImGui::TableSetupColumn("Category");
@@ -70,75 +154,23 @@ void UIWidget_Compositor::Draw() {
 		}
 	}
 	ImGui::EndChild();
-	ImGui::SameLine();
-	CompositorGrid();
-	 
 }
+void UIWidget_Compositor::UpdateLinks() {
+	Compositor& compositor { *m_compositor };
+	PinID start{};
+	PinID end{};
+	if (ImNodes::IsLinkCreated(&start, &end)) {
+		LOG_INFO("A Link has been created between " << start << " & " << end);
+		PackedPinInfo startUnpacked	{ PackedPinInfo::DecomposePinID(start) };
+		PackedPinInfo endUnpacked	{ PackedPinInfo::DecomposePinID(end) };
 
-void UIWidget_Compositor::CompositorGrid() {
-	ImNodes::BeginNodeEditor();
+		LOG_INFO("A Link has been created between " << startUnpacked.m_node << " & " << endUnpacked.m_node);
 
-	ImGui::Dummy(ImGui::GetContentRegionAvail());
-	if (ImGui::BeginDragDropTarget()) {
-		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CompositorNodeMetadata")) {
-			const char* nodeName = (const char*)payload->Data;
-			LOG_INFO("Dropping Node with name: \""<< nodeName<<'\"');
-
-			Compositor& c { *m_compositor };
-			if (c.DoesNodeTypeExist(nodeName)) {
-				c.AddNode(nodeName);
-			}
-			LOG_INFO(c.GetNodeList().size());
-		}
-		ImGui::EndDragDropTarget();
+		compositor.AddLink(start, end);
 	}
-	DrawNodes(); 
-	ImNodes::EndNodeEditor();
-
-}
-
-void UIWidget_Compositor::DrawNodes() {
-	Compositor& c{ *m_compositor };
-	for (auto& node : c.GetNodeList()) {
-		NodeID nid{ node.GetID() };
-		ImNodes::BeginNode(node.GetID());
-
-		ImNodes::BeginNodeTitleBar();
-		ImGui::Text(node.Name().c_str());
-		ImNodes::EndNodeTitleBar();
-		
-		for (auto& input : node.GetInputs()) {
-			SlotID id{ CompositionNode::GetUniquePinID(nid, input.ID(), false) };
-			ImNodes::BeginInputAttribute(id);
-			ImGui::Text(input.Name().c_str());
-			ImNodes::EndInputAttribute();
-		}
-
-		for (auto& output : node.GetOutputs()) {
-			SlotID id{ CompositionNode::GetUniquePinID(nid, output.ID(), true) };
-			ImNodes::BeginOutputAttribute(id );
-			ImGui::Text(output.Name().c_str());
-			ImNodes::EndOutputAttribute();
-		}
-
-
-
-		ImNodes::EndNode();
-
-	}
-}
-
-void UIWidget_Compositor::MenuBar() {
-	if (!ImGui::BeginMenuBar()) return;
-
-	ImGui::EndMenuBar();
-}
-
-void UIWidget_Compositor::LeftSideDrawerMenu() {
-	
 }
 void UIWidget_Compositor::Update() {
-
+	UpdateLinks();
 }
 
 void UIWidget_Compositor::Exit() {

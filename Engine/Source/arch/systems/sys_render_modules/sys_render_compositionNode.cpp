@@ -30,33 +30,43 @@ SlotMetadata SlotType::GetSlotMetadata() const {
 		m_slotId
 	};
 }
-void  SlotType::AssignID(SlotID _id) {
+PinID SlotType::GetPinID() const {
+	return m_pinId;
+}
+void SlotType::GenerateIDs(NodeID _nodeId, SlotID _slotId, bool _isInput) {
+	AssignSlotID(_slotId);
+	AssignPinID(_nodeId, _isInput);
+}
+void SlotType::AssignSlotID(SlotID _id) {
 	m_slotId = _id;
 }
 
-
-
+void SlotType::AssignPinID(NodeID _nodeId, bool _isInput){
+	// 16 bits node, 15 bits pinIndex, 1 bit type
+	m_pinId = PackedPinInfo::ComposePinID(_nodeId, m_slotId, _isInput); 
+}
 
 
 
 CompositionNode::CompositionNode() {
-	if (s_nodeIdFreeList.size()) {
-		m_id = s_nodeIdFreeList.back();
-		s_nodeIdFreeList.pop_back();
-	}
-	else {
-		m_id = ++s_nodeIdGen; 
-	}
+	//if (s_nodeIdFreeList.size()) {
+	//	m_id = s_nodeIdFreeList.back();
+	//	s_nodeIdFreeList.pop_back();
+	//}
+	//else {
+	//	++s_nodeIdGen;
+	//	m_id = s_nodeIdGen;
+	//}
 }
 
 CompositionNode::~CompositionNode() {
-	s_nodeIdFreeList.push_back(m_id);
+	//s_nodeIdFreeList.push_back(m_id);
 }
 
-void CompositionNode::AddInput(SlotType _node) {
+void CompositionNode::AddInput(SlotType _inputSlot) {
 	SlotID id = GenerateSlotID(false);
-	_node.AssignID(id);
-	m_inputs.Add(std::move(_node), id);
+	_inputSlot.GenerateIDs(m_id, id, true);
+	m_inputs.Add(std::move(_inputSlot), id);
 }
 
 
@@ -65,10 +75,10 @@ void CompositionNode::RemoveInput(SlotID _id) {
 	m_inputSlotIdFreeList.push_back(_id);
 }
 
-void CompositionNode::AddOutput(SlotType _node) {
+void CompositionNode::AddOutput(SlotType _inputSlot) {
 	SlotID id = GenerateSlotID(false);
-	_node.AssignID(id);
-	m_outputs.Add(std::move(_node), id);
+	_inputSlot.GenerateIDs(m_id, id, false);
+	m_outputs.Add(std::move(_inputSlot), id);
 }
 
 void CompositionNode::Name(std::string _name) {
@@ -102,7 +112,16 @@ void CompositionNode::RemoveOutput(SlotID _id) {
 }
 
 void CompositionNode::SetID(NodeID _id) {
+	if (_id == m_id) return;
 	m_id = _id;
+	// regen ids;
+	for (auto& input : m_inputs.Data()) {
+		input.GenerateIDs(m_id, input.m_slotId, true);
+	}
+	for (auto& output : m_outputs.Data()) {
+		output.GenerateIDs(m_id, output.m_slotId, true);
+	}
+
 }
 
 SlotID CompositionNode::GenerateSlotID(bool _isInput) {
