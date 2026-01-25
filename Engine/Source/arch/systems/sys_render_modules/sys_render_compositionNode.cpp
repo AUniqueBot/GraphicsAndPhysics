@@ -78,6 +78,22 @@ const std::string& CompositionNode::Name() const {
 	return m_name;
 }
 
+SparseSet<SlotID, SlotType>& CompositionNode::GetInputs() {
+	return m_inputs;
+}
+
+const SparseSet<SlotID, SlotType>& CompositionNode::GetInputs() const {
+	return m_inputs;
+}
+
+SparseSet<SlotID, SlotType>& CompositionNode::GetOutputs() {
+	return m_outputs;
+}
+
+const SparseSet<SlotID, SlotType>& CompositionNode::GetOutputs() const {
+	return m_outputs;
+}
+
 
 
 void CompositionNode::RemoveOutput(SlotID _id) {

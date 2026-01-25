@@ -114,8 +114,16 @@ public:
 
 	NodeID GetID() const { return m_id; }
 
-
+	SparseSet<SlotID, SlotType>& GetInputs();
+	const SparseSet<SlotID, SlotType>& GetInputs() const;
 	// save data.
+	SparseSet<SlotID, SlotType>& GetOutputs();
+	const SparseSet<SlotID, SlotType>& GetOutputs() const;
+
+	static unsigned GetUniquePinID(int _nodeID, int _localPinID, bool _input) {
+		// 16 bits node, 15 bits pinIndex, 1 bit type
+		return (_nodeID << 16) | (_localPinID << 1) | static_cast<uint32_t>(_input);
+	}
 
 private:
 	void SetID(NodeID _id);

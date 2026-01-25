@@ -19,8 +19,10 @@ public:
 
 public:
 	void CompositorGrid();
+	void DrawNodes();
 	void MenuBar();
 	void LeftSideDrawerMenu();
+
 public:
 	void EvaluateNodes(); // call the compositor to evaluate.
 

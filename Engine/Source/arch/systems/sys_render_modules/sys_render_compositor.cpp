@@ -62,7 +62,7 @@ bool Compositor::DoesNodeTypeExist(std::string _name) const {
 }
 
 NodeID Compositor::AddNode(std::string _name) {
-	CompositionNode cn{ m_nodeFactory.CreateNode(_name) };
+	CompositionNode cn	{ m_nodeFactory.CreateNode(_name) };
 	NodeID id			{ GenerateNodeID() };
 	cn.SetID(id);
 	m_compositionNodes.Add(std::move(cn), id);
