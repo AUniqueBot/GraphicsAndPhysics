@@ -19,6 +19,7 @@ UIWidget_Outliner::~UIWidget_Outliner() {
 void UIWidget_Outliner::Init() {
     Core& c = Core::GetInstance(); // only on init.
     SetEntityRegistry(&c.Registry()); // setup aliases
+    SetFactory(&c.GetEntityFactory());
     LOG_INFO("Outliner Init.");
 }
 
@@ -31,26 +32,6 @@ void UIWidget_Outliner::Draw() {
     //if (CollapsingHeader("Outliner")) {
     //}
     Table();
-    if (CollapsingHeader("Add Objects")) {
-        //
-        if (Button("Add Cube")) {
-            Entity& cubeObject = *registry.Instantiate();
-            cubeObject.AddComponent<MeshRenderer>();
-            ComponentView<MeshRenderer> mr = cubeObject.GetComponent<MeshRenderer>();
-            if (mr) {
-                // by right a mesh should be instantiated.
-                Cube cubeMesh = Cube{};
-                cubeMesh.Init();
-                mr->SetMesh(std::make_shared<Cube>(cubeMesh));
-            }
-            cubeObject.Name("Cube");
-            
-            cubeObject.GetComponent<Transform>()->Position(glm::vec3(5, 5, 5));
-        }
-        
-    }
-
-
 }
 
 void UIWidget_Outliner::Exit() {
@@ -67,6 +48,8 @@ void UIWidget_Outliner::OnUnselect() {
 
 }
 
+
+
 void UIWidget_Outliner::Menu() {
     /* --------------------------------------------------------- */
     /*
@@ -80,9 +63,16 @@ void UIWidget_Outliner::Menu() {
 
     //
     if (ImGui::BeginMenu("Primitives")) {
-        ImGui::MenuItem("Cube");
-        ImGui::MenuItem("Sphere");
+        if (ImGui::MenuItem("Cube")) {
+            m_entityFactory->CreateCube();
+        }
+        if (ImGui::MenuItem("Sphere")) {
+            m_entityFactory->CreateSphere();
+        }
         ImGui::MenuItem("Cone");
+        if (ImGui::MenuItem("Plane")) {
+            m_entityFactory->CreatePlane();
+        }
         ImGui::EndMenu();
     }
 
@@ -107,6 +97,12 @@ void UIWidget_Outliner::SetEntityRegistry(EntityRegistry* _registry) {
     if (_registry == m_entityRegistry) return;
     m_entityRegistry = _registry;
     LOG_INFO("Registry updated!");
+}
+
+void UIWidget_Outliner::SetFactory(EntityFactory* _registry){
+    if (_registry == m_entityFactory) return;
+    m_entityFactory = _registry;
+    LOG_INFO("Factory updated!");
 }
 
 void UIWidget_Outliner::Table() {

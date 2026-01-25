@@ -88,6 +88,10 @@ public:
 	void RequestOwnership(std::string _client, int _priority); // from, replacement.
 	void ReleaseOwnership(std::string _client); // from, replacement.
 
+	// for this frame, disable ownership of input from this client.
+	void SuspendOwnership(std::string _client); 
+
+
 	void ReleaseAllOwnership();
 
 	std::optional<std::string> GetCurrentOwner();

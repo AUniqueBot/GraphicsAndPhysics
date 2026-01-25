@@ -73,6 +73,9 @@ void InputRouter::ReleaseOwnership(std::string _client) {
 	
 }
 
+void InputRouter::SuspendOwnership(std::string _client) {
+}
+
 void InputRouter::ReleaseAllOwnership() {
 	// duplicate to a different set to prevent access errors
 	std::set<InputPriorityNode, InputPriorityNodeCompare> duplicateSet { m_inputClientPriority };

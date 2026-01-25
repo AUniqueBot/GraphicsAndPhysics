@@ -176,8 +176,11 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
+    <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
+    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp" />
+    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp" />
     <ClCompile Include="Source\res\res_resource.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\components\comp_light.cpp" />
@@ -237,6 +240,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSetDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h" />
+    <ClInclude Include="Headers\arch\ecs\ecs_entityFactory.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
@@ -249,6 +253,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />
     <ClInclude Include="Headers\arch\resources\res_resource.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />

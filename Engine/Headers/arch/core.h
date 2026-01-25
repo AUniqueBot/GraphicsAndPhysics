@@ -3,6 +3,7 @@
 #include "arch_headers.h"
 #include <arch/common/singleton.h>
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
+#include <arch/ecs/ecs_entityFactory.h>
 
 #include <arch/core/core_coordinatesystem.h>
 #include <arch/core/core_clock.h>
@@ -36,6 +37,10 @@ public:
 	
 	EntityRegistry& Registry()					{  return m_registry; }
 	const EntityRegistry& Registry() const		{  return m_registry; }
+
+	EntityFactory& GetEntityFactory()			{ return m_entityFactory; }
+	const EntityFactory& GetEntityFactory() const { return m_entityFactory; }
+
 
 	// - window -------------------------------------
 	void SetWindow(GLFWwindow* _window);
@@ -103,6 +108,7 @@ private:
 	InputSystem m_inputSystem;
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
+	EntityFactory m_entityFactory			{ m_registry };
 	ResourceManager m_resourceManager;
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;

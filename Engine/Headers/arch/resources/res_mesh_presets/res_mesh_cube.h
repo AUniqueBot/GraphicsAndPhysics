@@ -19,7 +19,7 @@ public:
 	//const unsigned GetIndexDataCount() const override;
 
 
-	void GenerateVertexData();
+	void UpdateVertexData();
 
 private:
 	glm::vec3 m_dimensions					{ 1.f, 1.f, 1.f };	// generate by face

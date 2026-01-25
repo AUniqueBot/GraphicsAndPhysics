@@ -35,6 +35,7 @@ public:
 	virtual const size_t GetIndexDataCount() const;
 
 
+
 	std::string VAOIdentifier() const;
 	void VAOIdentifier(std::string& _newIdentifier);
 

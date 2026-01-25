@@ -170,15 +170,13 @@ void Cube::Init() {
 	//AssignVertexNormals(normalData, vtxCount);
 	//AssignIndices(idxList, sizeof(idxList) / sizeof(unsigned));
 
-	GenerateVertexData();
+	UpdateVertexData();
 }
 
 
 
-void Cube::GenerateVertexData() {
-	m_vertexPositions.clear();
-	m_vertexNormals.clear();
-	m_indices.clear();
+void Cube::UpdateVertexData() {
+	ClearMeshInformation();
 	// forward/backward.
 	for (unsigned sign{}; sign < 2; ++sign) {
 		for (unsigned side{}; side < 3; ++side) {

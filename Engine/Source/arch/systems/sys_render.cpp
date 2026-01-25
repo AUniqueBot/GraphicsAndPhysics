@@ -149,8 +149,8 @@ void RenderSystem::Init() {
     SetupGLDebug();
     m_uboManager.Init();
     m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
-
     m_vaoManager.Init();
+    m_compositor.Init();
 
 }
 
@@ -362,7 +362,7 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
         
     for (const auto& light : lightComponentData) {
 
-        EntityView entity = registry.Get(light.GetEntityID());
+        EntityView entity = registry.GetEntity(light.GetEntityID());
         if (!entity || !entity->Active()) continue;
 
 

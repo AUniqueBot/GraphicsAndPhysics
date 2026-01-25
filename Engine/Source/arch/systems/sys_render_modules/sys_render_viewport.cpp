@@ -159,6 +159,7 @@ void Viewport::OnMouseMove() {
 
 	glm::vec3 forward = m_rotation * forwardVec;
 	glm::vec3 right = glm::normalize(glm::cross(forward, upVec));
+	glm::vec3 up = glm::normalize(glm::cross(forward, right));
 
 	// pan and look
 	if (delta.x || delta.y) {
@@ -178,7 +179,7 @@ void Viewport::OnMouseMove() {
 		else if (rightClick) {
 			float distanceMultiplier = 0.025f;
 			glm::vec3 panDelta = 
-				(upVec * delta.y) + 
+				(-up * delta.y) +
 				(right * delta.x);
 			panDelta *= distanceMultiplier;
 			m_position += panDelta;

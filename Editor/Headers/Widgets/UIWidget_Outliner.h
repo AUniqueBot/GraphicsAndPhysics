@@ -1,6 +1,7 @@
 #pragma once
 #include <UI_Widget.h>
 #include <arch/ecs/ecs_registry.h>
+#include <arch/ecs/ecs_entityFactory.h>
 
 
 class UIWidget_Outliner : public UIWidget {
@@ -20,13 +21,14 @@ public:
 
     void Menu();
 
-    void SetEntityRegistry(EntityRegistry* _registry);
 
 private:
     void Table();
 
+    void SetEntityRegistry(EntityRegistry* _registry);
+    void SetFactory(EntityFactory* _registry);
 
 private:
     EntityRegistry* m_entityRegistry{};
-
+    EntityFactory* m_entityFactory{};
 };

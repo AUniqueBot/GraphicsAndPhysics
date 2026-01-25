@@ -23,6 +23,13 @@ bool  SlotType::IsInput() const {
 SlotID SlotType::ID() const {
 	return m_slotId;
 }
+SlotMetadata SlotType::GetSlotMetadata() const {
+	return {
+		m_name,
+		m_type,
+		m_slotId
+	};
+}
 void  SlotType::AssignID(SlotID _id) {
 	m_slotId = _id;
 }
@@ -64,11 +71,22 @@ void CompositionNode::AddOutput(SlotType _node) {
 	m_outputs.Add(std::move(_node), id);
 }
 
+void CompositionNode::Name(std::string _name) {
+	 m_name = _name;
+}
+const std::string& CompositionNode::Name() const {
+	return m_name;
+}
+
 
 
 void CompositionNode::RemoveOutput(SlotID _id) {
 	m_outputs.Remove(_id);
 	m_outputSlotIdFreeList.push_back(_id);
+}
+
+void CompositionNode::SetID(NodeID _id) {
+	m_id = _id;
 }
 
 SlotID CompositionNode::GenerateSlotID(bool _isInput) {

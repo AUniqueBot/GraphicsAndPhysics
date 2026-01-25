@@ -89,16 +89,27 @@ void UI_Core::Update() {
 	ImGui::NewFrame();
 
 	ImGuiIO& uiIO = ImGui::GetIO();
+	Core* cPointer{ GetCore() };
 
-
-	if (GetCore()) {
-		Core& c = *GetCore();
+	if (cPointer) {
+		Core& c = *cPointer;
 		c.GetInputRouter().RequestOwnership("UI", 60);
 	}
 
 	BeginDockSpace();
 	RenderTopBar();
 	RenderWidgets();
+
+	if (cPointer) {
+		Core& c = *cPointer;
+		if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
+			EntityRegistry& er	{ c.Registry() };
+			
+			EntityID deletedId { er.SelectedEntity() } ;
+			er.DeselectEntity(deletedId);
+			er.Destroy(deletedId);
+		}
+	}
 
 
 	ImGui::Render();

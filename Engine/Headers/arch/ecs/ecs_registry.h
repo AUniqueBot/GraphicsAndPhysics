@@ -31,6 +31,9 @@ public:
 	IComponentPool() = default;
 	virtual ~IComponentPool() = default;
 	virtual size_t size() const { return 0; } // test value 3.
+
+	virtual bool Add(EntityID _addTo) = 0;
+	virtual bool Remove(EntityID _removeFrom) = 0;
 };
 
 
@@ -51,11 +54,11 @@ public:
 	const SparseSet<EntityID, T>& Data() const;
 
 	auto begin()		{ return m_compPool.begin(); }
-	auto end()		{ return m_compPool.end(); }
+	auto end()			{ return m_compPool.end(); }
 
 
-	bool Add(EntityID _addTo);
-	bool Remove(EntityID _removeFrom);
+	bool Add(EntityID _addTo) override;
+	bool Remove(EntityID _removeFrom) override;
 
 	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.At(_id)); }
 
@@ -170,8 +173,8 @@ public:
 	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
 	
 
-	EntityView Get(const EntityID& _id)					{ return m_entityList.At(_id); };
-	EntityViewConst Get(const EntityID& _id)	const   { return m_entityList.At(_id); };
+	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.At(_id); };
+	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.At(_id); };
 
 	
 	// component handling.
@@ -195,8 +198,19 @@ public:
 	// creates an entity.
 	EntityView Instantiate();
 
+	///! @brief destroys the specified entity
+	///! @param Entity: entity to remove
+	///! @param EntityID: ALT entityID to remove
+	///! @param
+	void Destroy(Entity _remove, bool _recursiveDeleteChildren = true);
+	void Destroy(EntityID _remove, bool _recursiveDeleteChildren = true);
+
 
 	// - existence checks -------------------------------------------------
+
+	///! @brief checks if a component pool of type T exists
+	///! @tparam T: Component type
+	///! @return true if exists
 	template<std::derived_from<Component> T>
 	bool ComponentPoolExists();
 
@@ -204,6 +218,10 @@ public:
 	void SelectEntity(EntityID _selectedObject, bool _additive = false);
 	const std::vector<EntityID>& SelectedEntities() const;
 	EntityID SelectedEntity() const;
+	
+	// remove 1 from selection
+	void DeselectEntity(EntityID _selectedObject);
+	// remove all from selection.
 	void ClearSelection();
 	bool EntityIsSelected(EntityID _id, bool _isCurrentSelection = true) const;
 
@@ -212,7 +230,7 @@ private:
 
 	void Clear();
 	// map would be a better idea
-	SparseSet<EntityID, Entity> m_entityList; // 
+	SparseSet<EntityID, Entity> m_entityList;
 	std::vector<EntityID> m_selectedEntitiesList;
 private:
 	using CompTypeID = std::type_index;
@@ -231,3 +249,4 @@ private:
 
 
 #include <arch/ecs/ecs_registryDEF.hpp>
+

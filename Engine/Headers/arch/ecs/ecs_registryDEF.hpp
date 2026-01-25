@@ -51,7 +51,7 @@ bool EntityRegistry::AddComponent(EntityID _addTo) {
 	bool res = val->Add(_addTo);
 	if (res) {
 		// add the tag to the entity
-		Entity& entity = *Get(_addTo);
+		Entity& entity = *GetEntity(_addTo);
 
 		const ComponentPackedData& cmpdata	{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata		{ cmpdata.m_componentMetadata };
@@ -74,7 +74,7 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	ComponentPool<T>& compPool = val.value().get();
 	bool res = compPool.Remove(_removeFrom);
 	if (res) {
-		Entity& entity = *Get(_removeFrom);
+		Entity& entity = *GetEntity(_removeFrom);
 		const ComponentPackedData& cmpdata{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata{ cmpdata.m_componentMetadata };
 		entity.m_componentsAttached.erase(cmdata.GetComponentTypeID());

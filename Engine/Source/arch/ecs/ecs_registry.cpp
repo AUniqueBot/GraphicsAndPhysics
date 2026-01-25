@@ -43,6 +43,26 @@ EntityView EntityRegistry::Instantiate() {
 	return m_entityList.At(refID);
 }
 
+void EntityRegistry::Destroy(Entity _remove, bool _recursiveDeleteChildren) {
+	// do child recursion here.
+	(void)_recursiveDeleteChildren;
+
+
+	for (unsigned _id : _remove.GetAttachedComponents()) {
+		SparseSetView compTypeIDView = m_componentIDLookup.At(_id);
+		if (!compTypeIDView) continue;
+		const EntityRegistry::CompTypeID& compTypeID = *compTypeIDView;
+		m_componentData.at(compTypeID).m_componentPool->Remove(_remove.GetID());
+	}
+	m_entityList.Remove(_remove.GetID());
+}
+
+void EntityRegistry::Destroy(EntityID _id, bool _recursiveDeleteChildren) {
+	if (EntityID::ENTITYID_INVALID == _id) return;
+	EntityView e { GetEntity(_id) };
+	if (e) Destroy(*e, _recursiveDeleteChildren);
+}
+
 
 
 void EntityRegistry::SelectEntity(EntityID _selectedObject, bool _additive) {
@@ -69,6 +89,8 @@ void EntityRegistry::SelectEntity(EntityID _selectedObject, bool _additive) {
 	}
 }
 
+
+
 const std::vector<EntityID>& EntityRegistry::SelectedEntities() const {
 	return m_selectedEntitiesList;
 }
@@ -76,6 +98,25 @@ const std::vector<EntityID>& EntityRegistry::SelectedEntities() const {
 EntityID EntityRegistry::SelectedEntity() const {
 	return m_selectedEntitiesList.size() > 0 ? m_selectedEntitiesList.back() : EntityID::ENTITYID_INVALID;
 }
+
+
+void EntityRegistry::DeselectEntity(EntityID _selectedID) {
+	if (EntityID::ENTITYID_INVALID == _selectedID) return;
+	
+	// case of deselecting the most current selection
+	if (SelectedEntity() == _selectedID) {
+		m_selectedEntitiesList.pop_back();
+		return;
+	}
+
+	// deselecting something that is somewhere else on the list
+	auto itr = std::find(m_selectedEntitiesList.begin(), m_selectedEntitiesList.end(), _selectedID);
+	// swap pop idiom
+	std::rotate(itr, itr + 1, m_selectedEntitiesList.end());
+	m_selectedEntitiesList.pop_back();
+}
+
+
 
 void EntityRegistry::ClearSelection() {
 	m_selectedEntitiesList.clear();

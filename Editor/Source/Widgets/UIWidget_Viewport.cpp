@@ -103,13 +103,14 @@ void UIWidget_Viewport::Update() {
 	Core& core{ *ApplicationCore() };
 	UpdateGizmo();
 	
-
-	PickObjectFromScreen();
-
-	if (WidgetIsHoveredOver() && ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
-		core.GetInputRouter().ReleaseOwnership("UI");
+	if (WidgetIsHoveredOver()) {
+		if (ImGui::IsKeyDown(ImGuiKey_LeftAlt)) {
+			core.GetInputRouter().ReleaseOwnership("UI");
+		}
+		else {
+			PickObjectFromScreen();
+		}
 	}	
-
 
 }
 
@@ -158,7 +159,7 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 	}
 
 	EntityRegistry& registry = ApplicationCore()->Registry();
-	EntityView entity = registry.Get(picked);
+	EntityView entity = registry.GetEntity(picked);
 
 	if (ImGui::IsMouseClicked(0)) {
 		ApplicationCore()->Registry().SelectEntity(
@@ -197,7 +198,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 		m_currentGizmoOperation;
 
 
-	EntityView e				{ registry.Get(selectedEntityID) };
+	EntityView e				{ registry.GetEntity(selectedEntityID) };
 	Transform&	trsComponent	{ *e->GetComponent<Transform>() };
 	glm::mat4 trsMtx			{ trsComponent.WorldTransformMtx() };
 	
