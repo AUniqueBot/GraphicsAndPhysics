@@ -111,6 +111,51 @@ void CompositionNode::RemoveOutput(SlotID _id) {
 	m_outputSlotIdFreeList.push_back(_id);
 }
 
+
+
+
+
+
+void CompositionNode::AddLink(LinkID _linkId, bool _asInput) {
+	LOG_INFO("Adding Link ID [" << _linkId << "] as " <<(_asInput ? "Input": "Output") << " for node [" << m_id << "]");
+	if (_asInput) {
+		m_inputLinks.push_back(_linkId);
+	}
+	else {
+		m_outputLinks.push_back(_linkId);
+	}
+}
+
+void CompositionNode::RemoveLink(LinkID _linkId) {
+	RemoveLink(_linkId, true);
+	RemoveLink(_linkId, false);
+}
+
+void CompositionNode::RemoveLink(LinkID _linkId, bool _isInput) {
+
+	LOG_INFO("Removing Link ID [" << _linkId << "] as " << (_isInput ? "Input" : "Output") << " for node [" << m_id <<"]");
+	if (_isInput) {
+		auto itrIn = std::find(m_inputLinks.begin(), m_inputLinks.end(), _linkId);
+		if (itrIn != m_inputLinks.begin()) {
+			std::rotate(itrIn, itrIn + 1, m_inputLinks.end());
+			m_inputLinks.pop_back();
+			return;
+		}
+	}
+	else {
+		auto itrOut = std::find(m_outputLinks.begin(), m_outputLinks.end(), _linkId);
+		if (itrOut != m_outputLinks.begin()) {
+			std::rotate(itrOut, itrOut + 1, m_outputLinks.end());
+			m_outputLinks.pop_back();
+			return;
+		}
+	}
+}
+
+
+
+
+
 void CompositionNode::SetID(NodeID _id) {
 	if (_id == m_id) return;
 	m_id = _id;

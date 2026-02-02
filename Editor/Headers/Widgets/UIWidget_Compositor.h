@@ -32,6 +32,7 @@ public:
 
 
 private:
+
 	Compositor* m_compositor					 {};
 	ViewportManager* m_viewportManager			{};
 	Viewport::ViewportID m_selectedViewport		{};

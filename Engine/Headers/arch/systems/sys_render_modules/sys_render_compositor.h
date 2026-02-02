@@ -69,10 +69,13 @@ private:
 
 	
 	std::vector<std::unique_ptr<CompositionEffect>> m_compositionEffectsList;
+	
+	// - general links --------------------------------------
 	SparseSet<NodeID, CompositionNode> m_compositionNodes;
 	SparseSet<LinkID, CompositionLink> m_compositionLinks;
 
 	
+
 	NodeID m_nodeCount						{};
 	std::vector<NodeID> m_freeNodeIDList	{};
 

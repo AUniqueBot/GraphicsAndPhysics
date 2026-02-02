@@ -85,15 +85,25 @@ struct CompositionLink {
 		}
 	}
 	PinID m_fromPin		{};
-
 	PinID m_toPin		{};
+
+	NodeID m_fromNode	{};
+	NodeID m_toNode		{};
 
 
 	void SetPins(PinID _from, PinID _to) {
+		PackedPinInfo fromPacked{ PackedPinInfo::DecomposePinID(_from) };
+		PackedPinInfo toPacked{ PackedPinInfo::DecomposePinID(_to) };
+
 		m_fromPin = _from;
 		m_toPin = _to;
+		m_fromNode = fromPacked.m_node;
+		m_toNode = toPacked.m_node;
 	}
 	LinkID GetLinkID() const { return m_linkId; }
+
+
+
 
 private:
 	LinkID m_linkId{};
@@ -111,6 +121,8 @@ struct CompositionNodeMetadata {
 	std::vector<SlotMetadata> m_inputs;
 	std::vector<SlotMetadata> m_outputs;
 };
+
+
 
 
 
@@ -160,10 +172,10 @@ public:
 	CompositionNode();
 	~CompositionNode();
 
-	void AddInput(SlotType _node); // will assign a slot id (input)
+	void AddInput(SlotType _slot); // will assign a slot id (input)
 	void RemoveInput(SlotID _id);
 	
-	void AddOutput(SlotType _node); // will assign a slot id (output, from m_outputSlotIdGen)
+	void AddOutput(SlotType _slot); // will assign a slot id (output, from m_outputSlotIdGen)
 	void RemoveOutput(SlotID _id);
 
 	void Name(std::string _name);
@@ -177,12 +189,16 @@ public:
 	SparseSet<SlotID, SlotType>& GetOutputs();
 	const SparseSet<SlotID, SlotType>& GetOutputs() const;
 
-	static unsigned GetUniquePinID(int _nodeID, int _localPinID, bool _input) {
-		// 16 bits node, 15 bits pinIndex, 1 bit type
-		return (_nodeID << 16) | (_localPinID << 1) | static_cast<uint32_t>(_input);
-	}
-
 	glm::vec2& Position() { return m_position; }
+
+
+	void AddLink(LinkID _linkId, bool _asInput);
+	void RemoveLink(LinkID _linkId);
+	void RemoveLink(LinkID _linkId, bool _isInput);
+
+
+
+
 
 private:
 	void SetID(NodeID _id);
@@ -204,6 +220,11 @@ private:
 
 	SparseSet<SlotID, SlotType> m_inputs;
 	SparseSet<SlotID, SlotType> m_outputs;
+
+
+	std::vector<LinkID> m_inputLinks;
+	std::vector<LinkID> m_outputLinks;
+
 
 	glm::vec2 m_position								{}; // for ImGui.
 };

@@ -78,8 +78,30 @@ LinkID Compositor::AddLink(PinID _from, PinID _to) {
 	CompositionLink link{};
 	link.SetPins(_from, _to);
 	LinkID id { link.GetLinkID() };
+	// decompose on both sides and add as output, input 
+
+	PackedPinInfo fromData	{ PackedPinInfo::DecomposePinID(_from) };
+	PackedPinInfo toData	{ PackedPinInfo::DecomposePinID(_to) };
+
+	m_compositionNodes.At(fromData.m_node)->AddLink(id, false);
+	m_compositionNodes.At(toData.m_node)->AddLink(id, true);
+
+
+
 	m_compositionLinks.Add(std::move(link),id);
 	return id;
+}
+
+void Compositor::RemoveLink(LinkID _id) {
+	// remove references from the thing.
+	auto view{ m_compositionLinks.At(_id) };
+	if (!view) return;
+
+	CompositionLink& link{ *m_compositionLinks.At(_id) };
+	// remove dependencies from the from side.
+	m_compositionNodes.At(link.m_fromNode)->RemoveLink(_id, false);
+	m_compositionNodes.At(link.m_toNode)->RemoveLink(_id, true);
+	m_compositionLinks.Remove(_id);
 }
 
 SparseSet<LinkID, CompositionLink> Compositor::GetLinkList() {

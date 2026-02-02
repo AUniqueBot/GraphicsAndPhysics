@@ -34,7 +34,7 @@ void UIWidget_Compositor::Draw() {
 
 void UIWidget_Compositor::CompositorGrid() {
 	ImNodes::BeginNodeEditor();
-
+	ImNodes::PushStyleVar(ImNodesStyleVar_::ImNodesStyleVar_LinkLineSegmentsPerLength, 1);
 	ImGui::Dummy(ImGui::GetContentRegionAvail());
 	if (ImGui::BeginDragDropTarget()) {
 		if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("CompositorNodeMetadata")) {
@@ -77,6 +77,7 @@ void UIWidget_Compositor::DrawNodes() {
 		
 		for (auto& input : node.GetInputs()) {
 			ImNodes::BeginInputAttribute(input.GetPinID());
+			ImNodes::PushAttributeFlag(ImNodesAttributeFlags_::ImNodesAttributeFlags_EnableLinkDetachWithDragClick);
 			ImGui::Text(input.Name().c_str());
 			ImNodes::EndInputAttribute();
 		}
@@ -84,6 +85,7 @@ void UIWidget_Compositor::DrawNodes() {
 		for (auto& output : node.GetOutputs()) {
 			ImNodes::BeginOutputAttribute(output.GetPinID());
 			ImGui::Text(output.Name().c_str());
+			ImNodes::ClearLinkSelection(); 
 			ImNodes::EndOutputAttribute();
 		}
 
@@ -161,12 +163,16 @@ void UIWidget_Compositor::UpdateLinks() {
 	PinID end{};
 	if (ImNodes::IsLinkCreated(&start, &end)) {
 		LOG_INFO("A Link has been created between " << start << " & " << end);
-		PackedPinInfo startUnpacked	{ PackedPinInfo::DecomposePinID(start) };
-		PackedPinInfo endUnpacked	{ PackedPinInfo::DecomposePinID(end) };
 
-		LOG_INFO("A Link has been created between " << startUnpacked.m_node << " & " << endUnpacked.m_node);
+		LinkID linkId = compositor.AddLink(start, end);
+	}
+	start = {};
 
-		compositor.AddLink(start, end);
+
+	LinkID link{};
+	if (ImNodes::IsLinkDestroyed(&link)) {
+		LOG_INFO("Killing Link.");
+		compositor.RemoveLink(link);
 	}
 }
 void UIWidget_Compositor::Update() {
