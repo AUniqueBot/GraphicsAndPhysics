@@ -68,7 +68,7 @@ void UIWidget_Outliner::Menu() {
         if (ImGui::MenuItem("Sphere")) {
             m_entityFactory->CreateSphere();
         }
-        ImGui::MenuItem("Cone");
+        ImGui::MenuItem("Plane");
         if (ImGui::MenuItem("Plane")) {
             m_entityFactory->CreatePlane();
         }
@@ -76,9 +76,15 @@ void UIWidget_Outliner::Menu() {
     }
 
     if (ImGui::BeginMenu("Light")) {
-        ImGui::MenuItem("Point Light");
-        ImGui::MenuItem("Directional Light");
-        ImGui::MenuItem("Ambient Light");
+        if (ImGui::MenuItem("Point Light")) {
+            m_entityFactory->CreatePointLight();
+        }
+        if (ImGui::MenuItem("Directional Light")) {
+            m_entityFactory->CreateDirectionalLight();
+        }
+        if (ImGui::MenuItem("Ambient Light")) {
+            m_entityFactory->CreateAmbientLight();
+        }
         ImGui::EndMenu();
     }
 
@@ -145,22 +151,30 @@ void UIWidget_Outliner::Table() {
         TableNextRow();
 
         ImGuiSelectableFlags selectableFlags =
-            ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns
+            ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns |
+            ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowOverlap
             ;
 
 
         TableSetColumnIndex(0);
+
+        std::string labelName = entity.Name() + "##";
+        labelName += static_cast<unsigned long>(entity.GetID());
+        ImGui::AlignTextToFramePadding();
+        //float y{ ImGui::GetCursorPosY() };
+
         const bool clicked = Selectable(
-            (entity.Name() + "##").c_str(), 
+            labelName.c_str(),
             c.Registry().SelectedEntity() == entity.GetID(),
-            selectableFlags
+            selectableFlags,
+            ImVec2{0, ImGui::GetFrameHeight()} // fill the entire row height
         );
-        //Text(entity.Name().c_str());
 
 
         TableSetColumnIndex(1);
         std::string entityIsActiveStr = "##" + entity.Name() + "IsActive" + std::to_string(entity.GetID().GetID());
         bool entityIsActiveState{ entity.Active() };
+        //ImGui::SetCursorPosY(y);
         Checkbox(entityIsActiveStr.c_str(), &entityIsActiveState);
         entity.Active(entityIsActiveState);
 
@@ -169,18 +183,17 @@ void UIWidget_Outliner::Table() {
         TableSetColumnIndex(2);
         std::string entityIsVisibleStr = "##" + entity.Name() + "IsVisible" + std::to_string(entity.GetID().GetID());
         bool entityIsVisibleState{ entity.IsVisible() };
+        //ImGui::SetCursorPosY(y);
         Checkbox(entityIsVisibleStr.c_str(), &entityIsVisibleState);
         entity.IsVisible(entityIsVisibleState);
 
 
         if (clicked) {
-            
             // do something
             m_entityRegistry->SelectEntity(
                 m_entityRegistry->SelectedEntity() == entity.GetID() ?
-                EntityID::ENTITYID_INVALID : entity.GetID()
+                EntityID::ENTITYID_INVALID : static_cast<unsigned long>(entity.GetID())
             );
-
         }
         
     }

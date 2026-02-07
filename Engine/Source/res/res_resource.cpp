@@ -35,3 +35,9 @@ std::filesystem::path BaseResource::ResourcePath() const {
 void BaseResource::ResourcePath(std::filesystem::path _path) {
 	m_pathToAsset = _path;
 }
+std::string BaseResource::Name() const {
+	return m_name;
+}
+void BaseResource::Name(std::string _name) {
+	m_name = _name;
+}

@@ -1,174 +1,15 @@
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 
-// - statics -------------------------------------------
 
-//static float positionData[] = {
-//	// x y z.
-//
-//	// back face
-//	-0.5f, -0.5f, -0.5f,
-//	 0.5f, -0.5f, -0.5f,
-//	-0.5f,  0.5f, -0.5f,
-//	 0.5f,  0.5f, -0.5f,
-//	 // front face
-//	 -0.5f, -0.5f,  0.5f,
-//	 0.5f, -0.5f,  0.5f,
-//	 -0.5f,  0.5f,  0.5f,
-//	 0.5f,  0.5f,  0.5f,
-//	 // left face
-//	 -0.5f, -0.5f, -0.5f,
-//	 -0.5f, -0.5f,  0.5f,
-//	 -0.5f,  0.5f, -0.5f,
-//	 -0.5f,  0.5f,  0.5f,
-//	 // right face
-//	 0.5f, -0.5f, -0.5f,
-//	 0.5f, -0.5f,  0.5f,
-//	 0.5f,  0.5f, -0.5f,
-//	 0.5f,  0.5f,  0.5f,
-//	 // bottom face
-//	 -0.5f, -0.5f, -0.5f,
-//	 0.5f, -0.5f, -0.5f,
-//	 -0.5f, -0.5f,  0.5f,
-//	 0.5f, -0.5f,  0.5f,
-//	 // top face
-//	 -0.5f,  0.5f, -0.5f,
-//	 0.5f,  0.5f, -0.5f,
-//	 -0.5f,  0.5f,  0.5f,
-//	 0.5f,  0.5f,  0.5f
-//};
-//
-//static float normalData[] = {
-//	// x y z.
-//
-//	// back face
-//	0.0f, 0.0f, -1.0f,
-//	0.0f, 0.0f, -1.0f,
-//	0.0f, 0.0f, -1.0f,
-//	0.0f, 0.0f, -1.0f,
-//	// front face
-//	0.0f, 0.0f,  1.0f,
-//	0.0f, 0.0f,  1.0f,
-//	0.0f, 0.0f,  1.0f,
-//	0.0f, 0.0f,  1.0f,
-//	// left face
-//	-1.0f, 0.0f, 0.0f,
-//	-1.0f, 0.0f, 0.0f,
-//	-1.0f, 0.0f, 0.0f,
-//	-1.0f, 0.0f, 0.0f,
-//	// right face
-//	1.0f, 0.0f, 0.0f,
-//	1.0f, 0.0f, 0.0f,
-//	1.0f, 0.0f, 0.0f,
-//	1.0f, 0.0f, 0.0f,
-//	// bottom face
-//	0.0f, -1.0f, 0.0f,
-//	0.0f, -1.0f, 0.0f,
-//	0.0f, -1.0f, 0.0f,
-//	0.0f, -1.0f, 0.0f,
-//	// top face
-//	0.0f,  1.0f, 0.0f,
-//	0.0f,  1.0f, 0.0f,
-//	0.0f,  1.0f, 0.0f,
-//	0.0f,  1.0f, 0.0f
-//};
-//
-//static float uvData[] = {
-//	0.0f, 0.0f,
-//	1.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 1.0f,
-//	0.0f, 0.0f,
-//	1.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 1.0f,
-//	0.0f, 0.0f,
-//	1.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 1.0f,
-//	0.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 0.0f,
-//	1.0f, 1.0f,
-//	0.0f, 0.0f,
-//	1.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 1.0f,
-//	0.0f, 0.0f,
-//	1.0f, 0.0f,
-//	0.0f, 1.0f,
-//	1.0f, 1.0f
-//};
-//
-//static glm::uvec3 idxList[] = { // note that we start from 0!
-//	glm::uvec3(0, 1, 3), // first triangle
-//	glm::uvec3(0, 2, 3), // second triangle
-//
-//	glm::uvec3(4, 5, 7),
-//	glm::uvec3(4, 6, 7),
-//
-//	glm::uvec3(8, 9, 11),
-//	glm::uvec3(8, 10, 11),
-//
-//	glm::uvec3(12, 13, 15),
-//	glm::uvec3(12, 14, 15),
-//
-//	glm::uvec3(16, 17, 19),
-//	glm::uvec3(16, 18, 19),
-//
-//	glm::uvec3(20, 21, 23),
-//	glm::uvec3(20, 22, 23)
-//};
 
-//const size_t Cube::GetVertexDataSize() const {
-//	return sizeof(positionData);
-//}
-//
-//const float* Cube::GetVertexData() const {
-//	return positionData;
-//}
-//
-//const size_t Cube::GetNormalDataSize() const {
-//	return sizeof(normalData);
-//}
-//
-//const float* Cube::GetNormalData() const {
-//	return normalData;
-//}
-//
-//const unsigned Cube::GetUVCount() const {
-//	return 1;
-//}
-//
-//const size_t Cube::GetUVDataSize(unsigned _index) const {
-//	(void)_index;
-//	return sizeof(uvData);
-//}
-//
-//const float* Cube::GetUVData(unsigned _index) const {
-//	return uvData;
-//	//return nullptr;
-//}
-//
-//const size_t Cube::GetIndexDataSize() const {
-//	return sizeof(idxList);
-//}
-//
-//const glm::uvec3* Cube::GetIndexData() const {
-//	return idxList;
-//}
-//
-//const unsigned Cube::GetIndexDataCount() const {
-//	return sizeof(idxList) / sizeof(idxList[0]);
-//}
-
+Cube::Cube(glm::vec3 _dimensions, glm::ivec3 _subdivisions) : 
+	m_dimensions{ _dimensions }, m_subdivisions{ _subdivisions }
+{
+	m_name = "Cube";
+	Init();
+}
 
 void Cube::Init() {
-	// init vertex positions
-	// m_vertexPositions.assign(, );
-	//size_t vtxCount = sizeof(positionData) / (sizeof(positionData[0]) * 3);
-	//AssignVertexPositions(positionData, vtxCount);
-	//AssignVertexNormals(normalData, vtxCount);
-	//AssignIndices(idxList, sizeof(idxList) / sizeof(unsigned));
 
 	UpdateVertexData();
 }
@@ -177,6 +18,9 @@ void Cube::Init() {
 
 void Cube::UpdateVertexData() {
 	ClearMeshInformation();
+
+	std::vector<glm::vec3> vertexPositions;
+	std::vector<glm::vec3> vertexNormals;
 	// forward/backward.
 	for (unsigned sign{}; sign < 2; ++sign) {
 		for (unsigned side{}; side < 3; ++side) {
@@ -228,17 +72,17 @@ void Cube::UpdateVertexData() {
 			if (flipped) vertexNormal *= -1;
 
 			unsigned faceNo		{ (side + 1) * (sign + 1) };
-			unsigned baseIndex	{ static_cast<unsigned>(m_vertexPositions.size()) };
+			unsigned baseIndex	{ static_cast<unsigned>(vertexPositions.size()) };
 
 			// row priority
 			for (int v{}; v < segmentV; ++v) {
 				for (int u{}; u < segmentU; ++u) {
-					m_vertexPositions.push_back({ 
+					vertexPositions.push_back({ 
 						startOffset 
 						+ (vertexOffsetWidth * static_cast<float>(u)) 
 						+ (vertexOffsetHeight * static_cast<float>(v))
 						});
-					m_vertexNormals.push_back(vertexNormal);
+					vertexNormals.push_back(vertexNormal);
 					
 
 
@@ -275,4 +119,7 @@ void Cube::UpdateVertexData() {
 			}
 		}
 	}
- }
+ 
+	SetData("position", reinterpret_cast<float*>(vertexPositions.data()), vertexPositions.size() * 3);
+	SetData("normal", reinterpret_cast<float*>(vertexNormals.data()), vertexPositions.size() * 3);
+}

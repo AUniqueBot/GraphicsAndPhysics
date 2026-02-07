@@ -106,6 +106,7 @@ ResourceIdentifier ResourceManager::AddResourceInternal(
 		name
 	};
 	_resource->ResourceID(resId);
+	_resource->Name(name);
 	m_resourcePoolIDLookup[resId] =_resource;
 	m_resourceNameToID[name] = resId;
 	m_resourceTypeManifest[_type].push_back(resId);

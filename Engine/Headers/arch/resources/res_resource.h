@@ -48,6 +48,10 @@ public:
 	RESTYPE_ID ResourceType() const	{ return m_resType; }
 
 
+	std::string Name() const;
+	void Name(std::string _name);
+
+
 	virtual void LoadAsset();
 	virtual void UnloadAsset();
 	bool IsAssetLoaded() const;
@@ -70,6 +74,7 @@ private:
 
 
 protected:
+	std::string m_name{};
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
 
 private:

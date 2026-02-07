@@ -39,7 +39,6 @@ void Core::Init() {
 		Mesh mesh = Mesh{};
 		mesh.LoadMeshFromPath("./Assets/Models/sampleModel.obj");
 
-
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
 		

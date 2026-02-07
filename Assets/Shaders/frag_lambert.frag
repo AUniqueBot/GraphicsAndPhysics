@@ -26,57 +26,67 @@ layout (std140, binding=2) uniform LightBlock {
 	LightData m_lightData[10];
 };
 
-vec3 CalculateAmbient() {
-    vec3 ambientValue = vec3(0);
 
-    for (int i = 0; i < m_count; ++i) {
-        LightData currentData = m_lightData[i];
-        if (currentData.m_position_type.w != 4.0) {
-            continue;
-        }
-        vec3 lightColor = currentData.m_color_power.xyz;
-        float power = currentData.m_color_power.w;
-
-        ambientValue = ambientValue + vec3(lightColor * power);
-    }
-
-    // Optionally clamp to prevent overbright
-    ambientValue = clamp(ambientValue, 0.0, 1.0);
-
-    return ambientValue;
-}
-
-
-vec3 CalculateDirectionalLighting(vec3 fragNormal) {
+vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     vec3 N = normalize(fragNormal);
-    vec3 result = vec3(0.0);
 
+    vec3 result = vec3(0.0);
+    vec3 ambientRes = vec3(0.0);
     for (int i = 0; i < m_count; ++i) {
         LightData currentData = m_lightData[i];
-        if (currentData.m_position_type.w != 3.0) {
-            continue;
+
+        // point light
+        if (currentData.m_position_type.w == 0.0) {
+            vec3 lightPosition = currentData.m_position_type.xyz;
+            vec3 lightVec = fragPosition - lightPosition;
+            vec3 nLightVec = normalize(lightVec);
+            // we need distance and attenuation values as well to make this work.
+            float dist = length(lightVec);
+            float power = currentData.m_color_power.w / (dist * dist); // quadratic loss.
+            // assumes distance falls off immediately for now.
+
+            float NdotL = max(dot(N, -nLightVec), 0.0);
+            vec3 lightColor = currentData.m_color_power.xyz;
+            result += lightColor * power * NdotL;
         }
 
-        // Direction is assumed to be the light direction (e.g., from which light comes)
-        vec3 lightDir = normalize(currentData.m_direction_roll.xyz);
-        float NdotL = max(dot(N, lightDir), 0.0);
 
-        vec3 lightColor = currentData.m_color_power.xyz;
-        float power = currentData.m_color_power.w;
+        // directional
+        else if (currentData.m_position_type.w == 3.0) {
+            // Direction is assumed to be the light direction (e.g., from which light comes)
+            vec3 lightDir = normalize(currentData.m_direction_roll.xyz);
+            float NdotL = max(dot(N, lightDir), 0.0);
 
-        // Lambert: albedo * lightColor * power * cos(theta)
-        result += lightColor * power * NdotL;
+            vec3 lightColor = currentData.m_color_power.xyz;
+            float power = currentData.m_color_power.w;
+
+            // Lambert: albedo * lightColor * power * cos(theta)
+            result += lightColor * power * NdotL;
+        }
+
+        // ambient
+        else if (currentData.m_position_type.w == 4.0) {
+            LightData currentData = m_lightData[i];
+            if (currentData.m_position_type.w != 4.0) {
+                continue;
+            }
+            vec3 lightColor = currentData.m_color_power.xyz;
+            float power = currentData.m_color_power.w;
+
+            ambientRes += vec3(lightColor * power);
+        }
     }
-    return result;
+    ambientRes = clamp(ambientRes, 0.0, 1.0);
+    return result + ambientRes;
 }
-
-
 
 void main() {
 	vec4 color = texture(u_albedo, frag_uv);
     out_objectId = u_objectId;
     // out_color = float(u_objectId % 256u) / 255.0; // testing
-    out_color = color * vec4(CalculateDirectionalLighting(frag_normal) + CalculateAmbient(), 1);
+    out_color = color * vec4(
+        CalculateLighting(frag_position, frag_normal), 1.0 // no alpha needed
+    );
 }
 
 

@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp" />
+    <ClCompile Include="Source\res\res_mesh_vertexLayout.cpp" />
     <ClCompile Include="Source\res\res_resource.cpp" />
     <ClCompile Include="Source\arch\components\comp_camera.cpp" />
     <ClCompile Include="Source\arch\components\comp_light.cpp" />
@@ -209,6 +210,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_cube.cpp" />
     <ClCompile Include="Source\res\res_resourceManager.cpp" />
     <ClCompile Include="Source\res\res_shader.cpp" />
+    <ClCompile Include="Source\res\res_shader_generation\res_shader_generator.cpp" />
     <ClCompile Include="Source\res\res_texture.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\util\util_graphics_debugging.cpp" />
@@ -254,12 +256,15 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_types.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh_vertexLayout.h" />
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />
     <ClInclude Include="Headers\arch\resources\res_resource.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_scene.h" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
+    <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_texture.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_render.h" />

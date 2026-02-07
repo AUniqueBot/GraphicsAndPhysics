@@ -10,6 +10,9 @@
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
 
+#include <arch/resources/res_mesh_presets/res_mesh_types.h>
+
+
 #include <arch/resources/res_material_presets/res_material_lambert.h>
 
 
@@ -141,12 +144,46 @@ void UIWidget_Inspector::Draw() {
 
 
 		const auto& selectedMesh = mr.GetMesh();
-		std::string selectedMeshName = selectedMesh->ResourcePath().filename().string();
+		std::string selectedMeshName = selectedMesh->Name();
+
 		RES_ID selectedMeshID = selectedMesh->ResourceID();
 		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
 			const auto& resPool = resmgr.GetResourcePool();
 			const auto& meshIDs = resmgr.GetResourcePoolManifest(Mesh::GetResourceTypeID());
 			
+			// first are the default meshes
+			bool isSelected = false;
+			for (unsigned i{}; i < Primitive::__COUNT; ++i) {
+
+				std::shared_ptr<Mesh> mesh	{};
+				std::string primitiveType	{};
+				switch (i) {
+					case Primitive::CUBE:
+						mesh.reset(new Cube());
+						primitiveType = "Cube";
+						break;
+					case Primitive::SPHERE:
+						mesh.reset(new Sphere());
+						primitiveType = "Sphere";
+						break;
+					case Primitive::PLANE:
+						primitiveType = "Plane";
+						mesh.reset(new Plane());
+						break;
+					case Primitive::ICOSPHERE:
+						continue;
+						primitiveType = "WIP - Icosphere";
+						//mesh.reset(new Plane());
+						break;
+				}
+				
+				isSelected = selectedMeshName == primitiveType;
+				if (Selectable(primitiveType.c_str())) {
+					 mr.SetMesh(mesh);
+				}
+			}
+			
+
 			for (const RES_ID& id : meshIDs) {
 				std::string imguiMeshID	{ "##meshID" };
 				imguiMeshID += id;
@@ -155,18 +192,19 @@ void UIWidget_Inspector::Draw() {
 				const auto& mesh = std::dynamic_pointer_cast<Mesh>(resPool.at(id));
 				std::string name { mesh->ResourcePath().filename().string()  };
 
-				bool isSelected = selectedMeshID == id;
+				isSelected = selectedMeshID == id;
 				if (Selectable(name.c_str(), isSelected)) {
+					mesh->Init();
 					mr.SetMesh(mesh);
 				}
 				PopID();
 			}
 			EndCombo();
 		}
-
 		// dropdown list.
+	
 
-
+		
 
 
 

@@ -48,10 +48,21 @@ unsigned VAOHandler::GetVAO() const {
 
 void VAOHandler::UseMesh(const Mesh& _mesh) {
 	if (!_mesh.GetVertexDataSize()) return;
-	SetData("position", _mesh.GetVertexData(), _mesh.GetVertexCount(), sizeof(glm::vec3));
-	SetData("normal", _mesh.GetNormalData(), _mesh.GetVertexCount(), sizeof(glm::vec3));
-	SetData("uv", _mesh.GetUVData(0), _mesh.GetVertexCount(), sizeof(glm::vec2));
-	SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
+
+	if (&_mesh != m_currentBoundMesh) {
+		m_currentBoundMesh = &_mesh;
+		for (const auto& [attributeName, attributeProps] : m_attributeBuffers) {
+			SetAttributeEnabled(attributeName, _mesh.GetData<float>(attributeName) != nullptr);
+			SetData(attributeName, _mesh.GetData<float>(attributeName), _mesh.GetVertexCount(), sizeof(glm::vec3));
+		}
+
+		for (unsigned i{}; i < 4; ++i) {
+			std::string uv{"uv"};
+			uv += std::to_string(i);
+			SetData(uv, _mesh.GetUVData(i), _mesh.GetVertexCount(), sizeof(glm::vec2));
+		}
+		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
+	}
 }
 
 
@@ -62,6 +73,29 @@ std::vector<GLuint> VAOHandler::GenerateBuffers(unsigned _bufferCount) {
 	buffers.resize(_bufferCount);
 	glGenBuffers(_bufferCount, buffers.data());
 	return buffers;
+}
+
+std::string VAOHandler::SetupAttributes(const VertexLayout& _layout) {
+	if (!m_vao) {
+		Init();
+	}
+	BindVAO();
+	if (!m_ebo) {
+		CreateEBO();
+	}
+
+
+	const size_t attrCount{ _layout.attributes.size() };
+	std::vector<GLuint> vboBuffers = VAOHandler::GenerateBuffers(attrCount);
+	for (size_t i{}; i < attrCount; ++i) {
+		const VertexAttributeDesc& attr { _layout.attributes[i] };
+		SetAttribute(attr.m_name, i, vboBuffers[i], attr.m_type, attr.m_featureCount, attr.m_normalized);
+	}
+	
+	UnbindVAO();
+
+	return _layout.name;
+	
 }
 
 void VAOHandler::SetData(std::string _name, const Mesh& _mesh) {
@@ -93,7 +127,7 @@ void VAOHandler::SetAttribute(
 	attr.m_type = _type;
 	attr.m_featureCount = _featureCount;
 	attr.m_normalised = _normalised;
-	attr.m_isActive = true;
+	attr.m_isActive = true; // active by default.
 
 	const int normalised = _normalised ? GL_TRUE : GL_FALSE;
 	glBindBuffer(GL_ARRAY_BUFFER, _buffer);
@@ -101,6 +135,20 @@ void VAOHandler::SetAttribute(
 	glEnableVertexAttribArray(_bindingPosition);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	//UnbindVAO();
+}
+
+
+
+void VAOHandler::SetAttributeEnabled(std::string _name, bool _enabled) {
+	auto itr = m_attributeBuffers.find(_name);
+
+	if (itr == m_attributeBuffers.end()) {
+		LOG_ERROR("Attribute: "<< _name << " does not exist");
+		return;
+	}
+	
+	AttributeProps& attrProps { itr->second };
+	attrProps.SetAttributeEnabled(_enabled);
 }
 
 unsigned VAOHandler::AttributeCount() const {
@@ -120,7 +168,6 @@ void VAOHandler::LogDebug() const {
 	
 	LOG_SPLITTER();
 }
-
 
 
 
@@ -180,22 +227,9 @@ void VAOHandler::FillEmptyVertexAttributeData(
 	unsigned _attribPosition, 
 	unsigned _typeSize
 ) {
-	switch (_typeSize) {
-		case sizeof(float) : 
-			glVertexAttrib1f(_attribPosition, 0.0f); 
-			break;
-		case sizeof(glm::vec2) : 
-			glVertexAttrib2f(_attribPosition, 0.0f, 0.0f); 
-			break;
-		case sizeof(glm::vec3) : 
-			glVertexAttrib3f(_attribPosition, 0.0f, 0.0f, 0.0f); 
-			break;
-		case sizeof(glm::vec4) : 
-			glVertexAttrib4f(_attribPosition, 0.0f, 0.0f, 0.0f, 0.0f); 
-			break;
-		default: 
-			break; // optional error handling
-	}
+	glDisableVertexAttribArray(_attribPosition);
+	glVertexAttrib4f(_attribPosition, 0.0f, 0.0f, 0.0f, 1.0f);
+
 }
 
 
@@ -217,40 +251,13 @@ void VAOHandler::SetVertexIndices(const void* _data, unsigned _dataSize) {
 
 
 void VAOManager::Init() {
-	VAOHandler staticVAO;
-	//LOG_INFO("Initialising Static VAO");
 
-	staticVAO.Init();
-	staticVAO.BindVAO();
-	staticVAO.CreateEBO();
-	// - setting up attributes --------------------
-	std::vector<GLuint> vboBuffers = VAOHandler::GenerateBuffers(3);
-	staticVAO.SetAttribute(
-		"position", 0, 
-		vboBuffers[0], 
-		GL_FLOAT, 
-		3, 
-		GL_FALSE
-	);
-	staticVAO.SetAttribute(
-		"normal", 
-		1, 
-		vboBuffers[1], 
-		GL_FLOAT, 
-		3, 
-		GL_FALSE
-	);
-	staticVAO.SetAttribute(
-		"uv", 
-		2, 
-		vboBuffers[2], 
-		GL_FLOAT, 
-		2, 
-		GL_FALSE
-	);
-
-	AddVAO("vao_static", staticVAO);
+	VAOHandler staticMeshVAO;
+	std::string identifier{};
+	identifier = staticMeshVAO.SetupAttributes(VertexLayouts::C_STATIC_MESH);
+	AddVAO(identifier, staticMeshVAO);
 	UnbindVAO();
+
 }
 
 

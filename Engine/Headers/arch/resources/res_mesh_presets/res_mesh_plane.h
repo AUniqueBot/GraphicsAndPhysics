@@ -6,8 +6,10 @@
 class Plane : public Mesh {
 private:
 public:
-	void Init() override;
+	Plane(glm::vec2 _dimensions = { 1.f, 1.f }, glm::ivec2 _subdivisions = {0, 0});
 
+	void Init() override;
+protected:
 	void UpdateVertexData();
 private:
 	glm::vec2 m_dimensions				{ 1.f, 1.f };

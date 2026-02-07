@@ -1,22 +1,16 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/resources/res_mesh_vertexLayout.h>
 // strict enforce SOA.
 
 
 class Mesh;
 // attribute thing - only worried about how to read data.
-struct AttributeProps {
-	std::string		m_name;
+struct AttributeProps : public VertexAttributeDesc {
 	unsigned		m_bufferID;
 	unsigned		m_bindingPosition;
-	GLenum			m_type;
-	unsigned		m_featureCount; // how many features per element
 	bool			m_normalised;
 	bool			m_isActive		{ true };
-
-
-
 
 	void SetAttributeEnabled(bool _isEnabled);
 	bool GetAttributeEnabled() const; 
@@ -39,6 +33,10 @@ public:
 
 	static void UnbindVAO();
 	static std::vector<GLuint> GenerateBuffers(unsigned _bufferCount);
+
+
+	std::string SetupAttributes(const VertexLayout& _layout);
+
 
 	void SetData(std::string _name, const Mesh& _mesh);
 
@@ -81,15 +79,20 @@ public:
 		bool _normalised
 	);
 
+	void SetAttributeEnabled(std::string _name, bool _enabled = true);
+
 
 	unsigned AttributeCount() const;
 
 
 public:
 	void LogDebug() const;
-
-
 private:
+
+	const Mesh* m_currentBoundMesh	{};
+private:
+
+	unsigned m_vaoId{};
 	unsigned m_vao{};
 	unsigned m_ebo{};
 	std::unordered_map<std::string, AttributeProps> m_attributeBuffers;

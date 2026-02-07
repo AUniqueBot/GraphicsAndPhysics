@@ -14,6 +14,7 @@ public:
 		LOG_INFO(ss.str());
 	};
 	EntityID(unsigned _id) : m_id{ _id } {};
+	EntityID(unsigned long _id) : m_id{ _id } {};
 	EntityID(const EntityID&) = default;
 	EntityID& operator=(const EntityID& _other) = default;
 
@@ -22,6 +23,8 @@ public:
 	bool operator>(const EntityID& other)	const { return m_id > other.m_id; }
 	bool operator==(const EntityID& other)	const { return m_id == other.m_id; }
 	bool operator==(unsigned long other)	const { return m_id == other; }
+	explicit operator unsigned long()		const { return m_id; }
+
 
 	inline bool IsValid() const { return m_id != ENTITYID_INVALID; };
 
