@@ -44,6 +44,9 @@ void UIWidget_Viewport::Draw() {
 		ImVec2(1, 0)  // bottom-right in texture
 	);
 
+	m_imgMin = ImGui::GetItemRectMin();
+	m_imgMax = ImGui::GetItemRectMax();
+
 	RenderGizmo();
 	RenderLightHelpers();
 	if (BeginDragDropTarget()) {
@@ -65,7 +68,6 @@ void UIWidget_Viewport::ResizeCallback() const {
 	if (!currentSize.x || !currentSize.y) return;// resize to dims 0 willl result in an empty buffer.
 
 	if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
-
 		vp.ViewportDimensions({ currentSize.x, currentSize.y });
 		vp.AspectRatio(currentSize.x / currentSize.y);
 		lastSize = currentSize;
@@ -256,37 +258,40 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 	ImVec2 viewportMin = ImGui::GetItemRectMin();
 	ImVec2 viewportMax = ImGui::GetItemRectMax();
 	glm::vec2 local{};
-	local.x = mouse.x - viewportMin.x;
-	local.y = mouse.y - viewportMin.y;
+	local.x = mouse.x - m_imgMin.x;
+	local.y = mouse.y - m_imgMin.y;
+
 	if (local.x < 0 || local.y < 0 ||
-		local.x > (viewportMax.x - viewportMin.x) ||
-		local.y > (viewportMax.y - viewportMin.y))
+		local.x > (m_imgMax.x - m_imgMin.x) ||
+		local.y > (m_imgMax.y - m_imgMin.y))
 	{
 		return;
 	}
-	local.y = (viewportMax.y - viewportMin.y) - local.y;
+	local.y = (m_imgMax.y - m_imgMin.y) - local.y;
 	glm::vec2 framebufferSize = vp.GetRenderTarget()->Resolution();
 	glm::vec2 viewportSize = {
-		viewportMax.x - viewportMin.x,
-		viewportMax.y - viewportMin.y
+		m_imgMax.x - m_imgMin.x,
+		m_imgMax.y - m_imgMin.y
 	};
 	glm::vec2 pixel{};
 	pixel.x = local.x * (framebufferSize.x / viewportSize.x);
 	pixel.y = local.y * (framebufferSize.y / viewportSize.y);
 
 
-	unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
 	
 	if (!ApplicationCore()) {
 		return;
 	}
 
-	EntityRegistry& registry = ApplicationCore()->Registry();
-	EntityView entity = registry.GetEntity(picked);
 
 
 
 	if (ImGui::IsMouseClicked(0)) {
+
+		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
+		EntityRegistry& registry = ApplicationCore()->Registry();
+		EntityView entity = registry.GetEntity(picked);
+		
 		ApplicationCore()->Registry().SelectEntity(
 			entity ? entity->GetID() : 
 			EntityID::ENTITYID_INVALID

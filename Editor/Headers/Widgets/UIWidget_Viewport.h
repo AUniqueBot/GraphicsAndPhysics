@@ -44,6 +44,10 @@ private:
 	double m_clickDeltaTime							{};
 	double m_clickTime								{ 0.01 };
 	
+
+	ImVec2 m_imgMin									{};
+	ImVec2 m_imgMax									{};
+
 	ImGuizmo::OPERATION m_currentGizmoOperation		{ ImGuizmo::TRANSLATE };
 
 };
