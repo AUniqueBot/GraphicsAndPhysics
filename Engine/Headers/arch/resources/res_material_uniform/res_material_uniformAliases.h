@@ -20,3 +20,4 @@ constexpr const char* U_EMISIVE				{ "u_emissive" };
 
 // - other ------------------------------------------------------
 constexpr const char* U_DELTATIME			{ "u_deltaTime" };
+constexpr const char* U_OBJECTID			{ "u_objectId" };

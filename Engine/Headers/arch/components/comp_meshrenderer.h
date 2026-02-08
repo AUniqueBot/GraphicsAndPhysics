@@ -36,14 +36,15 @@ public:
 		@brief
 			gets material list
 	*/
-	std::vector<Material>& GetMaterialList()			{ return m_materials; }
-	const std::vector<Material>& GetMaterialList() const { return m_materials; }
+	std::vector<std::shared_ptr<Material>>& GetMaterialList()			{ return m_materials; }
+	const std::vector<std::shared_ptr<Material>>& GetMaterialList() const { return m_materials; }
 
+	void AddMaterial(std::shared_ptr<Material> _material);
 
 	void Render(
-		const glm::vec4& _objectMatrix, 
-		const glm::vec4& _projectionMatrix, 
-		const glm::vec4& _cameraMatrix
+		const glm::mat4& _objectMatrix, 
+		const glm::mat4& _projectionMatrix, 
+		const glm::mat4& _cameraMatrix
 		);
 
 
@@ -59,7 +60,8 @@ private:
 	// model resource
 	
 	std::shared_ptr<Mesh> m_mesh		{};
-	std::vector<Material> m_materials;
+	std::vector<std::shared_ptr<Material>> m_materials;
+
 	bool m_castShadow					{ true };
 	bool m_staticShadow					{};
 

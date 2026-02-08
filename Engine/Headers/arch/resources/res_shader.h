@@ -6,7 +6,7 @@
 
 
 
-class ShaderProgram {
+class ShaderProgram : public Resource<ShaderProgram> {
 /*
 	@brief
 		contains the shader program
@@ -41,8 +41,8 @@ public:
 
 	int ShaderID() const { return m_programId; };
 
-
-
+	// a list of inputs from vertex buffers, uniforms from (???), and outputs from render targets
+	std::string GenerateShader();
 
 
 private:
@@ -57,4 +57,7 @@ private:
 	std::bitset<_COUNT> m_shaderLoadStatus;
 
 };
+
+
+
 

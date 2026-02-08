@@ -1,26 +1,35 @@
 #include "ecs_registry.h"
-#include <arch/common/sparseSetViewHandles.h>
+#include <arch/datatypes/type_sparseSet_viewHandle.h>
 #pragma once
 
-template <typename T>
-SparseSetView<ComponentPool<T>>  EntityRegistry::GetComponentPool() {
-	auto itr = m_componentPool.find(typeid(T));
-	if (itr != m_componentPool.end())
+template<std::derived_from<Component> T>
+SparseSetView<ComponentPool<T>> EntityRegistry::GetComponentPool() {
+	auto itr = m_componentData.find(typeid(T));
+	if (itr != m_componentData.end()) {
+		ComponentPackedData& componentInfo = itr->second;
 		return SparseSetView<ComponentPool<T>>{
-			std::ref(*std::static_pointer_cast<ComponentPool<T>>(itr->second)) 
+			std::ref(
+				*std::static_pointer_cast<ComponentPool<T>>(componentInfo.m_componentPool)
+			)
 		};
-
+	}
 
 	LOG_WARN("Non Registered Typed Called. Returning nullopt");
 	return SparseSetView<ComponentPool<T>>(std::nullopt);
 }
 
 
-template <typename T>
+template<std::derived_from<Component> T>
 SparseSetView<const ComponentPool<T>> EntityRegistry::GetComponentPool() const {
-	auto itr = m_componentPool.find(typeid(T));
-	if (itr != m_componentPool.end())
-		return std::cref(*std::static_pointer_cast<ComponentPool<T>>(itr->second));
+	auto itr = m_componentData.find(typeid(T));
+	if (itr != m_componentData.end()) {
+		const ComponentPackedData& componentInfo = itr->second;
+		return SparseSetView<const ComponentPool<T>>{
+			std::cref(
+				*std::static_pointer_cast<ComponentPool<T>>(componentInfo.m_componentPool)
+			)
+		};
+	}
 
 	LOG_WARN("Non Registered Typed Called. Returning nullopt");
 	return SparseSetView<const ComponentPool<T>>(std::nullopt);
@@ -29,7 +38,7 @@ SparseSetView<const ComponentPool<T>> EntityRegistry::GetComponentPool() const {
 
 
 
-template <typename T>
+template<std::derived_from<Component> T>
 bool EntityRegistry::AddComponent(EntityID _addTo) {
 	auto val = GetComponentPool<T>();
 	if (!val) {
@@ -39,9 +48,21 @@ bool EntityRegistry::AddComponent(EntityID _addTo) {
 		return false;
 	}
 
-	return val->Add(_addTo);
+	bool res = val->Add(_addTo);
+	if (res) {
+		// add the tag to the entity
+		Entity& entity = *GetEntity(_addTo);
+
+		const ComponentPackedData& cmpdata	{ m_componentData.at(typeid(T)) };
+		const ComponentMetadata& cmdata		{ cmpdata.m_componentMetadata };
+		entity.m_componentsAttached.insert(cmdata.GetComponentTypeID());
+	}
+
+	return res;
 }
-template <typename T>
+
+
+template<std::derived_from<Component> T>
 bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	auto val = GetComponentPool<T>();
 	if (!val.has_value()) {
@@ -51,10 +72,17 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 		return false;
 	}
 	ComponentPool<T>& compPool = val.value().get();
-	return compPool.Remove(_removeFrom);
+	bool res = compPool.Remove(_removeFrom);
+	if (res) {
+		Entity& entity = *GetEntity(_removeFrom);
+		const ComponentPackedData& cmpdata{ m_componentData.at(typeid(T)) };
+		const ComponentMetadata& cmdata{ cmpdata.m_componentMetadata };
+		entity.m_componentsAttached.erase(cmdata.GetComponentTypeID());
+	}
+	return res;
 }
 
-template<typename T>
+template<std::derived_from<Component> T>
 inline bool EntityRegistry::ComponentPoolExists() {
 	return static_cast<bool>(GetComponentPool<T>());
 }
@@ -64,18 +92,19 @@ inline bool EntityRegistry::ComponentPoolExists() {
 
 // ======================================================================================
 
-template <typename T>
+template<std::derived_from<Component> T>
 SparseSet<EntityID, T>& ComponentPool<T>::Data() {
 	return m_compPool;
 }
 
-template <typename T>
+template<std::derived_from<Component> T>
 const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 	return m_compPool;
 }
 
-template<typename T>
+template<std::derived_from<Component> T>
 bool ComponentPool<T>::Add(EntityID _addTo) {
+	if (_addTo == EntityID::ENTITYID_INVALID) return false;
 	std::cout << "[[ ================================================================== ]]" << std::endl;
 	std::cout << "Adding Component: " << typeid(T).name() << std::endl;
 	std::cout << "Client: " << _addTo << std::endl;
@@ -93,18 +122,19 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 	return result;
 }
 
-template<typename T>
+template<std::derived_from<Component> T>
 bool ComponentPool<T>::Remove(EntityID _removeFrom) {
+	if (_removeFrom == EntityID::ENTITYID_INVALID) return false;
 	return m_compPool.Remove(_removeFrom);
 }
 
-template<typename T>
+template<std::derived_from<Component> T>
 inline ComponentView<T> ComponentPool<T>::Get(EntityID _client) {
 	return m_compPool.At(_client);
 }
 
 
-template<typename T>
+template<std::derived_from<Component> T>
 inline ComponentView<const T> ComponentPool<T>::Get(EntityID _client) const {
 	return m_compPool.At(_client);
 }

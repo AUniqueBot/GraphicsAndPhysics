@@ -8,10 +8,14 @@ class ViewportManager {
 
 public:
 	Viewport::ViewportID CreateViewport();
+	std::shared_ptr<Viewport> GetViewport(Viewport::ViewportID _id);
+	
 	void RemoveViewport(Viewport::ViewportID _id);
 
-	std::map<Viewport::ViewportID, Viewport>& ViewportList();
-	const std::map<Viewport::ViewportID, Viewport>& ViewportList() const;
+	std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList();
+	const std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList() const;
+
+
 
 
 	void RequestViewportSort();
@@ -28,7 +32,7 @@ private:
 	glm::vec2 m_sensitivity							{ 1, 1 };
 
 	Viewport::ViewportID m_nextId					{ 1 };
-	std::map<Viewport::ViewportID, Viewport> m_viewports;
+	std::map<Viewport::ViewportID, std::shared_ptr<Viewport>> m_viewports;
 	std::vector<Viewport::ViewportID> m_viewportIndexRenderOrder;
 
 

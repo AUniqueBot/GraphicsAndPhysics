@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\arch\resources\res_resource.cpp">
+    <ClCompile Include="Source\res\res_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\components\comp_camera.cpp">
@@ -111,6 +111,30 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTargetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\core\core_inputRouter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_shader_generation\res_shader_generator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_mesh_vertexLayout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -128,7 +152,7 @@
     <ClInclude Include="Headers\arch\common\singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\common\sparseSetViewHandles.h">
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\system.h">
@@ -170,10 +194,10 @@
     <ClInclude Include="Headers\arch\core\core_window.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\datatypes\type_sparseset.h">
+    <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\datatypes\type_sparsesetDEF.hpp">
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSetDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h">
@@ -306,6 +330,45 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_inputRouter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionEffect.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionNode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\ecs\ecs_entityFactory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh_vertexLayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderPass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

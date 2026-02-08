@@ -10,20 +10,15 @@
 
 // - class methods -------------------------------------
 
-void Mesh::Load(std::filesystem::path _pathToModel) {
-
-	// Init();
-
+void Mesh::Load() {
 	// general flow
 	Assimp::Importer importer;
-	std::string path{ "./Assets/Models/sampleModel.obj" };
 	const aiScene* scene = importer.ReadFile(
-		path,
+		m_pathToAsset.string(),
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType
-
 	);
 
 
@@ -35,64 +30,93 @@ void Mesh::Load(std::filesystem::path _pathToModel) {
 	
 	unsigned meshCount	= scene->mNumMeshes;
 	aiMesh** meshList	= scene->mMeshes;
-	LOG_INFO(meshList);
 	LOG_INFO(meshCount);
 	
 
 	
 	// loading models
-	
+	// treat multiple models as single object.
 
-	
-	for (unsigned meshIndex = 0; meshIndex < 1; ++meshIndex) {
-		m_vertexPositions.clear();
-		m_vertexNormals.clear();
+	std::vector<float> vertexPosData	{};
+	std::vector<float> vertexNmlData	{};
+	std::vector<unsigned> faceIndexData	{};
+	unsigned vtxCount	{};
+
+	for (unsigned meshIndex{}; meshIndex < meshCount; ++meshIndex) {
 		const aiMesh* currentMesh = meshList[meshIndex];
-
 		const unsigned _vtxCount = currentMesh->mNumVertices;
 		const unsigned _idxCount = currentMesh->mNumFaces;
-		AssignVertexPositions(
-			reinterpret_cast<const float*>(currentMesh->mVertices), 
-			_vtxCount
-		);
+		
 
-		AssignVertexNormals(
-			reinterpret_cast<const float*>(currentMesh->mNormals),
-			_vtxCount
-		);
-
-
-
-		std::vector<unsigned> indices;
+		unsigned currentMeshIndexOffset = vtxCount;
 		for (unsigned int i = 0; i < currentMesh->mNumFaces; ++i) {
 			const aiFace& face = currentMesh->mFaces[i];
 			// typically faces are triangles
 			for (unsigned int j = 0; j < face.mNumIndices; ++j) {
-				indices.push_back(face.mIndices[j]);
+				faceIndexData.push_back(vtxCount + face.mIndices[j]);
 			}
 		}
+		vtxCount += _vtxCount;
 
+		// attach to the vertex pos data, nml data, etc.
+		const float* posPtr =
+			reinterpret_cast<const float*>(currentMesh->mVertices);
 
-		AssignIndices(
-			indices.data(),
-			indices.size()
+		vertexPosData.insert(
+			vertexPosData.end(),
+			posPtr,
+			posPtr + (_vtxCount * 3)
+		);
+
+		const float* nmlPtr =
+			reinterpret_cast<const float*>(currentMesh->mNormals);
+		vertexNmlData.insert(
+			vertexNmlData.end(),
+			nmlPtr,
+			nmlPtr + (_vtxCount * 3)
 		);
 	}
 
-	
+
+	SetVertexPositions(
+		reinterpret_cast<const float*>(vertexPosData.data()),
+		vtxCount
+	);
+	SetVertexNormals(
+		reinterpret_cast<const float*>(vertexNmlData.data()),
+		vtxCount
+	);
+	SetIndices(
+		faceIndexData.data(),
+		faceIndexData.size()
+	);
 
 	// loading mats
 	unsigned matCount	= scene->mNumMaterials;
 	aiMaterial** matList = scene->mMaterials;
-	
 
-	
 
 }
 
 void Mesh::Init() {
-	Load("./Assets/Models/sampleModel.obj");
-	LOG_INFO("Mesh: Initialisation Complete.");
+	LoadAsset();
+}
+
+void Mesh::LoadAsset() {
+	if (!BaseResource::IsAssetLoaded()) {
+		BaseResource::LoadAsset();
+		Load();
+		LOG_INFO("mesh loaded asset.");
+	}
+}
+
+void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
+	if (BaseResource::IsAssetLoaded()) {
+		BaseResource::UnloadAsset();	
+	}
+	ResourcePath(_pathToModel);
+	Name(_pathToModel.filename().string());
+	Load();
 }
 
 
@@ -101,24 +125,24 @@ void Mesh::Init() {
 
 
 unsigned Mesh::GetVertexCount() const {
-	return m_vertexPositions.size(); // pos = vec3 = 3x float
+	return m_attributeData.at("position")->ElementCount() / 3; // pos = vec3 = 3x float
 }
 
 
 const float* Mesh::GetVertexData() const {
-	return reinterpret_cast<const float*>(m_vertexPositions.data());
+	return GetData<float>("position");
 }
 
 
 const size_t Mesh::GetVertexDataSize() const {
-	return m_vertexPositions.size() * sizeof(glm::vec3);
+	return m_attributeData.at("position")->ElementCount() * sizeof(float);
 }
 
 const size_t Mesh::GetNormalDataSize() const {
-	return m_vertexNormals.size() * sizeof(glm::vec3);
+	return m_attributeData.at("normal")->ElementCount() * sizeof(glm::vec3);
 }
 const float* Mesh::GetNormalData() const {
-	return reinterpret_cast<const float*>(m_vertexNormals.data());
+	return GetData<float>("normal");
 }
 
 const unsigned Mesh::GetUVCount() const {
@@ -136,14 +160,14 @@ const float* Mesh::GetUVData(unsigned _index) const {
 }
 
 const size_t Mesh::GetIndexDataSize() const {
-	return m_indices.size() * sizeof(unsigned);
+	return m_indices.size() * sizeof(glm::ivec3);
 }
 
-const unsigned* Mesh::GetIndexData() const {
+const glm::uvec3* Mesh::GetIndexData() const {
 	return m_indices.data();
 }
 
-const unsigned Mesh::GetIndexDataCount() const {
+const size_t Mesh::GetIndexDataCount() const {
 	return m_indices.size();
 }
 
@@ -157,47 +181,42 @@ void Mesh::VAOIdentifier(std::string& _newIdentifier) {
 	m_vaoName = _newIdentifier;
 }
 
-void Mesh::UploadModel() {
-}
 
 void Mesh::ClearMeshInformation() {
-	m_vertexPositions.clear();
-	m_vertexNormals.clear();
-	m_vertexTangents.clear();
+	m_attributeData.clear();
 	m_uvs.clear();
-	m_vertexColor.clear();
-	m_indices.clear();
-	m_boneWeights.clear();
-	m_boneIndices.clear();
 }
 
-void Mesh::AssignVertexPositions(const float* _pointer, unsigned _vertexCount) {
-	m_vertexPositions.resize(_vertexCount);
-	for (unsigned i{}; i < _vertexCount; ++i) {
+
+// the
+void Mesh::SetVertexPositions(const float* _pointer, unsigned _vertexCount) {
+	SetData<float>("position", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
+}
+
+
+
+void Mesh::SetVertexNormals(const float* _pointer, unsigned _vertexCount) {
+	SetData<float>("normal", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
+}
+
+
+void Mesh::SetIndices(const unsigned* _pointer, unsigned _indexCount) {
+	// 1 face == 3 verts.
+	size_t faceGrpCount{ _indexCount / 3  };
+	m_indices.resize(faceGrpCount);
+	for (unsigned i{}; i < faceGrpCount; ++i) {
 		unsigned offset{ i * 3 };
-		m_vertexPositions[i] = glm::vec3{
+		m_indices[i] = glm::uvec3{
 			_pointer[offset + 0],
 			_pointer[offset + 1],
 			_pointer[offset + 2]
 		};
 	}
-
+	m_indices;
 }
 
-void Mesh::AssignVertexNormals(const float* _pointer, unsigned _vertexCount) {
-	m_vertexNormals.resize(_vertexCount);
-	for (unsigned i{}; i < _vertexCount; ++i) {
-		unsigned offset{ i * 3 };
-		m_vertexNormals[i] = glm::vec3{
-			_pointer[offset + 0],
-			_pointer[offset + 1],
-			_pointer[offset + 2]
-		};
-	}
-}
-
-void Mesh::AssignIndices(const unsigned* _pointer, unsigned _indexCount) {	
-	m_indices.assign(_pointer, _pointer + _indexCount);
+void Mesh::SetIndices(const glm::uvec3* _pointer, unsigned _indexGroupCount) {
+	m_indices.assign(_pointer, _pointer + _indexGroupCount);
 }
 
 

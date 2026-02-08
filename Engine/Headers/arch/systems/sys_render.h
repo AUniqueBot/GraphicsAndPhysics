@@ -1,7 +1,9 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/system.h>
+#include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
+#include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/components/comp_light.h>
@@ -34,8 +36,24 @@ public:
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
 
+public:
+
+
+	ViewportManager& GetViewportManager();
+	const ViewportManager& GetViewportManager() const;
+
+	RenderTargetManager& GetRenderTargetManager();
+	const RenderTargetManager& GetRenderTargetManager() const;
+
+	Compositor& GetCompositor();
+	const Compositor& GetCompositor() const;
+
+
 
 private:
+	/*!
+		@brief checks which lights to calculate from.
+	*/
 	std::vector<LightData> CullLights(const Viewport& _viewport);
 
 
@@ -47,9 +65,14 @@ private:
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	
+
+	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;
+	Compositor m_compositor;
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;
+
+
 
 };
 

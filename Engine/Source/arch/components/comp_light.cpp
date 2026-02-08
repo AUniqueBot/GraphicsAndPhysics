@@ -23,12 +23,10 @@ void Light::Power(float _value) {
     m_lightDataMismatch = true;
 }
 
-glm::vec3 Light::Color() const {
-    return m_color;
-}
+const glm::vec3& Light::Color() const { return m_color; }
 
 
-inline void Light::Color(glm::vec3 _col) {
+void Light::Color(glm::vec3 _col) {
     if (m_color == _col) return;
     m_color = _col;
     m_lightDataMismatch = true;

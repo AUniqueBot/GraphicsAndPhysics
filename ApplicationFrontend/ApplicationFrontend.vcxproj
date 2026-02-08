@@ -68,7 +68,8 @@
       <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q</Command>
+      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
+xcopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /E /I /Y /Q</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

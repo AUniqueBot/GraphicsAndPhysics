@@ -51,7 +51,25 @@
     <ClInclude Include="Headers\UI_Widget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\Widgets\UIWidget_AssetHandler.h">
+    <ClInclude Include="Headers\Widgets\UIWidget_AssetBrowser.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\UI_Menu.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Widgets\UIWidget_Viewport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern\src\imgui\ImGuizmo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern\src\imgui\imnodes.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Extern\src\imgui\imnodes_internal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\Utility\UI_LoadImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -101,7 +119,28 @@
     <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Widgets\UIWidget_AssetHandler.cpp">
+    <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\UI_Menu.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_Viewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Extern\src\imgui\ImGuizmo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Extern\src\imgui\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_Compositor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\UI_LoadImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -7,14 +7,20 @@
 
 Viewport::ViewportID ViewportManager::CreateViewport() {
 	Viewport::ViewportID id	{ m_nextId };
-	Viewport newVP			{ id };
+	std::shared_ptr<Viewport> newVP			{ std::make_shared<Viewport>(id) };
 	++m_nextId;
 
-	newVP.Init();
+	newVP->Init();
 	m_viewportIndexRenderOrder.push_back(id);
-	m_viewports.emplace( id, std::move(newVP));
+	m_viewports.emplace( id, newVP);
 
 	return id;
+}
+
+std::shared_ptr<Viewport> ViewportManager::GetViewport(Viewport::ViewportID _id) {
+	return 
+		m_viewports.find(_id) == m_viewports.end() ?
+		nullptr : m_viewports.at(_id);
 }
 
 void ViewportManager::RemoveViewport(Viewport::ViewportID _id) {
@@ -26,11 +32,11 @@ void ViewportManager::RemoveViewport(Viewport::ViewportID _id) {
 	);
 }
 
-std::map<Viewport::ViewportID, Viewport>& ViewportManager::ViewportList() {
+std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportManager::ViewportList() {
 	return m_viewports;
 }
 
-const std::map<Viewport::ViewportID, Viewport>& ViewportManager::ViewportList() const {
+const std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportManager::ViewportList() const {
 	return m_viewports;
 }
 
@@ -49,7 +55,7 @@ void ViewportManager::SortRenderOrder() {
 		m_viewportIndexRenderOrder.begin(),
 		m_viewportIndexRenderOrder.end(),
 		[this](uint32_t a, uint32_t b) {
-			return m_viewports.at(a).ViewportRenderOrder() < m_viewports.at(b).ViewportRenderOrder();
+			return m_viewports.at(a)->ViewportRenderOrder() < m_viewports.at(b)->ViewportRenderOrder();
 		}
 	);
 }

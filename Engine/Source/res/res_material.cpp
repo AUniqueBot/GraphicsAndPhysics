@@ -162,12 +162,12 @@ void Material::InitUniformLocations() {
 		GLint uniformCount{};
 		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-		for (unsigned i{}; i < uniformCount; ++i) {
+		for (int i{}; i < uniformCount; ++i) {
 			std::string name(256, '\0');
 			GLint nameLen{};
 			GLint size{};
 			GLenum type{};
-			glGetActiveUniform(programId, i, name.size(), &nameLen, &size, &type, &name[0]);
+			glGetActiveUniform(programId, i, static_cast<GLsizei>(name.size()), &nameLen, &size, &type, &name[0]);
 			name.resize(nameLen);
 			GLint location = glGetUniformLocation(programId, name.c_str());
 			if (-1 == location) {
@@ -177,8 +177,8 @@ void Material::InitUniformLocations() {
 
 			// data here
 			UniformData u_data{};
-			u_data.m_uniformLocation = location;
 			u_data.m_type = type;
+			u_data.m_uniformLocation = location;
 			LOG_INFO("Uniform name: " << name);
 			LOG_INFO("Uniform type: " << type);
 			m_uniformData.emplace(name, u_data);
@@ -197,18 +197,20 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::Render(
+void Material::ApplyUniforms(
 	const glm::mat4& _objectMatrix,
 	const glm::mat4& _projectionMatrix,
-	const glm::mat4& _cameraMatrix
+	const glm::mat4& _cameraMatrix,
+	const EntityID& _objId
 ) const {
 
 	const int shaderId{ GetShader() };
 	if (!shaderId) return;
 	glUseProgram(shaderId);
 
-
 	GLint uniformLocation{};
+
+	// lambda function
 	auto GetUniform = [this](const char* _uniformName) {
 		auto it = m_uniformData.find(_uniformName);
 		if (it == m_uniformData.end()) {
@@ -216,17 +218,18 @@ void Material::Render(
 			return -1; // invalid location
 		}
 		return it->second.m_uniformLocation;
-		
 	
 	};
 
 
+
 	uniformLocation = GetUniform(U_DELTATIME);
+
 	if (-1 != uniformLocation) {
 		static float timer{};
 		static bool downward{};
 
-		timer += downward ? -Core::DeltaTime() : Core::DeltaTime();
+		timer += static_cast<float>(downward ? -Core::DeltaTime() : Core::DeltaTime());
 		timer = std::clamp(timer, 0.f, 1.f);
 		downward = timer == 1 ? true : (timer == 0 ? false: downward);
 
@@ -244,7 +247,16 @@ void Material::Render(
 	if (-1 != uniformLocation) {
 		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
 	}
+	uniformLocation = GetUniform(U_OBJECTID);
+	if (-1 != uniformLocation) {
+		glUniform1ui(uniformLocation, _objId.GetID());
+	}
 
 
-	glGetError();
+	GLenum err;
+	while ((err = glGetError()) != GL_NO_ERROR) {
+
+		// got annoyed by this.
+		//LOG_ERROR("GL error: [" << err << "] ");
+	}
 }

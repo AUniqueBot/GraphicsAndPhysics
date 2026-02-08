@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -86,35 +86,48 @@
   <ItemGroup>
     <ClInclude Include="Extern\src\imgui\imconfig.h" />
     <ClInclude Include="Extern\src\imgui\imgui.h" />
+    <ClInclude Include="Extern\src\imgui\ImGuizmo.h" />
     <ClInclude Include="Extern\src\imgui\imgui_impl_glfw.h" />
     <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3.h" />
     <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3_loader.h" />
     <ClInclude Include="Extern\src\imgui\imgui_internal.h" />
+    <ClInclude Include="Extern\src\imgui\imnodes.h" />
+    <ClInclude Include="Extern\src\imgui\imnodes_internal.h" />
     <ClInclude Include="Extern\src\imgui\imstb_rectpack.h" />
     <ClInclude Include="Extern\src\imgui\imstb_textedit.h" />
     <ClInclude Include="Extern\src\imgui\imstb_truetype.h" />
     <ClInclude Include="Extern\src\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Headers\UI_Core.h" />
+    <ClInclude Include="Headers\UI_Menu.h" />
     <ClInclude Include="Headers\UI_Widget.h" />
-    <ClInclude Include="Headers\Widgets\UIWidget_AssetHandler.h" />
+    <ClInclude Include="Headers\Utility\UI_LoadImage.h" />
+    <ClInclude Include="Headers\Widgets\UIWidget_AssetBrowser.h" />
+    <ClInclude Include="Headers\Widgets\UIWidget_Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Extern\src\imgui\imgui.cpp" />
+    <ClCompile Include="Extern\src\imgui\ImGuizmo.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_demo.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_draw.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_impl_glfw.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_tables.cpp" />
     <ClCompile Include="Extern\src\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Extern\src\imgui\imnodes.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\cpp\imgui_stdlib.cpp" />
     <ClCompile Include="Extern\src\imgui\misc\fonts\binary_to_compressed_c.cpp" />
-    <ClCompile Include="Source\Widgets\UIWidget_AssetHandler.cpp" />
+    <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h" />
+    <ClCompile Include="Source\UI_Menu.cpp" />
+    <ClCompile Include="Source\Utility\UI_LoadImage.cpp" />
+    <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp" />
     <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h" />
     <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h" />
     <ClCompile Include="Source\UI_Core.cpp" />
+    <ClCompile Include="Source\Widgets\UIWidget_Compositor.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_Inspector.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_Outliner.cpp" />
     <ClCompile Include="Source\UI_Widget.cpp" />
+    <ClCompile Include="Source\Widgets\UIWidget_Viewport.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

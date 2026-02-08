@@ -11,7 +11,7 @@ class Component {
 	
 public:
 	
-	template <typename T>
+	template <std::derived_from<Component> T>
 	friend class ComponentPool;
 
 	virtual void Init() { LOG_INFO("Initialised Component"); };
@@ -30,6 +30,7 @@ protected:
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 private:
 	ComponentType m_type						{ __INVALID };
+	inline static unsigned s_compIdCounter		{ 0 }; // 0 is invalid.
 	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
 };
 

@@ -5,20 +5,17 @@
 class Cube : public Mesh {
 private:
 public:
-	
-	void Init() override;
-	const size_t GetVertexDataSize() const override;
-	const float* GetVertexData() const override;
-	const size_t GetNormalDataSize() const override;
-	const float* GetNormalData() const override;
-	const unsigned GetUVCount() const override;
-	const size_t GetUVDataSize(unsigned _index = 0) const override;
-	const float* GetUVData(unsigned _index = 0) const override;
-	const size_t GetIndexDataSize() const override;
-	const unsigned* GetIndexData() const override;
-	const unsigned GetIndexDataCount() const override;
+	Cube(
+		glm::vec3 _dimensions = { 1.f, 1.f, 1.f }, 
+		glm::ivec3 _subdivisions = { 0, 0, 0 }
+	);
 
+
+	void Init() override;
+protected:
+	void UpdateVertexData();
 
 private:
-	
+	glm::vec3 m_dimensions					{ 1.f, 1.f, 1.f };	// generate by face
+	glm::ivec3 m_subdivisions				{ 0, 0, 0 }; // default of 0; no subdivisions.
 };

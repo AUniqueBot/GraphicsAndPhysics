@@ -7,7 +7,7 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_camera.h>
-#include <arch/components/comp_transform.h>`
+#include <arch/components/comp_transform.h>
 #include <util/util_ostreamOverrides.h>
 #include <util/util_logging.h>
 #include <util/util_graphics_debugging.h>
@@ -16,10 +16,33 @@
 
 
 
+const char* GLDebugTypeToString(GLenum type) {
+    switch (type) {
+    case GL_DEBUG_TYPE_ERROR:               return "ERROR";
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  return "UNDEFINED_BEHAVIOR";
+    case GL_DEBUG_TYPE_PORTABILITY:         return "PORTABILITY";
+    case GL_DEBUG_TYPE_PERFORMANCE:         return "PERFORMANCE";
+    case GL_DEBUG_TYPE_MARKER:              return "MARKER";
+    case GL_DEBUG_TYPE_PUSH_GROUP:          return "PUSH_GROUP";
+    case GL_DEBUG_TYPE_POP_GROUP:           return "POP_GROUP";
+    case GL_DEBUG_TYPE_OTHER:               return "OTHER";
+    default:                                return "UNKNOWN";
+    }
+}
 
+const char* GLDebugSeverityToString(GLenum severity) {
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_HIGH:         return "HIGH";
+    case GL_DEBUG_SEVERITY_MEDIUM:       return "MEDIUM";
+    case GL_DEBUG_SEVERITY_LOW:          return "LOW";
+    case GL_DEBUG_SEVERITY_NOTIFICATION: return "NOTIFICATION";
+    default:                             return "UNKNOWN";
+    }
+}
 
-void GLAPIENTRY
-MessageCallback(GLenum source,
+void GLAPIENTRY MessageCallback(
+    GLenum source,
     GLenum type,
     GLuint id,
     GLenum severity,
@@ -27,11 +50,68 @@ MessageCallback(GLenum source,
     const GLchar* message,
     const void* userParam)
 {
-    return;
-    fprintf(stderr, "GL CALLBACK: %s type = 0x%x, severity = 0x%x, message = %s\n",
-        (type == GL_DEBUG_TYPE_ERROR ? "** GL ERROR **" : ""),
-        type, severity, message);
+    std::string msg(message);
+
+    // Messages we want to ignore
+    static const std::set<std::string> blackListSet = {
+        "<location> is invalid",
+        "Buffer detailed info",
+        "Rasterization usage warning:"
+    };
+    for (const std::string& str : blackListSet) {
+        if (msg.find(str) != std::string::npos) return;
+    }
+
+    // Convert type enum to string
+    const char* typeStr = "UNKNOWN";
+    switch (type) {
+    case GL_DEBUG_TYPE_ERROR:              typeStr = "ERROR"; break;
+    case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:typeStr = "DEPRECATED_BEHAVIOR"; break;
+    case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: typeStr = "UNDEFINED_BEHAVIOR"; break;
+    case GL_DEBUG_TYPE_PORTABILITY:        typeStr = "PORTABILITY"; break;
+    case GL_DEBUG_TYPE_PERFORMANCE:        typeStr = "PERFORMANCE"; break;
+    case GL_DEBUG_TYPE_MARKER:             typeStr = "MARKER"; break;
+    case GL_DEBUG_TYPE_PUSH_GROUP:         typeStr = "PUSH_GROUP"; break;
+    case GL_DEBUG_TYPE_POP_GROUP:          typeStr = "POP_GROUP"; break;
+    case GL_DEBUG_TYPE_OTHER:              typeStr = "OTHER"; break;
+    }
+
+    // Convert severity enum to string
+    const char* severityStr = "UNKNOWN";
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_HIGH:         severityStr = "HIGH"; break;
+    case GL_DEBUG_SEVERITY_MEDIUM:       severityStr = "MEDIUM"; break;
+    case GL_DEBUG_SEVERITY_LOW:          severityStr = "LOW"; break;
+    case GL_DEBUG_SEVERITY_NOTIFICATION: severityStr = "NOTIFICATION"; break;
+    }
+
+    // Choose appropriate log macro
+    if (type == GL_DEBUG_TYPE_ERROR) {
+        LOG_ERROR("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
+    else if (type == GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR ||
+        type == GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR ||
+        type == GL_DEBUG_TYPE_PORTABILITY ||
+        type == GL_DEBUG_TYPE_PERFORMANCE) {
+        LOG_WARN("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
+    else { // OTHER, MARKER, PUSH_GROUP, POP_GROUP
+        LOG_INFO("GL CALLBACK: " << message
+            << " (type=" << typeStr
+            << ", severity=" << severityStr
+            << ", id=" << id << ")");
+    }
 }
+
+
+
+
 
 void SetupGLDebug() {
     GLint flags = 0;
@@ -55,20 +135,22 @@ void RenderSystem::Init() {
 
     // - initialise gl settings -----------------
     glEnable(GL_DEPTH_TEST);
-
-
-
     // - init viewport manager ------------------
 
     Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
-    Viewport& viewport			{ m_viewportManager.ViewportList().at(vpId)	};
+    Viewport& viewport			{ *m_viewportManager.GetViewport(vpId)	};
+    RenderTargetManager::RenderTargetID rtId{ m_renderTargetManager.AddRenderTarget("Viewport",
+        viewport.ViewportDimensions()
+        ) };
+    RenderTarget& renderTarget  { *m_renderTargetManager.GetRenderTarget(rtId) };
+    viewport.SetRenderTarget(std::make_shared<RenderTarget>(renderTarget));
 
-    
+
     SetupGLDebug();
     m_uboManager.Init();
     m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
-
     m_vaoManager.Init();
+    m_compositor.Init();
 
 }
 
@@ -98,49 +180,70 @@ void RenderSystem::Update() {
     
     
     */
-    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT };
+    
 
 
 
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
 
+    // this segment is renderint the entire frame.
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glDisable(GL_SCISSOR_TEST);
     glClearColor(0, 0, 0, 1);
-    glClear(clearFlags);
-
-    glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
     for (const Viewport::ViewportID& id : vpRenderOrder) {
-        Viewport& currentViewport	{ viewportMap.at(id ) };
-
-
+        Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
-
-
-        glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-        glClear(clearFlags);
-        glClearDepth(1.0f);
         Render(currentViewport); // replace with a single viewport.
-    }	
+    }
+
+
+
 }
 
+/*
+    to render -> 
 
+
+*/
 
 
 
 void RenderSystem::Render(const Viewport& _viewport) {
+    const glm::vec2 vpDims  { _viewport.ViewportDimensions() };
+    if (!vpDims.x || !vpDims.y) return;
+
     auto GetError = GraphicsDebug::GetError;
 
     const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
     const glm::mat4 & _projectionMatrix		{ _viewport.ProjectionMatrix() };;
-
+    
     EntityRegistry& registry = Core::GetInstance().Registry();
     // use the current camera for projection matrix.
 
-    // set to wireframe
+
+
+    if (_viewport.GetRenderTarget()) {
+        _viewport.GetRenderTarget()->Bind();
+        glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
+    }
+
+    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
+    
+    // viewport set.
+    glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+    glClear(clearFlags);
+    glClearDepth(1.0f);
+    glClearStencil(0x00);
+    glStencilMask(0xff);
+
+    GLuint clearID = 0;
+    glClearBufferuiv(GL_COLOR, 1, &clearID);
+
+    // rendering
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
-
     glm::mat4 pos, rot, scl{ 1.f };
     glm::mat4 viewMtx{ 1.f };
     pos = glm::translate(glm::mat4{ 1.f }, glm::vec3());
@@ -160,69 +263,90 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
 
     auto& entityList = registry.GetEntityList();
+    auto& selectedEntityList = registry.SelectedEntities();
+
+
     for (Entity& e : entityList) {
         if (!e.Active() || !e.IsVisible()) {
 
             // to skip hidden ones as well.
             continue;
         }
+       
 
 
         const auto& mr = e.GetComponent<MeshRenderer>();
-        if (!mr) { continue; }
+        if (mr) {
         
-        auto matHandle = 0;	// pls get the material now.
-        auto trs = e.GetComponent<Transform>();
-        const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
+            auto trs = e.GetComponent<Transform>();
+            const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
-        std::shared_ptr<Mesh> mesh = mr->GetMesh();
-        if (!mesh) continue;
-        VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
+            std::shared_ptr<Mesh> mesh = mr->GetMesh();
+            if (!mesh) continue;
+            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
-        if (!vaoHandler) continue;
-        VAOHandler& currentVAO = *vaoHandler;
-        currentVAO.BindVAO();
-        //currentVAO.LogDebug();
-        currentVAO.UseMesh(*mesh);
-
-        const Material* mat{ &mr->GetDefaultMaterial() };
-        GLuint program = mr->GetDefaultMaterial().GetShader();
-        const unsigned matCount = mr->GetMaterialList().size();
-        const unsigned loopCount = matCount ? matCount : 1;
-
-
-        for (unsigned i{}; i < loopCount; ++i) {
-            if (matCount) {
-                mat = &mr->GetMaterialList().at(i);
-                program = mat->GetShader();
-            }
+            if (!vaoHandler) continue;
         
-            if (!mat) continue;
+            bool isSelected{ registry.EntityIsSelected(e.GetID()) };
+
+
         
-            glUseProgram(program);
-            glm::mat4 objMat{ 1.f };
+        
+            VAOHandler& currentVAO = *vaoHandler;
+            currentVAO.BindVAO(); 
+            //currentVAO.LogDebug();
+            currentVAO.UseMesh(*mesh);
+            // check if there is data here...
 
-            
-
-            mat->Render(
+            mr->Render(
                 objectTransformMatrix,
                 _projectionMatrix,
                 _cameraMatrix
             );
 
-            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount(), GL_UNSIGNED_INT, 0);
-    
-        
+
             m_vaoManager.UnbindVAO();
-            glBindTexture(GL_TEXTURE_2D, 0);
         }
+        
+        
+    
     }
+    
     glBindVertexArray(0);
 
+    
+
+
+    if (_viewport.GetRenderTarget()) {
+        _viewport.GetRenderTarget()->Unbind();
+    }
 
     //LOG_SPLITTER();
 }
 
+
+
+ViewportManager& RenderSystem::GetViewportManager() {
+    return m_viewportManager;
+}
+const ViewportManager& RenderSystem::GetViewportManager() const {
+    return m_viewportManager;
+}
+
+
+RenderTargetManager& RenderSystem::GetRenderTargetManager() {
+    return m_renderTargetManager;
+}
+const RenderTargetManager& RenderSystem::GetRenderTargetManager() const {
+    return m_renderTargetManager;
+}
+
+Compositor& RenderSystem::GetCompositor() {
+    return m_compositor;
+}
+const Compositor& RenderSystem::GetCompositor() const {
+    return m_compositor;
+}
 
 
 std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
@@ -245,7 +369,7 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
         
     for (const auto& light : lightComponentData) {
 
-        EntityView entity = registry.Get(light.GetEntityID());
+        EntityView entity = registry.GetEntity(light.GetEntityID());
         if (!entity || !entity->Active()) continue;
 
 

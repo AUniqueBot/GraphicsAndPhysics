@@ -6,7 +6,7 @@
 #include <arch/resources/res_shader.h>
 #include <arch/resources/res_material_uniform/res_material_uniform.h>
 #include <arch/resources/res_material_uniform/res_material_uniformAliases.h>
-
+#include <arch/common/entityid.h>
 
 // - class -----------------------------
 class Material {
@@ -36,10 +36,11 @@ public:
 
 	int GetShader() const;
 
-	virtual void Render(
+	virtual void ApplyUniforms(
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 
-		const glm::mat4& _cameraMatrix
+		const glm::mat4& _cameraMatrix,
+		const EntityID& _objId
 	) const;
 
 

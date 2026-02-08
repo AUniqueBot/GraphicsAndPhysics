@@ -150,25 +150,71 @@ public:
 
 public:
     void Init(GLFWwindow* _window);
+    void PreUpdate();
     void Update();
     void PostUpdate();
 
     // - query --------------------------
     
+
     bool IsKeyPressed(INPUT_KEY) const;
     bool IsKeyHeld(INPUT_KEY) const;
     bool IsKeyReleased(INPUT_KEY) const;
+
+
 
     bool IsMouseButtonClicked(INPUT_MOUSE_BUTTON _button) const;
     bool IsMouseButtonHeld(INPUT_MOUSE_BUTTON _button) const;
     bool IsMouseButtonReleased(INPUT_MOUSE_BUTTON _button) const;
 
+    double ScrollXOffset() const;
+    double ScrollYOffset() const;
+
+
     glm::vec2 GetMousePosition() const;
     glm::vec2 GetMouseDelta() const;
+    bool& CursorPositionFrozen();
+    const bool& CursorPositionFrozen() const;
+    void CursorPositionFrozen(bool _setting);
+    bool DisplayMouse() const;
+    void DisplayMouse(bool _setting);
+    void MoveMouse(glm::vec2 _pos);
+    void MoveMouse(float _x, float _y);
+
+
+
+    // - flags ---------------------------
+    bool InputIsAllowed() const;
+    void InputIsAllowed(bool _setting);
+
+
+    bool AllowKeyboardInput() const;
+    void AllowKeyboardInput(bool _setting);
+
+    bool AllowMouseInput() const;
+    void AllowMouseInput(bool _setting);
 
 
 public:
 
+
+private:
+    // raw versions of input queries.
+
+    bool IsKeyPressed_Internal(INPUT_KEY) const;
+    bool IsKeyHeld_Internal(INPUT_KEY) const;
+    bool IsKeyReleased_Internal(INPUT_KEY) const;
+
+    bool IsMouseButtonClicked_Internal(INPUT_MOUSE_BUTTON _button) const;
+    bool IsMouseButtonHeld_Internal(INPUT_MOUSE_BUTTON _button) const;
+    bool IsMouseButtonReleased_Internal(INPUT_MOUSE_BUTTON _button) const;
+    
+    
+    glm::vec2 GetMousePosition_Internal() const;
+    glm::vec2 GetMouseDelta_Internal() const;
+
+
+    void ClearInputs();
 
 private:
     void SetupCallbacks(GLFWwindow* _window);
@@ -180,22 +226,36 @@ private:
 
 private:
 
+    GLFWwindow* m_window                                     {};
+
+    bool m_freezeMousePosition                              { false };
+    bool m_mouseVisible                                     { false };
     double m_mouseX                                         { 0 };
     double m_mouseY                                         { 0 };
     double m_prevMouseX                                     { 0 };
     double m_prevMouseY                                     { 0 };
+    double m_deltaMouseX                                    { 0 };
+    double m_deltaMouseY                                    { 0 };
+
 
 
     double m_scrollOffsetX                                  { 0 };
     double m_scrollOffsetY                                  { 0 };
+    double m_scrollOffsetPrevX                              { 0 };
+    double m_scrollOffsetPrevY                              { 0 };
 
 
     std::bitset<_MOUSE_COUNT> m_activatedMouseButtons       { false };
-    std::bitset<_MOUSE_COUNT> m_activatedMouseButtonsPrev   { false }; //  history
+    std::bitset<_MOUSE_COUNT> m_activatedMouseButtonsPrev   { false }; // history
 
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtons      { false };
     std::bitset<_KEY_COUNT> m_activatedKeyboardButtonsPrev  { false }; // history
 
+
+    // - flags ----------------------------------
+    bool m_allowInputs                                      { true }; 
+    bool m_allowMouse                                       { true };
+    bool m_allowKeyboard                                    { true };
 
 private:
     // - mappings -------------------------------

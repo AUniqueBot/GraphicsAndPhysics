@@ -2,7 +2,7 @@
 
 #include <bitset>
 #include <arch/common/entityid.h>
-#include <arch/common/sparseSetViewHandles.h>
+#include <arch/datatypes/type_sparseSet_viewHandle.h>
 #include <arch/components/componentList.h>
 
 
@@ -44,6 +44,15 @@ public:
 
 	EntityRegistry* GetRegistry()								{ return m_registry; }
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
+
+
+	const std::set<unsigned>&
+		GetAttachedComponents() const							{ return m_componentsAttached; };
+
+protected:
+	friend class EntityRegistry;
+	std::set<unsigned> m_componentsAttached;
+
 
 private:
 

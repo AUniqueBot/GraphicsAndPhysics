@@ -11,7 +11,7 @@ bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 		return false;
 	}
 	// add this value 
-	m_valueToIdx[_id] = m_idxToValue.size();
+	m_valueToIdx[_id] = static_cast<int>(m_idxToValue.size());
 	m_idxToValue.push_back(_id);
 
 	m_typeContainer.push_back(std::move(_newItem));

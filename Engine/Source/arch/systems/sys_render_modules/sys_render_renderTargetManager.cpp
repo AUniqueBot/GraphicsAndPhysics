@@ -2,14 +2,26 @@
 
 RenderTargetManager::~RenderTargetManager() {
 	for (auto& [_, rt] : m_renderTargetMap) {
-		rt.Destroy();
+		if (rt) rt->Destroy();
 	}
 }
 
-unsigned RenderTargetManager::AddRenderTarget(std::string _name, glm::ivec2 _dimensions) {
+RenderTargetManager::RenderTargetID RenderTargetManager::AddRenderTarget(std::string _name, glm::ivec2 _dimensions) {
 	const unsigned id = m_renderTargetIdCounter++;
-	RenderTarget renderTarget{};
-	renderTarget.Create(_dimensions);
-	m_renderTargetMap.emplace(id, std::move(renderTarget));
+	std::shared_ptr<RenderTarget> renderTarget = std::make_shared<RenderTarget>();
+	renderTarget->Resolution(_dimensions);
+	// build here or something.
+	renderTarget->Build();
+	//renderTarget->Create_DEC(_dimensions); // to be deprecated.
+	m_renderTargetMap.emplace(id, renderTarget);
 	return id;
+}
+
+std::shared_ptr<RenderTarget> RenderTargetManager::GetRenderTarget(RenderTargetID _id) {
+	// TODO: insert return statement here
+	return m_renderTargetMap.at(_id);
+}
+
+const RenderTargetManager::RenderTargetMap& RenderTargetManager::GetRenderTargetMap() const {
+	return m_renderTargetMap;
 }

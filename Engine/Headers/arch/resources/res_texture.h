@@ -2,7 +2,7 @@
 #include <pch.h>
 #include <arch/resources/res_resource.h>
 
-class Texture : public Resource {
+class Texture : public Resource<Texture> {
 private:
 public:
 	enum WRAP_BEHAVIOUR : int {
@@ -34,7 +34,7 @@ public:
 	using TEX_ID = unsigned;
 public:
 
-	Texture(std::filesystem::path _newImage = "") : Resource(TEXTURE), m_resPath{_newImage} {}
+	Texture(std::filesystem::path _newImage = "") : m_resPath{_newImage} {}
 
 
 

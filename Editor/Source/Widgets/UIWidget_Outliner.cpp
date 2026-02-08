@@ -1,16 +1,15 @@
 #include <Widgets/UIWidget_Outliner.h>
 #include <arch/core.h>
-#include <imgui.h>
 #include <Widgets/UIWidget_Inspector.h>
 
 
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/components/comp_transform.h>
-
-
-UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) : UIWidget(_widgetName) {
     
+UIWidget_Outliner::UIWidget_Outliner(std::string _widgetName) 
+    : UIWidget(_widgetName) {
+    m_flags = {ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar};
 }
 
 UIWidget_Outliner::~UIWidget_Outliner() {
@@ -19,43 +18,19 @@ UIWidget_Outliner::~UIWidget_Outliner() {
 void UIWidget_Outliner::Init() {
     Core& c = Core::GetInstance(); // only on init.
     SetEntityRegistry(&c.Registry()); // setup aliases
+    SetFactory(&c.GetEntityFactory());
     LOG_INFO("Outliner Init.");
 }
 
-void UIWidget_Outliner::Draw() const {
+void UIWidget_Outliner::Draw() {
     using namespace ImGui;
 
     if (!m_entityRegistry) return;
     EntityRegistry& registry = *m_entityRegistry;
-
-    if (CollapsingHeader("Outliner")) {
-        Table();
-    }
-    if (CollapsingHeader("Add Objects")) {
-        //
-        if (Button("Add Cube")) {
-            Entity& cubeObject = *registry.Instantiate();
-            cubeObject.AddComponent<MeshRenderer>();
-            ComponentView<MeshRenderer> mr = cubeObject.GetComponent<MeshRenderer>();
-            if (mr) {
-
-                // by right a mesh should be instantiated.
-                Cube cubeMesh = Cube{};
-                cubeMesh.Init();
-                mr->SetMesh(std::make_shared<Cube>(cubeMesh));
-            }
-
-            cubeObject.Name("Cube");
-
-            
-
-            cubeObject.GetComponent<Transform>()->Position(glm::vec3(5, 5, 5));
-        }
-        
-
-    }
-
-
+    Menu();
+    //if (CollapsingHeader("Outliner")) {
+    //}
+    Table();
 }
 
 void UIWidget_Outliner::Exit() {
@@ -72,13 +47,70 @@ void UIWidget_Outliner::OnUnselect() {
 
 }
 
+
+
+void UIWidget_Outliner::Menu() {
+    /* --------------------------------------------------------- */
+    /*
+        preview
+        [primitive] [light] [type] [type]
+    
+    */
+    /* --------------------------------------------------------- */
+
+    if (!ImGui::BeginMenuBar()) return;
+
+    //
+    if (ImGui::BeginMenu("Primitives")) {
+        if (ImGui::MenuItem("Cube")) {
+            m_entityFactory->CreateCube();
+        }
+        if (ImGui::MenuItem("Sphere")) {
+            m_entityFactory->CreateSphere();
+        }
+        ImGui::MenuItem("Plane");
+        if (ImGui::MenuItem("Plane")) {
+            m_entityFactory->CreatePlane();
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Light")) {
+        if (ImGui::MenuItem("Point Light")) {
+            m_entityFactory->CreatePointLight();
+        }
+        if (ImGui::MenuItem("Directional Light")) {
+            m_entityFactory->CreateDirectionalLight();
+        }
+        if (ImGui::MenuItem("Ambient Light")) {
+            m_entityFactory->CreateAmbientLight();
+        }
+        ImGui::EndMenu();
+    }
+
+    if (ImGui::BeginMenu("Other")) {
+        ImGui::MenuItem("Game Object");
+        ImGui::MenuItem("Camera");
+        ImGui::EndMenu();
+    }
+
+
+    ImGui::EndMenuBar();
+}
+
 void UIWidget_Outliner::SetEntityRegistry(EntityRegistry* _registry) {
     if (_registry == m_entityRegistry) return;
     m_entityRegistry = _registry;
     LOG_INFO("Registry updated!");
 }
 
-void UIWidget_Outliner::Table() const {
+void UIWidget_Outliner::SetFactory(EntityFactory* _registry){
+    if (_registry == m_entityFactory) return;
+    m_entityFactory = _registry;
+    LOG_INFO("Factory updated!");
+}
+
+void UIWidget_Outliner::Table() {
 
 
     /* --------------------------------------------------------- */
@@ -113,31 +145,57 @@ void UIWidget_Outliner::Table() const {
     TableHeadersRow();
     // -- aliases -------------------------
     EntityRegistry& registry = *m_entityRegistry;
+
+    Core& c = *ApplicationCore();
     for (Entity& entity : registry.GetEntityList()) {
         TableNextRow();
-        for (unsigned columnIdx{}; columnIdx < columns; ++columnIdx) {
-            TableSetColumnIndex(columnIdx);
-            switch (columnIdx) {
-            case 0: {
-                Text(entity.Name().c_str());
-                break;
-            }
-            case 1: {
-                std::string entityIsActiveStr = "##" + entity.Name() + "IsActive" + std::to_string(entity.GetID().GetID());
-                bool entityIsActiveState{ entity.Active() };
-                Checkbox(entityIsActiveStr.c_str(), &entityIsActiveState);
-                entity.Active(entityIsActiveState);
-                break;
-            }
-            case 2: {
-                std::string entityIsVisibleStr = "##" + entity.Name() + "IsVisible" + std::to_string(entity.GetID().GetID());
-                bool entityIsVisibleState{ entity.IsVisible() };
-                Checkbox(entityIsVisibleStr.c_str(), &entityIsVisibleState);
-                entity.IsVisible(entityIsVisibleState);
-                break;
-            }
-            }
+
+        ImGuiSelectableFlags selectableFlags =
+            ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns |
+            ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowOverlap
+            ;
+
+
+        TableSetColumnIndex(0);
+
+        std::string labelName = entity.Name() + "##";
+        labelName += static_cast<unsigned long>(entity.GetID());
+        ImGui::AlignTextToFramePadding();
+        //float y{ ImGui::GetCursorPosY() };
+
+        const bool clicked = Selectable(
+            labelName.c_str(),
+            c.Registry().SelectedEntity() == entity.GetID(),
+            selectableFlags,
+            ImVec2{0, ImGui::GetFrameHeight()} // fill the entire row height
+        );
+
+
+        TableSetColumnIndex(1);
+        std::string entityIsActiveStr = "##" + entity.Name() + "IsActive" + std::to_string(entity.GetID().GetID());
+        bool entityIsActiveState{ entity.Active() };
+        //ImGui::SetCursorPosY(y);
+        Checkbox(entityIsActiveStr.c_str(), &entityIsActiveState);
+        entity.Active(entityIsActiveState);
+
+
+
+        TableSetColumnIndex(2);
+        std::string entityIsVisibleStr = "##" + entity.Name() + "IsVisible" + std::to_string(entity.GetID().GetID());
+        bool entityIsVisibleState{ entity.IsVisible() };
+        //ImGui::SetCursorPosY(y);
+        Checkbox(entityIsVisibleStr.c_str(), &entityIsVisibleState);
+        entity.IsVisible(entityIsVisibleState);
+
+
+        if (clicked) {
+            // do something
+            m_entityRegistry->SelectEntity(
+                m_entityRegistry->SelectedEntity() == entity.GetID() ?
+                EntityID::ENTITYID_INVALID : static_cast<unsigned long>(entity.GetID())
+            );
         }
+        
     }
 
 

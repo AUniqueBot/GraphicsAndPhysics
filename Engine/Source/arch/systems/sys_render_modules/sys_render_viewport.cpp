@@ -26,7 +26,7 @@ void Viewport::Render() {
 void Viewport::Update() {
 	OnInput();
 	OnMouseMove();
-
+	//OnScroll();
 	UpdateAttributes();
 }
 
@@ -80,7 +80,9 @@ const glm::mat4& Viewport::ProjectionMatrix() const {
 // - viewport management ----------------------------------------------
 
 void Viewport::ViewportDimensions(const glm::ivec2& _dimensions) {
+	if (m_viewportDimensions == _dimensions) return;
 	m_viewportDimensions = _dimensions;
+	Resize();
 }
 
 const glm::ivec2& Viewport::ViewportDimensions() const {
@@ -119,11 +121,6 @@ void Viewport::SetViewportMovable(bool _setting) {
 	m_vpIsMovable = _setting;
 }
 
-void Viewport::OnScroll() {
-	if (!m_vpIsMovable) return;
-
-}
-
 void Viewport::OnMouseMove() {
 	if (!m_vpIsMovable) return;
 
@@ -131,52 +128,81 @@ void Viewport::OnMouseMove() {
 	InputSystem& is = Core::GetInstance().GetInputSystem();
 
 
-	InputSystem::INPUT_MOUSE_BUTTON actionButton = InputSystem::MOUSE_LEFT;
-	if (is.IsMouseButtonClicked(actionButton)) {
-		LOG_INFO("LMB Clicked");
+	InputSystem::INPUT_MOUSE_BUTTON lookButton = InputSystem::MOUSE_LEFT;
+	InputSystem::INPUT_MOUSE_BUTTON panButton = InputSystem::MOUSE_RIGHT;
+	if (is.IsMouseButtonClicked(lookButton)) {
+		//LOG_INFO("LMB Clicked");
 	}
-	if (is.IsMouseButtonReleased(actionButton)) {
-		LOG_INFO("LMB Released");
+	if (is.IsMouseButtonReleased(lookButton)) {
+		//LOG_INFO("LMB Released");
 	}
-	if (!is.IsMouseButtonHeld(InputSystem::MOUSE_LEFT)) {
+
+	bool leftClick = is.IsMouseButtonHeld(lookButton);
+	bool rightClick = is.IsMouseButtonHeld(panButton) || is.IsMouseButtonHeld(InputSystem::MOUSE_MIDDLE);
+	double scrollWheelY = is.ScrollYOffset();
+	double scrollWheelX = is.ScrollXOffset();
+
+	bool mouseActive	{ leftClick || rightClick };
+	is.CursorPositionFrozen(mouseActive);
+	is.DisplayMouse(mouseActive);
+
+
+	if (!mouseActive && abs(scrollWheelY) <= DBL_EPSILON) {
 		return;
 	}
 
-
-
 	glm::vec2 delta = is.GetMouseDelta();
 
-	if (!delta.x && !delta.y) return;
 
 	const glm::vec3 forwardVec	{ 0, 0, 1 };
 	const glm::vec3 upVec		{ 0, 1, 0 };
 
-	// sensitivity tuning (adjust as needed)
-	float sensitivity = 0.002f;
-	float yaw			= -delta.x * sensitivity;
-	float pitch			= -delta.y * sensitivity;
+	glm::vec3 forward = m_rotation * forwardVec;
+	glm::vec3 right = glm::normalize(glm::cross(forward, upVec));
+	glm::vec3 up = glm::normalize(glm::cross(forward, right));
 
-	glm::vec3 forward	= m_rotation * forwardVec; 
-	glm::vec3 right		= glm::normalize(glm::cross(forward, upVec));
+	// pan and look
+	if (delta.x || delta.y) {
+		if (leftClick) {
+			// sensitivity tuning (adjust as needed)
+			float sensitivity = 0.002f;
+			float yaw			= -delta.x * sensitivity;
+			float pitch			= -delta.y * sensitivity;
 
-	glm::quat yawRot	= glm::angleAxis(yaw, upVec);
-	glm::quat pitchRot	= glm::angleAxis(pitch, right);
+			glm::quat yawRot	= glm::angleAxis(yaw, upVec);
+			glm::quat pitchRot	= glm::angleAxis(pitch, right);
 
-	m_rotation			= glm::normalize(yawRot * pitchRot * m_rotation);
+			m_rotation			= glm::normalize(yawRot * pitchRot * m_rotation);
 
-	glm::vec3 newForward = m_rotation * glm::vec3(0, 0, 1);
+			glm::vec3 newForward = m_rotation * glm::vec3(0, 0, 1);
+		}
+		else if (rightClick) {
+			float distanceMultiplier = 0.025f;
+			glm::vec3 panDelta = 
+				(-up * delta.y) +
+				(right * delta.x);
+			panDelta *= distanceMultiplier;
+			m_position += panDelta;
+		}
+	}
+	// dolly
+	if (scrollWheelY) {
+		float distanceMultiplier = 10.f;
+		glm::vec3 fwdOffset = forward * (distanceMultiplier * static_cast<float>(scrollWheelY));
+		m_position += fwdOffset;
+	}
+
+
 
 	m_transformDirty = true;
-
-	
 }
 
 void Viewport::OnInput() {
 	
 	if (!m_vpIsMovable) return;
 
-
 	InputSystem& is = Core::GetInstance().GetInputSystem();
+	
 	
 	// aliases here.
 	const InputSystem::INPUT_KEY fwd		{ InputSystem::KEYBOARD_W };
@@ -187,7 +213,7 @@ void Viewport::OnInput() {
 	const InputSystem::INPUT_KEY down		{ InputSystem::KEYBOARD_LCONTROL };
 
 	float moveSpeed					{ 10.0f };
-	double dt						{ Core::DeltaTime() };
+	float dt						{ static_cast<float>(Core::DeltaTime()) };
 
 
 	// check for inputs
@@ -196,18 +222,13 @@ void Viewport::OnInput() {
 
 	if (is.IsKeyHeld(right) || is.IsKeyHeld(left)) {
 		inputVector.x  = static_cast<float>(static_cast<int>(is.IsKeyHeld(right)) - static_cast<int>(is.IsKeyHeld(left)));
-		LOG_INFO("keyboard input detected! lateral");
 	}
 
 	if (is.IsKeyHeld(up) || is.IsKeyHeld(down)) {
 		inputVector.y  = static_cast<float>(static_cast<int>(is.IsKeyHeld(up)) - static_cast<int>(is.IsKeyHeld(down)));
-
-		LOG_INFO("keyboard input detected! vertical");
 	}
 	if (is.IsKeyHeld(fwd) || is.IsKeyHeld(back)) {
 		inputVector.z  = static_cast<float>(static_cast<int>(is.IsKeyHeld(fwd)) - static_cast<int>(is.IsKeyHeld(back)));
-
-		LOG_INFO("keyboard input detected! directional");
 	}
 
 	if (inputVector.x || inputVector.y || inputVector.z) {
@@ -226,6 +247,21 @@ void Viewport::OnInput() {
 Viewport::ViewportID Viewport::ID() const {
 	return m_vpId;
 }
+
+std::shared_ptr<RenderTarget> Viewport::GetRenderTarget() {
+	return m_renderTarget;
+}
+
+std::shared_ptr<const RenderTarget> Viewport::GetRenderTarget() const {
+	return m_renderTarget;
+}
+
+void Viewport::SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget) {
+	m_renderTarget = _renderTarget;
+}
+
+
+
 
 
 
@@ -322,6 +358,9 @@ const float& Viewport::AspectRatio() const {
 // - dynamic hidden functions ------------------------------------------
 
 void Viewport::Resize() {
+	if (!m_renderTarget) return;
+	RenderTarget& rt = *m_renderTarget;
+	rt.Resolution(m_viewportDimensions);
 }
 
 void Viewport::Move() {

@@ -2,8 +2,10 @@
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
 #include <arch/resources/res_mesh.h>
-
 #include <UI_Core.h>
+#include <arch/core/core_inputRouter.h>
+
+
 
 //
 //#include <imgui/imgui_impl_glfw.h>
@@ -12,9 +14,30 @@ const unsigned C_VERSION_MAJOR = 4;
 const unsigned C_VERSION_MINOR = 6;
 
 
+void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
+
+	InputSystem& is{ _core.GetInputSystem() };
+
+	_router.RegisterSystem(is, "Core");
+	_router.RegisterSystem(_uiCore, "UI");
+	std::vector<std::string> clientNames{ _router.GetAllClients() };
+
+	LOG_INFO("router registered input systems");
+	for (const std::string& clientName : clientNames) {
+		LOG_INFO(clientName);
+	}
+
+}
+
+
+
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
 	Core& c = Core::GetInstance();
+	UI_Core uic{};
+
+	InitInputs(c.GetInputRouter(), c, uic);
+
 
 	// core to also initialise the timer
 	// - GLFW Initialisation ------------------------------------------------------
@@ -56,11 +79,12 @@ int main() {
 	}
 
 	c.Init();
-	UI_Core uic{};
+	
 	uic.Init(C_VERSION_MAJOR, C_VERSION_MINOR, mainWindow, c);
 
 	// - Main Loop -----------------------------------------------------------------
 	while (!glfwWindowShouldClose(mainWindow)) {
+		c.GetInputRouter().BeginFrame();
 		c.PreUpdate();
 		glfwPollEvents();
 		c.Update();
@@ -79,4 +103,12 @@ int main() {
 	glfwTerminate();
 
 }
+
+
+
+
+
+
+
+
 

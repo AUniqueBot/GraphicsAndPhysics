@@ -19,9 +19,7 @@ void Core::Init() {
 
 
 
-	// test out this stuff.
-	m_registry.name = "hi"; // for debugging purposes.
-	
+	// test out this stuff.	
 
 
 	Entity& obj1 = *(m_registry.Instantiate());
@@ -35,12 +33,24 @@ void Core::Init() {
 	cam.Name("Camera");
 	
 	obj1.AddComponent<MeshRenderer>();	// object
+	const auto& component = obj1.GetComponent<MeshRenderer>();
+	if (component) {
+
+		Mesh mesh = Mesh{};
+		mesh.LoadMeshFromPath("./Assets/Models/sampleModel.obj");
+
+		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
+		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
+		
+	}
+
+
 	ambientLight.AddComponent<Light>();			// ambient light
 	dirLight.AddComponent<Light>();			// directional light
 	cam.AddComponent<Camera>();			// cameara
 
 	Light& _ambientLight = *(ambientLight.GetComponent<Light>());
-	_ambientLight.Power(0.3);
+	_ambientLight.Power(0.3f);
 	_ambientLight.Type(LightType::AMBIENT);
 
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
@@ -82,6 +92,8 @@ void Core::PreUpdate() {
 	for (auto s : m_systemInstances) {
 		s->PreUpdate();
 	}
+	m_inputRouter.RequestOwnership("Core", 50);
+	m_inputSystem.PreUpdate();
 }
 
 void Core::Update() {
@@ -135,7 +147,7 @@ void Core::CoreInit() {
 	// - input -------------------------------
 	glfwSetWindowUserPointer(m_window, this);
 	m_inputSystem.Init(m_window);
-
+	m_resourceManager.Init(); 
 
 
 
@@ -144,11 +156,11 @@ void Core::CoreInit() {
 
 
 void Core::RegisterComponents() {
-	m_registry.RegisterType<Transform>();
-	m_registry.RegisterType<RigidBody>();
-	m_registry.RegisterType<Camera>();
-	m_registry.RegisterType<MeshRenderer>();
-	m_registry.RegisterType<Light>();
+	m_registry.RegisterComponent<Transform>();
+	m_registry.RegisterComponent<RigidBody>();
+	m_registry.RegisterComponent<Camera>();
+	m_registry.RegisterComponent<MeshRenderer>();
+	m_registry.RegisterComponent<Light>();
 
 
 	// register all types here.
