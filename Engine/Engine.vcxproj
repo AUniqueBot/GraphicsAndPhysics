@@ -273,6 +273,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositor.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderLayer.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderManager.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderPass.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h" />

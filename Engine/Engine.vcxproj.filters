@@ -368,5 +368,8 @@
     <ClInclude Include="Headers\arch\resources\res_mesh_vertexLayout.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderPass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

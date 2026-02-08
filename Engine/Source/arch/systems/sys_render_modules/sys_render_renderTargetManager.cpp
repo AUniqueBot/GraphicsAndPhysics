@@ -21,3 +21,7 @@ std::shared_ptr<RenderTarget> RenderTargetManager::GetRenderTarget(RenderTargetI
 	// TODO: insert return statement here
 	return m_renderTargetMap.at(_id);
 }
+
+const RenderTargetManager::RenderTargetMap& RenderTargetManager::GetRenderTargetMap() const {
+	return m_renderTargetMap;
+}

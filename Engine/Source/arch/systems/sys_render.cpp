@@ -272,43 +272,50 @@ void RenderSystem::Render(const Viewport& _viewport) {
             // to skip hidden ones as well.
             continue;
         }
-        
+       
 
 
         const auto& mr = e.GetComponent<MeshRenderer>();
-        if (!mr) { continue; }
+        if (mr) {
         
-        auto trs = e.GetComponent<Transform>();
-        const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
+            auto trs = e.GetComponent<Transform>();
+            const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
-        std::shared_ptr<Mesh> mesh = mr->GetMesh();
-        if (!mesh) continue;
-        VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
+            std::shared_ptr<Mesh> mesh = mr->GetMesh();
+            if (!mesh) continue;
+            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
-        if (!vaoHandler) continue;
+            if (!vaoHandler) continue;
         
-        bool isSelected{ registry.EntityIsSelected(e.GetID()) };
+            bool isSelected{ registry.EntityIsSelected(e.GetID()) };
 
 
         
         
-        VAOHandler& currentVAO = *vaoHandler;
-        currentVAO.BindVAO(); 
-        //currentVAO.LogDebug();
-        currentVAO.UseMesh(*mesh);
-        // check if there is data here...
+            VAOHandler& currentVAO = *vaoHandler;
+            currentVAO.BindVAO(); 
+            //currentVAO.LogDebug();
+            currentVAO.UseMesh(*mesh);
+            // check if there is data here...
 
-        mr->Render(
-            objectTransformMatrix,
-            _projectionMatrix,
-            _cameraMatrix
-        );
+            mr->Render(
+                objectTransformMatrix,
+                _projectionMatrix,
+                _cameraMatrix
+            );
 
 
-        m_vaoManager.UnbindVAO();
+            m_vaoManager.UnbindVAO();
+        }
+        
+        
+    
     }
-       
+    
     glBindVertexArray(0);
+
+    
+
 
     if (_viewport.GetRenderTarget()) {
         _viewport.GetRenderTarget()->Unbind();

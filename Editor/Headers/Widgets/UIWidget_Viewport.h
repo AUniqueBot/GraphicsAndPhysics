@@ -32,7 +32,7 @@ public:
 	void ResizeCallback() const;
 	void RenderGizmo() const;
 
-
+	void RenderLightHelpers();
 
 	void UpdateGizmo();
 	void PickObjectFromScreen();

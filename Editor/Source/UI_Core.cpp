@@ -19,7 +19,7 @@
 #include <Widgets/UIWidget_Compositor.h>
 #include <arch/systems/sys_render.h>
 
-
+#include <Utility/UI_LoadImage.h>
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
 
@@ -52,7 +52,10 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	m_applicationCore = &_core;
 	m_entityRegistry = &_core.Registry();
 
+	// -- load all image icons ---------------------------------
 
+	LoadIcons();
+	
 
 	// -- widget initialisation --------------------------------
 	LOG_INFO("Adding Widgets here...");
@@ -61,7 +64,6 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 	AddWidget(std::make_shared<UIWidget_Inspector>("Inspector"));
 	AddWidget(std::make_shared<UIWidget_Compositor>("Compositor"));
 	// needs a viewport arg.
-
 
 	
 
@@ -146,6 +148,15 @@ void UI_Core::BeginDockSpace() {
 	ImGui::DockSpace(dockspace_id, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
 
 	ImGui::End();
+}
+
+void UI_Core::LoadIcons() {
+	int x, y{};
+	m_iconMap["area light"] = UIEditor::LoadImageForImGui(".\\EditorAssets\\Icons\\AreaLight Gizmo.png", x, y);
+	m_iconMap["camera"] = UIEditor::LoadImageForImGui(".\\EditorAssets\\Icons\\Camera Gizmo.png", x, y);
+	m_iconMap["directional light"] = UIEditor::LoadImageForImGui(".\\EditorAssets\\Icons\\DirectionalLight Gizmo.png", x, y);
+	m_iconMap["main light"] = UIEditor::LoadImageForImGui(".\\EditorAssets\\Icons\\Main Light Gizmo.png", x, y);
+	m_iconMap["point light"] = UIEditor::LoadImageForImGui(".\\EditorAssets\\Icons\\PointLightGizmo.png", x, y);
 }
 
 

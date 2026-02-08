@@ -50,8 +50,13 @@ public:
 	Core* GetCore() const;
 
 
+
+	inline GLuint GetIcon(std::string _name) const { return m_iconMap.at(_name); };
+
 protected:
 	void BeginDockSpace();
+
+	void LoadIcons();
 
 
 	void RenderTopBar() const;
@@ -67,6 +72,9 @@ private:
 	bool m_mouseInputAllowed					{ true };
 
 	Core* m_applicationCore						{};
+
+	std::unordered_map<std::string, GLuint> m_iconMap;
+
 
 	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;
 	std::unordered_map<std::string, std::shared_ptr<UIMenu>> m_menuStorage;

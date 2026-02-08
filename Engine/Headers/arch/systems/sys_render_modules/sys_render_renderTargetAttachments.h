@@ -73,6 +73,7 @@ constexpr const char* ToString(ScalarType _v) {
 }
 
 
+
 class RenderTargetAttachment {
 public:
 	friend class RenderTarget;

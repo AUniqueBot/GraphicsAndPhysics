@@ -69,6 +69,9 @@
     <ClInclude Include="Extern\src\imgui\imnodes_internal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Utility\UI_LoadImage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Extern\src\imgui\imgui.cpp">
@@ -129,6 +132,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Extern\src\imgui\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Widgets\UIWidget_Compositor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\UI_LoadImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

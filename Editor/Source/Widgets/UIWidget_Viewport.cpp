@@ -1,7 +1,9 @@
 #include <Widgets/UIWidget_Viewport.h>
 #include <arch/systems/sys_render_modules/sys_render_viewport.h>
 #include <arch/components/comp_transform.h>
+#include <arch/components/comp_light.h>
 #include <glm/gtx/matrix_decompose.hpp>
+
 
 UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
 	: UIWidget(_widgetName), m_viewportPointer{_target} {
@@ -43,6 +45,7 @@ void UIWidget_Viewport::Draw() {
 	);
 
 	RenderGizmo();
+	RenderLightHelpers();
 	if (BeginDragDropTarget()) {
 		EndDragDropTarget();
 	}
@@ -96,6 +99,126 @@ void UIWidget_Viewport::RenderGizmo() const {
 		panelSize.y
 	);
 
+}
+
+void UIWidget_Viewport::RenderLightHelpers()  {
+	Core& c				{ *ApplicationCore() };
+	EntityRegistry& er	{ c.Registry() };
+	const auto& compPool = er.GetComponentPool<Light>();
+	if (!compPool)return;
+
+	glm::vec2 vp { m_viewportPointer->ViewportDimensions() };
+	glm::mat4 clipMtx {
+		m_viewportPointer->ProjectionMatrix() *
+		glm::inverse(m_viewportPointer->CameraMatrix())
+	};
+
+
+	const UI_Core& uic { *UICore() };
+	
+	// - icons here -----------------------------------
+	GLuint directionalLight		{ uic.GetIcon("directional light") };
+	GLuint areaLight			{ uic.GetIcon("area light") };
+	GLuint mainLight			{ uic.GetIcon("main light") };
+	GLuint pointLight			{ uic.GetIcon("point light") };
+
+
+
+
+	for (const auto& light: compPool->Data()) {
+		EntityID enttId = light.GetEntityID();
+		if (!enttId.IsValid()) continue;
+		const auto& entity	{ *er.GetEntity(enttId) };
+		const auto& trs = *entity.GetComponent<Transform>();
+		std::string name{entity.Name()};
+		// get transform position.
+
+		// light.Type();
+		// switch case based on this.
+
+		// for now all lights use the same icon. (light)
+
+		// convert position to position in screen.
+		glm::vec4 clip = clipMtx * glm::vec4(trs.Position(), 1.0f);
+
+		if (clip.w <= 0.0f)
+			continue; // behind camera
+	
+		// NDC 
+		glm::vec3 ndc = glm::vec3(clip.x, clip.y, clip.z) / clip.w;
+
+		// skip out of clip range
+		if (ndc.x < -1 || ndc.x > 1 ||
+			ndc.y < -1 || ndc.y > 1 ||
+			ndc.z < -1 || ndc.z > 1)
+			continue;
+
+		ImVec2 screen {
+			(ndc.x * 0.5f + 0.5f) * vp.x,
+			(1.0f - (ndc.y * 0.5f + 0.5f))* vp.y
+		};
+		name += "##";
+		name += static_cast<unsigned long>(enttId);
+
+
+
+		GLuint currentLightIcon{};
+
+		switch (light.Type()) {
+		
+		case LightType::POINT:
+			currentLightIcon = pointLight;
+			break;		
+
+		case LightType::AREA : 
+			currentLightIcon = areaLight;
+			break;		
+		case LightType::SPOT: 
+			break;		
+		case LightType::DIRECTIONAL : 
+			currentLightIcon = directionalLight;
+			break;		
+		case LightType::AMBIENT:
+			currentLightIcon = mainLight;
+			break;		
+		case LightType::SUN : 
+			break;
+		}
+
+
+		
+
+		if (currentLightIcon != 0) {
+			ImVec2 buttonSize = {32, 32};
+			screen.x -= buttonSize.x * 0.5f;
+			screen.y -= buttonSize.y * 0.5f;
+			ImGui::SetCursorPos(screen);
+
+			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));        // background
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0, 0, 0, 0)); // hovered
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0, 0, 0, 0));  // active
+			if (ImGui::ImageButton(name.c_str(), 
+					(void*)(intptr_t)currentLightIcon, 
+				ImVec2((float)32, (float)32),
+				ImVec2(0, 0), ImVec2(1, 1)
+			)) {
+				er.SelectEntity(enttId);
+			}
+			ImGui::PopStyleColor(3);
+		}
+		else {
+			ImVec2 buttonSize = ImGui::CalcTextSize(name.c_str());
+			buttonSize.x += ImGui::GetStyle().FramePadding.x * 2.0f;
+			buttonSize.y += ImGui::GetStyle().FramePadding.y * 2.0f;
+			screen.x -= buttonSize.x * 0.5f;
+			screen.y -= buttonSize.y * 0.5f;
+			ImGui::SetCursorPos(screen);
+
+			if (ImGui::Button(name.c_str())) {
+				er.SelectEntity(enttId);
+			}
+		}
+	}
 }
 
 void UIWidget_Viewport::Update() {
@@ -160,6 +283,8 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 
 	EntityRegistry& registry = ApplicationCore()->Registry();
 	EntityView entity = registry.GetEntity(picked);
+
+
 
 	if (ImGui::IsMouseClicked(0)) {
 		ApplicationCore()->Registry().SelectEntity(

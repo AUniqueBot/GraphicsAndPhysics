@@ -54,7 +54,12 @@ public:
 	bool AddColorAttachment(ColorAttachment _colAttachment);
 	bool SetDepthAttachment(DepthAttachment _depthAttachment);
 
+	// - texture access -----------------------------------------------------------------
+	
 
+	
+	
+	// - building ------------------------------------------------------------------------
 
 	// builds the render target
 	bool Build();
