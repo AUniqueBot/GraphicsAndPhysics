@@ -172,9 +172,9 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 			currentLightIcon = pointLight;
 			break;		
 
-		case LightType::AREA : 
+/*		case LightType::AREA : 
 			currentLightIcon = areaLight;
-			break;		
+			break;	*/	
 		case LightType::SPOT: 
 			break;		
 		case LightType::DIRECTIONAL : 
@@ -183,8 +183,8 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 		case LightType::AMBIENT:
 			currentLightIcon = mainLight;
 			break;		
-		case LightType::SUN : 
-			break;
+		//case LightType::SUN : 
+		//	break;
 		}
 
 
@@ -193,7 +193,7 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 		if (currentLightIcon != 0) {
 			ImVec2 buttonSize = {32, 32};
 			screen.x -= buttonSize.x * 0.5f;
-			screen.y -= buttonSize.y * 0.5f;
+			screen.y += buttonSize.y * 0.5f;
 			ImGui::SetCursorPos(screen);
 
 			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));        // background

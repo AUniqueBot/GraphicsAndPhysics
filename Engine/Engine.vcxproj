@@ -177,6 +177,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   <ItemGroup>
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_physics.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp" />
@@ -268,6 +269,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_texture.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
+    <ClInclude Include="Headers\arch\systems\sys_physics.h" />
+    <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h" />
     <ClInclude Include="Headers\arch\systems\sys_render.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionEffect.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_compositionNode.h" />
@@ -296,6 +299,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\util\util_ostreamOverrides.h" />
     <ClInclude Include="Headers\util\util_print.h" />
     <ClInclude Include="Headers\util\util_serialisation.h" />
+    <ClInclude Include="Source\arch\components\comp_rigidbody.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Editor\Editor.vcxproj">

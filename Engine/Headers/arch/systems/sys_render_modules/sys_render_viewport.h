@@ -3,6 +3,19 @@
 #include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
 class Viewport {
 public:
+	enum FACETORENDER {
+		FRONT = GL_FRONT,
+		BACK = GL_BACK,
+		FRONTANDBACK = GL_FRONT_AND_BACK
+	};
+
+	enum RENDERMODE {
+		POINT = GL_POINT,
+		LINE = GL_LINE,
+		FILL = GL_FILL
+	};
+
+public:
 	using ViewportID = uint32_t;
 public:
 	Viewport(ViewportID _generatedId);
@@ -13,6 +26,10 @@ public:
 
 	void Render();
 
+	RENDERMODE GetRenderMode() const;
+	void SetRenderMode(RENDERMODE _mode) ;
+	FACETORENDER GetFaceToRender() const;
+	void SetFaceToRender(FACETORENDER _faces);
 
 	void Update();
 
@@ -117,5 +134,6 @@ private:
 	bool m_projectionDirty			{ true };
 	glm::mat4 m_projectionMatrix	{ 1.f };
 
-
+	FACETORENDER m_faceToRender		{ FRONTANDBACK };
+	RENDERMODE	m_renderMode		{ FILL };
 };

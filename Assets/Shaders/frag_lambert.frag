@@ -12,6 +12,11 @@ layout(location = 1) out uint out_objectId;
 // out vec4 (location = 1) out_objectId;
 /*
 */
+#define LIGHT_POINT 0.0
+#define LIGHT_SPOT 1.0
+#define LIGHT_DIRECTIONAL 2.0
+#define LIGHT_AMBIENT 3.0
+
 
 struct LightData {
 	vec4 m_position_type;	// 1, 2, 3, 4
@@ -29,14 +34,14 @@ layout (std140, binding=2) uniform LightBlock {
 
 vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     vec3 N = normalize(fragNormal);
-
+    
     vec3 result = vec3(0.0);
     vec3 ambientRes = vec3(0.0);
     for (int i = 0; i < m_count; ++i) {
         LightData currentData = m_lightData[i];
-
+        int lightType = int(currentData.m_position_type.w);
         // point light
-        if (currentData.m_position_type.w == 0.0) {
+        if (lightType== LIGHT_POINT) {
             vec3 lightPosition = currentData.m_position_type.xyz;
             vec3 lightVec = fragPosition - lightPosition;
             vec3 nLightVec = normalize(lightVec);
@@ -52,7 +57,7 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
 
 
         // directional
-        else if (currentData.m_position_type.w == 3.0) {
+        else if (lightType == LIGHT_DIRECTIONAL) {
             // Direction is assumed to be the light direction (e.g., from which light comes)
             vec3 lightDir = normalize(currentData.m_direction_roll.xyz);
             float NdotL = max(dot(N, lightDir), 0.0);
@@ -65,11 +70,7 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
         }
 
         // ambient
-        else if (currentData.m_position_type.w == 4.0) {
-            LightData currentData = m_lightData[i];
-            if (currentData.m_position_type.w != 4.0) {
-                continue;
-            }
+        else if (lightType == LIGHT_AMBIENT) {
             vec3 lightColor = currentData.m_color_power.xyz;
             float power = currentData.m_color_power.w;
 

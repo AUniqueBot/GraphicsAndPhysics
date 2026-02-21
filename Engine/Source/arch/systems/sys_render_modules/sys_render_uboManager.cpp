@@ -57,7 +57,6 @@ void UBO::BufferSize(size_t _size) {
 void UBO::BindBuffer() {
 	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);	
 	GraphicsDebug::GetError();
-
 }
 
 void UBO::SetBinding(GLuint _program) {
@@ -71,9 +70,6 @@ void UBO::FillBufferData(const void* _data) {
 		return;
 	}
 	BindBuffer();
-
-
-	LightUBOData culledLights = *(LightUBOData*)(_data);
 
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
 	GraphicsDebug::GetError();

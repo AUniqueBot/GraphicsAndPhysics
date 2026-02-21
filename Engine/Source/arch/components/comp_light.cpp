@@ -33,6 +33,7 @@ void Light::Color(glm::vec3 _col) {
 }
 
 
+
 LightData Light::GetLightData() const {
     if (m_lightDataMismatch) {
          UpdateLightData();

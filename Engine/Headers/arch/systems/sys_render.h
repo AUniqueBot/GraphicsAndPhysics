@@ -18,7 +18,8 @@ constexpr unsigned CURRENT_MAX_LIGHT_COUNT	{ 20 };
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
-	
+
+
 	// system funcs
 	void Init()			override;
 
@@ -32,9 +33,39 @@ public:
 	void Cleanup()		override { LOG_INFO("Cleanup"); };
 
 
+	Viewport::RENDERMODE GetRenderMode() const;
+	void SetRenderMode(Viewport::RENDERMODE _renderMode);
+
+	Viewport::FACETORENDER GetFaceRenderedDirection() const;
+	void SetFaceRenderedDirection(Viewport::FACETORENDER _setting);
 
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
+private: 
+	void ClearBuffers(const Viewport& _viewport);
+	void UseViewport(const Viewport& _viewport);
+	void UnbindViewport(const Viewport& _viewport);
+
+
+	void BeginViewportPass(const Viewport& _viewport);
+	void EndViewportPass(const Viewport& _viewport);
+	void SetupRenderSettings(const Viewport& _viewport);
+
+
+	void FillLightBufferData(const std::vector<LightData>& _culledLightList);
+	void ShadowRenderPass(
+		const Viewport& _viewport, 
+		const EntityRegistry& _er, 
+		const std::deque<Entity>& _entityList,
+		const std::vector<LightData>& _culledLightList
+	);
+	void LightingRenderPass(
+		const Viewport& _viewport,
+		const EntityRegistry& _er,
+		const std::deque<Entity>& _entityList,
+		const std::vector<EntityID>& _selectedEntityList,
+		const std::vector<LightData>& _culledLightList
+	);
 
 public:
 
@@ -65,6 +96,10 @@ private:
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	
+	Viewport::FACETORENDER m_facesToRender	{ Viewport::FRONT };
+	Viewport::RENDERMODE m_renderMode		{ Viewport::FILL };
+
+
 
 	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;

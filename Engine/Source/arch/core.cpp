@@ -170,4 +170,5 @@ void Core::RegisterComponents() {
 void Core::RegisterSystems() {
 	RegisterSystem<TransformSystem>();
 	RegisterSystem<RenderSystem>();
+	RegisterSystem<PhysicsSystem>();
 }

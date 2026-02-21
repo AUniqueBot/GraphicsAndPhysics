@@ -19,8 +19,6 @@ std::string ShaderGenerator::GenerateWorldObjectAttributes(const VAOHandler& _va
 
 	std::stringstream ss;
 
-
-	
 	// attributes here.
 	const char* attrLayoutString = 
 		"layout (location = 0) in vec3 a_position;\n\n"
@@ -71,7 +69,7 @@ std::string ShaderGenerator::GenerateScreenSpaceAttributes() const {
 		"out vec3 frag_uv;\n\n"
 		;
 
-
+	
 
 	return std::string();
 }

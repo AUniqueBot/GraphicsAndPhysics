@@ -177,37 +177,20 @@ void RenderSystem::Update() {
         get the camera matrix
         get the projection matrix
         render();
-    
-    
     */
+
     
-
-
 
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
-
-    // this segment is renderint the entire frame.
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glDisable(GL_SCISSOR_TEST);
-    glClearColor(0, 0, 0, 1);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // glEnable(GL_SCISSOR_TEST); // assuming the engine doesn't need overlays. then agin, can be alleviated with a render order test.
     for (const Viewport::ViewportID& id : vpRenderOrder) {
         Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
         Render(currentViewport); // replace with a single viewport.
     }
-
-
-
 }
 
-/*
-    to render -> 
 
-
-*/
 
 
 
@@ -216,68 +199,108 @@ void RenderSystem::Render(const Viewport& _viewport) {
     if (!vpDims.x || !vpDims.y) return;
 
     auto GetError = GraphicsDebug::GetError;
-
-    const glm::mat4& _cameraMatrix			{ glm::inverse(_viewport.CameraMatrix()) };
-    const glm::mat4 & _projectionMatrix		{ _viewport.ProjectionMatrix() };;
-    
     EntityRegistry& registry = Core::GetInstance().Registry();
-    // use the current camera for projection matrix.
+    auto& entityList = registry.GetEntityList();
+    auto& selectedEntityList = registry.SelectedEntities();    
+    BeginViewportPass(_viewport);
 
+    std::vector<LightData> culledLights = CullLights(_viewport);
+    FillLightBufferData(culledLights);
+    ShadowRenderPass(_viewport, registry, entityList, culledLights);
+    LightingRenderPass(_viewport, registry, entityList, selectedEntityList, culledLights);
+    EndViewportPass(_viewport);
 
+}
 
-    if (_viewport.GetRenderTarget()) {
-        _viewport.GetRenderTarget()->Bind();
-        glViewport(0,0, _viewport.ViewportDimensions().x, _viewport.ViewportDimensions().y);
-    }
-
-    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
-    
-    // viewport set.
+void RenderSystem::ClearBuffers(const Viewport& _vp) {
+    GLuint clearFlags { GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+    glClearDepth(1.0f);
     glClear(clearFlags);
+}
+
+void RenderSystem::UseViewport(const Viewport& _viewport) {
+    std::shared_ptr<const RenderTarget> rtPtr{ _viewport.GetRenderTarget() };
+    if (!rtPtr) return;
+
+    rtPtr->Bind();
+    glm::vec2 vpDims{ _viewport.ViewportDimensions() };
+    glViewport(0, 0, vpDims.x, vpDims.y);
+    glPolygonMode(_viewport.GetFaceToRender(), _viewport.GetRenderMode());
+}
+
+void RenderSystem::BeginViewportPass(const Viewport& _viewport) {
+    UseViewport(_viewport);
+    ClearBuffers(_viewport);
+}
+
+void RenderSystem::EndViewportPass(const Viewport& _viewport) {
+    UnbindViewport(_viewport);
+}
+
+void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
+    GLuint clearFlags{ GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
+    glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClearDepth(1.0f);
     glClearStencil(0x00);
+    glClear(clearFlags);
     glStencilMask(0xff);
 
     GLuint clearID = 0;
+
+    // viewport set.
     glClearBufferuiv(GL_COLOR, 1, &clearID);
 
-    // rendering
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    glm::mat4 pos, rot, scl{ 1.f };
-    glm::mat4 viewMtx{ 1.f };
-    pos = glm::translate(glm::mat4{ 1.f }, glm::vec3());
-    rot = glm::mat4{ 1.f };
+}
 
-    std::vector<LightData> culledLights = CullLights(_viewport);
-    // set into UBO here.
-    
+void RenderSystem::FillLightBufferData(const std::vector<LightData>& _culledLightList) {
     LightUBOData lightData{};
-    lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(culledLights.size()));
+    lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
     for (size_t i = 0; i < lightData.m_count; ++i) {
-        lightData.m_lightData[i] = culledLights[i]; // or whatever data source
+        lightData.m_lightData[i] = _culledLightList[i]; // or whatever data source
     }
 
     UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
     lightBuffer.FillBufferData(&lightData);
+}
+
+void RenderSystem::UnbindViewport(const Viewport& _viewport) {
+    if (_viewport.GetRenderTarget()) {
+        _viewport.GetRenderTarget()->Unbind();
+    }
+}
+
+void RenderSystem::ShadowRenderPass(
+    const Viewport& _viewport,
+    const EntityRegistry& _er,
+    const std::deque<Entity>& _entityList,
+    const std::vector<LightData>& _lightList
+) {
+    for (const LightData& light : _lightList) {
+
+    }
+}
+
+void RenderSystem::LightingRenderPass(
+    const Viewport& _viewport,
+    const EntityRegistry& _er,
+    const std::deque<Entity>& _entityList,
+    const std::vector<EntityID>& _selectedEntityList,
+    const std::vector<LightData>& _culledLightList
+) {
+    const glm::mat4& _cameraMatrix{ glm::inverse(_viewport.CameraMatrix()) };
+    const glm::mat4& _projectionMatrix{ _viewport.ProjectionMatrix() };;
 
 
-    auto& entityList = registry.GetEntityList();
-    auto& selectedEntityList = registry.SelectedEntities();
-
-
-    for (Entity& e : entityList) {
+    for (const Entity& e : _entityList) {
         if (!e.Active() || !e.IsVisible()) {
-
             // to skip hidden ones as well.
             continue;
         }
-       
-
 
         const auto& mr = e.GetComponent<MeshRenderer>();
         if (mr) {
-        
+
             auto trs = e.GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
@@ -286,14 +309,11 @@ void RenderSystem::Render(const Viewport& _viewport) {
             VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
             if (!vaoHandler) continue;
-        
-            bool isSelected{ registry.EntityIsSelected(e.GetID()) };
 
+            bool isSelected{ _er.EntityIsSelected(e.GetID()) };
 
-        
-        
             VAOHandler& currentVAO = *vaoHandler;
-            currentVAO.BindVAO(); 
+            currentVAO.BindVAO();
             //currentVAO.LogDebug();
             currentVAO.UseMesh(*mesh);
             // check if there is data here...
@@ -307,23 +327,27 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
             m_vaoManager.UnbindVAO();
         }
-        
-        
-    
     }
-    
+
     glBindVertexArray(0);
-
-    
-
-
-    if (_viewport.GetRenderTarget()) {
-        _viewport.GetRenderTarget()->Unbind();
-    }
-
-    //LOG_SPLITTER();
 }
 
+// ------------------------------------------------------------------------------------
+
+Viewport::RENDERMODE RenderSystem::GetRenderMode() const {
+    return m_renderMode;
+};
+void RenderSystem::SetRenderMode(Viewport::RENDERMODE _renderMode) {
+    m_renderMode = _renderMode;
+}
+Viewport::FACETORENDER RenderSystem::GetFaceRenderedDirection() const {
+    return m_facesToRender;
+}
+void RenderSystem::SetFaceRenderedDirection(Viewport::FACETORENDER _setting) {
+    m_facesToRender = _setting;
+}
+
+// ------------------------------------------------------------------------------------
 
 
 ViewportManager& RenderSystem::GetViewportManager() {
@@ -402,8 +426,6 @@ bool RenderSystem::LightCollisionTest(const Light& _lightComponent, const Viewpo
     case POINT:
         testCase = PointLightCollisionTest(_lightComponent, _viewport);
         break;
-    case AREA:
-        break;
     case SPOT:
         testCase = SpotLightCollisionTest(_lightComponent, _viewport);
         break;
@@ -413,10 +435,6 @@ bool RenderSystem::LightCollisionTest(const Light& _lightComponent, const Viewpo
     case AMBIENT:
         testCase = true;
         break;
-    case SUN:
-        testCase = true;
-        break;
-
     default:
         break;
     }

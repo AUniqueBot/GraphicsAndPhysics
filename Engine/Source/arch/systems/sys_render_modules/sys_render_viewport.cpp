@@ -20,6 +20,22 @@ void Viewport::Render() {
 	
 }
 
+Viewport::RENDERMODE Viewport::GetRenderMode() const {
+	return m_renderMode;
+}
+
+void Viewport::SetRenderMode(Viewport::RENDERMODE _mode) {
+	m_renderMode = _mode;
+}
+
+Viewport::FACETORENDER Viewport::GetFaceToRender() const {
+	return m_faceToRender;
+}
+
+void Viewport::SetFaceToRender(FACETORENDER _faces) {
+	m_faceToRender = _faces;
+}
+
 
 
 

@@ -3,12 +3,10 @@
 #include <arch/common/component.h>
 
 enum LightType {
-	POINT,
-	AREA,
-	SPOT,
-	DIRECTIONAL,
-	AMBIENT,
-	SUN
+	POINT = 0,
+	SPOT = 1,
+	DIRECTIONAL = 2,
+	AMBIENT = 3,
 };
 
 struct alignas(sizeof(glm::vec4)) LightData {
@@ -29,11 +27,11 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	void SetPower(float power) { m_color_power.w = power; }
 
 	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
-	// Padding z,w can be left alone or zeroed
+
 };
 
 
-constexpr unsigned C_MAX_LIGHTS{ 50 };
+constexpr unsigned C_MAX_LIGHTS{ 10 };
 struct alignas(sizeof(glm::vec4)) LightUBOData {
 	int m_count{};
 	LightData m_lightData[C_MAX_LIGHTS];
@@ -61,8 +59,10 @@ public:
 	const glm::vec3& Color() const;
 	void Color(glm::vec3 _col);
 
+	
 	LightData GetLightData() const;
 
+	
 
 private:
 
