@@ -54,17 +54,12 @@ private:
 
 	void FillLightBufferData(const std::vector<LightData>& _culledLightList);
 	void ShadowRenderPass(
-		const Viewport& _viewport, 
-		const EntityRegistry& _er, 
-		const std::deque<Entity>& _entityList,
-		const std::vector<LightData>& _culledLightList
+		const Viewport& _viewport,
+		const EntityRegistry& _er
 	);
 	void LightingRenderPass(
 		const Viewport& _viewport,
-		const EntityRegistry& _er,
-		const std::deque<Entity>& _entityList,
-		const std::vector<EntityID>& _selectedEntityList,
-		const std::vector<LightData>& _culledLightList
+		const EntityRegistry& _er
 	);
 
 public:

@@ -47,8 +47,8 @@ void UIWidget_Inspector::Draw() {
 	UI_Core& uic = *puic;
 	Core& core = *papc;
 
-	EntityID selectedID = core.Registry().SelectedEntity();
-	EntityView selectedObj = core.Registry().GetEntity(selectedID);
+	EntityID selectedID = core.GetRegistry().SelectedEntity();
+	EntityView selectedObj = core.GetRegistry().GetEntity(selectedID);
 	if (!selectedObj) {
 		Text("No object selected with ID [%i]", selectedID);
 		return;
@@ -123,7 +123,7 @@ void UIWidget_Inspector::Draw() {
 	auto meshV = obj.GetComponent<MeshRenderer>();
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
-		ResourceManager& resmgr = papc->ResManager();
+		ResourceManager& resmgr = papc->GetResourceManager();
 
 		LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
 		float colBuffer[4]{
@@ -235,6 +235,30 @@ void UIWidget_Inspector::Draw() {
 			light.Power(pwrBuffer);
 		}
 
+		bool flag{light.GetCastShadow()};
+
+		const char* currentLight{
+			light.Type() == POINT ? "Point" :
+			light.Type() == SPOT ? "Spot" :
+			light.Type() == DIRECTIONAL ? "Directional":
+			"Ambient"
+		};
+
+		if (ImGui::BeginCombo("Light Type", currentLight)) {
+			if (ImGui::Selectable("Point")) {
+				light.Type(POINT);
+			}
+			if (ImGui::Selectable("Directional")) {
+				light.Type(DIRECTIONAL);
+			}
+			if (ImGui::Selectable("Ambient")) {
+				light.Type(AMBIENT);
+			}
+			ImGui::EndCombo();
+		}
+		if (light.Type() != AMBIENT && Checkbox("Casts Shadow##Light", &flag)) {
+			light.SetCastShadow(flag);
+		}
 	}
 
 	

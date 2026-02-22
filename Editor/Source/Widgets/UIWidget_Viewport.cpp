@@ -31,9 +31,12 @@ void UIWidget_Viewport::Draw() {
 	// unlike the other widgets, clicking here is allowed.
 	const glm::ivec2& sizeGL = vp.ViewportDimensions();
 	ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
-	if (!sizeIm.x || !sizeIm.y) return;
+	if (!sizeIm.x || !sizeIm.y || !rt.VerifyFBOCompleteness()) return;
 
-			
+	if (rt.GetColorAttachmentCount() == 0) {
+		LOG_WARN("Render Target has no color attachments");
+		return;
+	}
 	const unsigned col = rt.GetColorAttachmentTextureID(0);
 	assert(glIsTexture(col));
 	ImGui::Image(
@@ -105,7 +108,7 @@ void UIWidget_Viewport::RenderGizmo() const {
 
 void UIWidget_Viewport::RenderLightHelpers()  {
 	Core& c				{ *ApplicationCore() };
-	EntityRegistry& er	{ c.Registry() };
+	EntityRegistry& er	{ c.GetRegistry() };
 	const auto& compPool = er.GetComponentPool<Light>();
 	if (!compPool)return;
 
@@ -289,10 +292,10 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 	if (ImGui::IsMouseClicked(0)) {
 
 		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
-		EntityRegistry& registry = ApplicationCore()->Registry();
+		EntityRegistry& registry = ApplicationCore()->GetRegistry();
 		EntityView entity = registry.GetEntity(picked);
 		
-		ApplicationCore()->Registry().SelectEntity(
+		ApplicationCore()->GetRegistry().SelectEntity(
 			entity ? entity->GetID() : 
 			EntityID::ENTITYID_INVALID
 		);
@@ -310,7 +313,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 	if (!m_viewportPointer) return;
 	Core* c								{ ApplicationCore() };
 	if (!c) return;
-	EntityRegistry registry = c->Registry();
+	EntityRegistry registry = c->GetRegistry();
 
 	Viewport& vp						{ *m_viewportPointer };
 	EntityID selectedEntityID			{ registry.SelectedEntity() };

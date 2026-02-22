@@ -16,11 +16,13 @@ public:
 
 	RenderTargetID AddRenderTarget(std::string _name, glm::ivec2 _dimensions);
 	std::shared_ptr<RenderTarget> GetRenderTarget(RenderTargetID _id);
+	void RemoveRenderTarget(RenderTargetID _rtId);
 
 
 	const RenderTargetMap& GetRenderTargetMap() const;
 
 private:
 	std::unordered_map<RenderTargetID, std::shared_ptr<RenderTarget>> m_renderTargetMap;
-	static inline unsigned m_renderTargetIdCounter{};
+	static inline unsigned m_renderTargetIdGenerator			{  };
+	static inline std::vector<unsigned> m_freeRenderTargetID	{  };
 };

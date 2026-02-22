@@ -17,7 +17,7 @@ UIWidget_Outliner::~UIWidget_Outliner() {
 
 void UIWidget_Outliner::Init() {
     Core& c = Core::GetInstance(); // only on init.
-    SetEntityRegistry(&c.Registry()); // setup aliases
+    SetEntityRegistry(&c.GetRegistry()); // setup aliases
     SetFactory(&c.GetEntityFactory());
     LOG_INFO("Outliner Init.");
 }
@@ -165,7 +165,7 @@ void UIWidget_Outliner::Table() {
 
         const bool clicked = Selectable(
             labelName.c_str(),
-            c.Registry().SelectedEntity() == entity.GetID(),
+            c.GetRegistry().SelectedEntity() == entity.GetID(),
             selectableFlags,
             ImVec2{0, ImGui::GetFrameHeight()} // fill the entire row height
         );

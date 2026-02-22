@@ -5,7 +5,11 @@
 
 // - general ----------------------------------------------------------
 
-Viewport::Viewport(ViewportID _generatedId) : m_vpId{ _generatedId }, m_projectionDirty{ true }, m_transformDirty{ true }  {
+Viewport::Viewport(ViewportID _generatedId) : 
+	m_vpId{ _generatedId }, 
+	m_projectionDirty{ true }, 
+	m_transformDirty{ true }, 
+	m_renderTarget{} {
 }
 
 void Viewport::Init() {

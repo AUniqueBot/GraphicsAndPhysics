@@ -34,6 +34,49 @@ void Light::Color(glm::vec3 _col) {
 
 
 
+bool Light::GetCastShadow() const { 
+    return m_castShadow; 
+}
+void Light::SetCastShadow(bool _cast) {
+    if (_cast == m_castShadow) {
+        return;
+    }
+    m_castShadow = _cast; 
+
+
+    if (_cast && m_lightType != AMBIENT) {
+        m_shadowMapRt = std::make_unique<RenderTarget>();
+        m_shadowMapRt->Resolution(m_shadowMapResolution);
+        m_shadowMapRt->Build();
+    }
+    else {
+        m_shadowMapRt->Destroy();
+    }
+
+}
+
+void Light::SetShadowMapResolution(glm::ivec2 _resolution) {
+    if (_resolution != m_shadowMapResolution) {
+        m_shadowMapResolution = _resolution;
+        if (m_shadowMapRt) m_shadowMapRt->Resolution(_resolution);
+    }
+}
+
+void Light::SetShadowMapResolution(unsigned _width, unsigned _height) {
+    SetShadowMapResolution({_width, _height});
+}
+
+RenderTarget* Light::GetShadowMap() {
+    return m_shadowMapRt.get();
+}
+
+const RenderTarget* Light::GetShadowMap() const {
+    return m_shadowMapRt.get();
+}
+
+
+
+
 LightData Light::GetLightData() const {
     if (m_lightDataMismatch) {
          UpdateLightData();

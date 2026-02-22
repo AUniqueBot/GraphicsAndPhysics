@@ -105,7 +105,7 @@ private:
 
 	ViewportID m_vpId;
 	// - render target ----------------------------------
-	std::shared_ptr<RenderTarget> m_renderTarget{};
+	std::shared_ptr<RenderTarget> m_renderTarget;
 
 private:
 

@@ -13,7 +13,7 @@ UIWidget_AssetBrowser::~UIWidget_AssetBrowser() {
 void UIWidget_AssetBrowser::Init() {
 	Core& c = Core::GetInstance();
 	
-	SetResourceManager(&c.ResManager());
+	SetResourceManager(&c.GetResourceManager());
 	// initialise the starting directory path.
 	m_currentDir = "Assets/";
 	m_currentDir = std::filesystem::absolute(m_currentDir);

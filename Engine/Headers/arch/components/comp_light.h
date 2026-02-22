@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/component.h>
+#include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
 
 enum LightType {
 	POINT = 0,
@@ -62,6 +63,15 @@ public:
 	
 	LightData GetLightData() const;
 
+
+	// -- shadows ----------------------------------------
+	bool GetCastShadow() const;
+	void SetCastShadow(bool _cast);
+	void SetShadowMapResolution(glm::ivec2 _resolution);
+	void SetShadowMapResolution(unsigned _width, unsigned _height);
+	RenderTarget* GetShadowMap();
+	const RenderTarget* GetShadowMap() const;
+	
 	
 
 private:
@@ -70,30 +80,35 @@ private:
 
 private:
 	// generic values
-	LightType m_lightType		{ POINT };				//
-	float m_power				{ 1.0f };				// kW
-	glm::vec3 m_color			{ 1.0f, 1.0f, 1.0f };	// 
+	LightType m_lightType							{ POINT };				//
+	float m_power									{ 1.0f };				// kW
+	glm::vec3 m_color								{ 1.0f, 1.0f, 1.0f };	// 
 
 	// non sun/directional
 	// saving strategy - contain only data for the light type.
 	// if you're saving sun data, only save the sun data.
-	glm::vec2 m_range			{ 10.f, 100.f };		// x - minimum attenuation, y - max attenuation
+	glm::vec2 m_range								{ 10.f, 100.f };		// x - minimum attenuation, y - max attenuation
 	
 
 	// area light
-	glm::vec2 m_dimensions		{ 1.0f, 1.0f };
-	bool m_isWindow				{ false };
+	glm::vec2 m_dimensions							{ 1.0f, 1.0f };
+	bool m_isWindow									{ false };
 
 
 	// spotlight
-	float m_angle				{ 25.0f };				// in degrees.
+	float m_angle									{ 25.0f };				// in degrees.
+
+	// shadows
+	bool m_castShadow								{ false };
+	glm::ivec2 m_shadowMapResolution				{ 512, 512 };
+	std::shared_ptr<RenderTarget> m_shadowMapRt		{ nullptr };
 
 
 	// all this would provide a struct of data to be sent for rendering.
 
 	// -  cached data to be mutable --------------------------
-	mutable LightData m_lightData		{};
-	mutable bool m_lightDataMismatch	{ true };
+	mutable LightData m_lightData					{};
+	mutable bool m_lightDataMismatch				{ true };
 
 };
 

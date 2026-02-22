@@ -35,8 +35,8 @@ public:
 	void Stop();
 	void Cleanup();
 	
-	EntityRegistry& Registry()					{  return m_registry; }
-	const EntityRegistry& Registry() const		{  return m_registry; }
+	EntityRegistry& GetRegistry()					{  return m_registry; }
+	const EntityRegistry& GetRegistry() const		{  return m_registry; }
 
 	EntityFactory& GetEntityFactory()			{ return m_entityFactory; }
 	const EntityFactory& GetEntityFactory() const { return m_entityFactory; }
@@ -60,8 +60,8 @@ public:
 	static double DeltaTime();
 
 
-	ResourceManager& ResManager() { return m_resourceManager; };
-	const ResourceManager& ResManager() const { return m_resourceManager; };
+	ResourceManager& GetResourceManager() { return m_resourceManager; };
+	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
 
 

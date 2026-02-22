@@ -143,7 +143,10 @@ void RenderSystem::Init() {
         viewport.ViewportDimensions()
         ) };
     RenderTarget& renderTarget  { *m_renderTargetManager.GetRenderTarget(rtId) };
-    viewport.SetRenderTarget(std::make_shared<RenderTarget>(renderTarget));
+    std::shared_ptr<RenderTarget> rt{ std::make_shared<RenderTarget>(renderTarget) };
+    rt->AddInitialColorAttachments();
+    rt->Build();
+    viewport.SetRenderTarget(rt);
 
 
     SetupGLDebug();
@@ -156,12 +159,12 @@ void RenderSystem::Init() {
 
 void RenderSystem::PreUpdate() {
     // clear the buffer.
-    //LOG_INFO("Run PreUpdate");
+
+
 }
 
 
 void RenderSystem::Update() {
-    glm::mat4 dummy{};
     /*
         disable
         clear screen
@@ -183,6 +186,9 @@ void RenderSystem::Update() {
 
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
+
+
+
     for (const Viewport::ViewportID& id : vpRenderOrder) {
         Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
@@ -199,15 +205,14 @@ void RenderSystem::Render(const Viewport& _viewport) {
     if (!vpDims.x || !vpDims.y) return;
 
     auto GetError = GraphicsDebug::GetError;
-    EntityRegistry& registry = Core::GetInstance().Registry();
-    auto& entityList = registry.GetEntityList();
-    auto& selectedEntityList = registry.SelectedEntities();    
-    BeginViewportPass(_viewport);
-
+    EntityRegistry& registry = Core::GetInstance().GetRegistry();
     std::vector<LightData> culledLights = CullLights(_viewport);
+    BeginViewportPass(_viewport);
+  
     FillLightBufferData(culledLights);
-    ShadowRenderPass(_viewport, registry, entityList, culledLights);
-    LightingRenderPass(_viewport, registry, entityList, selectedEntityList, culledLights);
+    ShadowRenderPass(_viewport, registry);
+    if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
+    LightingRenderPass(_viewport, registry);
     EndViewportPass(_viewport);
 
 }
@@ -272,27 +277,59 @@ void RenderSystem::UnbindViewport(const Viewport& _viewport) {
 
 void RenderSystem::ShadowRenderPass(
     const Viewport& _viewport,
-    const EntityRegistry& _er,
-    const std::deque<Entity>& _entityList,
-    const std::vector<LightData>& _lightList
+    const EntityRegistry& _er
 ) {
-    for (const LightData& light : _lightList) {
+
+    ComponentPool<Light> lightPool { *_er.GetComponentPool<Light>() };
+    ComponentPool<MeshRenderer> mrPool{ *_er.GetComponentPool<MeshRenderer>() };
+
+    // in the shadow pass, all meshes use the SAME material unless it has transparency or some SS nonsense. 
+
+    for (Light& light : lightPool.Data()) {
+        const auto lightEntity{ _er.GetEntity(light.GetEntityID()) };
+
+        if (!lightEntity->Active() || !lightEntity->IsVisible()) continue;
+        // quick quit on 
+        if (!light.GetCastShadow()) continue;
+        const auto* shadowMap{ light.GetShadowMap() };
+        
+        if (!shadowMap) {
+            LOG_ERROR("No shadow map bound to this light!");
+            continue;
+        }
+        // bind
+        shadowMap->Bind();
+        LOG_INFO("Binding to FBO ID: [" << shadowMap->FBO()<< "]");
+        // for all the objects in the scene, do a render pass.
+        // do a render here.
+        LOG_INFO("Rendering depth to FBO ID: [" << shadowMap->FBO()<< "]");
+
+        for (const MeshRenderer& mr : mrPool.Data()) {
+            const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
+            if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
+            // do something.
+        }
+
+        // unbind
+        shadowMap->Unbind();
 
     }
 }
 
 void RenderSystem::LightingRenderPass(
     const Viewport& _viewport,
-    const EntityRegistry& _er,
-    const std::deque<Entity>& _entityList,
-    const std::vector<EntityID>& _selectedEntityList,
-    const std::vector<LightData>& _culledLightList
+    const EntityRegistry& _er
 ) {
+    // - prereqs --------------------------------------------
     const glm::mat4& _cameraMatrix{ glm::inverse(_viewport.CameraMatrix()) };
     const glm::mat4& _projectionMatrix{ _viewport.ProjectionMatrix() };;
 
+    EntityRegistry& registry = Core::GetInstance().GetRegistry();
+    auto& entityList = registry.GetEntityList();
+    auto& selectedEntityList = registry.SelectedEntities();
 
-    for (const Entity& e : _entityList) {
+
+    for (const Entity& e : _er.GetEntityList()) {
         if (!e.Active() || !e.IsVisible()) {
             // to skip hidden ones as well.
             continue;
@@ -377,7 +414,7 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 
     std::vector<LightData> potentialLights{};
 
-    EntityRegistry& registry = Core::GetInstance().Registry();
+    EntityRegistry& registry = Core::GetInstance().GetRegistry();
     const auto& lightPoolRef = registry.GetComponentPool<Light>();
 
     if (!registry.ComponentPoolExists<Light>()) {

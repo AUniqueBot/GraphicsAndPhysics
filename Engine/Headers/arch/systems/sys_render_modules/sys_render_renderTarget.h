@@ -23,14 +23,12 @@ public:
 		m_resolution{_res}, 
 		m_renderTargetName{_name}
 	{
-		AddInitialColorAttachments();
 	};
 	~RenderTarget();
 
 
 	// 0 == color attachment
 	// 1 == object id
-
 
 
 
@@ -47,16 +45,15 @@ public:
 	const ColorAttachment& GetColorAttachment(unsigned _index) const;
 	unsigned GetColorAttachmentTextureID(unsigned _index = C_RENDER_MATERIAL) const;
 	unsigned GetDepthAttachmentTextureID() const;
+	std::vector<ColorAttachment>& GetColorAttachments() { return m_colorAttachments; }
+	const std::vector<ColorAttachment>& GetColorAttachments() const { return m_colorAttachments; }
 
 	
 
 	void AddInitialColorAttachments();
 	bool AddColorAttachment(ColorAttachment _colAttachment);
 	bool SetDepthAttachment(DepthAttachment _depthAttachment);
-
-	// - texture access -----------------------------------------------------------------
-	
-
+	size_t GetColorAttachmentCount() const { return m_colorAttachments.size(); }
 	
 	
 	// - building ------------------------------------------------------------------------
@@ -97,7 +94,7 @@ private:
 
 	// specific color attachments that must always be there.
 	DepthAttachment m_depthAttachment;	
-
+	std::shared_ptr<RenderTarget> m_renderTarget					{};
 	unsigned m_fboDepth												{}; // depth attachment
 
 	bool m_isValid													{};

@@ -85,6 +85,8 @@ void RenderTarget::Resize(unsigned _width, unsigned _height) {
 	Resize({ _width, _height });
 }
 
+
+
 const ColorAttachment& RenderTarget::GetColorAttachment(unsigned _index) const {
 	return m_colorAttachments[_index];
 }
@@ -143,13 +145,13 @@ bool RenderTarget::AddColorAttachment(ColorAttachment _colAttachment) {
 }
 
 bool RenderTarget::SetDepthAttachment(DepthAttachment _depthAttachment) {
-	return false;
+	m_depthAttachment = _depthAttachment;
+	return true;
 }
 
 
 
 bool RenderTarget::Build() {
-
 
 	const unsigned width	{ static_cast<unsigned>(m_resolution.x) };
 	const unsigned height	{ static_cast<unsigned>(m_resolution.y) };
@@ -240,9 +242,7 @@ bool RenderTarget::Build() {
 		drawBuffers.data()
 	);
 
-
-
-
+	
 	m_isValid = VerifyFBOCompleteness();
 
 	if (!m_isValid) {
@@ -281,6 +281,7 @@ void RenderTarget::Destroy() {
 		//m_fboDepth = 0;
 	}
 	m_currentColorAttachmentCounter = 0;	
+	LOG_INFO("Destroyed render target");
 }
 
 

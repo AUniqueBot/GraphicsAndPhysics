@@ -50,7 +50,7 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 
 	// -- entity registry registration -------------------------
 	m_applicationCore = &_core;
-	m_entityRegistry = &_core.Registry();
+	m_entityRegistry = &_core.GetRegistry();
 
 	// -- load all image icons ---------------------------------
 
@@ -105,7 +105,7 @@ void UI_Core::Update() {
 	if (cPointer) {
 		Core& c = *cPointer;
 		if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
-			EntityRegistry& er	{ c.Registry() };
+			EntityRegistry& er	{ c.GetRegistry() };
 			
 			EntityID deletedId { er.SelectedEntity() } ;
 			er.DeselectEntity(deletedId);
