@@ -138,6 +138,9 @@
     <ClCompile Include="Source\arch\systems\sys_physics.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_shadowMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -384,6 +387,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_shadowMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

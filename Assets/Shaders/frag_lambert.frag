@@ -23,13 +23,23 @@ struct LightData {
 	vec4 m_direction_roll;
 	vec4 m_color_power;
 	vec4 m_attenuation;
+    mat4 m_lightMatrix;
 };
-
 layout (std140, binding=2) uniform LightBlock {
 	int m_count;
 	// int _pad[3];                // pad to 16 bytes so next comes at offset 16
 	LightData m_lightData[10];
 };
+uniform sampler2DArray shadowMap;
+
+
+vec3 ShadowPass() {
+    for (int i = 0; i < m_count; ++i) {
+        // sample from the corresponding light map.
+
+    }
+    return vec3(1.0, 0.0, 0.0);
+}
 
 
 vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {

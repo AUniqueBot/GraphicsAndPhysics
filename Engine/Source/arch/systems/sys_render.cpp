@@ -155,6 +155,9 @@ void RenderSystem::Init() {
     m_vaoManager.Init();
     m_compositor.Init();
 
+    // - shadows -------------------------------
+    SetupShadowProgram();
+    m_shadowMap.Build();
 }
 
 void RenderSystem::PreUpdate() {
@@ -216,6 +219,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     EndViewportPass(_viewport);
 
 }
+
 
 void RenderSystem::ClearBuffers(const Viewport& _vp) {
     GLuint clearFlags { GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
@@ -280,40 +284,93 @@ void RenderSystem::ShadowRenderPass(
     const EntityRegistry& _er
 ) {
 
-    ComponentPool<Light> lightPool { *_er.GetComponentPool<Light>() };
-    ComponentPool<MeshRenderer> mrPool{ *_er.GetComponentPool<MeshRenderer>() };
+    const ComponentPool<Light>& lightPool { *_er.GetComponentPool<Light>() };
+    const ComponentPool<MeshRenderer>& mrPool { *_er.GetComponentPool<MeshRenderer>() };
+
+    if (!m_shadowMap.FBO() || !m_shadowMap.TextureID()) {
+        LOG_ERROR("No shadow map bound to this light!");
+        return;
+    }
 
     // in the shadow pass, all meshes use the SAME material unless it has transparency or some SS nonsense. 
+    BindLightingProgram();
 
-    for (Light& light : lightPool.Data()) {
+    for (const Light& light : lightPool.Data()) {
+
         const auto lightEntity{ _er.GetEntity(light.GetEntityID()) };
-
         if (!lightEntity->Active() || !lightEntity->IsVisible()) continue;
-        // quick quit on 
-        if (!light.GetCastShadow()) continue;
-        const auto* shadowMap{ light.GetShadowMap() };
-        
-        if (!shadowMap) {
-            LOG_ERROR("No shadow map bound to this light!");
-            continue;
-        }
-        // bind
-        shadowMap->Bind();
-        LOG_INFO("Binding to FBO ID: [" << shadowMap->FBO()<< "]");
-        // for all the objects in the scene, do a render pass.
-        // do a render here.
-        LOG_INFO("Rendering depth to FBO ID: [" << shadowMap->FBO()<< "]");
+        if (light.Type() != DIRECTIONAL) continue;
 
+
+        if (light.CastShadowDirty()) {
+            bool wantsShadowId{ light.GetCastShadow() };
+            if (!wantsShadowId) {
+                m_shadowMap.ReclaimID(light.GetShadowMapID());
+                light.InvalidateShadowMapID();
+                light.CleanCastShadow();
+            }
+            else {
+                if (!m_shadowMap.HasFreeLayers()) {
+                    LOG_INFO("No free slots for shadow map. Waiting for next update.");
+                    // early exit, cannot update the var.
+                    continue;
+                }
+                LOG_INFO("Assigning new id to light.");
+                light.SetShadowMapID(m_shadowMap.GenerateLayerID());
+                light.CleanCastShadow();
+            }
+        }
+
+
+        if (!light.GetCastShadow()) continue; // ignore anything not asking for it.
+        unsigned shadowMapID{light.GetShadowMapID()};
+        if (!m_shadowMap.ValidateID(shadowMapID)) continue;
+
+
+        
+        // convert light to matrix.
+        auto trs = lightEntity->GetComponent<Transform>();
+        glm::mat4 lightMtx = glm::lookAt(
+            glm::vec3(), 
+            trs->Forward(), 
+            glm::vec3(0, 1, 0)
+        );
+        glm::mat4 lightPrj = glm::ortho(
+            -10, 10, -10, 10, -10, 10
+        );
+        glm::mat4 lightSpaceMtx = lightPrj * lightMtx;
+
+
+        m_shadowMap.Bind(shadowMapID);
+        LOG_INFO(
+            "Binding to shadowmap: "<< m_shadowMap.FBO() << 
+            " texture ID: [" << m_shadowMap.TextureID() << 
+            "]"
+        );
         for (const MeshRenderer& mr : mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
             if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
+            
+            std::shared_ptr<const Mesh> mesh = mr.GetMesh();
+            if (!mesh) continue;
+            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
+            if (!vaoHandler) continue;
+
+            VAOHandler& currentVAO = *vaoHandler;
+            currentVAO.BindVAO();
+            //currentVAO.LogDebug();
+            currentVAO.UseMesh(*mesh);
+
             // do something.
+            auto trsMesh = meshEntity->GetComponent<Transform>();
+            const glm::mat4 objectTransformMatrix = trsMesh->LocalTransformMtx();
+            PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
+            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
-
-        // unbind
-        shadowMap->Unbind();
-
     }
+
+    UnbindLightingProgram();
+    m_shadowMap.Unbind();
 }
 
 void RenderSystem::LightingRenderPass(
@@ -448,8 +505,6 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
         // direction of 0, -1, 0, * quat.
         lightData.SetDirection(trs->Forward());
 
-
-
         potentialLights.push_back(lightData);
     }
     return potentialLights;
@@ -486,6 +541,41 @@ bool RenderSystem::SpotLightCollisionTest(const Light& _lightComponent, const Vi
 bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
     (void)_lightComponent;
     return true;
+}
+
+void RenderSystem::SetupShadowProgram() {
+    std::string vertexShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_shadowPassVertex.vert");
+    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowPass.frag");
+
+    ShaderProgram lambertShader{};
+    GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
+    GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
+
+    std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
+
+    m_shadowPrg = { ShaderProgram::LinkShaders(shaderList) };
+    m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, U_OBJECT_MATRIX);
+    m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, U_LIGHT_MATRIX);
+    LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of "<< m_shadowMeshLoc << " and light uniform loc of "<< m_shadowLightLoc);
+}
+
+void RenderSystem::SetupShadowBuffers() {
+    const unsigned SHADOW_WH    { 1024 };
+    m_shadowMap.SetResolution({ SHADOW_WH, SHADOW_WH });
+    m_shadowMap.Build();
+}
+
+void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {
+    glUniformMatrix4fv(m_shadowMeshLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
+    glUniformMatrix4fv(m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
+}
+
+void RenderSystem::BindLightingProgram() {
+    glUseProgram(m_shadowPrg);
+}
+
+void RenderSystem::UnbindLightingProgram() {
+    glUseProgram(0);
 }
 
 

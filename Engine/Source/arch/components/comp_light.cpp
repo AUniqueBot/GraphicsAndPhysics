@@ -41,38 +41,31 @@ void Light::SetCastShadow(bool _cast) {
     if (_cast == m_castShadow) {
         return;
     }
-    m_castShadow = _cast; 
-
-
-    if (_cast && m_lightType != AMBIENT) {
-        m_shadowMapRt = std::make_unique<RenderTarget>();
-        m_shadowMapRt->Resolution(m_shadowMapResolution);
-        m_shadowMapRt->Build();
-    }
-    else {
-        m_shadowMapRt->Destroy();
-    }
-
+    m_castShadow = _cast;
+    m_castShadowDirty = true;
 }
 
-void Light::SetShadowMapResolution(glm::ivec2 _resolution) {
-    if (_resolution != m_shadowMapResolution) {
-        m_shadowMapResolution = _resolution;
-        if (m_shadowMapRt) m_shadowMapRt->Resolution(_resolution);
-    }
+void Light::InvalidateShadowMapID() const {
+    m_shadowMapID = std::numeric_limits<unsigned>::max();
 }
 
-void Light::SetShadowMapResolution(unsigned _width, unsigned _height) {
-    SetShadowMapResolution({_width, _height});
+void Light::SetShadowMapID(unsigned _id) const {
+    if (_id == m_shadowMapID) return;
+    m_shadowMapID = _id;
 }
 
-RenderTarget* Light::GetShadowMap() {
-    return m_shadowMapRt.get();
+unsigned Light::GetShadowMapID() const {
+    return m_shadowMapID;
 }
 
-const RenderTarget* Light::GetShadowMap() const {
-    return m_shadowMapRt.get();
+bool Light::CastShadowDirty() const {
+    return m_castShadowDirty;
 }
+
+void Light::CleanCastShadow() const {
+    m_castShadowDirty = false;
+}
+
 
 
 
@@ -84,9 +77,25 @@ LightData Light::GetLightData() const {
     return m_lightData;
 }
 
+void Light::RenderShadow(const MeshRenderer& _mr, const glm::mat4& _objectMatrix) const {
+    
+    const LightData lightData{ GetLightData() };
+     
+    const unsigned UNIFORMLOC{};
+    glUniformMatrix4fv(UNIFORMLOC, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
+    glUniformMatrix4fv(UNIFORMLOC, 1, GL_FALSE, glm::value_ptr(lightData.m_matrix));
+    glDrawElements(GL_TRIANGLES, _mr.GetMesh()->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+    
+
+}
+
 void Light::UpdateLightData() const {
     if (!m_lightDataMismatch) return;
-    m_lightData.m_position_type.w   = m_lightType;
-    m_lightData.m_color_power       = glm::vec4(m_color, m_power);
+    m_lightData.SetType(m_lightType);
+    m_lightData.SetColor(m_color); 
+    m_lightData.SetPower(m_power);
+    
     m_lightDataMismatch = false;
 }
+
+

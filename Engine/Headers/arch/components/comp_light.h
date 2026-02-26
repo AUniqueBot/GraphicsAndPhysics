@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/component.h>
+#include <arch/components/comp_meshrenderer.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
 
 enum LightType {
@@ -16,12 +17,18 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
 	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
+	glm::mat4 m_matrix				{};
 
-
-	void SetPosition(const glm::vec3& pos) { m_position_type = glm::vec4(pos, m_position_type.w); }
+	void SetPosition(const glm::vec3& pos) { 
+		m_position_type = glm::vec4(pos, m_position_type.w); 
+		UpdateMatrix();
+	}
 	void SetType(float type) { m_position_type.w = type; }
 
-	void SetDirection(const glm::vec3& dir) { m_direction = glm::vec4(dir, m_direction.w); }
+	void SetDirection(const glm::vec3& dir) { 
+		m_direction = glm::vec4(dir, m_direction.w); 
+		UpdateMatrix();
+	}
 	void SetRoll(float roll) { m_direction.w = roll; }
 
 	void SetColor(const glm::vec3& color) { m_color_power = glm::vec4(color, m_color_power.w); }
@@ -29,6 +36,23 @@ struct alignas(sizeof(glm::vec4)) LightData {
 
 	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
 
+
+private:
+	void UpdateMatrix() {
+		glm::vec3 pos = glm::vec3(m_position_type);
+		glm::vec3 dir = glm::normalize(glm::vec3(m_direction));
+		glm::vec3 up = glm::vec3(0, 1, 0);
+
+		if (abs(glm::dot(dir, up)) > 0.99f)
+			up = glm::vec3(1, 0, 0);
+		glm::mat4 viewMtx =  glm::lookAt(pos, pos + dir, up);
+		
+		glm::mat4 projectionMtx { glm::identity<glm::mat4>() };
+		if (m_position_type.w == DIRECTIONAL) {
+			projectionMtx = glm::ortho(-100, 100, -100, 100, -100, 100);
+		}
+		m_matrix = projectionMtx * viewMtx;
+	}
 };
 
 
@@ -63,16 +87,22 @@ public:
 	
 	LightData GetLightData() const;
 
+	void RenderShadow(
+		const MeshRenderer& _mr, 
+		const glm::mat4& _objectMatrix
+	) const;
 
 	// -- shadows ----------------------------------------
 	bool GetCastShadow() const;
 	void SetCastShadow(bool _cast);
-	void SetShadowMapResolution(glm::ivec2 _resolution);
-	void SetShadowMapResolution(unsigned _width, unsigned _height);
-	RenderTarget* GetShadowMap();
-	const RenderTarget* GetShadowMap() const;
 	
+	void InvalidateShadowMapID() const;
+	void SetShadowMapID(unsigned _id) const;
+	unsigned GetShadowMapID() const;
 	
+
+	bool CastShadowDirty() const;
+	void CleanCastShadow() const;
 
 private:
 
@@ -99,9 +129,9 @@ private:
 	float m_angle									{ 25.0f };				// in degrees.
 
 	// shadows
-	bool m_castShadow								{ false };
-	glm::ivec2 m_shadowMapResolution				{ 512, 512 };
-	std::shared_ptr<RenderTarget> m_shadowMapRt		{ nullptr };
+	mutable bool m_castShadow								{ false };
+	mutable bool m_castShadowDirty							{ false };
+	mutable unsigned m_shadowMapID							{ std::numeric_limits<unsigned>::max() };
 
 
 	// all this would provide a struct of data to be sent for rendering.
@@ -109,6 +139,7 @@ private:
 	// -  cached data to be mutable --------------------------
 	mutable LightData m_lightData					{};
 	mutable bool m_lightDataMismatch				{ true };
+
 
 };
 

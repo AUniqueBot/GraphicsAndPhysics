@@ -180,6 +180,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\systems\sys_physics.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_shadowMap.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp" />
     <ClCompile Include="Source\res\res_mesh_vertexLayout.cpp" />
@@ -281,6 +282,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTarget.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_shadowMap.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />

@@ -6,6 +6,7 @@
 #include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
+#include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 #include <arch/components/comp_light.h>
 
 
@@ -30,7 +31,7 @@ public:
 	void PreUpdate()	override;
 	void Update()		override;
 	void Stop()			override { LOG_INFO("Stop"); };
-	void Cleanup()		override { LOG_INFO("Cleanup"); };
+	void Cleanup()		override { m_shadowMap.Destroy(); LOG_INFO("Cleaning up shadow map");  };
 
 
 	Viewport::RENDERMODE GetRenderMode() const;
@@ -42,6 +43,8 @@ public:
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
 private: 
+	
+private: 
 	void ClearBuffers(const Viewport& _viewport);
 	void UseViewport(const Viewport& _viewport);
 	void UnbindViewport(const Viewport& _viewport);
@@ -50,6 +53,8 @@ private:
 	void BeginViewportPass(const Viewport& _viewport);
 	void EndViewportPass(const Viewport& _viewport);
 	void SetupRenderSettings(const Viewport& _viewport);
+
+
 
 
 	void FillLightBufferData(const std::vector<LightData>& _culledLightList);
@@ -61,6 +66,7 @@ private:
 		const Viewport& _viewport,
 		const EntityRegistry& _er
 	);
+
 
 public:
 
@@ -88,13 +94,27 @@ private:
 	bool PointLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;
 
 
+	void SetupShadowProgram();
+	void SetupShadowBuffers();
+	void PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix);
+	void BindLightingProgram();
+	void UnbindLightingProgram();
+
+
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	
+	// shadow handling.
+
+	// genera
+
+
 	Viewport::FACETORENDER m_facesToRender	{ Viewport::FRONT };
 	Viewport::RENDERMODE m_renderMode		{ Viewport::FILL };
 
-
+	GLuint m_shadowPrg						{};
+	GLuint m_shadowMeshLoc					{};
+	GLuint m_shadowLightLoc					{};
 
 	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;
@@ -103,6 +123,8 @@ private:
 	VAOManager m_vaoManager;
 
 
+	ShadowMap m_shadowMap;
+	
 
 };
 

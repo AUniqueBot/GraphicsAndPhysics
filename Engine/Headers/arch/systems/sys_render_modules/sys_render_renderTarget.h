@@ -94,7 +94,6 @@ private:
 
 	// specific color attachments that must always be there.
 	DepthAttachment m_depthAttachment;	
-	std::shared_ptr<RenderTarget> m_renderTarget					{};
 	unsigned m_fboDepth												{}; // depth attachment
 
 	bool m_isValid													{};

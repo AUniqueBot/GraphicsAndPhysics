@@ -293,6 +293,7 @@ unsigned RenderTarget::FBO() const {
 
 void RenderTarget::Bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	glViewport(0, 0, m_resolution.x, m_resolution.y);
 }
 
 void RenderTarget::Unbind() const {
