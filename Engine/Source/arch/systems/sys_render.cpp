@@ -158,6 +158,16 @@ void RenderSystem::Init() {
     // - shadows -------------------------------
     SetupShadowProgram();
     m_shadowMap.Build();
+
+
+    std::string vtxShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_fullscreenTriangle.vert");
+    std::string fragShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowMap.frag");
+    const unsigned vtx = ShaderProgram::LoadShader(vtxShaderSrc.c_str(), ShaderProgram::VERTEX);
+    const unsigned frag = ShaderProgram::LoadShader(fragShaderSrc.c_str(), ShaderProgram::FRAG);
+    m_planeShader = ShaderProgram::GenerateShaderProgram({ vtx, frag });
+
+
+
 }
 
 void RenderSystem::PreUpdate() {
@@ -177,7 +187,7 @@ void RenderSystem::Update() {
 
         // - viewport setup ----------------------------
         get the size of each viewport 
-        get the position of each viewport
+        get the position of each viewport 
 
         // - render setup ------------------------------
         get the camera matrix
@@ -216,6 +226,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     ShadowRenderPass(_viewport, registry);
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
     LightingRenderPass(_viewport, registry);
+
     EndViewportPass(_viewport);
 
 }
@@ -231,7 +242,7 @@ void RenderSystem::ClearBuffers(const Viewport& _vp) {
 void RenderSystem::UseViewport(const Viewport& _viewport) {
     std::shared_ptr<const RenderTarget> rtPtr{ _viewport.GetRenderTarget() };
     if (!rtPtr) return;
-
+      
     rtPtr->Bind();
     glm::vec2 vpDims{ _viewport.ViewportDimensions() };
     glViewport(0, 0, vpDims.x, vpDims.y);
@@ -307,7 +318,7 @@ void RenderSystem::ShadowRenderPass(
             if (!wantsShadowId) {
                 m_shadowMap.ReclaimID(light.GetShadowMapID());
                 light.InvalidateShadowMapID();
-                light.CleanCastShadow();
+                LOG_INFO("clearing light id.");
             }
             else {
                 if (!m_shadowMap.HasFreeLayers()) {
@@ -317,8 +328,8 @@ void RenderSystem::ShadowRenderPass(
                 }
                 LOG_INFO("Assigning new id to light.");
                 light.SetShadowMapID(m_shadowMap.GenerateLayerID());
-                light.CleanCastShadow();
             }
+            light.CleanCastShadow();
         }
 
 
@@ -330,23 +341,33 @@ void RenderSystem::ShadowRenderPass(
         
         // convert light to matrix.
         auto trs = lightEntity->GetComponent<Transform>();
-        glm::mat4 lightMtx = glm::lookAt(
-            glm::vec3(), 
-            trs->Forward(), 
+        glm::vec3 sceneCenter = glm::vec3(0.0f);
+        glm::vec3 lightDir = glm::normalize(trs->Forward());
+        glm::vec3 lightPos = sceneCenter - lightDir * 20.0f;
+
+        glm::mat4 lightView = glm::lookAt(
+            lightPos,
+            sceneCenter,
             glm::vec3(0, 1, 0)
         );
-        glm::mat4 lightPrj = glm::ortho(
-            -10, 10, -10, 10, -10, 10
+
+        glm::mat4 lightProj = glm::ortho(
+            -10.f, 10.f,
+            -10.f, 10.f,
+            0.1f, 50.f
         );
-        glm::mat4 lightSpaceMtx = lightPrj * lightMtx;
+
+        glm::mat4 lightSpaceMtx = lightProj * lightView;
 
 
         m_shadowMap.Bind(shadowMapID);
+        glClear(GL_DEPTH_BUFFER_BIT);
         LOG_INFO(
             "Binding to shadowmap: "<< m_shadowMap.FBO() << 
             " texture ID: [" << m_shadowMap.TextureID() << 
             "]"
-        );
+        ); 
+
         for (const MeshRenderer& mr : mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
             if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
@@ -355,22 +376,25 @@ void RenderSystem::ShadowRenderPass(
             if (!mesh) continue;
             VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
             if (!vaoHandler) continue;
-
             VAOHandler& currentVAO = *vaoHandler;
             currentVAO.BindVAO();
-            //currentVAO.LogDebug();
             currentVAO.UseMesh(*mesh);
 
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
-            const glm::mat4 objectTransformMatrix = trsMesh->LocalTransformMtx();
+            const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
-    }
+        
 
+
+    }
+    //DebugRenderPass(m_shadowMap.TextureID()); 
     UnbindLightingProgram();
     m_shadowMap.Unbind();
+
+
 }
 
 void RenderSystem::LightingRenderPass(
@@ -384,6 +408,8 @@ void RenderSystem::LightingRenderPass(
     EntityRegistry& registry = Core::GetInstance().GetRegistry();
     auto& entityList = registry.GetEntityList();
     auto& selectedEntityList = registry.SelectedEntities();
+        
+    _er.GetComponentPool<MeshRenderer>();
 
 
     for (const Entity& e : _er.GetEntityList()) {
@@ -411,19 +437,31 @@ void RenderSystem::LightingRenderPass(
             //currentVAO.LogDebug();
             currentVAO.UseMesh(*mesh);
             // check if there is data here...
-
+            for (const auto& mat : mr->GetMaterialList() ){
+                mat->ApplyShadowMap(m_shadowMap);
+            }
             mr->Render(
                 objectTransformMatrix,
                 _projectionMatrix,
                 _cameraMatrix
             );
-
-
             m_vaoManager.UnbindVAO();
         }
     }
 
     glBindVertexArray(0);
+
+
+
+}
+
+void RenderSystem::DebugRenderPass(const unsigned& textureId) {
+    glDisable(GL_DEPTH_TEST);
+    glUseProgram(m_planeShader);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D_ARRAY, textureId);
+    glUniform1i(glGetUniformLocation(m_planeShader, "u_texture"), 0);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 
 // ------------------------------------------------------------------------------------
@@ -536,8 +574,8 @@ bool RenderSystem::LightCollisionTest(const Light& _lightComponent, const Viewpo
 bool RenderSystem::SpotLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
     (void)_lightComponent;
     return true;
-}
-
+} 
+ 
 bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const {
     (void)_lightComponent;
     return true;
@@ -553,25 +591,27 @@ void RenderSystem::SetupShadowProgram() {
 
     std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
 
-    m_shadowPrg = { ShaderProgram::LinkShaders(shaderList) };
+    m_shadowPrg = { ShaderProgram::GenerateShaderProgram(shaderList) };
     m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, U_OBJECT_MATRIX);
     m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, U_LIGHT_MATRIX);
-    LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of "<< m_shadowMeshLoc << " and light uniform loc of "<< m_shadowLightLoc);
+    LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of <"<< m_shadowMeshLoc << "> and light uniform loc of <"<< m_shadowLightLoc<<">");
 }
 
 void RenderSystem::SetupShadowBuffers() {
     const unsigned SHADOW_WH    { 1024 };
     m_shadowMap.SetResolution({ SHADOW_WH, SHADOW_WH });
-    m_shadowMap.Build();
+    m_shadowMap.Build(); 
 }
 
 void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {
     glUniformMatrix4fv(m_shadowMeshLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
-    glUniformMatrix4fv(m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
+    glUniformMatrix4fv(m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_lightMatrix));
 }
 
 void RenderSystem::BindLightingProgram() {
-    glUseProgram(m_shadowPrg);
+    glUseProgram(m_shadowPrg); 
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 }
 
 void RenderSystem::UnbindLightingProgram() {

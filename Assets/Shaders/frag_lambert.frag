@@ -4,14 +4,14 @@ in vec2 frag_uv;
 
 
 uniform sampler2D u_albedo;
+uniform sampler2DArrayShadow u_shadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
-layout(location = 0) out vec4 out_color;
-layout(location = 1) out uint out_objectId;
-// out vec4 (location = 1) out_objectId;
-/*
-*/
+    
+layout (location = 0) out vec4 out_color;
+layout (location = 1) out uint out_objectId;
+
 #define LIGHT_POINT 0.0
 #define LIGHT_SPOT 1.0
 #define LIGHT_DIRECTIONAL 2.0
@@ -24,25 +24,38 @@ struct LightData {
 	vec4 m_color_power;
 	vec4 m_attenuation;
     mat4 m_lightMatrix;
+    vec4 m_shadowId;
 };
 layout (std140, binding=2) uniform LightBlock {
-	int m_count;
-	// int _pad[3];                // pad to 16 bytes so next comes at offset 16
+	// vec3 _pad;                // pad to 16 bytes so next comes at offset 16
 	LightData m_lightData[10];
+	int m_count;
 };
-uniform sampler2DArray shadowMap;
 
 
-vec3 ShadowPass() {
+float CalculateShadow() {
+    float shadowLowest = 1.0;
     for (int i = 0; i < m_count; ++i) {
         // sample from the corresponding light map.
+        LightData currentLight = m_lightData[i];
+        int layerid = int(currentLight.m_shadowId.x);
+        if (-1 == layerid) continue; // set to -1 in cpu before sent to gpu if illegal, otherwise it's unsigned::max()
+        // texture(u_shadow, vec3(frag_uv,))
 
+        vec4 lightspacepos = currentLight.m_lightMatrix * vec4(frag_position, 1.0);
+        vec3 projCoords = (lightspacepos.xyz/lightspacepos.w + 1.0) * 0.5;
+        float closestDepth = texture(u_shadowMap, vec3(projCoords.xy, layerid)).r;
+        float currentDepth = projCoords.z;
+        float bias = 0.005;
+        float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
+        shadowLowest = min(shadow, shadowLowest);
     }
-    return vec3(1.0, 0.0, 0.0);
+    return shadowLowest;
 }
 
 
 vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
+    // return vec3(0.8745, 0.7255, 0.0588);
     vec3 N = normalize(fragNormal);
     
     vec3 result = vec3(0.0);
@@ -88,7 +101,8 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
         }
     }
     ambientRes = clamp(ambientRes, 0.0, 1.0);
-    return result + ambientRes;
+    // result *= 1;
+    return result * CalculateShadow() + ambientRes;
 }
 
 void main() {
@@ -98,6 +112,8 @@ void main() {
     out_color = color * vec4(
         CalculateLighting(frag_position, frag_normal), 1.0 // no alpha needed
     );
+
+    
 }
 
 

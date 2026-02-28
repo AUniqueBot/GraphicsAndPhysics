@@ -16,7 +16,7 @@ void LambertMaterial::Init() {
     GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
 
     std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
-    GLuint programId             { ShaderProgram::LinkShaders(shaderList) };
+    GLuint programId             { ShaderProgram::GenerateShaderProgram(shaderList) };
     lambertShader.SetShaderID(programId);
     SetShaderProgram(std::make_shared<ShaderProgram>(lambertShader));
 

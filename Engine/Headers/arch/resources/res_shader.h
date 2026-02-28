@@ -34,7 +34,7 @@ public:
 		const std::string& _sourceCodePath
 	);
 	static GLuint LoadShader(const char* _sourceCode, SHADERTYPE _type);
-	static GLuint LinkShaders(std::vector<GLuint>);
+	static GLuint GenerateShaderProgram(std::vector<GLuint>);
 
 	
 	void SetShaderID(GLuint _id) { m_programId = _id; };

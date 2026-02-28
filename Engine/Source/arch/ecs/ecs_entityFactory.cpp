@@ -6,6 +6,18 @@
 
 #include <arch/components/comp_light.h>
 
+
+EntityView EntityFactory::CreateGameObject(const glm::vec3& pos) {
+	EntityView objv{ m_registry.Instantiate() };
+	if (objv) {
+		Entity& e{ *objv };
+		e.Name("gameObject");
+		e.GetComponent<Transform>()->Position(pos);
+	}
+	return objv;
+}
+
+
 EntityView EntityFactory::CreateCube(const glm::vec3& pos) {
 	// TODO: insert return statement here
 

@@ -18,6 +18,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
 	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
 	glm::mat4 m_matrix				{};
+	glm::vec4 m_shadowId			{}; // needs + 3 more
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
@@ -35,6 +36,10 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	void SetPower(float power) { m_color_power.w = power; }
 
 	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
+
+	void SetID(unsigned id) { 
+		m_shadowId.x = id == std::numeric_limits<unsigned>::max() ? -1.f :  static_cast<float>(id); 
+	}
 
 
 private:
@@ -58,8 +63,9 @@ private:
 
 constexpr unsigned C_MAX_LIGHTS{ 10 };
 struct alignas(sizeof(glm::vec4)) LightUBOData {
-	int m_count{};
+	//glm::vec3 _pad;
 	LightData m_lightData[C_MAX_LIGHTS];
+	int m_count{}; 
 };
 
 

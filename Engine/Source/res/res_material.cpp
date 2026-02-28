@@ -197,6 +197,28 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
+void Material::ApplyShadowMap(const ShadowMap& _shadowMap) {
+	GLint uniformLocation{};
+
+	// lambda function
+	auto GetUniform = [this](const char* _uniformName) {
+		auto it = m_uniformData.find(_uniformName);
+		if (it == m_uniformData.end()) {
+			//LOG_WARN("Uniform '" << _uniformName << "' not found.");
+			return -1; // invalid location
+		}
+		return it->second.m_uniformLocation;
+
+		};
+
+	uniformLocation = GetUniform(U_SHADOWMAP);
+	if (-1 != uniformLocation) {
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _shadowMap.TextureID());
+		glUniform1i(uniformLocation, 1);
+	}
+}
+
 void Material::ApplyUniforms(
 	const glm::mat4& _objectMatrix,
 	const glm::mat4& _projectionMatrix,
@@ -251,6 +273,8 @@ void Material::ApplyUniforms(
 	if (-1 != uniformLocation) {
 		glUniform1ui(uniformLocation, _objId.GetID());
 	}
+
+
 
 
 	GLenum err;

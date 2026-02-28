@@ -47,11 +47,13 @@ void Light::SetCastShadow(bool _cast) {
 
 void Light::InvalidateShadowMapID() const {
     m_shadowMapID = std::numeric_limits<unsigned>::max();
+    m_lightDataMismatch = true;
 }
 
 void Light::SetShadowMapID(unsigned _id) const {
     if (_id == m_shadowMapID) return;
     m_shadowMapID = _id;
+    m_lightDataMismatch = true;
 }
 
 unsigned Light::GetShadowMapID() const {
@@ -94,7 +96,7 @@ void Light::UpdateLightData() const {
     m_lightData.SetType(m_lightType);
     m_lightData.SetColor(m_color); 
     m_lightData.SetPower(m_power);
-    
+    m_lightData.SetID(m_shadowMapID);
     m_lightDataMismatch = false;
 }
 

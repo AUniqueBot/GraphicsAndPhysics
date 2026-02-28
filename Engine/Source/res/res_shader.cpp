@@ -34,7 +34,7 @@ void ShaderProgram::Unload() {
 
 
 
-GLuint ShaderProgram::LinkShaders(std::vector<GLuint> _shaderList) {
+GLuint ShaderProgram::GenerateShaderProgram(std::vector<GLuint> _shaderList) {
 	// go through shaders and link
 	GLuint programId = glCreateProgram();
 	for (GLuint& shaderId : _shaderList) {

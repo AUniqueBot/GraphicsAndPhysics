@@ -7,6 +7,7 @@
 #include <arch/resources/res_material_uniform/res_material_uniform.h>
 #include <arch/resources/res_material_uniform/res_material_uniformAliases.h>
 #include <arch/common/entityid.h>
+#include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 
 // - class -----------------------------
 class Material {
@@ -36,6 +37,7 @@ public:
 
 	int GetShader() const;
 
+	void ApplyShadowMap(const ShadowMap& _shadowMap);
 	virtual void ApplyUniforms(
 		const glm::mat4& _objectMatrix, 
 		const glm::mat4& _projectionMatrix, 

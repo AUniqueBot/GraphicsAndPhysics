@@ -21,7 +21,7 @@ public:
 
 	unsigned FBO() const;
 	unsigned TextureID() const;
-
+	 
 
 	bool ValidateID(unsigned _id) const;
 	unsigned GenerateLayerID();
@@ -37,6 +37,6 @@ private:
 	unsigned m_shadowTex	{};
 
 
-	unsigned m_currentLayerCount{};
+	unsigned m_currentLayerCount{}; 
 	std::vector<unsigned> m_freeLayers{};
 };

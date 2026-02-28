@@ -24,7 +24,7 @@ unsigned ShadowMap::GetLayers() const {
 	return m_layers;
 }
 
-void ShadowMap::Build() {
+void ShadowMap::Build() {	
 	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_shadowTex);
 
 	glTextureStorage3D(
@@ -35,12 +35,12 @@ void ShadowMap::Build() {
 		m_resolution.y,
 		m_layers
 	);
-
+	glClearTexImage(m_shadowTex, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-
+	
 	float borderColor[] = { 1,1,1,1 };
 	glTextureParameterfv(m_shadowTex, GL_TEXTURE_BORDER_COLOR, borderColor);
 

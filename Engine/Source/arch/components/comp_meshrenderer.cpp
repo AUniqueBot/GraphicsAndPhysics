@@ -58,7 +58,7 @@ void MeshRenderer::Render(
 			_projectionMatrix,
 			_cameraMatrix,
 			GetEntityID()
-		);
+		); 
 
 
 		// TODO - render based on materials indices.

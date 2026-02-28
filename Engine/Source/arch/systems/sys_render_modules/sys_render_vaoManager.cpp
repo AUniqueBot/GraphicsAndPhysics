@@ -30,7 +30,6 @@ void VAOHandler::Init() {
 }
 
 void VAOHandler::BindVAO() const {
-	//LOG_INFO("Binding Buffer " << m_vao); /// correct.
 	glBindVertexArray(m_vao);
 }
 
@@ -56,7 +55,7 @@ void VAOHandler::UseMesh(const Mesh& _mesh) {
 			SetData(attributeName, _mesh.GetData<float>(attributeName), _mesh.GetVertexCount(), sizeof(glm::vec3));
 		}
 
-		for (unsigned i{}; i < 4; ++i) {
+		for (unsigned i{}; i < 1; ++i) {
 			std::string uv{"uv"};
 			uv += std::to_string(i);
 			SetData(uv, _mesh.GetUVData(i), _mesh.GetVertexCount(), sizeof(glm::vec2));

@@ -8,7 +8,7 @@ constexpr const char* U_PROJECTION_MATRIX	{ "u_projectionMtx" };
 
 // - light -----------------------------------------------------
 constexpr const char* U_LIGHT_MATRIX		{ "u_lightMtx" };
-
+constexpr const char* U_SHADOWMAP			{ "u_shadowMap"};
 
 // - texture maps ----------------------------------------------
 constexpr const char* U_ALBEDO				{ "u_albedo" };

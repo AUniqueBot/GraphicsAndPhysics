@@ -68,6 +68,8 @@ private:
 	);
 
 
+	void DebugRenderPass(const unsigned& );
+
 public:
 
 
@@ -124,7 +126,7 @@ private:
 
 
 	ShadowMap m_shadowMap;
-	
+	GLuint m_planeShader{};
 
 };
 

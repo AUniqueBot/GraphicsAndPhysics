@@ -68,8 +68,10 @@ void UIWidget_Outliner::Menu() {
         if (ImGui::MenuItem("Sphere")) {
             m_entityFactory->CreateSphere();
         }
-        ImGui::MenuItem("Plane");
         if (ImGui::MenuItem("Plane")) {
+            m_entityFactory->CreatePlane();
+        }
+        if (ImGui::MenuItem("Object")) {
             m_entityFactory->CreatePlane();
         }
         ImGui::EndMenu();
@@ -89,7 +91,9 @@ void UIWidget_Outliner::Menu() {
     }
 
     if (ImGui::BeginMenu("Other")) {
-        ImGui::MenuItem("Game Object");
+        if (ImGui::MenuItem("Game Object")) {
+            m_entityFactory->CreateGameObject();
+        }
         ImGui::MenuItem("Camera");
         ImGui::EndMenu();
     }

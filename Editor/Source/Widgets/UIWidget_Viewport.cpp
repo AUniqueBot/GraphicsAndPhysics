@@ -292,6 +292,7 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 	if (ImGui::IsMouseClicked(0)) {
 
 		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
+		LOG_INFO("Picked ID: "<< picked );
 		EntityRegistry& registry = ApplicationCore()->GetRegistry();
 		EntityView entity = registry.GetEntity(picked);
 		

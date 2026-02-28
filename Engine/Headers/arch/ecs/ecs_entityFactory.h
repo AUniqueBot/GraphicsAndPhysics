@@ -7,12 +7,12 @@ public:
         : m_registry(registry) {
     }
 
+    EntityView CreateGameObject(const glm::vec3& pos = glm::vec3());
 
     // - basic primitives -----------------------------------------
     EntityView CreateCube(const glm::vec3& pos = glm::vec3());
     EntityView CreateSphere(const glm::vec3& pos = glm::vec3());
     EntityView CreatePlane(const glm::vec3& pos = glm::vec3());
-
 
 
     EntityView CreatePointLight(
@@ -36,4 +36,5 @@ public:
 
 private:
     EntityRegistry& m_registry;
+
 };
