@@ -9,7 +9,7 @@
 #include <arch/common/component.h>
 #include <arch/resources/res_mesh.h>
 #include <arch/resources/res_material.h>
-
+#include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 
 
 
@@ -40,6 +40,9 @@ public:
 	const std::vector<std::shared_ptr<Material>>& GetMaterialList() const { return m_materials; }
 
 	void AddMaterial(std::shared_ptr<Material> _material);
+
+
+	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 
 	void Render(
 		const glm::mat4& _objectMatrix, 

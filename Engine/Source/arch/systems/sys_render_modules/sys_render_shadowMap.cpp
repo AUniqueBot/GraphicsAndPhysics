@@ -35,6 +35,17 @@ void ShadowMap::Build() {
 		m_resolution.y,
 		m_layers
 	);
+
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+
+	// 2. Set the comparison function (usually LEQUAL for depth)
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+
+	// 3. Set to LINEAR to enable 4-tap Hardware PCF
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+
 	glClearTexImage(m_shadowTex, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

@@ -314,9 +314,6 @@
     <ClInclude Include="Headers\util\util_math.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\util\util_ostreamOverrides.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\util\util_print.h">
       <Filter>Header Files</Filter>
     </ClInclude>

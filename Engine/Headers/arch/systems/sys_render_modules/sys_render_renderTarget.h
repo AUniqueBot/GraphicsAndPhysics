@@ -40,7 +40,7 @@ public:
 	const std::string& Name() const { return m_renderTargetName; }
 	std::string& Name() { return m_renderTargetName; }
 	void Name(const std::string& _name) { m_renderTargetName = _name; }
-
+	  
 
 	const ColorAttachment& GetColorAttachment(unsigned _index) const;
 	unsigned GetColorAttachmentTextureID(unsigned _index = C_RENDER_MATERIAL) const;

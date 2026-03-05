@@ -201,8 +201,8 @@ std::string UI_Core::AddMenuItem(std::shared_ptr<UIMenu> _menu) {
 	return std::string();
 }
 
-void UI_Core::RemoveMenuItem(std::string _id)
-{
+void UI_Core::RemoveMenuItem(std::string _id) {
+
 }
 
 
@@ -244,21 +244,6 @@ void UI_Core::AllowMouseInput(bool _setting) {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 Core* UI_Core::GetCore() const {
 	return m_applicationCore;
 }
@@ -278,7 +263,7 @@ void UI_Core::UpdateAllowedInputs() {
 	ImGui::GetIO().WantCaptureKeyboard = m_inputAllowed && m_keyboardInputAllowed;
 	ImGui::GetIO().WantCaptureMouse = m_inputAllowed && m_mouseInputAllowed;
 }
-void UI_Core::RenderTopBar() const {
+void UI_Core::RenderTopBar() const { 
 	if (ImGui::BeginMainMenuBar()) {
 		for (const auto& [_,menu] : m_menuStorage) {
 			if (menu) menu->Draw();

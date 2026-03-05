@@ -60,9 +60,9 @@ void Core::Init() {
 	Light& _dirLight = *(dirLight.GetComponent<Light>());
 
 	_dirLight.Type(DIRECTIONAL);
-	_dirLight.Power(1);
+	_dirLight.Power(1); 
 
-	dirLight.GetComponent<Transform>()->Forward(glm::vec3(0.5, 1, -1));
+	dirLight.GetComponent<Transform>()->Forward(glm::vec3(0, 0, 1));
 
 
 	LambertMaterial& mat = static_cast<LambertMaterial&>(obj1.GetComponent<MeshRenderer>()->GetDefaultMaterial());

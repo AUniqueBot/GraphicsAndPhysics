@@ -31,7 +31,7 @@ public:
 private:
 
 private:
-	glm::ivec2 m_resolution	{ 1024, 1024 };
+	glm::ivec2 m_resolution	{ 2048, 2048 };
 	unsigned m_layers		{ 64 };
 	unsigned m_fbo			{};
 	unsigned m_shadowTex	{};

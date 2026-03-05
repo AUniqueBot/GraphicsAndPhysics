@@ -120,9 +120,18 @@ void RenderTarget::AddInitialColorAttachments() {
 		GL_NONE,
 		true
 	};
+	ColorAttachment outShadowRT{
+		"out_litShadow",
+		ColorChannelLayout::RGBA,
+		ScalarType::UINT,
+		TextureFilter::LINEAR,
+		GL_NONE,
+		true
+	};
 
 	// must be added in sequence.
 	AddColorAttachment(outColor);
+	AddColorAttachment(outShadowRT);
 	AddColorAttachment(outObjectId);
 	
 	

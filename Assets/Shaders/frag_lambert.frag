@@ -4,13 +4,14 @@ in vec2 frag_uv;
 
 
 uniform sampler2D u_albedo;
-uniform sampler2DArrayShadow u_shadowMap;
+uniform sampler2DArray u_shadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
     
 layout (location = 0) out vec4 out_color;
 layout (location = 1) out uint out_objectId;
+layout (location = 2) out vec4 out_litShadow;
 
 #define LIGHT_POINT 0.0
 #define LIGHT_SPOT 1.0
@@ -41,14 +42,23 @@ float CalculateShadow() {
         int layerid = int(currentLight.m_shadowId.x);
         if (-1 == layerid) continue; // set to -1 in cpu before sent to gpu if illegal, otherwise it's unsigned::max()
         // texture(u_shadow, vec3(frag_uv,))
-
         vec4 lightspacepos = currentLight.m_lightMatrix * vec4(frag_position, 1.0);
-        vec3 projCoords = (lightspacepos.xyz/lightspacepos.w + 1.0) * 0.5;
+        
+        vec3 projCoords = ((lightspacepos.xyz/lightspacepos.w) + 1.0) * 0.5;
+        // skipping any out.
+        if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+            projCoords.y < 0.0 || projCoords.y > 1.0 ||
+            projCoords.z > 1.0
+        ) {
+            continue;
+        }
+
+
         float closestDepth = texture(u_shadowMap, vec3(projCoords.xy, layerid)).r;
         float currentDepth = projCoords.z;
         float bias = 0.005;
         float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
-        shadowLowest = min(shadow, shadowLowest);
+        shadowLowest = min(shadowLowest, shadow);
     }
     return shadowLowest;
 }
@@ -83,13 +93,13 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
         else if (lightType == LIGHT_DIRECTIONAL) {
             // Direction is assumed to be the light direction (e.g., from which light comes)
             vec3 lightDir = normalize(currentData.m_direction_roll.xyz);
-            float NdotL = max(dot(N, lightDir), 0.0);
+            float NdotL = max(dot(N, -lightDir), 0.0);
 
             vec3 lightColor = currentData.m_color_power.xyz;
             float power = currentData.m_color_power.w;
 
             // Lambert: albedo * lightColor * power * cos(theta)
-            result += lightColor * power * NdotL;
+            result += lightColor * power *  NdotL;
         }
 
         // ambient
@@ -112,6 +122,7 @@ void main() {
     out_color = color * vec4(
         CalculateLighting(frag_position, frag_normal), 1.0 // no alpha needed
     );
+    // out_color = vec4(vec3(CalculateShadow()), 1.0);
 
     
 }

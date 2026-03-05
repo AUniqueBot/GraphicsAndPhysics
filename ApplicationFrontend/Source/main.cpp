@@ -56,7 +56,7 @@ int main() {
 	c.SetWindow(mainWindow);
 
 	// failed to create window
-	if (!mainWindow) {
+	if (!mainWindow) { 
 		LOG_ERROR("Bad GLFW Init.");
 
 		glfwTerminate();
@@ -70,7 +70,7 @@ int main() {
 	// - GLEW Initialisation -------------------------------------------------------
 	GLenum glewStatus = glewInit();
 	//uic.Init(4, 6, mainWindow);
-
+	 
 	if (glewStatus != GLEW_OK) {
 		LOG_ERROR("Bad GLEW Init.");
 		//uic.Exit();

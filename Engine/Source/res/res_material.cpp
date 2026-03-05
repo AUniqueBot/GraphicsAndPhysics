@@ -197,7 +197,8 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::ApplyShadowMap(const ShadowMap& _shadowMap) {
+void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
+	glUseProgram(GetShader());
 	GLint uniformLocation{};
 
 	// lambda function
@@ -222,7 +223,7 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) {
 void Material::ApplyUniforms(
 	const glm::mat4& _objectMatrix,
 	const glm::mat4& _projectionMatrix,
-	const glm::mat4& _cameraMatrix,
+	const glm::mat4& _cameraMatrix, 
 	const EntityID& _objId
 ) const {
 
@@ -274,7 +275,7 @@ void Material::ApplyUniforms(
 		glUniform1ui(uniformLocation, _objId.GetID());
 	}
 
-
+	
 
 
 	GLenum err;

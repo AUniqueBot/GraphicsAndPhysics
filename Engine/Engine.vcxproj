@@ -298,7 +298,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\util\util_graphics_debugging.h" />
     <ClInclude Include="Headers\util\util_logging.h" />
     <ClInclude Include="Headers\util\util_math.h" />
-    <ClInclude Include="Headers\util\util_ostreamOverrides.h" />
     <ClInclude Include="Headers\util\util_print.h" />
     <ClInclude Include="Headers\util\util_serialisation.h" />
     <ClInclude Include="Source\arch\components\comp_rigidbody.cpp" />

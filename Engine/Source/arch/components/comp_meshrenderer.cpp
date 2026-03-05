@@ -32,6 +32,20 @@ std::shared_ptr<Mesh> MeshRenderer::GetMesh() {
 	return m_mesh; 
 }
 
+
+void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
+	if (m_materials.size() == 0) {
+ 		const Material& mat = GetDefaultMaterial();
+		mat.ApplyShadowMap(_shadowMap);
+		return;
+	}
+
+	for (const std::shared_ptr<Material>& matPtr : m_materials) {
+		// TODO - render based on materials indices.
+		matPtr->ApplyShadowMap(_shadowMap);
+	}
+}
+
 void MeshRenderer::Render(
 	const glm::mat4& _objectMatrix, 
 	const glm::mat4& _projectionMatrix, 
@@ -47,7 +61,7 @@ void MeshRenderer::Render(
 			_cameraMatrix,
 			GetEntityID()
 		);
- 
+
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
 		return;
 	}
@@ -60,10 +74,7 @@ void MeshRenderer::Render(
 			GetEntityID()
 		); 
 
-
 		// TODO - render based on materials indices.
-
-
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
 
 	}

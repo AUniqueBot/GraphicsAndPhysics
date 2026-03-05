@@ -19,7 +19,7 @@ constexpr unsigned CURRENT_MAX_LIGHT_COUNT	{ 20 };
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
-
+	 
 
 	// system funcs
 	void Init()			override;
@@ -115,8 +115,8 @@ private:
 	Viewport::RENDERMODE m_renderMode		{ Viewport::FILL };
 
 	GLuint m_shadowPrg						{};
-	GLuint m_shadowMeshLoc					{};
-	GLuint m_shadowLightLoc					{};
+	GLint m_shadowMeshLoc					{};
+	GLint m_shadowLightLoc					{};
 
 	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;

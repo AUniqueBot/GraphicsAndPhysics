@@ -8,7 +8,6 @@
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/components/comp_camera.h>
 #include <arch/components/comp_transform.h>
-#include <util/util_ostreamOverrides.h>
 #include <util/util_logging.h>
 #include <util/util_graphics_debugging.h>
 
@@ -16,7 +15,7 @@
 
 
 
-const char* GLDebugTypeToString(GLenum type) {
+static const char* GLDebugTypeToString(GLenum type) {
     switch (type) {
     case GL_DEBUG_TYPE_ERROR:               return "ERROR";
     case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "DEPRECATED_BEHAVIOR";
@@ -31,7 +30,7 @@ const char* GLDebugTypeToString(GLenum type) {
     }
 }
 
-const char* GLDebugSeverityToString(GLenum severity) {
+static const char* GLDebugSeverityToString(GLenum severity) {
     switch (severity) {
     case GL_DEBUG_SEVERITY_HIGH:         return "HIGH";
     case GL_DEBUG_SEVERITY_MEDIUM:       return "MEDIUM";
@@ -169,7 +168,7 @@ void RenderSystem::Init() {
 
 
 }
-
+ 
 void RenderSystem::PreUpdate() {
     // clear the buffer.
 
@@ -341,8 +340,9 @@ void RenderSystem::ShadowRenderPass(
         
         // convert light to matrix.
         auto trs = lightEntity->GetComponent<Transform>();
-        glm::vec3 sceneCenter = glm::vec3(0.0f);
         glm::vec3 lightDir = glm::normalize(trs->Forward());
+        glm::vec3 sceneCenter = glm::vec3(0.0f);
+
         glm::vec3 lightPos = sceneCenter - lightDir * 20.0f;
 
         glm::mat4 lightView = glm::lookAt(
@@ -352,12 +352,13 @@ void RenderSystem::ShadowRenderPass(
         );
 
         glm::mat4 lightProj = glm::ortho(
-            -10.f, 10.f,
-            -10.f, 10.f,
-            0.1f, 50.f
+            -50.f, 50.f,
+            -50.f, 50.f,
+            -50.f, 50.f
         );
 
         glm::mat4 lightSpaceMtx = lightProj * lightView;
+        light.GetLightData().m_matrix = lightSpaceMtx;
 
 
         m_shadowMap.Bind(shadowMapID);
@@ -383,12 +384,9 @@ void RenderSystem::ShadowRenderPass(
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-            PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
+            PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
-        
-
-
     }
     //DebugRenderPass(m_shadowMap.TextureID()); 
     UnbindLightingProgram();
@@ -437,9 +435,7 @@ void RenderSystem::LightingRenderPass(
             //currentVAO.LogDebug();
             currentVAO.UseMesh(*mesh);
             // check if there is data here...
-            for (const auto& mat : mr->GetMaterialList() ){
-                mat->ApplyShadowMap(m_shadowMap);
-            }
+            mr->ApplyShadowMap(m_shadowMap);
             mr->Render(
                 objectTransformMatrix,
                 _projectionMatrix,
@@ -449,7 +445,7 @@ void RenderSystem::LightingRenderPass(
         }
     }
 
-    glBindVertexArray(0);
+    glBindVertexArray(0); 
 
 
 

@@ -17,18 +17,16 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
 	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
-	glm::mat4 m_matrix				{};
+	mutable glm::mat4 m_matrix		{};
 	glm::vec4 m_shadowId			{}; // needs + 3 more
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
-		UpdateMatrix();
 	}
 	void SetType(float type) { m_position_type.w = type; }
 
 	void SetDirection(const glm::vec3& dir) { 
 		m_direction = glm::vec4(dir, m_direction.w); 
-		UpdateMatrix();
 	}
 	void SetRoll(float roll) { m_direction.w = roll; }
 
@@ -41,23 +39,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 		m_shadowId.x = id == std::numeric_limits<unsigned>::max() ? -1.f :  static_cast<float>(id); 
 	}
 
-
-private:
-	void UpdateMatrix() {
-		glm::vec3 pos = glm::vec3(m_position_type);
-		glm::vec3 dir = glm::normalize(glm::vec3(m_direction));
-		glm::vec3 up = glm::vec3(0, 1, 0);
-
-		if (abs(glm::dot(dir, up)) > 0.99f)
-			up = glm::vec3(1, 0, 0);
-		glm::mat4 viewMtx =  glm::lookAt(pos, pos + dir, up);
-		
-		glm::mat4 projectionMtx { glm::identity<glm::mat4>() };
-		if (m_position_type.w == DIRECTIONAL) {
-			projectionMtx = glm::ortho(-100, 100, -100, 100, -100, 100);
-		}
-		m_matrix = projectionMtx * viewMtx;
-	}
+	void SetMatrix(glm::mat4 mat) { m_matrix = mat; }
 };
 
 
@@ -91,7 +73,8 @@ public:
 	void Color(glm::vec3 _col);
 
 	
-	LightData GetLightData() const;
+	const LightData& GetLightData() const;
+	LightData& GetLightData();
 
 	void RenderShadow(
 		const MeshRenderer& _mr, 
