@@ -9,11 +9,6 @@
 
 void UBO::Init() {
 	using namespace GraphicsDebug;
-	GetError();
-	if (m_bufferType == _COUNT) {
-		LOG_ERROR("Unspecified Buffer Type. Ignoring.");
-		return;
-	}
 
 	//LOG_INFO("INIT START");
 	glGenBuffers(1, &m_bufferId);
@@ -25,23 +20,13 @@ void UBO::Init() {
 
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);
-	GetError();
 	glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, NULL, GL_DYNAMIC_DRAW);
-	GetError();
-	glBindBufferBase(GL_UNIFORM_BUFFER, m_bufferType, m_bufferId);
-	GetError();
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_bufferId);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	LOG_INFO("INIT END");
 }
 
-void UBO::BufferType(BUFFER_TYPE _type) {
-	m_bufferType = _type;
-}
-
-UBO::BUFFER_TYPE UBO::BufferType() const {
-	return m_bufferType;
-}
 
 size_t UBO::BufferSize() const {
 	return m_bufferSize;
@@ -53,28 +38,37 @@ void UBO::BufferSize(size_t _size) {
 
 
 
-void UBO::BindBuffer() {
+void UBO::BindBuffer() const {
+	if (m_currentBoundId == m_bufferId) return;
+	m_currentBoundId = m_bufferId;
+
 	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);	
 	GraphicsDebug::GetError();
 }
 
-void UBO::SetBinding(GLuint _program) {
-	const int uniformIndex = glGetUniformBlockIndex(_program, "LightBlock");
-	glUniformBlockBinding(_program, uniformIndex, 0);
+void UBO::SetBindingIndex(GLuint _bindingIndex) {
+	if (_bindingIndex == m_bindingIndex) return;
+	m_bindingIndex = _bindingIndex;
+	if (m_bufferId) {
+		glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_bufferId);
+	}
 }
 
-void UBO::FillBufferData(const void* _data) {
+void UBO::FillBufferData(const void* _data) const {
 	if (!_data) {
 		LOG_ERROR("nullptr provided, no data filled");
 		return;
 	}
-	BindBuffer();
-
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
 	GraphicsDebug::GetError();
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+
+void UBO::UnbindBuffer() {
+	if (m_currentBoundId == 0) return;
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	m_currentBoundId = 0;
+}
 
 
 
@@ -91,27 +85,26 @@ void UBOManager::Init() {
 		
 }
 
-void UBOManager::CreateUBO(UBO::BUFFER_TYPE _bufferType, size_t _size) {
+void UBOManager::CreateUBO(BUFFER_TYPE _bufferType, size_t _size) {
 	if (m_uboMap.contains(_bufferType)) {
 		LOG_WARN("Buffer Type <" << typeid(_bufferType).name() << "> already created.");
 		return;
 	}
 	UBO& ref = m_uboMap[_bufferType];
-
-	ref.BufferType(_bufferType);
 	ref.BufferSize(_size);
+	ref.SetBindingIndex(static_cast<unsigned>(_bufferType));
 	ref.Init();
 }
 
 
-UBO* UBOManager::GetUBO(UBO::BUFFER_TYPE _bufferType) {
+UBO* UBOManager::GetUBO(BUFFER_TYPE _bufferType) {
 	if (!m_uboMap.contains(_bufferType)) {
 		return nullptr;
 	}
 	return &m_uboMap[_bufferType];
 }
 
-const UBO* UBOManager::GetUBO(UBO::BUFFER_TYPE _bufferType) const {
+const UBO* UBOManager::GetUBO(BUFFER_TYPE _bufferType) const {
 	if (!m_uboMap.contains(_bufferType)) {
 		return nullptr;
 	}

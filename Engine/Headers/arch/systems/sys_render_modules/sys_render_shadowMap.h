@@ -31,10 +31,11 @@ public:
 private:
 
 private:
-	glm::ivec2 m_resolution	{ 2048, 2048 };
-	unsigned m_layers		{ 64 };
-	unsigned m_fbo			{};
-	unsigned m_shadowTex	{};
+	glm::ivec2 m_framebufferSize	{ 4096, 4096 };
+	glm::ivec2 m_tileSize			{ 4096, 4096 };
+	unsigned m_layers				{ 8 };
+	unsigned m_fbo					{ 0 };
+	unsigned m_shadowTex			{ 0 };
 
 
 	unsigned m_currentLayerCount{}; 

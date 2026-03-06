@@ -57,7 +57,6 @@ private:
 
 
 
-	void FillLightBufferData(const std::vector<LightData>& _culledLightList);
 	void ShadowRenderPass(
 		const Viewport& _viewport,
 		const EntityRegistry& _er
@@ -66,6 +65,13 @@ private:
 		const Viewport& _viewport,
 		const EntityRegistry& _er
 	);
+
+
+public:
+	// ubo
+	void FillLightBufferUBO(const std::vector<LightData>& _culledLightList);
+	void FillShadowMapUBO();
+
 
 
 	void DebugRenderPass(const unsigned& );

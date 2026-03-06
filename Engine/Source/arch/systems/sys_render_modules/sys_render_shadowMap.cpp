@@ -3,14 +3,14 @@
 
 
 void ShadowMap::SetResolution(glm::ivec2 _res) {
-	if (_res == m_resolution) return;
-	m_resolution = _res;
+	if (_res == m_framebufferSize) return;
+	m_framebufferSize = _res;
 	Destroy();
 	Build();
 }
 
 glm::ivec2 ShadowMap::GetResolution() const {
-	return m_resolution;
+	return m_framebufferSize;
 }
 
 void ShadowMap::SetLayers(unsigned _layers) {
@@ -31,8 +31,8 @@ void ShadowMap::Build() {
 		m_shadowTex,
 		1,
 		GL_DEPTH_COMPONENT32F,
-		m_resolution.x,
-		m_resolution.y,
+		m_framebufferSize.x,
+		m_framebufferSize.y,
 		m_layers
 	);
 
@@ -92,7 +92,7 @@ void ShadowMap::Bind(unsigned layer) const {
 	assert(status == GL_FRAMEBUFFER_COMPLETE);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glViewport(0, 0, m_resolution.x, m_resolution.y);
+	glViewport(0, 0, m_framebufferSize.x, m_framebufferSize.y);
 
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);

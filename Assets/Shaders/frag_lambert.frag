@@ -34,8 +34,19 @@ layout (std140, binding=2) uniform LightBlock {
 };
 
 
+layout (std140, binding=3) uniform ShadowMapData {
+	// vec3 _pad;                // pad to 16 bytes so next comes at offset 16
+	ivec2 m_framebufferSize;
+	ivec2 m_baseTileSize;
+	int m_lodCount;
+    ivec4 _pad;
+};
+
 float CalculateShadow() {
     float shadowLowest = 1.0;
+    vec2 fbSizeF = vec2(m_framebufferSize);
+    vec2 texelSize = vec2(1.0 / fbSizeF.x, 1.0 / fbSizeF.y);
+
     for (int i = 0; i < m_count; ++i) {
         // sample from the corresponding light map.
         LightData currentLight = m_lightData[i];
@@ -53,12 +64,18 @@ float CalculateShadow() {
             continue;
         }
 
-
-        float closestDepth = texture(u_shadowMap, vec3(projCoords.xy, layerid)).r;
         float currentDepth = projCoords.z;
         float bias = 0.005;
-        float shadow = currentDepth - bias > closestDepth ? 0.0 : 1.0;
-        shadowLowest = min(shadowLowest, shadow);
+        float accShadowVal = 0;
+        for (int u = -1; u <= 1; ++u) {
+            for (int v = -1; v <= 1; ++v) {
+                vec2 offset = vec2(texelSize.x * u, texelSize.y * v);
+                float closestDepth = texture(u_shadowMap, vec3(projCoords.xy + offset, layerid)).r;
+                accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+            }
+        }
+        accShadowVal /= 9.0;
+        shadowLowest = min(shadowLowest, accShadowVal);
     }
     return shadowLowest;
 }

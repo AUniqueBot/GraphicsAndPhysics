@@ -50,6 +50,13 @@ struct alignas(sizeof(glm::vec4)) LightUBOData {
 	int m_count{}; 
 };
 
+struct alignas(16) ShadowMapUBOData {
+	glm::ivec2 m_framebufferSize;
+	glm::ivec2 m_baseTileSize;
+	int m_lodCount; // each lod causes dim >> 2.
+	glm::ivec3 _pad;
+};
+
 
 
 
@@ -59,7 +66,7 @@ class Light : public Component {
 public:
 
 
-
+	 
 public:
 	void Init() override {}
 
@@ -76,12 +83,12 @@ public:
 	const LightData& GetLightData() const;
 	LightData& GetLightData();
 
-	void RenderShadow(
+	void RenderShadow( 
 		const MeshRenderer& _mr, 
 		const glm::mat4& _objectMatrix
 	) const;
 
-	// -- shadows ----------------------------------------
+	// -- shadows ----------------------------------------  
 	bool GetCastShadow() const;
 	void SetCastShadow(bool _cast);
 	

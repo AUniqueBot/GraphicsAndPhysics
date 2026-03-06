@@ -150,7 +150,8 @@ void RenderSystem::Init() {
 
     SetupGLDebug();
     m_uboManager.Init();
-    m_uboManager.CreateUBO(UBO::LIGHTS, sizeof(LightUBOData));
+    m_uboManager.CreateUBO(UBOManager::LIGHTS, sizeof(LightUBOData));
+    m_uboManager.CreateUBO(UBOManager::SHADOWS, sizeof(ShadowMapUBOData));
     m_vaoManager.Init();
     m_compositor.Init();
 
@@ -221,7 +222,8 @@ void RenderSystem::Render(const Viewport& _viewport) {
     std::vector<LightData> culledLights = CullLights(_viewport);
     BeginViewportPass(_viewport);
   
-    FillLightBufferData(culledLights);
+    FillLightBufferUBO(culledLights);
+    FillShadowMapUBO();
     ShadowRenderPass(_viewport, registry);
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
     LightingRenderPass(_viewport, registry);
@@ -272,15 +274,31 @@ void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
 
 }
 
-void RenderSystem::FillLightBufferData(const std::vector<LightData>& _culledLightList) {
+void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLightList) {
     LightUBOData lightData{};
     lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
     for (size_t i = 0; i < lightData.m_count; ++i) {
         lightData.m_lightData[i] = _culledLightList[i]; // or whatever data source
     }
 
-    UBO& lightBuffer = *(m_uboManager.GetUBO(UBO::LIGHTS));
+    UBO& lightBuffer = *m_uboManager.GetUBO(UBOManager::LIGHTS);
+    lightBuffer.BindBuffer();
     lightBuffer.FillBufferData(&lightData);
+    lightBuffer.UnbindBuffer();
+}
+
+void RenderSystem::FillShadowMapUBO() {
+    ShadowMapUBOData smData{};
+
+    smData.m_framebufferSize = m_shadowMap.GetResolution();
+    smData.m_baseTileSize = smData.m_framebufferSize;
+    smData.m_lodCount = 1;
+
+
+    UBO& shadowUBO = *m_uboManager.GetUBO(UBOManager::SHADOWS);
+    shadowUBO.BindBuffer();
+    shadowUBO.FillBufferData(&smData);
+    shadowUBO.UnbindBuffer();
 }
 
 void RenderSystem::UnbindViewport(const Viewport& _viewport) {
@@ -363,11 +381,6 @@ void RenderSystem::ShadowRenderPass(
 
         m_shadowMap.Bind(shadowMapID);
         glClear(GL_DEPTH_BUFFER_BIT);
-        LOG_INFO(
-            "Binding to shadowmap: "<< m_shadowMap.FBO() << 
-            " texture ID: [" << m_shadowMap.TextureID() << 
-            "]"
-        ); 
 
         for (const MeshRenderer& mr : mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
