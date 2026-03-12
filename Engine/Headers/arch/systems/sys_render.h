@@ -8,7 +8,7 @@
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 #include <arch/components/comp_light.h>
-
+#include <arch/components/comp_transform.h>
 
 constexpr unsigned C_MAX_LIGHT_COUNT_LOW	{ 20 };
 constexpr unsigned C_MAX_LIGHT_COUNT_MED	{ 40 };
@@ -31,7 +31,7 @@ public:
 	void PreUpdate()	override;
 	void Update()		override;
 	void Stop()			override { LOG_INFO("Stop"); };
-	void Cleanup()		override { m_shadowMap.Destroy(); LOG_INFO("Cleaning up shadow map");  };
+	void Cleanup()		override { m_directionalShadowMaps.Destroy(); LOG_INFO("Cleaning up shadow map");  };
 
 
 	Viewport::RENDERMODE GetRenderMode() const;
@@ -42,9 +42,9 @@ public:
 
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
+	 
 private: 
 	
-private: 
 	void ClearBuffers(const Viewport& _viewport);
 	void UseViewport(const Viewport& _viewport);
 	void UnbindViewport(const Viewport& _viewport);
@@ -64,6 +64,24 @@ private:
 	void LightingRenderPass(
 		const Viewport& _viewport,
 		const EntityRegistry& _er
+	);
+
+private: 
+	// shadow passes.
+
+
+
+	void RenderRangedLightShadows(
+		const Light& light,
+		const Transform& lightTransform,
+		const EntityRegistry& entityRegistry,
+		const ComponentPool<MeshRenderer>& meshPool
+	);
+	void RenderPointLightShadows(
+		const Light& light,
+		const Transform& lightTransform,
+		const EntityRegistry& entityRegistry,
+		const ComponentPool<MeshRenderer>& meshPool
 	);
 
 
@@ -130,8 +148,8 @@ private:
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;
 
-
-	ShadowMap m_shadowMap;
+	ShadowMap m_directionalShadowMaps;
+	ShadowMap m_pointLightShadowMaps;
 	GLuint m_planeShader{};
 
 };

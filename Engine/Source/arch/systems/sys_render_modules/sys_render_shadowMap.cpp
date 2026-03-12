@@ -2,15 +2,31 @@
 
 
 
-void ShadowMap::SetResolution(glm::ivec2 _res) {
+void ShadowMap::SetShadowMapType(ShadowMapType type) {
+	m_shadowMapType = type;
+}
+
+const ShadowMapType& ShadowMap::GetShadowMapType() const{
+	return m_shadowMapType;
+}
+
+void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 	if (_res == m_framebufferSize) return;
 	m_framebufferSize = _res;
 	Destroy();
 	Build();
 }
 
-glm::ivec2 ShadowMap::GetResolution() const {
+const glm::ivec2& ShadowMap::GetFramebufferSize() const {
 	return m_framebufferSize;
+}
+
+void ShadowMap::SetBaseTileSize(glm::ivec2 _res) {
+	m_baseTileSize = _res;
+}
+
+const glm::ivec2& ShadowMap::GetBaseTileSize() const {
+	return m_baseTileSize;
 }
 
 void ShadowMap::SetLayers(unsigned _layers) {
@@ -25,7 +41,7 @@ unsigned ShadowMap::GetLayers() const {
 }
 
 void ShadowMap::Build() {	
-	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_shadowTex);
+	glCreateTextures(m_shadowMapType, 1, &m_shadowTex);
 
 	glTextureStorage3D(
 		m_shadowTex,
@@ -59,8 +75,6 @@ void ShadowMap::Build() {
 
 	glNamedFramebufferDrawBuffer(m_fbo, GL_NONE);
 	glNamedFramebufferReadBuffer(m_fbo, GL_NONE);
-
-
 }
 
 void ShadowMap::Destroy() {
@@ -132,3 +146,12 @@ void ShadowMap::ReclaimID(unsigned _id) {
 bool ShadowMap::HasFreeLayers() const {
 	return m_currentLayerCount < m_layers || m_freeLayers.size() > 0;
 }
+
+unsigned ShadowMap::GetLODLevels() const {
+	return m_levels;
+}
+
+void ShadowMap::SetLODLevels(unsigned _levels) {
+	m_levels = _levels;
+}
+

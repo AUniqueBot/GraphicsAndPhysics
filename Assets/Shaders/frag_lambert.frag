@@ -67,10 +67,18 @@ float CalculateShadow() {
         float currentDepth = projCoords.z;
         float bias = 0.005;
         float accShadowVal = 0;
-        for (int u = -1; u <= 1; ++u) {
-            for (int v = -1; v <= 1; ++v) {
-                vec2 offset = vec2(texelSize.x * u, texelSize.y * v);
-                float closestDepth = texture(u_shadowMap, vec3(projCoords.xy + offset, layerid)).r;
+
+
+
+        vec2 textureCoords = projCoords.xy;
+        vec2 ratio = vec2(m_baseTileSize)/vec2(m_framebufferSize); 
+        textureCoords *= ratio;
+
+        // PCF shading.
+        for (int u = -5; u <= 5; ++u) {
+            for (int v = -5; v <= 5 ; ++v) {
+                vec2 offset = texelSize * vec2(u,v);
+                float closestDepth = texture(u_shadowMap, vec3(textureCoords + offset, layerid)).r;
                 accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
             }
         }

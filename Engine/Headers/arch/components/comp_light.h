@@ -88,8 +88,8 @@ public:
 		const glm::mat4& _objectMatrix
 	) const;
 
-	// -- shadows ----------------------------------------  
-	bool GetCastShadow() const;
+	// -- shadows ----------------------------------------   
+	bool GetCastShadow() const; 
 	void SetCastShadow(bool _cast);
 	
 	void InvalidateShadowMapID() const;

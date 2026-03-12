@@ -85,6 +85,7 @@ void Core::Run() {
 	PreUpdate();
 	glfwPollEvents();
 	Update();
+	FixedUpdate();
 	PostUpdate();
 }
 
@@ -104,6 +105,22 @@ void Core::Update() {
 
 	for (auto s : m_systemInstances) {
 		s->Update();
+	}
+}
+
+void Core::FixedUpdate() {
+
+	static double currentDelta = 0;
+	currentDelta += DeltaTime();
+
+	if (currentDelta < m_fixedDeltaTime) return;
+	int updateCount	{ static_cast<int>(currentDelta/m_fixedDeltaTime) };
+
+
+	for (int i{}; i < updateCount; ++i) {
+		for (auto s : m_systemInstances) {
+			s->FixedUpdate();
+		}
 	}
 }
 

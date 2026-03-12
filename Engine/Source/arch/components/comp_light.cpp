@@ -44,24 +44,24 @@ void Light::SetCastShadow(bool _cast) {
     m_castShadow = _cast;
     m_castShadowDirty = true;
 }
-
+ 
 void Light::InvalidateShadowMapID() const {
     m_shadowMapID = std::numeric_limits<unsigned>::max();
-    m_lightDataMismatch = true;
+    m_lightDataMismatch = true;  
 }
 
 void Light::SetShadowMapID(unsigned _id) const {
     if (_id == m_shadowMapID) return;
     m_shadowMapID = _id;
     m_lightDataMismatch = true;
-}
+} 
 
 unsigned Light::GetShadowMapID() const {
-    return m_shadowMapID;
+    return m_shadowMapID; 
 }
 
 bool Light::CastShadowDirty() const {
-    return m_castShadowDirty;
+    return m_castShadowDirty; 
 }
 
 void Light::CleanCastShadow() const {

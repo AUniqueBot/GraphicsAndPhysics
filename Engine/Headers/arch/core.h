@@ -29,6 +29,7 @@ public:
 
 	void PreUpdate();
 	void Update();
+	void FixedUpdate();
 	void PostUpdate();
 
 
@@ -38,29 +39,31 @@ public:
 	EntityRegistry& GetRegistry()					{  return m_registry; }
 	const EntityRegistry& GetRegistry() const		{  return m_registry; }
 
-	EntityFactory& GetEntityFactory()			{ return m_entityFactory; }
-	const EntityFactory& GetEntityFactory() const { return m_entityFactory; }
+	EntityFactory& GetEntityFactory()				{ return m_entityFactory; }
+	const EntityFactory& GetEntityFactory() const	{ return m_entityFactory; }
 
 
 	// - window -------------------------------------
 	void SetWindow(GLFWwindow* _window);
-	bool IsWindowSet()							{ return m_window != nullptr; }
-	GLFWwindow* GetWindow()						{ return m_window; }
+	bool IsWindowSet()								{ return m_window != nullptr; }
+	GLFWwindow* GetWindow()							{ return m_window; }
 
 
 
 	// - input system -------------------------------
-	InputSystem& GetInputSystem()				{ return m_inputSystem; }
-	const InputSystem& GetInputSystem()	const	{ return m_inputSystem; }
+	InputSystem& GetInputSystem()					{ return m_inputSystem; }
+	const InputSystem& GetInputSystem()	const		{ return m_inputSystem; }
 
-	InputRouter& GetInputRouter()				{ return m_inputRouter; }
-	const InputRouter& GetInputRouter()	const	{ return m_inputRouter; }
+	InputRouter& GetInputRouter()					{ return m_inputRouter; }
+	const InputRouter& GetInputRouter()	const		{ return m_inputRouter; }
 
 	// - delta time ---------------------------------
 	static double DeltaTime();
+	double FixedDeltaTime()	const					{ return m_fixedDeltaTime;  }
+	void SetFixedDeltaTime(double _newDelta)		{ m_fixedDeltaTime = _newDelta; }
 
 
-	ResourceManager& GetResourceManager() { return m_resourceManager; };
+	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
 	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
 
@@ -112,6 +115,6 @@ private:
 	ResourceManager m_resourceManager;
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;
-
+	double m_fixedDeltaTime					{ 1.0/60.0 };
 
 };
