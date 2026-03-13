@@ -223,7 +223,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     BeginViewportPass(_viewport);
   
     FillLightBufferUBO(culledLights);
-    FillShadowMapUBO();
+    FillShadowMapUBO(culledLights);
     ShadowRenderPass(_viewport, registry);
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
     LightingRenderPass(_viewport, registry);
@@ -281,6 +281,7 @@ void RenderSystem::RenderRangedLightShadows(
 ) {
     for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
         for (const MeshRenderer& mr : meshPool.Data()) {
+            if (!mr.GetCastShadow()) continue;
             const auto meshEntity{ entityRegistry.GetEntity(mr.GetEntityID()) };
             if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
 
@@ -295,7 +296,7 @@ void RenderSystem::RenderRangedLightShadows(
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-            PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
+            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
     }
@@ -327,7 +328,7 @@ void RenderSystem::RenderPointLightShadows(
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-            PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
+            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
     }
@@ -335,7 +336,7 @@ void RenderSystem::RenderPointLightShadows(
 }
 
 void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLightList) {
-    LightUBOData lightData{};
+    static LightUBOData lightData{};
     lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
     for (size_t i = 0; i < lightData.m_count; ++i) {
         lightData.m_lightData[i] = _culledLightList[i]; // or whatever data source
@@ -347,12 +348,17 @@ void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLight
     lightBuffer.UnbindBuffer();
 }
 
-void RenderSystem::FillShadowMapUBO() {
-    ShadowMapUBOData smData{};
+void RenderSystem::FillShadowMapUBO(const std::vector<LightData>& _culledLightList) {
+    static ShadowMapUBOData smData{};
+    
 
-    smData.m_framebufferSize = m_directionalShadowMaps.GetFramebufferSize();
-    smData.m_baseTileSize = m_directionalShadowMaps.GetBaseTileSize(); 
-    smData.m_lodCount = m_directionalShadowMaps.GetLODLevels();
+
+
+    for (const LightData& lightData: _culledLightList) {
+            
+
+    }
+
 
 
     UBO& shadowUBO = *m_uboManager.GetUBO(UBOManager::SHADOWS);
@@ -386,110 +392,76 @@ void RenderSystem::ShadowRenderPass(
     // in the shadow pass, all meshes use the SAME material unless it has transparency or some SS nonsense. 
     BindLightingProgram();
 
-    for (const Light& light : lightPool.Data()) {
 
+    // sort and batch render by light types.
+    std::array<std::vector<const Light*>, 3> lightBuckets;
+    for (std::vector<const Light*> bucket : lightBuckets) {
+        bucket.reserve(lightPool.size());
+    }
+
+    for (const Light& light : lightPool.Data()) {
         const auto lightEntity{ _er.GetEntity(light.GetEntityID()) };
         if (!lightEntity->Active() || !lightEntity->IsVisible()) continue;
-        if (light.Type() != DIRECTIONAL) continue;
+        int id = light.Type() == POINT ? 0 : light.Type() == SPOT ? 1 : light.Type() == DIRECTIONAL ? 2 : -1;
+        if (id < 0) continue;
+        lightBuckets[id].push_back(&light);
+    }
 
 
-        if (light.CastShadowDirty()) {
-            bool wantsShadowId{ light.GetCastShadow() };
-            if (!wantsShadowId) {
-                m_directionalShadowMaps.ReclaimID(light.GetShadowMapID());
-                light.InvalidateShadowMapID();
-                LOG_INFO("clearing light id.");
-            }
-            else {
-                if (!m_directionalShadowMaps.HasFreeLayers()) {
-                    LOG_INFO("No free slots for shadow map. Waiting for next update.");
-                    // early exit, cannot update the var.
-                    continue;
-                }
-                LOG_INFO("Assigning new id to light.");
-                light.SetShadowMapID(m_directionalShadowMaps.GenerateLayerID());
-            }
-            light.CleanCastShadow();
+    // rendering shadows.
+    using ShadowRenderFunc = std::function<
+        void(const Viewport&, const EntityRegistry&, const Light&, const ComponentPool<MeshRenderer>&)
+    >;
+    for (int i{}; i < 3; ++i) {
+        ShadowMap* currentShadowMap{};
+        ShadowRenderFunc shadowPassFunction;
+        switch (i) {
+        case 0:
+            currentShadowMap = &m_pointLightShadowMaps;
+            shadowPassFunction = [this](
+                const Viewport& vp, 
+                const EntityRegistry& er, 
+                const Light& l, 
+                const ComponentPool<MeshRenderer>& mr
+                ) {
+                    this->PointLightShadowRenderPass(vp, er, l, mr);
+                };
+            break;
+        case 1:
+            currentShadowMap = &m_spotLightShadowMaps;
+            shadowPassFunction = [this](
+                const Viewport& vp,
+                const EntityRegistry& er,
+                const Light& l,
+                const ComponentPool<MeshRenderer>& mr
+                ) {
+                    this->SpotLightShadowRenderPass(vp, er, l, mr);
+                };
+            break;
+        case 2:
+            currentShadowMap = &m_directionalShadowMaps;
+            shadowPassFunction = [this](
+                const Viewport& vp,
+                const EntityRegistry& er,
+                const Light& l,
+                const ComponentPool<MeshRenderer>& mr
+                ) {
+                    this->DirectionalLightShadowRenderPass(vp, er, l, mr);
+                };
+            break;
         }
 
-
-        if (!light.GetCastShadow()) continue; // ignore anything not asking for it.
-        unsigned shadowMapID{light.GetShadowMapID()};
-        if (!m_directionalShadowMaps.ValidateID(shadowMapID)) continue;
-
-
-        
-        // convert light to matrix.
-        auto trs = lightEntity->GetComponent<Transform>();
-        glm::vec3 lightDir = glm::normalize(trs->Forward());
-
-        glm::vec3 cameraCenter = _viewport.Position();
-        glm::vec3 lightPos = cameraCenter - lightDir * 20.0f;
-
-        glm::mat4 lightView = glm::lookAt(
-            lightPos,
-            cameraCenter,
-            glm::vec3(0, 1, 0)
-        );
-
-        glm::mat4 lightProj = glm::ortho(
-            -50.f, 50.f,
-            -50.f, 50.f,
-            -50.f, 50.f
-        );
-
-        glm::mat4 lightSpaceMtx = lightProj * lightView; // typical.
-        light.GetLightData().m_matrix = lightSpaceMtx;
-        m_directionalShadowMaps.Bind(shadowMapID);
-
-        glViewport(0, 0, fbSize.x, fbSize.y);
-        glScissor(0, 0, fbSize.x, fbSize.y);
-        glClear(GL_DEPTH_BUFFER_BIT);
-
-
-
-
-
-        float currentYOffset = 0;
-        for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
-            glm::ivec2 offset{ (level % 2), (level / 2) };
-            // every level
-            
-
-
-            // calculate matrix.
-            lightSpaceMtx = lightProj * lightView;
-            float nextYOffset = m_directionalShadowMaps.GetBaseTileSize().x >> level;
-            currentYOffset += m_directionalShadowMaps.GetBaseTileSize().x >> level;
-            LOG_INFO("Next Y Offset for level [" << level << "] " << currentYOffset << ", " << nextYOffset);
-            m_directionalShadowMaps.GetBaseTileSize();
-            glViewport(offset.x * tileSize.x, offset.y * tileSize.y, tileSize.x, tileSize.y);
-            glScissor(offset.x * tileSize.x, offset.y * tileSize.y, tileSize.x, tileSize.y);
-
-            for (const MeshRenderer& mr : mrPool.Data()) {
-                const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
-                if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
-            
-                std::shared_ptr<const Mesh> mesh = mr.GetMesh();
-                if (!mesh) continue;
-                VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
-                if (!vaoHandler) continue;
-                VAOHandler& currentVAO = *vaoHandler;
-                currentVAO.BindVAO();
-                currentVAO.UseMesh(*mesh);
-
-                // do something.
-                auto trsMesh = meshEntity->GetComponent<Transform>();
-                const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-                PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
-                glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
-            }
+        currentShadowMap->Bind();
+        for (const Light* light : lightBuckets[i]) {
+            unsigned id{ light->GetShadowMapID() };
+            currentShadowMap->SetBoundLayer(id);
+            shadowPassFunction(_viewport, _er, *light, mrPool);
         }
     }
+    ShadowMap::Unbind();
+
+
     UnbindLightingProgram();
-    m_directionalShadowMaps.Unbind();
-
-
 }
 
 void RenderSystem::LightingRenderPass(
@@ -514,37 +486,152 @@ void RenderSystem::LightingRenderPass(
         }
 
         const auto& mr = e.GetComponent<MeshRenderer>();
-        if (mr) {
+        if (!mr) continue;
 
-            auto trs = e.GetComponent<Transform>();
-            const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
-            std::shared_ptr<Mesh> mesh = mr->GetMesh();
-            if (!mesh) continue;
-            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
+        auto trs = e.GetComponent<Transform>();
+        const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
-            if (!vaoHandler) continue;
+        std::shared_ptr<Mesh> mesh = mr->GetMesh();
+        if (!mesh) continue;
+        VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
-            bool isSelected{ _er.EntityIsSelected(e.GetID()) };
+        if (!vaoHandler) continue;
 
-            VAOHandler& currentVAO = *vaoHandler;
-            currentVAO.BindVAO();
-            //currentVAO.LogDebug();
-            currentVAO.UseMesh(*mesh);
-            // check if there is data here...
-            mr->ApplyShadowMap(m_directionalShadowMaps);
-            mr->Render(
-                objectTransformMatrix,
-                _projectionMatrix,
-                _cameraMatrix
-            );
-            m_vaoManager.UnbindVAO();
-        }
+        bool isSelected{ _er.EntityIsSelected(e.GetID()) };
+
+        VAOHandler& currentVAO = *vaoHandler;
+        currentVAO.BindVAO();
+        //currentVAO.LogDebug();
+        currentVAO.UseMesh(*mesh);
+        // check if there is data here...
+        mr->ApplyShadowMap(m_directionalShadowMaps);
+        mr->Render(
+            objectTransformMatrix,
+            _projectionMatrix,
+            _cameraMatrix
+        );
+        m_vaoManager.UnbindVAO();
+        
     }
 
     glBindVertexArray(0); 
 
 
+
+}
+
+void RenderSystem::DirectionalLightShadowRenderPass(
+    const Viewport& _viewport, 
+    const EntityRegistry& _er, 
+    const Light& _light,
+    const ComponentPool<MeshRenderer>& _mrPool
+) {
+    const EntityViewConst& lightEntity  { _er.GetEntity(_light.GetEntityID()) };
+    const ComponentView<Transform>& trs { lightEntity->GetComponent<Transform>() };
+    const glm::vec2& fbSize             { m_directionalShadowMaps.GetFramebufferSize() };
+
+
+    // generate light data.
+    if (_light.CastShadowDirty()) {
+        bool wantsShadowId{ _light.GetCastShadow() };
+        if (!wantsShadowId) {
+            m_directionalShadowMaps.ReclaimID(_light.GetShadowMapID());
+            _light.InvalidateShadowMapID();
+            LOG_INFO("clearing light id.");
+        }
+        else {
+            if (!m_directionalShadowMaps.HasFreeLayers()) {
+                LOG_INFO("No free slots for shadow map. Waiting for next update.");
+                // early exit, cannot update the var.
+                return;
+            }
+            LOG_INFO("Assigning new id to light.");
+            _light.SetShadowMapID(m_directionalShadowMaps.GenerateLayerID());
+        }
+        _light.CleanCastShadow();
+    }
+    if (!_light.GetCastShadow()) return; // ignore anything not asking for it.
+    unsigned shadowMapID{ _light.GetShadowMapID() };
+    if (!m_directionalShadowMaps.ValidateID(shadowMapID)) return;
+    // convert light to matrix.
+    glm::vec3 lightDir      { glm::normalize(trs->Forward()) };
+    const glm::vec3& camPos        { _viewport.Position() };
+    glm::vec3 lightPos = camPos - lightDir * 20.0f;
+
+    glm::mat4 lightView = glm::lookAt(
+        lightPos,
+        camPos,
+        glm::vec3(0, 1, 0)
+    );
+
+    m_directionalShadowMaps.Bind(); // batch handling 
+    m_directionalShadowMaps.SetBoundLayer(shadowMapID);
+    glViewport(0, 0, fbSize.x, fbSize.y);
+    glScissor(0, 0, fbSize.x, fbSize.y);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    float currentYOffset = 0;
+    for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
+        glm::ivec2 offset{ (level % 2), (level / 2) };
+        // every level generate a new ortho matrix
+        glm::mat4 lightProj = glm::ortho(
+            -50.f, 50.f,
+            -50.f, 50.f,
+            0.f, 100.f
+        );
+
+        // calculate light space matrix.
+        glm::mat4 lightSpaceMtx { lightProj * lightView }; // typical.
+        // textures must be in multiples of 2.
+        int tileSizeX = m_directionalShadowMaps.GetBaseTileSize().x >> level;
+        int tileSizeY = m_directionalShadowMaps.GetBaseTileSize().y >> level;
+        m_directionalShadowMaps.GetBaseTileSize();
+        glViewport(0, currentYOffset, tileSizeX, tileSizeY);
+        glScissor(0, currentYOffset, tileSizeX, tileSizeY);
+        currentYOffset += tileSizeY;
+
+        for (const MeshRenderer& mr : _mrPool.Data()) {
+            const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
+            if (!meshEntity->Active() || !meshEntity->IsVisible() || !mr.GetCastShadow()) continue;
+
+            std::shared_ptr<const Mesh> mesh = mr.GetMesh();
+            if (!mesh) continue;
+            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
+            if (!vaoHandler) continue;
+            VAOHandler& currentVAO = *vaoHandler;
+            currentVAO.BindVAO();
+            currentVAO.UseMesh(*mesh);
+
+            // do something.
+            auto trsMesh = meshEntity->GetComponent<Transform>();
+            const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
+            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
+            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+        }
+    }
+
+    // once done pass this to the shadow UBO.
+
+   
+
+}
+
+void RenderSystem::PointLightShadowRenderPass(
+    const Viewport& _viewport, 
+    const EntityRegistry& _er, 
+    const Light& _light, 
+    const ComponentPool<MeshRenderer>& _mrPool
+) {
+
+}
+
+void RenderSystem::SpotLightShadowRenderPass(
+    const Viewport& _viewport, 
+    const EntityRegistry& _er, 
+    const Light& _light, 
+    const ComponentPool<MeshRenderer>& _mrPool
+) {
 
 }
 

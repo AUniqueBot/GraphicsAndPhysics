@@ -41,7 +41,6 @@ public:
 
 	void AddMaterial(std::shared_ptr<Material> _material);
 
-
 	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 
 	void Render(
@@ -51,9 +50,12 @@ public:
 		);
 
 
+
 	static Material& GetDefaultMaterial();
 
-
+	// - shadows ----------------------------------------------------------------------------------
+	const bool& GetCastShadow() const	{ return m_castShadow; };
+	void SetCastShadow(bool _cast)		{ m_castShadow = _cast; };
 
 public:
 

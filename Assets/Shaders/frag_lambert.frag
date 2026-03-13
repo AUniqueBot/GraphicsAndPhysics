@@ -20,28 +20,38 @@ layout (location = 2) out vec4 out_litShadow;
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
+#define MAX_LIGHT_COUNT 10
+#define MAX_SHADOW_COUNT 10
+#define SHADOW_MAP_MATRIX_COUNT 6
 
 struct LightData {
 	vec4 m_position_type;	// 1, 2, 3, 4
 	vec4 m_direction_roll;
 	vec4 m_color_power;
 	vec4 m_attenuation;
-    mat4 m_lightMatrix;
-    vec4 m_shadowId;
 };
+
+
+struct ShadowData {
+    mat4 m_lightMatrix[SHADOW_MAP_MATRIX_COUNT];
+    vec4 m_atlasOffsetSize;
+    vec4 m_lightTypeShadowId;
+};
+
+
 layout (std140, binding=2) uniform LightBlock {
 	// vec3 _pad;                // pad to 16 bytes so next comes at offset 16
-	LightData m_lightData[10];
-	int m_count;
+	LightData m_lightData[MAX_LIGHT_COUNT];
+	int m_lightCount;
 };
 
 
 layout (std140, binding=3) uniform ShadowMapData {
-	// vec3 _pad;                // pad to 16 bytes so next comes at offset 16
-	ivec2 m_framebufferSize;
-	ivec2 m_baseTileSize;
-	int m_lodCount;
-    ivec4 _pad;
+    ShadowData m_shadowData[MAX_SHADOW_COUNT];
+	vec4 m_directionalAtlasResAndTexelSize;
+	vec4 m_spotAtlasResAndTexelSize;
+	vec4 m_pointAtlasResAndTexelSize;
+    int m_shadowCount;
 };
 
 
@@ -91,49 +101,43 @@ float PercentageCloserFilter(
 }
 
 float CalculateShadow() {
-    float shadowLowest = 1.0;
-    vec2 fbSizeF = vec2(m_framebufferSize);
-    vec2 texelSize = vec2(1.0 / fbSizeF.x, 1.0 / fbSizeF.y);
 
-    for (int i = 0; i < m_count; ++i) {
-        // sample from the corresponding light map.
-        LightData currentLight = m_lightData[i];
-        int layerid = int(currentLight.m_shadowId.x);
-        if (-1 == layerid) continue; // set to -1 in cpu before sent to gpu if illegal, otherwise it's unsigned::max()
-        // texture(u_shadow, vec3(frag_uv,))
-        vec4 lightspacepos = currentLight.m_lightMatrix * vec4(frag_position, 1.0);
+    // for (int i= 0; i < )
+    // float shadowLowest = 1.0;
+    // vec2 fbSizeF = vec2(m_framebufferSize);
+    // vec2 texelSize = vec2(1.0 / fbSizeF.x, 1.0 / fbSizeF.y);
+
+    // for (int i = 0; i < m_count; ++i) {
+    //     // sample from the corresponding light map.
+    //     LightData currentLight = m_lightData[i];
+    //     int layerid = int(currentLight.m_shadowId.x);
+    //     if (-1 == layerid) continue; // set to -1 in cpu before sent to gpu if illegal, otherwise it's unsigned::max()
+    //     // texture(u_shadow, vec3(frag_uv,))
+    //     vec4 lightspacepos = currentLight.m_lightMatrix * vec4(frag_position, 1.0);
         
-        vec3 projCoords = ((lightspacepos.xyz/lightspacepos.w) + 1.0) * 0.5;
-        // skipping any out.
-        if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
-            projCoords.y < 0.0 || projCoords.y > 1.0 ||
-            projCoords.z > 1.0
-        ) {
-            continue;
-        }
+    //     vec3 projCoords = ((lightspacepos.xyz/lightspacepos.w) + 1.0) * 0.5;
+    //     // skipping any out.
+    //     if (projCoords.x < 0.0 || projCoords.x > 1.0 ||
+    //         projCoords.y < 0.0 || projCoords.y > 1.0 ||
+    //         projCoords.z > 1.0
+    //     ) {
+    //         continue;
+    //     }
 
-        float currentDepth = projCoords.z;
-        float bias = 0.005;
-        float accShadowVal = 0;
+    //     float currentDepth = projCoords.z;
+    //     float bias = 0.005;
+    //     float accShadowVal = 0;
 
-        vec2 textureCoords = projCoords.xy;
-        vec2 ratio = vec2(m_baseTileSize)/vec2(m_framebufferSize); 
-        textureCoords *= ratio;
+    //     vec2 textureCoords = projCoords.xy;
+    //     vec2 ratio = vec2(m_baseTileSize)/vec2(m_framebufferSize); 
+    //     textureCoords *= ratio;
+    //     accShadowVal = PercentageCloserFilter(textureCoords, texelSize, layerid, 5, currentDepth, bias, u_shadowMap);
 
-        // // PCF shading.
-        // for (int u = -5; u <= 5; ++u) {
-        //     for (int v = -5; v <= 5 ; ++v) {
-        //         vec2 offset = texelSize * vec2(u,v);
-        //         float closestDepth = texture(u_shadowMap, vec3(textureCoords + offset, layerid)).r;
-        //         accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
-        //     }
-        // }
-        // accShadowVal /= 9.0;
-        accShadowVal = PercentageCloserFilter(textureCoords, texelSize, layerid, 5, currentDepth, bias, u_shadowMap);
+    //     shadowLowest = min(shadowLowest, accShadowVal);
+    // }
+    // return shadowLowest;
+    return 1.0;
 
-        shadowLowest = min(shadowLowest, accShadowVal);
-    }
-    return shadowLowest;
 }
 
 
@@ -143,7 +147,7 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     
     vec3 result = vec3(0.0);
     vec3 ambientRes = vec3(0.0);
-    for (int i = 0; i < m_count; ++i) {
+    for (int i = 0; i < m_lightCount; ++i) {
         LightData currentData = m_lightData[i];
         int lightType = int(currentData.m_position_type.w);
         // point light

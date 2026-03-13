@@ -41,7 +41,6 @@ void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 	}
 
 	for (const std::shared_ptr<Material>& matPtr : m_materials) {
-		// TODO - render based on materials indices.
 		matPtr->ApplyShadowMap(_shadowMap);
 	}
 }

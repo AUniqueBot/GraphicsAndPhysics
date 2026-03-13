@@ -34,8 +34,9 @@ public:
 	void Destroy();
 
 
-	void Bind(unsigned _layer) const;
-	void Unbind() const;
+	void Bind() const;
+	void SetBoundLayer(unsigned _layer) const;
+	static void Unbind();
 
 
 	unsigned FBO() const;
@@ -55,15 +56,15 @@ private:
 
 private:
 
-	ShadowMapType m_shadowMapType	{ ShadowMapType::TEXTURE };
+	ShadowMapType m_shadowMapType			{ ShadowMapType::TEXTURE };
 
-	glm::ivec2 m_framebufferSize	{ 4096, 4096 };
-	glm::ivec2 m_baseTileSize		{ 2048, 2048 };	// 2048, 1024, 512, 256
-	unsigned m_layers				{ 8 };
-	unsigned m_fbo					{ 0 };
-	unsigned m_shadowTex			{ 0 };
-	unsigned m_levels				{ 4 };
-
-	unsigned m_currentLayerCount{}; 
-	std::vector<unsigned> m_freeLayers{};
+	glm::ivec2 m_framebufferSize			{ 4096, 4096 };
+	glm::ivec2 m_baseTileSize				{ 2048, 2048 };	// 2048, 1024, 512, 256
+	unsigned m_layers						{ 8 };
+	unsigned m_fbo							{ 0 };
+	unsigned m_shadowTex					{ 0 };
+	unsigned m_levels						{ 4 };
+	mutable unsigned m_currentBoundLayer	{ 0 };
+	unsigned m_currentLayerCount			{ 0 }; 
+	std::vector<unsigned> m_freeLayers		{ };
 };

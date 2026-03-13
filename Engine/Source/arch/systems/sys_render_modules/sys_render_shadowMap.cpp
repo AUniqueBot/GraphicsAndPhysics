@@ -91,29 +91,22 @@ void ShadowMap::Destroy() {
 
 
 
-void ShadowMap::Bind(unsigned layer) const {
-	LOG_DEBUG("Binding to shadow map layer: "<< layer);
-	assert(layer < m_layers);
-	glNamedFramebufferTextureLayer(
-		m_fbo,
-		GL_DEPTH_ATTACHMENT,
-		m_shadowTex,
-		0,
-		layer
-	);
-
-	GLenum status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
-	assert(status == GL_FRAMEBUFFER_COMPLETE);
-
+void ShadowMap::Bind() const {
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	glViewport(0, 0, m_framebufferSize.x, m_framebufferSize.y);
-
 	glDrawBuffer(GL_NONE);
 	glReadBuffer(GL_NONE);
 }
 
+void ShadowMap::SetBoundLayer(unsigned _layer) const {
+	assert(_layer < m_layers);
+	if (m_currentBoundLayer == _layer) return;
+	m_currentBoundLayer = _layer;
+	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, m_shadowTex, 0, _layer);
+}
 
-void ShadowMap::Unbind() const {
+
+void ShadowMap::Unbind() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 

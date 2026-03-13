@@ -17,8 +17,6 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
 	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
-	mutable glm::mat4 m_matrix		{};
-	glm::vec4 m_shadowId			{}; // needs + 3 more
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
@@ -34,27 +32,60 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	void SetPower(float power) { m_color_power.w = power; }
 
 	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
-
-	void SetID(unsigned id) { 
-		m_shadowId.x = id == std::numeric_limits<unsigned>::max() ? -1.f :  static_cast<float>(id); 
-	}
-
-	void SetMatrix(glm::mat4 mat) { m_matrix = mat; }
 };
 
 
-constexpr unsigned C_MAX_LIGHTS{ 10 };
+constexpr int C_SHADOWMAPMATRIX_COUNT { 6 }; // you need 6 (!) for cube maps.
+struct alignas(sizeof(glm::vec4)) ShadowData {
+
+	glm::mat4 m_lightMatrix[C_SHADOWMAPMATRIX_COUNT]	{};	//
+	glm::vec4 m_atlasOffsetSize							{}; // position and size of the tile.
+	glm::vec4 m_lightTypeShadowId						{}; // id is layer of arrayid.
+
+
+	// get light type and shadow id.
+
+	void SetShadowID(int _id) {
+		m_lightTypeShadowId.y = _id;
+	}
+	void SetLightType(LightType _type) {
+		m_lightTypeShadowId.x = static_cast<int>(_type);
+	}
+
+	void SetMatrix(glm::mat4 _matrix, int _idx) {
+		assert(_idx < C_SHADOWMAPMATRIX_COUNT && _idx > -1);
+		m_lightMatrix[_idx] = _matrix;
+	}
+
+
+	void SetAtlasOffset(const glm::vec2& _offset) {
+		m_atlasOffsetSize.x = _offset.x;
+		m_atlasOffsetSize.y = _offset.y;
+	}
+
+	void SetAtlasSize(const glm::vec2& _tileSize) {
+		m_atlasOffsetSize.z = _tileSize.x;
+		m_atlasOffsetSize.w = _tileSize.y;
+	}
+};
+
+
+constexpr unsigned C_MAX_LIGHTS			{ 10 };
 struct alignas(sizeof(glm::vec4)) LightUBOData {
-	//glm::vec3 _pad;
 	LightData m_lightData[C_MAX_LIGHTS];
 	int m_count{}; 
 };
 
-struct alignas(16) ShadowMapUBOData {
-	glm::ivec2 m_framebufferSize;
-	glm::ivec2 m_baseTileSize;
-	int m_lodCount; // each lod causes dim >> 2.
-	glm::ivec3 _pad;
+
+constexpr int C_MAX_SHADOWS				{ 10 };
+struct alignas(sizeof(glm::vec4)) ShadowMapUBOData {
+	ShadowData m_shadowData[C_MAX_SHADOWS];
+
+	glm::vec4 m_directionalAtlasResAndTexelSize;
+	glm::vec4 m_spotAtlasResAndTexelSize;
+	glm::vec4 m_pointAtlasResAndTexelSize;
+	
+	int m_count	{};
 };
 
 

@@ -56,7 +56,6 @@ private:
 
 
 
-
 	void ShadowRenderPass(
 		const Viewport& _viewport,
 		const EntityRegistry& _er
@@ -65,7 +64,27 @@ private:
 		const Viewport& _viewport,
 		const EntityRegistry& _er
 	);
+private: 
+	void DirectionalLightShadowRenderPass(
+		const Viewport& _viewport,
+		const EntityRegistry& _er,
+		const Light& _light,
+		const ComponentPool<MeshRenderer>& _mrPool
+	);
 
+	void PointLightShadowRenderPass(
+		const Viewport& _viewport,
+		const EntityRegistry& _er,
+		const Light& _light,
+		const ComponentPool<MeshRenderer>& _mrPool
+	);
+
+	void SpotLightShadowRenderPass(
+		const Viewport& _viewport,
+		const EntityRegistry& _er,
+		const Light& _light,
+		const ComponentPool<MeshRenderer>& _mrPool
+	);
 private: 
 	// shadow passes.
 
@@ -88,7 +107,7 @@ private:
 public:
 	// ubo
 	void FillLightBufferUBO(const std::vector<LightData>& _culledLightList);
-	void FillShadowMapUBO();
+	void FillShadowMapUBO(const std::vector<LightData>& _culledLightList);
 
 
 
@@ -148,6 +167,7 @@ private:
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;
 
+	ShadowMap m_spotLightShadowMaps;
 	ShadowMap m_directionalShadowMaps;
 	ShadowMap m_pointLightShadowMaps;
 	GLuint m_planeShader{};

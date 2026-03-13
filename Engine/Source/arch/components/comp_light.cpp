@@ -90,7 +90,6 @@ void Light::RenderShadow(const MeshRenderer& _mr, const glm::mat4& _objectMatrix
      
     const unsigned UNIFORMLOC{};
     glUniformMatrix4fv(UNIFORMLOC, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
-    glUniformMatrix4fv(UNIFORMLOC, 1, GL_FALSE, glm::value_ptr(lightData.m_matrix));
     glDrawElements(GL_TRIANGLES, _mr.GetMesh()->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
     
 
@@ -101,7 +100,6 @@ void Light::UpdateLightData() const {
     m_lightData.SetType(m_lightType);
     m_lightData.SetColor(m_color); 
     m_lightData.SetPower(m_power);
-    m_lightData.SetID(m_shadowMapID);
     m_lightDataMismatch = false;
 }
 
