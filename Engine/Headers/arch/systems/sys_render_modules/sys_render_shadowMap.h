@@ -21,7 +21,7 @@ public:
 
 
 	void SetFramebufferSize(glm::ivec2 _res);
-	const glm::ivec2& GetFramebufferSize() const;
+	const glm::ivec2& GetFramebufferSize() const; 
 
 	void SetBaseTileSize(glm::ivec2 _res);
 	const glm::ivec2& GetBaseTileSize() const;

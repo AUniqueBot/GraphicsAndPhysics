@@ -1,4 +1,6 @@
-﻿in vec3 frag_position;
+﻿// #version 440 core // hide this on compile lmaoooo.
+
+in vec3 frag_position;
 in vec3 frag_normal;
 in vec2 frag_uv;
 
@@ -42,6 +44,52 @@ layout (std140, binding=3) uniform ShadowMapData {
     ivec4 _pad;
 };
 
+
+
+
+const vec2 poissonDisk[16] = vec2[](
+    vec2(-0.94201624, -0.39906216),
+    vec2(0.94558609, -0.76890725),
+    vec2(-0.09418410, -0.92938870),
+    vec2(0.34495938, 0.29387760),
+    vec2(-0.91588581, 0.45771432),
+    vec2(-0.81544232, -0.87912464),
+    vec2(-0.38277543, 0.27676845),
+    vec2(0.97484398, 0.75648379),
+    vec2(0.44323325, -0.97511554),
+    vec2(0.53742981, -0.47373420),
+    vec2(-0.26496911, -0.41893023),
+    vec2(0.79197514, 0.19090188),
+    vec2(-0.24188840, 0.99706507),
+    vec2(-0.81409955, 0.91437590),
+    vec2(0.19984126, 0.78641367),
+    vec2(0.14383161, -0.14100790)
+);
+
+
+float PercentageCloserFilter(
+    vec2 position, 
+    vec2 texelSize, 
+    int layerid,
+    int halfKernelLength, 
+    float currentDepth, 
+    float bias,
+    sampler2DArray shadowMap
+    ) {
+
+    float accShadowVal = 0;
+    // PCF shading
+    for (float u = -halfKernelLength; u <= halfKernelLength; ++u) {
+        for (float v = -halfKernelLength; v <= halfKernelLength ; ++v) {
+            vec2 offset = texelSize * vec2(u,v);
+            float closestDepth = texture(shadowMap, vec3(position + offset, layerid)).r;
+            accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+        }
+    }
+    float kernel = float(2 * halfKernelLength + 1);
+    return accShadowVal /= (kernel * kernel);
+}
+
 float CalculateShadow() {
     float shadowLowest = 1.0;
     vec2 fbSizeF = vec2(m_framebufferSize);
@@ -72,15 +120,17 @@ float CalculateShadow() {
         vec2 ratio = vec2(m_baseTileSize)/vec2(m_framebufferSize); 
         textureCoords *= ratio;
 
-        // PCF shading.
-        for (int u = -5; u <= 5; ++u) {
-            for (int v = -5; v <= 5 ; ++v) {
-                vec2 offset = texelSize * vec2(u,v);
-                float closestDepth = texture(u_shadowMap, vec3(textureCoords + offset, layerid)).r;
-                accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
-            }
-        }
-        accShadowVal /= 9.0;
+        // // PCF shading.
+        // for (int u = -5; u <= 5; ++u) {
+        //     for (int v = -5; v <= 5 ; ++v) {
+        //         vec2 offset = texelSize * vec2(u,v);
+        //         float closestDepth = texture(u_shadowMap, vec3(textureCoords + offset, layerid)).r;
+        //         accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+        //     }
+        // }
+        // accShadowVal /= 9.0;
+        accShadowVal = PercentageCloserFilter(textureCoords, texelSize, layerid, 5, currentDepth, bias, u_shadowMap);
+
         shadowLowest = min(shadowLowest, accShadowVal);
     }
     return shadowLowest;

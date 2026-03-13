@@ -423,7 +423,7 @@ void RenderSystem::ShadowRenderPass(
         auto trs = lightEntity->GetComponent<Transform>();
         glm::vec3 lightDir = glm::normalize(trs->Forward());
 
-        glm::vec3 cameraCenter = glm::vec3();
+        glm::vec3 cameraCenter = _viewport.Position();
         glm::vec3 lightPos = cameraCenter - lightDir * 20.0f;
 
         glm::mat4 lightView = glm::lookAt(
@@ -449,14 +449,19 @@ void RenderSystem::ShadowRenderPass(
 
 
 
-        
+
+        float currentYOffset = 0;
         for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
             glm::ivec2 offset{ (level % 2), (level / 2) };
+            // every level
+            
+
 
             // calculate matrix.
-
             lightSpaceMtx = lightProj * lightView;
-
+            float nextYOffset = m_directionalShadowMaps.GetBaseTileSize().x >> level;
+            currentYOffset += m_directionalShadowMaps.GetBaseTileSize().x >> level;
+            LOG_INFO("Next Y Offset for level [" << level << "] " << currentYOffset << ", " << nextYOffset);
             m_directionalShadowMaps.GetBaseTileSize();
             glViewport(offset.x * tileSize.x, offset.y * tileSize.y, tileSize.x, tileSize.y);
             glScissor(offset.x * tileSize.x, offset.y * tileSize.y, tileSize.x, tileSize.y);
@@ -630,7 +635,7 @@ std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
         lightData.SetPosition(position);
         // direction of 0, -1, 0, * quat.
         lightData.SetDirection(trs->Forward());
-
+         
         potentialLights.push_back(lightData);
     }
     return potentialLights;
