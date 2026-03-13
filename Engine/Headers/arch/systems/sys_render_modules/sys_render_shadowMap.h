@@ -30,7 +30,7 @@ public:
 	unsigned GetLayers() const;
 
 
-	void Build();
+	void BuildShadowMap();
 	void Destroy();
 
 

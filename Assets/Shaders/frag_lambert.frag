@@ -68,8 +68,6 @@ float CalculateShadow() {
         float bias = 0.005;
         float accShadowVal = 0;
 
-
-
         vec2 textureCoords = projCoords.xy;
         vec2 ratio = vec2(m_baseTileSize)/vec2(m_framebufferSize); 
         textureCoords *= ratio;

@@ -14,7 +14,7 @@ void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 	if (_res == m_framebufferSize) return;
 	m_framebufferSize = _res;
 	Destroy();
-	Build();
+	BuildShadowMap();
 }
 
 const glm::ivec2& ShadowMap::GetFramebufferSize() const {
@@ -33,14 +33,14 @@ void ShadowMap::SetLayers(unsigned _layers) {
 	if (_layers == m_layers) return;
 	m_layers = _layers;
 	Destroy();
-	Build();
+	BuildShadowMap();
 }
 
 unsigned ShadowMap::GetLayers() const {
 	return m_layers;
 }
 
-void ShadowMap::Build() {	
+void ShadowMap::BuildShadowMap() {	
 	glCreateTextures(m_shadowMapType, 1, &m_shadowTex);
 
 	glTextureStorage3D(

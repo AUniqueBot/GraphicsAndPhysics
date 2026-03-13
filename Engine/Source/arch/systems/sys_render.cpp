@@ -423,7 +423,7 @@ void RenderSystem::ShadowRenderPass(
         auto trs = lightEntity->GetComponent<Transform>();
         glm::vec3 lightDir = glm::normalize(trs->Forward());
 
-        glm::vec3 cameraCenter = _viewport.Position();
+        glm::vec3 cameraCenter = glm::vec3();
         glm::vec3 lightPos = cameraCenter - lightDir * 20.0f;
 
         glm::mat4 lightView = glm::lookAt(
@@ -671,7 +671,7 @@ bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent, const V
 
 void RenderSystem::SetupShadowProgram() {
     std::string vertexShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_shadowPassVertex.vert");
-    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowPass.frag");
+    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowPassFrag.frag");
 
     ShaderProgram lambertShader{};
     GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
@@ -690,11 +690,11 @@ void RenderSystem::SetupShadowBuffers() {
     
     m_directionalShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
     m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
-    m_directionalShadowMaps.Build(); 
+    m_directionalShadowMaps.BuildShadowMap(); 
 
     m_pointLightShadowMaps.SetFramebufferSize({SHADOW_WH, SHADOW_WH});
     m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::CUBEMAP);
-    m_pointLightShadowMaps.Build(); 
+    m_pointLightShadowMaps.BuildShadowMap(); 
 
 }
 
