@@ -6,7 +6,9 @@ in vec2 frag_uv;
 
 
 uniform sampler2D u_albedo;
-uniform sampler2DArray u_shadowMap;
+uniform sampler2DArray u_directionalShadowMap;
+uniform sampler2DArray u_spotLightShadowMap;
+uniform samplerCubeArray u_pointLightShadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
@@ -34,7 +36,7 @@ struct LightData {
 
 struct ShadowData {
     mat4 m_lightMatrix[SHADOW_MAP_MATRIX_COUNT];
-    vec4 m_atlasOffsetSize;
+    vec4 m_atlasOffsetSize[SHADOW_MAP_MATRIX_COUNT];
     vec4 m_lightTypeShadowId;
 };
 
@@ -51,7 +53,9 @@ layout (std140, binding=3) uniform ShadowMapData {
 	vec4 m_directionalAtlasResAndTexelSize;
 	vec4 m_spotAtlasResAndTexelSize;
 	vec4 m_pointAtlasResAndTexelSize;
-    int m_shadowCount;
+    int m_directionalShadowCount;
+    int m_pointShadowCount;
+    int m_spotShadowCount;
 };
 
 
@@ -100,9 +104,33 @@ float PercentageCloserFilter(
     return accShadowVal /= (kernel * kernel);
 }
 
-float CalculateShadow() {
 
-    // for (int i= 0; i < )
+
+
+
+
+
+
+
+
+float CalculateShadow() {
+    float addedValue = 0.0;
+    for (int i= 0; i < m_directionalShadowCount; ++i) {
+ 
+        int type = int(m_shadowData[i].m_lightTypeShadowId.x);
+        if (LIGHT_DIRECTIONAL == type) {
+            addedValue = -1.0;
+            // sample the texture.
+
+        }
+        else if (LIGHT_POINT == type) {
+
+        }
+        else if (LIGHT_SPOT == type) {
+
+        }
+
+    }
     // float shadowLowest = 1.0;
     // vec2 fbSizeF = vec2(m_framebufferSize);
     // vec2 texelSize = vec2(1.0 / fbSizeF.x, 1.0 / fbSizeF.y);
@@ -136,7 +164,7 @@ float CalculateShadow() {
     //     shadowLowest = min(shadowLowest, accShadowVal);
     // }
     // return shadowLowest;
-    return 1.0;
+    return 1.0 + addedValue;
 
 }
 

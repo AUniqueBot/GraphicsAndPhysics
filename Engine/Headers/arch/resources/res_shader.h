@@ -33,8 +33,8 @@ public:
 	static std::string ParseShaderCode(
 		const std::string& _sourceCodePath
 	);
-	static GLuint LoadShader(const char* _sourceCode, SHADERTYPE _type);
-	static GLuint GenerateShaderProgram(std::vector<GLuint>);
+	static GLuint CompileShader(const char* _sourceCode, SHADERTYPE _type);
+	static GLuint BuildShaderProgram(std::vector<GLuint>);
 
 	
 	void SetShaderID(GLuint _id) { m_programId = _id; };

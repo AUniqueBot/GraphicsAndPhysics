@@ -6,6 +6,10 @@
 
 #include <arch/components/comp_light.h>
 
+#include <arch/resources/res_material_presets/res_material_lambert.h>
+#include <arch/resources/res_material_presets/res_material_lambert.h>
+
+
 
 EntityView EntityFactory::CreateGameObject(const glm::vec3& pos) {
 	EntityView objv{ m_registry.Instantiate() };
@@ -51,6 +55,7 @@ EntityView EntityFactory::CreateSphere(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Cube>(Cube()));
 			mr->GetMesh()->Init();
 			mr->Init();
+			mr->AddMaterial(std::make_shared<LambertMaterial>(LambertMaterial()));
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}

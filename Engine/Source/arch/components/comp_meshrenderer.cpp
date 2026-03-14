@@ -33,6 +33,18 @@ std::shared_ptr<Mesh> MeshRenderer::GetMesh() {
 }
 
 
+void MeshRenderer::AddMaterial(std::shared_ptr<Material> _material) {
+	_material->Init();
+	m_materials.push_back(_material);
+}
+
+void MeshRenderer::RemoveMaterial(std::shared_ptr<Material> _material) {
+	const auto& itr{ std::find(m_materials.begin(), m_materials.end(), _material) };
+	if (itr == m_materials.end()) return;
+	std::rotate(itr, itr + 1, m_materials.end());
+	m_materials.pop_back();
+}
+
 void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 	if (m_materials.size() == 0) {
  		const Material& mat = GetDefaultMaterial();

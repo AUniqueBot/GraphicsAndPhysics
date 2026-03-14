@@ -68,6 +68,32 @@ void Light::CleanCastShadow() const {
     m_castShadowDirty = false;
 }
 
+const ShadowData& Light::GetShadowData() const {
+    if (m_shadowDataMismatch) {
+        UpdateShadowData();
+    }
+    return m_shadowData;
+}
+
+ShadowData& Light::GetShadowData() {
+    if (m_shadowDataMismatch) {
+        UpdateShadowData();
+    }
+    return m_shadowData;
+}
+
+void Light::SetShadowDataMatrix(int level, const glm::mat4& matrix) const {
+    m_shadowData.SetMatrix(matrix, level);
+}
+
+void Light::SetShadowDataAtlasOffset(int level, const glm::vec2& offset) const {
+    m_shadowData.SetAtlasOffset(offset, level);
+}
+
+void Light::SetShadowDataAtlasSize(int level, const glm::vec2& size) const {
+    m_shadowData.SetAtlasSize(size, level);
+}
+
 
 const LightData& Light::GetLightData() const {
     if (m_lightDataMismatch) {
@@ -96,11 +122,16 @@ void Light::RenderShadow(const MeshRenderer& _mr, const glm::mat4& _objectMatrix
 }
 
 void Light::UpdateLightData() const {
-    if (!m_lightDataMismatch) return;
     m_lightData.SetType(m_lightType);
     m_lightData.SetColor(m_color); 
     m_lightData.SetPower(m_power);
     m_lightDataMismatch = false;
+}
+
+void Light::UpdateShadowData() const {
+    
+
+    m_shadowDataMismatch = false;
 }
 
 

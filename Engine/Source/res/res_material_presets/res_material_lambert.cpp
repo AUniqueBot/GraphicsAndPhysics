@@ -12,11 +12,11 @@ void LambertMaterial::Init() {
     std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_lambert.frag");
 
     ShaderProgram lambertShader{};
-    GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-    GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
+    GLuint vtxShaderId = ShaderProgram::CompileShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
+    GLuint fragShaderId = ShaderProgram::CompileShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
 
     std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
-    GLuint programId             { ShaderProgram::GenerateShaderProgram(shaderList) };
+    GLuint programId             { ShaderProgram::BuildShaderProgram(shaderList) };
     lambertShader.SetShaderID(programId);
     SetShaderProgram(std::make_shared<ShaderProgram>(lambertShader));
 

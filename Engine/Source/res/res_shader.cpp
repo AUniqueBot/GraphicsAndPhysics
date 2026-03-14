@@ -34,7 +34,7 @@ void ShaderProgram::Unload() {
 
 
 
-GLuint ShaderProgram::GenerateShaderProgram(std::vector<GLuint> _shaderList) {
+GLuint ShaderProgram::BuildShaderProgram(std::vector<GLuint> _shaderList) {
 	// go through shaders and link
 	GLuint programId = glCreateProgram();
 	for (GLuint& shaderId : _shaderList) {
@@ -118,7 +118,7 @@ std::string ShaderProgram::ParseShaderCode_Internal(
 
 
 
-GLuint ShaderProgram::LoadShader(const char* _sourceCode, SHADERTYPE _type) {
+GLuint ShaderProgram::CompileShader(const char* _sourceCode, SHADERTYPE _type) {
 	// - reject cases -------------------------------
 	if (_type > FRAG) { // if (_type > _COUNT) { // once full implementation is complete.
 		LOG_WARN("Unsupported shader type");

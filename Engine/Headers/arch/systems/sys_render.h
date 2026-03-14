@@ -107,7 +107,7 @@ private:
 public:
 	// ubo
 	void FillLightBufferUBO(const std::vector<LightData>& _culledLightList);
-	void FillShadowMapUBO(const std::vector<LightData>& _culledLightList);
+	void FillShadowMapUBO(const std::vector<ShadowData>& _culledLightList);
 
 
 
@@ -131,7 +131,10 @@ private:
 	/*!
 		@brief checks which lights to calculate from.
 	*/
-	std::vector<LightData> CullLights(const Viewport& _viewport);
+	const std::vector<Light*> CullLights(const Viewport& _viewport, EntityRegistry& _er);
+	void UpdateLightingData(const std::vector<Light*> lightList, const EntityRegistry& er);
+	std::vector<LightData> GetLightData(const std::vector<Light*>& lightList) const;
+	std::vector<ShadowData> GetShadowData(const std::vector<Light*>& lightList) const;
 
 
 	bool LightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;
@@ -142,17 +145,14 @@ private:
 	void SetupShadowProgram();
 	void SetupShadowBuffers();
 	void PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix);
-	void BindLightingProgram();
-	void UnbindLightingProgram();
+	void BindShadowShader();
+	void UnbindShadowShader();
 
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	
 	// shadow handling.
-
-	// genera
-
 
 	Viewport::FACETORENDER m_facesToRender	{ Viewport::FRONT };
 	Viewport::RENDERMODE m_renderMode		{ Viewport::FILL };
@@ -171,6 +171,11 @@ private:
 	ShadowMap m_directionalShadowMaps;
 	ShadowMap m_pointLightShadowMaps;
 	GLuint m_planeShader{};
+
+
+	// UBOs
+	mutable ShadowMapUBOData m_smData		{};
+	mutable LightUBOData m_ldData			{};
 
 };
 

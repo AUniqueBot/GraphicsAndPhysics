@@ -83,7 +83,7 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 }
 
 template<std::derived_from<Component> T>
-inline bool EntityRegistry::ComponentPoolExists() {
+inline bool EntityRegistry::ComponentPoolExists() const {
 	return static_cast<bool>(GetComponentPool<T>());
 }
 

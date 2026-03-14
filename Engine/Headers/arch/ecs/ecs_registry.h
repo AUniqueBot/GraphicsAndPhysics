@@ -212,7 +212,7 @@ public:
 	///! @tparam T: Component type
 	///! @return true if exists
 	template<std::derived_from<Component> T>
-	bool ComponentPoolExists();
+	bool ComponentPoolExists() const;
 
 
 	void SelectEntity(EntityID _selectedObject, bool _additive = false);

@@ -40,8 +40,5 @@ private:
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
 	GLuint m_reservedColorTexId {}; // texture identifier, storage of color texture.
-
-	
-
 };
 

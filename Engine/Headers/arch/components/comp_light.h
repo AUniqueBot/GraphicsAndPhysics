@@ -35,11 +35,15 @@ struct alignas(sizeof(glm::vec4)) LightData {
 };
 
 
-constexpr int C_SHADOWMAPMATRIX_COUNT { 6 }; // you need 6 (!) for cube maps.
+
+
+
+
+constexpr int C_SHADOWMAP_COUNT { 6 }; // you need 6 (!) for cube maps.
 struct alignas(sizeof(glm::vec4)) ShadowData {
 
-	glm::mat4 m_lightMatrix[C_SHADOWMAPMATRIX_COUNT]	{};	//
-	glm::vec4 m_atlasOffsetSize							{}; // position and size of the tile.
+	glm::mat4 m_lightMatrix[C_SHADOWMAP_COUNT]			{};	//
+	glm::vec4 m_atlasOffsetSize[C_SHADOWMAP_COUNT]		{}; // position and size of the tile.
 	glm::vec4 m_lightTypeShadowId						{}; // id is layer of arrayid.
 
 
@@ -53,19 +57,21 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 	}
 
 	void SetMatrix(glm::mat4 _matrix, int _idx) {
-		assert(_idx < C_SHADOWMAPMATRIX_COUNT && _idx > -1);
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
 		m_lightMatrix[_idx] = _matrix;
 	}
 
 
-	void SetAtlasOffset(const glm::vec2& _offset) {
-		m_atlasOffsetSize.x = _offset.x;
-		m_atlasOffsetSize.y = _offset.y;
+	void SetAtlasOffset(const glm::vec2& _offset, int _idx) {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		m_atlasOffsetSize[_idx].x = _offset.x;
+		m_atlasOffsetSize[_idx].y = _offset.y;
 	}
 
-	void SetAtlasSize(const glm::vec2& _tileSize) {
-		m_atlasOffsetSize.z = _tileSize.x;
-		m_atlasOffsetSize.w = _tileSize.y;
+	void SetAtlasSize(const glm::vec2& _tileSize, int _idx) {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		m_atlasOffsetSize[_idx].z = _tileSize.x;
+		m_atlasOffsetSize[_idx].w = _tileSize.y;
 	}
 };
 
@@ -85,7 +91,10 @@ struct alignas(sizeof(glm::vec4)) ShadowMapUBOData {
 	glm::vec4 m_spotAtlasResAndTexelSize;
 	glm::vec4 m_pointAtlasResAndTexelSize;
 	
-	int m_count	{};
+
+	int m_directionalCount;
+	int m_pointCount;
+	int m_spotCount;
 };
 
 
@@ -114,6 +123,9 @@ public:
 	const LightData& GetLightData() const;
 	LightData& GetLightData();
 
+
+
+
 	void RenderShadow( 
 		const MeshRenderer& _mr, 
 		const glm::mat4& _objectMatrix
@@ -131,9 +143,18 @@ public:
 	bool CastShadowDirty() const;
 	void CleanCastShadow() const;
 
+	const ShadowData& GetShadowData() const;
+	ShadowData& GetShadowData();
+
+public:
+	void SetShadowDataMatrix(int level, const glm::mat4& matrix) const;
+	void SetShadowDataAtlasOffset(int level, const glm::vec2& offset) const;
+	void SetShadowDataAtlasSize(int level, const glm::vec2& size) const;
+
 private:
 
 	void UpdateLightData() const;
+	void UpdateShadowData() const;
 
 private:
 	// generic values
@@ -156,9 +177,9 @@ private:
 	float m_angle									{ 25.0f };				// in degrees.
 
 	// shadows
-	mutable bool m_castShadow								{ false };
-	mutable bool m_castShadowDirty							{ false };
-	mutable unsigned m_shadowMapID							{ std::numeric_limits<unsigned>::max() };
+	mutable bool m_castShadow						{ false };
+	mutable bool m_castShadowDirty					{ false };
+	mutable unsigned m_shadowMapID					{ std::numeric_limits<unsigned>::max() };
 
 
 	// all this would provide a struct of data to be sent for rendering.
@@ -168,6 +189,8 @@ private:
 	mutable bool m_lightDataMismatch				{ true };
 
 
+	mutable ShadowData m_shadowData					{};
+	mutable bool m_shadowDataMismatch				{};
 };
 
 

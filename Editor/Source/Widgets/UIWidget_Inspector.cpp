@@ -124,24 +124,46 @@ void UIWidget_Inspector::Draw() {
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
 		ResourceManager& resmgr = papc->GetResourceManager();
+		auto& matList{ mr.GetMaterialList() };
+		if (matList.size() == 0) {
+			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
+			float colBuffer[4]{
+				mat.Color()[0],
+				mat.Color()[1],
+				mat.Color()[2],
+				mat.Color()[3],
+			};
 
-		LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
-		float colBuffer[4]{
-			mat.Color()[0],
-			mat.Color()[1],
-			mat.Color()[2],
-			mat.Color()[3],
-		};
-
-		if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
-			mat.Color(glm::vec4(
-				colBuffer[0], 
-				colBuffer[1], 
-				colBuffer[2], 
-				colBuffer[3] 
-				));
+			if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
+				mat.Color(glm::vec4(
+					colBuffer[0], 
+					colBuffer[1], 
+					colBuffer[2], 
+					colBuffer[3] 
+					));
+			}
 		}
 
+		else {
+
+			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(matList[0].get());
+			float colBuffer[4]{
+				mat.Color()[0],
+				mat.Color()[1],
+				mat.Color()[2],
+				mat.Color()[3],
+			};
+
+			if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
+				mat.Color(glm::vec4(
+					colBuffer[0],
+					colBuffer[1],
+					colBuffer[2],
+					colBuffer[3]
+				));
+			}
+			
+		}
 
 		const auto& selectedMesh = mr.GetMesh();
 		std::string selectedMeshName = selectedMesh->Name();

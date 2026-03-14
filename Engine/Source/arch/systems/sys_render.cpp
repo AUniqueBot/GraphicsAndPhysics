@@ -162,9 +162,9 @@ void RenderSystem::Init() {
 
     std::string vtxShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_fullscreenTriangle.vert");
     std::string fragShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowMap.frag");
-    const unsigned vtx = ShaderProgram::LoadShader(vtxShaderSrc.c_str(), ShaderProgram::VERTEX);
-    const unsigned frag = ShaderProgram::LoadShader(fragShaderSrc.c_str(), ShaderProgram::FRAG);
-    m_planeShader = ShaderProgram::GenerateShaderProgram({ vtx, frag });
+    const unsigned vtx = ShaderProgram::CompileShader(vtxShaderSrc.c_str(), ShaderProgram::VERTEX);
+    const unsigned frag = ShaderProgram::CompileShader(fragShaderSrc.c_str(), ShaderProgram::FRAG);
+    m_planeShader = ShaderProgram::BuildShaderProgram({ vtx, frag });
 
 
 
@@ -214,18 +214,25 @@ void RenderSystem::Update() {
 
 
 void RenderSystem::Render(const Viewport& _viewport) {
-    const glm::vec2 vpDims  { _viewport.ViewportDimensions() };
+    const glm::vec2 vpDims{ _viewport.ViewportDimensions() };
     if (!vpDims.x || !vpDims.y) return;
 
     auto GetError = GraphicsDebug::GetError;
     EntityRegistry& registry = Core::GetInstance().GetRegistry();
-    std::vector<LightData> culledLights = CullLights(_viewport);
+
+    const std::vector<Light*> culledLights          { CullLights(_viewport, registry) };
+    const std::vector<LightData> lightData          { GetLightData(culledLights) };
+    const std::vector<ShadowData> shadowData        { GetShadowData(culledLights) };
+    
+    
+    UpdateLightingData(culledLights, registry);
+    
+
     BeginViewportPass(_viewport);
-  
-    FillLightBufferUBO(culledLights);
-    FillShadowMapUBO(culledLights);
     ShadowRenderPass(_viewport, registry);
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
+    FillLightBufferUBO(lightData);
+    FillShadowMapUBO(shadowData);
     LightingRenderPass(_viewport, registry);
 
     EndViewportPass(_viewport);
@@ -309,10 +316,7 @@ void RenderSystem::RenderPointLightShadows(
     const ComponentPool<MeshRenderer>& meshPool
 ) {
     for (unsigned sides{}; sides < m_directionalShadowMaps.GetLODLevels(); ++sides) {
-
-
         // change perspective 
-
         for (const MeshRenderer& mr : meshPool.Data()) {
             const auto meshEntity{ entityRegistry.GetEntity(mr.GetEntityID()) };
             if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
@@ -336,34 +340,25 @@ void RenderSystem::RenderPointLightShadows(
 }
 
 void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLightList) {
-    static LightUBOData lightData{};
-    lightData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
-    for (size_t i = 0; i < lightData.m_count; ++i) {
-        lightData.m_lightData[i] = _culledLightList[i]; // or whatever data source
+    m_ldData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
+    for (size_t i = 0; i < m_ldData.m_count; ++i) {
+        m_ldData.m_lightData[i] = _culledLightList[i]; // or whatever data source
     }
 
     UBO& lightBuffer = *m_uboManager.GetUBO(UBOManager::LIGHTS);
     lightBuffer.BindBuffer();
-    lightBuffer.FillBufferData(&lightData);
+    lightBuffer.FillBufferData(&m_ldData);
     lightBuffer.UnbindBuffer();
 }
 
-void RenderSystem::FillShadowMapUBO(const std::vector<LightData>& _culledLightList) {
-    static ShadowMapUBOData smData{};
-    
-
-
-
-    for (const LightData& lightData: _culledLightList) {
-            
-
+void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataList) {
+    m_smData.m_directionalCount = std::min(static_cast<int>(_shadowDataList.size()), C_MAX_SHADOWS);
+    for (int i{}; i < m_smData.m_directionalCount; ++i) {
+        m_smData.m_shadowData[i] = _shadowDataList[i];
     }
-
-
-
     UBO& shadowUBO = *m_uboManager.GetUBO(UBOManager::SHADOWS);
     shadowUBO.BindBuffer();
-    shadowUBO.FillBufferData(&smData);
+    shadowUBO.FillBufferData(&m_smData);
     shadowUBO.UnbindBuffer();
 }
 
@@ -390,7 +385,7 @@ void RenderSystem::ShadowRenderPass(
     }
 
     // in the shadow pass, all meshes use the SAME material unless it has transparency or some SS nonsense. 
-    BindLightingProgram();
+    BindShadowShader();
 
 
     // sort and batch render by light types.
@@ -451,17 +446,15 @@ void RenderSystem::ShadowRenderPass(
             break;
         }
 
+        if (!currentShadowMap || !currentShadowMap->IsBuilt() || !shadowPassFunction) continue;
+
         currentShadowMap->Bind();
         for (const Light* light : lightBuckets[i]) {
-            unsigned id{ light->GetShadowMapID() };
-            currentShadowMap->SetBoundLayer(id);
             shadowPassFunction(_viewport, _er, *light, mrPool);
         }
     }
     ShadowMap::Unbind();
-
-
-    UnbindLightingProgram();
+    UnbindShadowShader();
 }
 
 void RenderSystem::LightingRenderPass(
@@ -517,8 +510,6 @@ void RenderSystem::LightingRenderPass(
 
     glBindVertexArray(0); 
 
-
-
 }
 
 void RenderSystem::DirectionalLightShadowRenderPass(
@@ -530,7 +521,9 @@ void RenderSystem::DirectionalLightShadowRenderPass(
     const EntityViewConst& lightEntity  { _er.GetEntity(_light.GetEntityID()) };
     const ComponentView<Transform>& trs { lightEntity->GetComponent<Transform>() };
     const glm::vec2& fbSize             { m_directionalShadowMaps.GetFramebufferSize() };
+    ShadowData& sdData                  { const_cast<Light*>(&_light)->GetShadowData() };
 
+    
 
     // generate light data.
     if (_light.CastShadowDirty()) {
@@ -554,6 +547,13 @@ void RenderSystem::DirectionalLightShadowRenderPass(
     if (!_light.GetCastShadow()) return; // ignore anything not asking for it.
     unsigned shadowMapID{ _light.GetShadowMapID() };
     if (!m_directionalShadowMaps.ValidateID(shadowMapID)) return;
+    m_directionalShadowMaps.SetBoundLayer(shadowMapID);
+
+    // clear.
+    glViewport(0, 0, fbSize.x, fbSize.y);
+    glScissor(0, 0, fbSize.x, fbSize.y);
+    glClear(GL_DEPTH_BUFFER_BIT);
+
     // convert light to matrix.
     glm::vec3 lightDir      { glm::normalize(trs->Forward()) };
     const glm::vec3& camPos        { _viewport.Position() };
@@ -565,24 +565,22 @@ void RenderSystem::DirectionalLightShadowRenderPass(
         glm::vec3(0, 1, 0)
     );
 
-    m_directionalShadowMaps.Bind(); // batch handling 
-    m_directionalShadowMaps.SetBoundLayer(shadowMapID);
-    glViewport(0, 0, fbSize.x, fbSize.y);
-    glScissor(0, 0, fbSize.x, fbSize.y);
-    glClear(GL_DEPTH_BUFFER_BIT);
-
     float currentYOffset = 0;
     for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
         glm::ivec2 offset{ (level % 2), (level / 2) };
         // every level generate a new ortho matrix
+
+
+        float length            { (level + 1) * 100.f };
+        float halfLength        { length * 0.5f };
         glm::mat4 lightProj = glm::ortho(
-            -50.f, 50.f,
-            -50.f, 50.f,
-            0.f, 100.f
+            -halfLength, halfLength,
+            -halfLength, halfLength,
+            0.f, 2 * length
         );
 
         // calculate light space matrix.
-        glm::mat4 lightSpaceMtx { lightProj * lightView }; // typical.
+        glm::mat4 lightSpaceMtx { lightProj * lightView }; 
         // textures must be in multiples of 2.
         int tileSizeX = m_directionalShadowMaps.GetBaseTileSize().x >> level;
         int tileSizeY = m_directionalShadowMaps.GetBaseTileSize().y >> level;
@@ -590,6 +588,12 @@ void RenderSystem::DirectionalLightShadowRenderPass(
         glViewport(0, currentYOffset, tileSizeX, tileSizeY);
         glScissor(0, currentYOffset, tileSizeX, tileSizeY);
         currentYOffset += tileSizeY;
+
+
+        sdData.SetAtlasOffset(glm::vec2(0, currentYOffset), level);
+        sdData.SetAtlasSize(glm::vec2(tileSizeX, tileSizeY), level);
+        sdData.SetMatrix(lightSpaceMtx, level);
+
 
         for (const MeshRenderer& mr : _mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
@@ -606,15 +610,12 @@ void RenderSystem::DirectionalLightShadowRenderPass(
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
+            PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
     }
 
     // once done pass this to the shadow UBO.
-
-   
-
 }
 
 void RenderSystem::PointLightShadowRenderPass(
@@ -685,47 +686,88 @@ const Compositor& RenderSystem::GetCompositor() const {
 }
 
 
-std::vector<LightData> RenderSystem::CullLights(const Viewport& _viewport) {
 
-    std::vector<LightData> potentialLights{};
 
-    EntityRegistry& registry = Core::GetInstance().GetRegistry();
-    const auto& lightPoolRef = registry.GetComponentPool<Light>();
+const std::vector<Light*> RenderSystem::CullLights(
+    const Viewport& _viewport,
+    EntityRegistry& _er
+) {
 
-    if (!registry.ComponentPoolExists<Light>()) {
+    std::vector<Light*> potentialLights{};
+
+
+    if (!_er.ComponentPoolExists<Light>()) {
         LOG_WARN("Light Component Pool does not exist");
-        return std::vector<LightData> {};
+        return potentialLights;
     }
 
-
-    const ComponentPool<Light>& lightPool = *lightPoolRef;
+    SparseSetView<ComponentPool<Light>> lightPoolRef    { _er.GetComponentPool<Light>() };
+    ComponentPool<Light>& lightPool                     { *lightPoolRef };
     const unsigned lightCount = m_maxLightCount;
-    const auto& lightComponentData = lightPool.Data();
+    SparseSet<EntityID, Light>& lightComponentData = lightPool.Data();
 
-        
-    for (const auto& light : lightComponentData) {
+    potentialLights.reserve(lightPool.size());
+    for (Light& light : lightComponentData) {
 
-        EntityView entity = registry.GetEntity(light.GetEntityID());
+        EntityView entity  { _er.GetEntity(light.GetEntityID()) };
         if (!entity || !entity->Active()) continue;
-
-
-        //
         if (!LightCollisionTest(light, _viewport)) {
             // light does not appear or cause an effect in the camera frustum.
             continue;
         }
-
-        ComponentView<Transform> trs = entity->GetComponent<Transform>();
-        
-        LightData lightData = light.GetLightData();
-        glm::vec3 position = trs->Position();
-        lightData.SetPosition(position);
-        // direction of 0, -1, 0, * quat.
-        lightData.SetDirection(trs->Forward());
-         
-        potentialLights.push_back(lightData);
+        potentialLights.push_back(&light);
     }
     return potentialLights;
+}
+
+void RenderSystem::UpdateLightingData(
+    const std::vector<Light*> lightList, 
+    const EntityRegistry& er
+) {
+
+
+    for (Light* light : lightList) {
+        const Transform& trs{ *er.GetEntity(light->GetEntityID())->GetComponent<Transform>() };
+        LightData& ld { light->GetLightData() };
+        ShadowData& sd { light->GetShadowData() };
+        ld.SetPosition(trs.Position());
+        ld.SetDirection(trs.Forward());
+
+
+        sd.SetShadowID(light->GetShadowMapID());
+        sd.SetLightType(light->Type());
+    }
+}
+
+std::vector<LightData> RenderSystem::GetLightData(const std::vector<Light*>& lightList) const {
+    std::vector<LightData> lightData;
+    lightData.reserve(lightList.size());
+
+    for (const Light* light : lightList) {
+        lightData.push_back(light->GetLightData());
+
+        //ComponentView<Transform> trs = entity->GetComponent<Transform>();
+
+        //LightData lightData = light.GetLightData();
+        //glm::vec3 position = trs->Position();
+        //lightData.SetPosition(position);
+        //// direction of 0, -1, 0, * quat.
+        //lightData.SetDirection(trs->Forward());
+        //potentialLights.push_back(lightData);
+    }
+    lightData.shrink_to_fit();
+    return lightData;
+}
+
+std::vector<ShadowData> RenderSystem::GetShadowData(const std::vector<Light*>& lightList) const {
+    std::vector<ShadowData> shadowData;
+    shadowData.reserve(lightList.size());
+    for (const Light* light : lightList) {
+        if (light->GetCastShadow()) {
+            shadowData.push_back(light->GetShadowData());
+        }
+    }
+    return shadowData;
 }
 
 
@@ -766,28 +808,31 @@ void RenderSystem::SetupShadowProgram() {
     std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowPassFrag.frag");
 
     ShaderProgram lambertShader{};
-    GLuint vtxShaderId = ShaderProgram::LoadShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-    GLuint fragShaderId = ShaderProgram::LoadShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
+    GLuint vtxShaderId = ShaderProgram::CompileShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
+    GLuint fragShaderId = ShaderProgram::CompileShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
 
     std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
 
-    m_shadowPrg = { ShaderProgram::GenerateShaderProgram(shaderList) };
+    m_shadowPrg = { ShaderProgram::BuildShaderProgram(shaderList) };
     m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, U_OBJECT_MATRIX);
     m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, U_LIGHT_MATRIX);
     LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of <"<< m_shadowMeshLoc << "> and light uniform loc of <"<< m_shadowLightLoc<<">");
 }
 
 void RenderSystem::SetupShadowBuffers() {
-    const unsigned SHADOW_WH    { 8192 };
+    const unsigned SHADOW_WH    { 4096 };
     
     m_directionalShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
-    m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
+    m_directionalShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
     m_directionalShadowMaps.BuildShadowMap(); 
 
-    m_pointLightShadowMaps.SetFramebufferSize({SHADOW_WH, SHADOW_WH});
+    m_spotLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
+    m_spotLightShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
+    m_spotLightShadowMaps.BuildShadowMap();
+
+    m_pointLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
     m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::CUBEMAP);
     m_pointLightShadowMaps.BuildShadowMap(); 
-
 }
 
 void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {
@@ -795,13 +840,13 @@ void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightM
     glUniformMatrix4fv(m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_lightMatrix));
 }
 
-void RenderSystem::BindLightingProgram() {
+void RenderSystem::BindShadowShader() {
     glUseProgram(m_shadowPrg); 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 }
 
-void RenderSystem::UnbindLightingProgram() {
+void RenderSystem::UnbindShadowShader() {
     glUseProgram(0);
 }
 

@@ -13,8 +13,10 @@ const ShadowMapType& ShadowMap::GetShadowMapType() const{
 void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 	if (_res == m_framebufferSize) return;
 	m_framebufferSize = _res;
-	Destroy();
-	BuildShadowMap();
+	if (m_isBuilt) {
+		Destroy();
+		BuildShadowMap();
+	}
 }
 
 const glm::ivec2& ShadowMap::GetFramebufferSize() const {
@@ -72,10 +74,24 @@ void ShadowMap::BuildShadowMap() {
 	glTextureParameterfv(m_shadowTex, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glCreateFramebuffers(1, &m_fbo);
-
 	glNamedFramebufferDrawBuffer(m_fbo, GL_NONE);
 	glNamedFramebufferReadBuffer(m_fbo, GL_NONE);
+
+
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadowTex, 0);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	m_isBuilt = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+	if (!m_isBuilt) {
+		Destroy();
+	}
 }
+
+const bool& ShadowMap::IsBuilt() const {
+	return m_isBuilt;
+}
+
 
 void ShadowMap::Destroy() {
 	if (m_fbo) {
@@ -87,6 +103,7 @@ void ShadowMap::Destroy() {
 		glDeleteTextures(1, &m_shadowTex);
 		m_shadowTex = 0;
 	}
+	m_isBuilt = false;
 }
 
 

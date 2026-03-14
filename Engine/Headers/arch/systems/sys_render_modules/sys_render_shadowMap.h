@@ -31,6 +31,7 @@ public:
 
 
 	void BuildShadowMap();
+	const bool& IsBuilt() const;
 	void Destroy();
 
 
@@ -64,7 +65,9 @@ private:
 	unsigned m_fbo							{ 0 };
 	unsigned m_shadowTex					{ 0 };
 	unsigned m_levels						{ 4 };
+	bool m_isBuilt							{};
 	mutable unsigned m_currentBoundLayer	{ 0 };
 	unsigned m_currentLayerCount			{ 0 }; 
 	std::vector<unsigned> m_freeLayers		{ };
+	
 };
