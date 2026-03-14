@@ -156,6 +156,8 @@ std::array<GLubyte, 4> Material::ColorToBytes(const glm::vec4& col) {
 
 
 
+
+
 void Material::InitUniformLocations() {
 	if (m_shader.get()) {
 		int programId { m_shader.get()->ShaderID() };
@@ -179,10 +181,8 @@ void Material::InitUniformLocations() {
 			UniformData u_data{};
 			u_data.m_type = type;
 			u_data.m_uniformLocation = location;
-			LOG_INFO("Uniform name: " << name);
-			LOG_INFO("Uniform type: " << type);
 			m_uniformData.emplace(name, u_data);
-			m_uniformLocations.emplace(name, i);
+			m_uniformLocations.emplace(name, location);
 		}
 	}
 }
@@ -203,12 +203,11 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 
 	// lambda function
 	auto GetUniform = [this](const char* _uniformName) {
-		auto it = m_uniformData.find(_uniformName);
-		if (it == m_uniformData.end()) {
-			//LOG_WARN("Uniform '" << _uniformName << "' not found.");
+		auto it = m_uniformLocations.find(_uniformName);
+		if (it == m_uniformLocations.end()) {
 			return -1; // invalid location
 		}
-		return it->second.m_uniformLocation;
+		return it->second;
 
 		};
 
@@ -235,13 +234,12 @@ void Material::ApplyUniforms(
 
 	// lambda function
 	auto GetUniform = [this](const char* _uniformName) {
-		auto it = m_uniformData.find(_uniformName);
-		if (it == m_uniformData.end()) {
+		auto it = m_uniformLocations.find(_uniformName);
+		if (it == m_uniformLocations.end()) {
 			//LOG_WARN("Uniform '" << _uniformName << "' not found.");
 			return -1; // invalid location
 		}
-		return it->second.m_uniformLocation;
-	
+		return it->second;
 	};
 
 
@@ -285,3 +283,133 @@ void Material::ApplyUniforms(
 		//LOG_ERROR("GL error: [" << err << "] ");
 	}
 }
+
+
+GLint Material::GetUniformLocation(const std::string& _uniformName) const {
+	GLint shaderId{ GetShader() };
+	if (!shaderId) return -1;
+	return glGetUniformLocation(shaderId, _uniformName.c_str());
+}
+
+
+void Material::SetUniformMatrix(std::string _uniformName, glm::mat4 _value) {
+	GLint shaderId{GetShader()};
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName) ;
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniformMatrix4fv(uniformLoc, 1, GL_FALSE, glm::value_ptr(_value));
+}
+
+void Material::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+
+	}
+	glUniform3fv(uniformLoc, 1, glm::value_ptr(_value));
+
+}
+
+void Material::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform2fv(uniformLoc, 1, glm::value_ptr(_value));
+
+}
+
+void Material::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform3iv(uniformLoc, 1, glm::value_ptr(_value));
+}
+
+void Material::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform2iv(uniformLoc, 1, glm::value_ptr(_value));
+
+}
+
+void Material::SetUniformInt(std::string _uniformName, GLint _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform1i(uniformLoc, _value);
+
+}
+
+void Material::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform1ui(uniformLoc, _value);
+}
+
+void Material::SetUniformFloat(std::string _uniformName, GLfloat _value) {
+	GLint shaderId{ GetShader() };
+	GLint uniformLoc = -1;
+	if (!m_uniformLocations.contains(_uniformName)) {
+		uniformLoc = GetUniformLocation(_uniformName);
+		// by right this shouldn't happen but jic.
+		if (uniformLoc == -1) return;
+		m_uniformLocations[_uniformName] = uniformLoc;
+	}
+	else {
+		uniformLoc = m_uniformLocations.at(_uniformName);
+	}
+	glUniform1f(uniformLoc, _value);
+}
+

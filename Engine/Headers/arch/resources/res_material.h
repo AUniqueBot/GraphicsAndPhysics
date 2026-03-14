@@ -9,6 +9,8 @@
 #include <arch/common/entityid.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 
+
+
 // - class -----------------------------
 class Material {
 public:
@@ -46,6 +48,18 @@ public:
 	) const;
 
 
+	// - apply uniform functions -----------------------------------------
+	void SetUniformMatrix(std::string _uniformName, glm::mat4 _value);
+	void SetUniformVec3(std::string _uniformName, glm::vec3 _value);
+	void SetUniformVec2(std::string _uniformName, glm::vec2 _value);
+	void SetUniformIVec3(std::string _uniformName, glm::ivec3 _value);
+	void SetUniformIVec2(std::string _uniformName, glm::ivec2 _value);
+	void SetUniformInt(std::string _uniformName, GLint _value);
+	void SetUniformUnsigned(std::string _uniformName, GLuint _value);
+	void SetUniformFloat(std::string _uniformName, GLfloat _value);
+	
+
+
 	// - material helpers -------------------------------------
 	static unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType);
 
@@ -57,6 +71,8 @@ public:
 
 	
 protected:
+	GLint GetUniformLocation(const std::string& _uniformName) const;
+
 	void InitUniformLocations();
 	void SetUniform(std::string _uniformName, UniformData _data) const;
 
@@ -64,6 +80,6 @@ protected:
 
 
 	std::map<std::string, UniformData> m_uniformData;
-	std::map<std::string, GLuint> m_uniformLocations;
+	std::map<std::string, GLint> m_uniformLocations;
 
 };

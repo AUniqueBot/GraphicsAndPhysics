@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositionNode.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_shadowMap.cpp" />
+    <ClCompile Include="Source\res\res_material_presets\res_material_phong.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp" />
     <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp" />
     <ClCompile Include="Source\res\res_mesh_vertexLayout.cpp" />
@@ -253,6 +254,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_lambert.h" />
+    <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_phong.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh.h" />

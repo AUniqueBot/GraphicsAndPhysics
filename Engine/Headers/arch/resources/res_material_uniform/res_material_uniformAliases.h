@@ -4,6 +4,7 @@
 // - camera ----------------------------------------------------
 constexpr const char* U_OBJECT_MATRIX			{ "u_objectMtx" };
 constexpr const char* U_CAMERA_MATRIX			{ "u_cameraMtx" };
+constexpr const char* U_CAMERA_POSITION			{ "u_cameraPos" };
 constexpr const char* U_PROJECTION_MATRIX		{ "u_projectionMtx" };
 
 // - light -----------------------------------------------------
