@@ -43,11 +43,7 @@ public:
 	void RemoveMaterial(std::shared_ptr<Material> _material);
 	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 
-	void Render(
-		const glm::mat4& _objectMatrix, 
-		const glm::mat4& _projectionMatrix, 
-		const glm::mat4& _cameraMatrix
-		);
+	void Render();
 
 
 

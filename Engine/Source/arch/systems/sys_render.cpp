@@ -150,6 +150,8 @@ void RenderSystem::Init() {
 
     SetupGLDebug();
     m_uboManager.Init();
+    m_uboManager.CreateUBO(UBOManager::COMMON, sizeof(CommonUBOData));
+    m_uboManager.CreateUBO(UBOManager::OBJECT, sizeof(ObjectUBOData));
     m_uboManager.CreateUBO(UBOManager::LIGHTS, sizeof(LightUBOData));
     m_uboManager.CreateUBO(UBOManager::SHADOWS, sizeof(ShadowMapUBOData));
     m_vaoManager.Init();
@@ -158,15 +160,6 @@ void RenderSystem::Init() {
     // - shadows -------------------------------
     SetupShadowProgram();
     SetupShadowBuffers();
-
-
-    std::string vtxShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_fullscreenTriangle.vert");
-    std::string fragShaderSrc = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowMap.frag");
-    const unsigned vtx = ShaderProgram::CompileShader(vtxShaderSrc.c_str(), ShaderProgram::VERTEX);
-    const unsigned frag = ShaderProgram::CompileShader(fragShaderSrc.c_str(), ShaderProgram::FRAG);
-    m_planeShader = ShaderProgram::BuildShaderProgram({ vtx, frag });
-
-
 
 }
  
@@ -226,14 +219,24 @@ void RenderSystem::Render(const Viewport& _viewport) {
     
     
     UpdateLightingData(culledLights, registry);
-    
+
+    FillLightBufferUBO(lightData);
+    FillShadowMapUBO(shadowData);
+    FillCommonUBO(
+        _viewport.CameraMatrix(),
+        _viewport.ProjectionMatrix(),
+        _viewport.Position(),
+        _viewport.Forward(),
+        static_cast<GLfloat>(Clock::DeltaTime())
+    );
+
 
     BeginViewportPass(_viewport);
     ShadowRenderPass(_viewport, registry);
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
-    FillLightBufferUBO(lightData);
-    FillShadowMapUBO(shadowData);
     LightingRenderPass(_viewport, registry);
+    UBO::UnbindBuffer();
+    
 
     EndViewportPass(_viewport);
 
@@ -348,7 +351,6 @@ void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLight
     UBO& lightBuffer = *m_uboManager.GetUBO(UBOManager::LIGHTS);
     lightBuffer.BindBuffer();
     lightBuffer.FillBufferData(&m_ldData);
-    lightBuffer.UnbindBuffer();
 }
 
 void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataList) {
@@ -359,7 +361,32 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
     UBO& shadowUBO = *m_uboManager.GetUBO(UBOManager::SHADOWS);
     shadowUBO.BindBuffer();
     shadowUBO.FillBufferData(&m_smData);
-    shadowUBO.UnbindBuffer();
+}
+
+void RenderSystem::FillCommonUBO( 
+    const glm::mat4& _cameraMatrix, 
+    const glm::mat4& _projectionMatrix, 
+    const glm::vec3& _cameraPosition, 
+    const glm::vec3& _cameraForward, 
+    const GLfloat& _deltaTime
+) {
+    UBO& commonUBO = *m_uboManager.GetUBO(UBOManager::COMMON);
+    m_commonUboData.m_cameraMatrix = _cameraMatrix;
+    m_commonUboData.m_projectionMatrix = _projectionMatrix;
+    m_commonUboData.m_cameraPosition = _cameraPosition;
+    m_commonUboData.m_cameraForward = _cameraForward;
+    m_commonUboData.m_deltaTime = _deltaTime;
+    commonUBO.BindBuffer();
+    commonUBO.FillBufferData(&m_commonUboData);
+}
+
+void RenderSystem::FillObjectUBO(const Entity& entity, const Transform& _trs) {
+    UBO& objectUBO = *m_uboManager.GetUBO(UBOManager::OBJECT);
+    m_objectUboData.m_objectMatrix = _trs.WorldTransformMtx();
+    m_objectUboData.m_position = _trs.Position();
+    m_objectUboData.m_objectId = static_cast<GLuint>(entity.GetID().GetID());
+    objectUBO.BindBuffer();
+    objectUBO.FillBufferData(&m_objectUboData);
 }
 
 void RenderSystem::UnbindViewport(const Viewport& _viewport) {
@@ -498,12 +525,9 @@ void RenderSystem::LightingRenderPass(
         //currentVAO.LogDebug();
         currentVAO.UseMesh(*mesh);
         // check if there is data here...
+        FillObjectUBO(e, *trs);
         mr->ApplyShadowMap(m_directionalShadowMaps);
-        mr->Render(
-            objectTransformMatrix,
-            _projectionMatrix,
-            _cameraMatrix
-        );
+        mr->Render();
         m_vaoManager.UnbindVAO();
         
     }
@@ -588,12 +612,11 @@ void RenderSystem::DirectionalLightShadowRenderPass(
         glViewport(0, currentYOffset, tileSizeX, tileSizeY);
         glScissor(0, currentYOffset, tileSizeX, tileSizeY);
         currentYOffset += tileSizeY;
-
+         
 
         sdData.SetAtlasOffset(glm::vec2(0, currentYOffset), level);
         sdData.SetAtlasSize(glm::vec2(tileSizeX, tileSizeY), level);
         sdData.SetMatrix(lightSpaceMtx, level);
-
 
         for (const MeshRenderer& mr : _mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
@@ -607,10 +630,13 @@ void RenderSystem::DirectionalLightShadowRenderPass(
             currentVAO.BindVAO();
             currentVAO.UseMesh(*mesh);
 
+
+
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
+            FillObjectUBO(*meshEntity, *trsMesh);
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
     }
@@ -767,6 +793,8 @@ std::vector<ShadowData> RenderSystem::GetShadowData(const std::vector<Light*>& l
             shadowData.push_back(light->GetShadowData());
         }
     }
+
+
     return shadowData;
 }
 

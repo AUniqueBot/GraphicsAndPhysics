@@ -61,16 +61,7 @@ void PhongMaterial::UpdateTextureID() {
 }
 
 
-void PhongMaterial::ApplyUniforms(
-    const glm::mat4& _objectMatrix,
-    const glm::mat4& _projectionMatrix,
-    const glm::mat4& _cameraMatrix,
-    const EntityID& _objId
-) const {
-
-    //return;
-    Material::ApplyUniforms(_objectMatrix, _projectionMatrix, _cameraMatrix, _objId);
-
+void PhongMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, m_texId);

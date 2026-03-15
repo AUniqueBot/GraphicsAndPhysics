@@ -57,37 +57,19 @@ void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 	}
 }
 
-void MeshRenderer::Render(
-	const glm::mat4& _objectMatrix, 
-	const glm::mat4& _projectionMatrix, 
-	const glm::mat4& _cameraMatrix
-) {
+void MeshRenderer::Render() {
 	
 	// use the default material and render.
 	if (m_materials.size() == 0) {
 		const Material& mat = GetDefaultMaterial();
-		mat.ApplyUniforms(
-			_objectMatrix,
-			_projectionMatrix,
-			_cameraMatrix,
-			GetEntityID()
-		);
-
+		mat.ApplyUniforms();
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
 		return;
 	}
 	// go through all materials
 	for (const std::shared_ptr<Material> matPtr: m_materials) {
-		matPtr->ApplyUniforms(
-			_objectMatrix,
-			_projectionMatrix,
-			_cameraMatrix,
-			GetEntityID()
-		); 
-
-		// TODO - render based on materials indices.
+		matPtr->ApplyUniforms();
 		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
-
 	}
 }
 

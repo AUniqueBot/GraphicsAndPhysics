@@ -7,6 +7,11 @@
 
 
 
+struct alignas(sizeof(glm::vec4)) ObjectUBOData {
+	glm::mat4 m_objectMatrix;
+	glm::vec3 m_position;
+	GLuint m_objectId;
+};
 
 
 class Transform : public Component {

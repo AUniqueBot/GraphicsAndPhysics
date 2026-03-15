@@ -35,9 +35,10 @@ private:
 
 class UBOManager {
 public:
+
 	enum BUFFER_TYPE {
-		TRANSFORMS,				// transform buffer - contains camera, projection, and object transform
-		MATERIALS,				// buffer for material data.
+		COMMON,					// transform buffer - contains camera, projection, and object transform
+		OBJECT,					// buffer for material data.
 		LIGHTS,					// buffer for lights
 		SHADOWS,				// shadow map buffer.
 		_COUNT

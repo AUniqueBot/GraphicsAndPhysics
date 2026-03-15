@@ -18,14 +18,10 @@ uniform sampler2D u_albedo;
 uniform sampler2DArray u_directionalShadowMap;
 uniform sampler2DArray u_spotLightShadowMap;
 uniform samplerCubeArray u_pointLightShadowMap;
-uniform vec3 u_cameraPos;
-uniform float u_deltaTime;
-uniform uint u_objectId;
 
-    
+// --------------------------------------------------------------------------------
 layout (location = 0) out vec4 out_color;
 layout (location = 1) out uint out_objectId;
-layout (location = 2) out vec4 out_litShadow;
 
 
 struct LightData {
@@ -34,14 +30,11 @@ struct LightData {
 	vec4 m_color_power;
 	vec4 m_attenuation;
 };
-
-
 struct ShadowData {
     mat4 m_lightMatrix[SHADOW_MAP_MATRIX_COUNT];
     vec4 m_atlasOffsetSize[SHADOW_MAP_MATRIX_COUNT];
     vec4 m_lightTypeShadowId;
 };
-
 
 layout (std140, binding=2) uniform LightBlock {
 	// vec3 _pad;                // pad to 16 bytes so next comes at offset 16
@@ -60,6 +53,7 @@ layout (std140, binding=3) uniform ShadowMapData {
     int m_spotShadowCount;
 };
 
+// --------------------------------------------------------------------------------
 
 
 
@@ -105,15 +99,6 @@ float PercentageCloserFilter(
     float kernel = float(2 * halfKernelLength + 1);
     return accShadowVal /= (kernel * kernel);
 }
-
-
-
-
-
-
-
-
-
 
 float CalculateShadow() {
     float addedValue = 0.0;
@@ -250,7 +235,6 @@ vec3 CalculateSpecularLighting(vec3 fragPosition, vec3 fragNormal, vec3 specular
 
     return specularCol *specularValue;
 }
-
 
 void main() {
 	vec4 color = texture(u_albedo, frag_uv);

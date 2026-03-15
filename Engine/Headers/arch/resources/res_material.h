@@ -40,12 +40,7 @@ public:
 	int GetShader() const;
 
 	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
-	virtual void ApplyUniforms(
-		const glm::mat4& _objectMatrix, 
-		const glm::mat4& _projectionMatrix, 
-		const glm::mat4& _cameraMatrix,
-		const EntityID& _objId
-	) const;
+	virtual void ApplyUniforms() const;
 
 
 	// - apply uniform functions -----------------------------------------
