@@ -219,70 +219,7 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 	}
 }
 
-void Material::ApplyUniforms(
-	const glm::mat4& _objectMatrix,
-	const glm::mat4& _projectionMatrix,
-	const glm::mat4& _cameraMatrix, 
-	const EntityID& _objId
-) const {
-
-	const int shaderId{ GetShader() };
-	if (!shaderId) return;
-	glUseProgram(shaderId);
-
-	GLint uniformLocation{};
-
-	// lambda function
-	auto GetUniform = [this](const char* _uniformName) {
-		auto it = m_uniformLocations.find(_uniformName);
-		if (it == m_uniformLocations.end()) {
-			//LOG_WARN("Uniform '" << _uniformName << "' not found.");
-			return -1; // invalid location
-		}
-		return it->second;
-	};
-
-
-
-	uniformLocation = GetUniform(U_DELTATIME);
-
-	if (-1 != uniformLocation) {
-		static float timer{};
-		static bool downward{};
-
-		timer += static_cast<float>(downward ? -Core::DeltaTime() : Core::DeltaTime());
-		timer = std::clamp(timer, 0.f, 1.f);
-		downward = timer == 1 ? true : (timer == 0 ? false: downward);
-
-		glUniform1f(uniformLocation, timer);
-	}
-	uniformLocation = GetUniform(U_OBJECT_MATRIX);
-	if (-1 != uniformLocation) {
-		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
-	}
-	uniformLocation = GetUniform(U_PROJECTION_MATRIX);
-	if (-1 != uniformLocation) {
-		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_projectionMatrix));
-	}
-	uniformLocation = GetUniform(U_CAMERA_MATRIX);
-	if (-1 != uniformLocation) {
-		glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(_cameraMatrix));
-	}
-	uniformLocation = GetUniform(U_OBJECTID);
-	if (-1 != uniformLocation) {
-		glUniform1ui(uniformLocation, _objId.GetID());
-	}
-
-	
-
-
-	GLenum err;
-	while ((err = glGetError()) != GL_NO_ERROR) {
-
-		// got annoyed by this.
-		//LOG_ERROR("GL error: [" << err << "] ");
-	}
-}
+void Material::ApplyUniforms() const {}
 
 
 GLint Material::GetUniformLocation(const std::string& _uniformName) const {

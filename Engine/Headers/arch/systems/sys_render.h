@@ -17,6 +17,22 @@ constexpr unsigned C_MAX_LIGHT_COUNT_HIGH	{ 60 };
 
 constexpr unsigned CURRENT_MAX_LIGHT_COUNT	{ 20 };
 
+
+
+
+struct alignas(sizeof(glm::vec4)) CommonUBOData {
+	glm::mat4 m_cameraMatrix;			// 16
+	glm::mat4 m_projectionMatrix;		// 32
+	glm::vec3 m_cameraPosition;			
+	GLint _pad1;
+	glm::vec3 m_cameraForward;
+	GLint _pad2;
+	glm::vec3 m_cameraUp;
+	GLfloat m_deltaTime;
+};
+
+
+
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
 	 
@@ -27,7 +43,7 @@ public:
 
 	void Start()		override { LOG_INFO("Start"); };
 
-
+	 
 	void PreUpdate()	override;
 	void Update()		override;
 	void Stop()			override { LOG_INFO("Stop"); };
@@ -108,7 +124,18 @@ public:
 	// ubo
 	void FillLightBufferUBO(const std::vector<LightData>& _culledLightList);
 	void FillShadowMapUBO(const std::vector<ShadowData>& _culledLightList);
+	void FillCommonUBO(
+		const glm::mat4& _cameraMatrix,
+		const glm::mat4& _projectionMatrix,
+		const glm::vec3& _cameraPosition,
+		const glm::vec3& _cameraForward,
+		const GLfloat& _deltaTime
+	);
 
+	void FillObjectUBO(
+		const Entity& entity,
+		const Transform& _trs
+	);
 
 
 	void DebugRenderPass(const unsigned& );
@@ -174,8 +201,10 @@ private:
 
 
 	// UBOs
-	mutable ShadowMapUBOData m_smData		{};
-	mutable LightUBOData m_ldData			{};
+	ShadowMapUBOData m_smData		{};
+	LightUBOData m_ldData			{};
+	CommonUBOData m_commonUboData	{};
+	ObjectUBOData m_objectUboData	{};
 
 };
 
