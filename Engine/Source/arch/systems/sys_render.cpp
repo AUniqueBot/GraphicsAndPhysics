@@ -223,7 +223,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     FillLightBufferUBO(lightData);
     FillShadowMapUBO(shadowData);
     FillCommonUBO(
-        _viewport.CameraMatrix(),
+        glm::inverse(_viewport.CameraMatrix()), // incorrect direction
         _viewport.ProjectionMatrix(),
         _viewport.Position(),
         _viewport.Forward(),

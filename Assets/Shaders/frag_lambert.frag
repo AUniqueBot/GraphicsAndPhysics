@@ -6,6 +6,17 @@
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
+#define MAX_LIGHT_COUNT 10
+#define MAX_SHADOW_COUNT 10
+#define SHADOW_MAP_MATRIX_COUNT 6
+
+
+
+in VertexOutput {
+    vec3 frag_position;
+    vec3 frag_normal;
+    vec2 frag_uv;
+} VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
 uniform sampler2DArray u_directionalShadowMap;
