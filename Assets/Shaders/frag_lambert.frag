@@ -1,35 +1,23 @@
 ﻿// #version 440 core // hide this on compile
 
 
-
 #define LIGHT_POINT 0.0
 #define LIGHT_SPOT 1.0
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
-#define MAX_LIGHT_COUNT 10
-#define MAX_SHADOW_COUNT 10
-#define SHADOW_MAP_MATRIX_COUNT 6
-
-// ------------------------------------------------------------------------------------
-// input
-
-in VertexOutput {
-    vec3 frag_position;
-    vec3 frag_normal;
-    vec2 frag_uv;
-} VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
 uniform sampler2DArray u_directionalShadowMap;
 uniform sampler2DArray u_spotLightShadowMap;
 uniform samplerCubeArray u_pointLightShadowMap;
+uniform float u_deltaTime;
+uniform uint u_objectId;
 
-
-// ------------------------------------------------------------------------------------
-// output
+    
 layout (location = 0) out vec4 out_color;
 layout (location = 1) out uint out_objectId;
+layout (location = 2) out vec4 out_litShadow;
 
 
 // ------------------------------------------------------------------------------------
