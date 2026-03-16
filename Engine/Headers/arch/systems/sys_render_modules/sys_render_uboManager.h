@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/datatypes/type_sparseSet.h>
 
 
 
@@ -18,6 +18,7 @@ public:
 	void BindBuffer() const;
 	static void UnbindBuffer();
 	void SetBindingIndex(GLuint _bindingIdx);
+	const GLuint& GetBindingIndex() const;
 
 	void FillBufferData(const void* _data) const;
 
@@ -33,24 +34,31 @@ private:
 
 
 
+namespace DefaultUBOs {
+	constexpr const char* DEFAULTBUFFER_COMMON	{ "COMMON" };
+	constexpr const char* DEFAULTBUFFER_OBJECT	{ "OBJECT" };
+	constexpr const char* DEFAULTBUFFER_LIGHTS	{ "LIGHTS" };
+	constexpr const char* DEFAULTBUFFER_SHADOW	{ "SHADOW" };
+	constexpr const int BINDINGOFFSET			{ 4 };
+}
+
+
+
 class UBOManager {
 public:
 
-	enum BUFFER_TYPE {
-		COMMON,					// transform buffer - contains camera, projection, and object transform
-		OBJECT,					// buffer for material data.
-		LIGHTS,					// buffer for lights
-		SHADOWS,				// shadow map buffer.
-		_COUNT
-	};
 public:
 	void Init();
+	void CreateUBO(std::string _bufferName, int _bindIndex, size_t _size);
 
-	void CreateUBO(BUFFER_TYPE _bufferType, size_t _size = 100);
+	UBO* GetUBO(std::string _bufferName);
+	const UBO* GetUBO(std::string _bufferName) const;
 
-	UBO* GetUBO(BUFFER_TYPE _bufferType);
-	const UBO* GetUBO(BUFFER_TYPE _bufferType) const;
+
+	void RemoveUBO(std::string _bufferName);
+	bool HasUBO(std::string _bufferName) const;
 
 private:
-	std::map<BUFFER_TYPE, UBO> m_uboMap;
+	SparseSet<std::string, UBO> m_uboDatabase;
+
 };

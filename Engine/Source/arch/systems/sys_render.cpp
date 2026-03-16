@@ -150,10 +150,10 @@ void RenderSystem::Init() {
 
     SetupGLDebug();
     m_uboManager.Init();
-    m_uboManager.CreateUBO(UBOManager::COMMON, sizeof(CommonUBOData));
-    m_uboManager.CreateUBO(UBOManager::OBJECT, sizeof(ObjectUBOData));
-    m_uboManager.CreateUBO(UBOManager::LIGHTS, sizeof(LightUBOData));
-    m_uboManager.CreateUBO(UBOManager::SHADOWS, sizeof(ShadowMapUBOData));
+    m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_COMMON, 0, sizeof(CommonUBOData));
+    m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_OBJECT, 1, sizeof(ObjectUBOData));
+    m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_LIGHTS, 2, sizeof(LightUBOData));
+    m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW, 3, sizeof(ShadowMapUBOData));
     m_vaoManager.Init();
     m_compositor.Init();
 
@@ -223,7 +223,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     FillLightBufferUBO(lightData);
     FillShadowMapUBO(shadowData);
     FillCommonUBO(
-        glm::inverse(_viewport.CameraMatrix()), // incorrect direction
+        glm::inverse(_viewport.CameraMatrix()),
         _viewport.ProjectionMatrix(),
         _viewport.Position(),
         _viewport.Forward(),
@@ -348,7 +348,7 @@ void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLight
         m_ldData.m_lightData[i] = _culledLightList[i]; // or whatever data source
     }
 
-    UBO& lightBuffer = *m_uboManager.GetUBO(UBOManager::LIGHTS);
+    UBO& lightBuffer = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_LIGHTS);
     lightBuffer.BindBuffer();
     lightBuffer.FillBufferData(&m_ldData);
 }
@@ -358,7 +358,7 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
     for (int i{}; i < m_smData.m_directionalCount; ++i) {
         m_smData.m_shadowData[i] = _shadowDataList[i];
     }
-    UBO& shadowUBO = *m_uboManager.GetUBO(UBOManager::SHADOWS);
+    UBO& shadowUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW);
     shadowUBO.BindBuffer();
     shadowUBO.FillBufferData(&m_smData);
 }
@@ -370,7 +370,7 @@ void RenderSystem::FillCommonUBO(
     const glm::vec3& _cameraForward, 
     const GLfloat& _deltaTime
 ) {
-    UBO& commonUBO = *m_uboManager.GetUBO(UBOManager::COMMON);
+    UBO& commonUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_COMMON);
     m_commonUboData.m_cameraMatrix = _cameraMatrix;
     m_commonUboData.m_projectionMatrix = _projectionMatrix;
     m_commonUboData.m_cameraPosition = _cameraPosition;
@@ -381,7 +381,7 @@ void RenderSystem::FillCommonUBO(
 }
 
 void RenderSystem::FillObjectUBO(const Entity& entity, const Transform& _trs) {
-    UBO& objectUBO = *m_uboManager.GetUBO(UBOManager::OBJECT);
+    UBO& objectUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_OBJECT);
     m_objectUboData.m_objectMatrix = _trs.WorldTransformMtx();
     m_objectUboData.m_position = _trs.Position();
     m_objectUboData.m_objectId = static_cast<GLuint>(entity.GetID().GetID());

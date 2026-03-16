@@ -36,6 +36,7 @@ EntityView EntityFactory::CreateCube(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Cube>(Cube()));
 			mr->GetMesh()->Init();
 			mr->Init();
+			mr->AddMaterial(std::make_shared<LambertMaterial>(LambertMaterial()));
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}
@@ -52,7 +53,7 @@ EntityView EntityFactory::CreateSphere(const glm::vec3& pos) {
 		e.AddComponent<MeshRenderer>();
 		ComponentView<MeshRenderer> mr{ e.GetComponent<MeshRenderer>() };
 		if (mr) {
-			mr->SetMesh(std::make_shared<Cube>(Cube()));
+			mr->SetMesh(std::make_shared<Sphere>(Sphere()));
 			mr->GetMesh()->Init();
 			mr->Init();
 			mr->AddMaterial(std::make_shared<LambertMaterial>(LambertMaterial()));
@@ -75,6 +76,7 @@ EntityView EntityFactory::CreatePlane(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Plane>(Plane()));
 			mr->GetMesh()->Init();
 			mr->Init();
+			mr->AddMaterial(std::make_shared<LambertMaterial>(LambertMaterial()));
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}

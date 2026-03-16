@@ -54,6 +54,10 @@ void UBO::SetBindingIndex(GLuint _bindingIndex) {
 	}
 }
 
+const GLuint& UBO::GetBindingIndex() const {
+	return m_bindingIndex;
+}
+
 void UBO::FillBufferData(const void* _data) const {
 	if (!_data) {
 		LOG_ERROR("nullptr provided, no data filled");
@@ -85,30 +89,40 @@ void UBOManager::Init() {
 		
 }
 
-void UBOManager::CreateUBO(BUFFER_TYPE _bufferType, size_t _size) {
-	if (m_uboMap.contains(_bufferType)) {
-		LOG_WARN("Buffer Type <" << typeid(_bufferType).name() << "> already created.");
-		return;
+
+void UBOManager::CreateUBO(std::string _bufferName, int _bindIndex, size_t _size) {
+	if (m_uboDatabase.At(_bufferName)) { 
+		LOG_WARN("Buffer <" << _bufferName << "> already created.");
+		return; 
 	}
-	UBO& ref = m_uboMap[_bufferType];
-	ref.BufferSize(_size);
-	ref.SetBindingIndex(static_cast<unsigned>(_bufferType));
-	ref.Init();
+	UBO newUbo;
+	newUbo.BufferSize(_size);
+	newUbo.SetBindingIndex(_bindIndex);
+	newUbo.Init();
+	m_uboDatabase.Add(std::move(newUbo), _bufferName);
+}
+
+UBO* UBOManager::GetUBO(std::string _bufferName) {
+	SparseSetView<UBO> data{ m_uboDatabase.At(_bufferName) };
+	if (!data) return nullptr;
+	return &*data;
+}
+
+const UBO* UBOManager::GetUBO(std::string _bufferName) const {
+	SparseSetView<const UBO> data{ m_uboDatabase.At(_bufferName) };
+	if (!data) return nullptr;
+	return &*data;
 }
 
 
-UBO* UBOManager::GetUBO(BUFFER_TYPE _bufferType) {
-	if (!m_uboMap.contains(_bufferType)) {
-		return nullptr;
-	}
-	return &m_uboMap[_bufferType];
+
+
+void UBOManager::RemoveUBO(std::string _bufferName) {
+	m_uboDatabase.Remove(_bufferName);
 }
 
-const UBO* UBOManager::GetUBO(BUFFER_TYPE _bufferType) const {
-	if (!m_uboMap.contains(_bufferType)) {
-		return nullptr;
-	}
-	return &m_uboMap.at(_bufferType);
+bool UBOManager::HasUBO(std::string _bufferName) const {
+	return static_cast<bool>(m_uboDatabase.At(_bufferName));
 }
 
 

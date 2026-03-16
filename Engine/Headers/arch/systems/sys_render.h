@@ -200,7 +200,7 @@ private:
 	GLuint m_planeShader{};
 
 
-	// UBOs
+	// UBO data.
 	ShadowMapUBOData m_smData		{};
 	LightUBOData m_ldData			{};
 	CommonUBOData m_commonUboData	{};

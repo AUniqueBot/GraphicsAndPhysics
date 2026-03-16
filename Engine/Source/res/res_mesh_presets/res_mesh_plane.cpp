@@ -19,7 +19,7 @@ void Plane::UpdateVertexData() {
 	std::vector<glm::vec3> vertexNormals;
 	glm::vec3 startingPosition{ m_dimensions.x, 0, m_dimensions.y };
 	startingPosition.x *= -0.5f;
-	startingPosition.y *= 0.5f;
+	startingPosition.z *= 0.5f;
 
 	unsigned pointsU{ static_cast<unsigned>(m_subdivisions.x) + 2 };
 	unsigned pointsV{ static_cast<unsigned>(m_subdivisions.y) + 2 };
