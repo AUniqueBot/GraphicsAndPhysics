@@ -832,16 +832,26 @@ bool RenderSystem::PointLightCollisionTest(const Light& _lightComponent, const V
 }
 
 void RenderSystem::SetupShadowProgram() {
-    std::string vertexShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_shadowPassVertex.vert");
-    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_shadowPassFrag.frag");
+    std::string vertexShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_shadowPassVertex.vert");
+    std::string fragmentShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_shadowPassFrag.frag");
 
-    ShaderProgram lambertShader{};
-    GLuint vtxShaderId = ShaderProgram::CompileShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-    GLuint fragShaderId = ShaderProgram::CompileShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
+    ShaderProgram shadowShader  {};
+    Shader vertexShader         {};
+    Shader fragmentShader       {};
+    vertexShader.SetShaderCode(vertexShaderSource);
+    fragmentShader.SetShaderCode(fragmentShaderSource);
+    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
+    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+    vertexShader.Build();
+    fragmentShader.Build();
+    shadowShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
+    shadowShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
 
-    std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
-
-    m_shadowPrg = { ShaderProgram::BuildShaderProgram(shaderList) };
+    
+    
+    shadowShader.Build();
+    
+    m_shadowPrg = shadowShader.GetShaderProgramID();
     m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, U_OBJECT_MATRIX);
     m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, U_LIGHT_MATRIX);
     LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of <"<< m_shadowMeshLoc << "> and light uniform loc of <"<< m_shadowLightLoc<<">");

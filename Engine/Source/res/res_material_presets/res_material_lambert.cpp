@@ -8,16 +8,26 @@ void LambertMaterial::Init() {
 
 
     // - loading shader ------------------
-    std::string vertexShaderSource   = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
-    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_lambert.frag");
+    Shader vertexShader     {};
+    Shader fragmentShader   {};
+    vertexShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert"));
+    fragmentShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_lambert.frag"));
 
+    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
+    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+    vertexShader.Build();
+    fragmentShader.Build(); 
     ShaderProgram lambertShader{};
-    GLuint vtxShaderId = ShaderProgram::CompileShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-    GLuint fragShaderId = ShaderProgram::CompileShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
 
-    std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
-    GLuint programId             { ShaderProgram::BuildShaderProgram(shaderList) };
-    lambertShader.SetShaderID(programId);
+    lambertShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
+    lambertShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
+
+    GLuint vtxShaderId = vertexShader.GetShaderID();
+    GLuint fragShaderId = fragmentShader.GetShaderID();
+    lambertShader.Build();
+    //GLuint programId             { ShaderProgram::BuildShaderProgram() };
+    //lambertShader.SetShaderProgramID(programId);
+
     SetShaderProgram(std::make_shared<ShaderProgram>(lambertShader));
 
 

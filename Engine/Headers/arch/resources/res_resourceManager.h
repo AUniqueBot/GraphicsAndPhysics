@@ -134,7 +134,7 @@ private:
 	std::unordered_map<RESTYPE_ID, ResourceTypeMetadata>		m_resourceTypeMetadata;
 	std::unordered_map<RESTYPE_ID, std::vector<RES_ID>>			m_resourceTypeManifest;
 
-
+	
 };
 
 

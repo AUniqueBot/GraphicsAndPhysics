@@ -12,7 +12,7 @@ void Material::SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProg){
 }
 
 int Material::GetShader() const {
-    return (m_shader.get() == nullptr) ? 0 : m_shader.get()->ShaderID();
+    return (m_shader.get() == nullptr) ? 0 : m_shader.get()->GetShaderProgramID();
 }
 
 
@@ -160,7 +160,7 @@ std::array<GLubyte, 4> Material::ColorToBytes(const glm::vec4& col) {
 
 void Material::InitUniformLocations() {
 	if (m_shader.get()) {
-		int programId { m_shader.get()->ShaderID() };
+		int programId { m_shader.get()->GetShaderProgramID() };
 		GLint uniformCount{};
 		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
 

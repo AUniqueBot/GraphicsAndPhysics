@@ -175,6 +175,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\res\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />
     <ClCompile Include="Source\arch\systems\sys_physics.cpp" />
@@ -269,6 +270,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_scene.h" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
+    <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_texture.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />

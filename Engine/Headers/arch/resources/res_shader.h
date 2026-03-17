@@ -6,16 +6,10 @@
 
 
 
-class ShaderProgram : public Resource<ShaderProgram> {
-/*
-	@brief
-		contains the shader program
-	
-	Not responsible for loading the program
-*/
 
-public:
-	enum SHADERTYPE {
+namespace ShaderConstants {
+	constexpr GLuint C_INVALIDSHADERID				{ 0 };
+	enum class ShaderType {
 		VERTEX,
 		FRAG,
 		GEOMETRY,
@@ -24,38 +18,69 @@ public:
 		COMPUTE,
 		_COUNT
 	};
+}
 
+namespace ShaderUtilFunctions {
+
+	std::string ParseShaderCode(const std::string& _sourceCodePath);
+	GLuint CompileShader(const char* _sourceCode, ShaderConstants::ShaderType _type);
+	GLuint BuildShaderProgram(std::vector<GLuint>);
+}
+
+
+std::ostream& operator<<(std::ostream& _os, ShaderConstants::ShaderType _type);
+
+
+class Shader : public Resource<Shader> {
+public:
+
+public:
+
+	void SetShaderType(ShaderConstants::ShaderType _type);
+	const ShaderConstants::ShaderType& GetShaderType() const;
+
+	void SetShaderCode(const std::string& _shaderCode);
+	const std::string& GetShaderCode() const;
+
+	const GLuint& GetShaderID() const;
+
+
+	void Build(bool _showDebugMessages = true);
+	void Destroy();
+private:
+	std::string m_shaderName	{};
+	GLuint m_shaderId			{ ShaderConstants::C_INVALIDSHADERID };
+	std::string m_shaderCode	{};
+	ShaderConstants::ShaderType m_shaderType		{};
+	bool m_shaderIsBuilt		{ false };
+};
+
+
+
+class ShaderProgram : public Resource<ShaderProgram> {
+/*
+	@brief
+		contains the shader program
+	Not responsible for loading the program
+*/
 public:
 	void Init();
 	void Load();
 	void Unload();
 
-	static std::string ParseShaderCode(
-		const std::string& _sourceCodePath
-	);
-	static GLuint CompileShader(const char* _sourceCode, SHADERTYPE _type);
-	static GLuint BuildShaderProgram(std::vector<GLuint>);
+	void SetShader(Shader _shader, ShaderConstants::ShaderType);
 
-	
-	void SetShaderID(GLuint _id) { m_programId = _id; };
+	void SetShaderProgramID(GLuint _id);
+	int GetShaderProgramID() const;
 
-	int ShaderID() const { return m_programId; };
-
-	// a list of inputs from vertex buffers, uniforms from (???), and outputs from render targets
-	std::string GenerateShader();
-
+	void Build();
+	void Destroy();
 
 private:
-	static std::string ParseShaderCode_Internal(
-		const std::string& filePath,
-		std::unordered_set<std::string>& visited
-	);
-
-
+	std::vector<GLuint> GetShaderVectorList() const;
 private:
-	unsigned m_programId { 0 };
-	std::bitset<_COUNT> m_shaderLoadStatus;
-
+	GLuint m_programId												{ 0 };
+	SparseSet<ShaderConstants::ShaderType, Shader> m_shaderList;
 };
 
 

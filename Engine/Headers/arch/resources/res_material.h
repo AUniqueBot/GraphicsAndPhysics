@@ -14,7 +14,7 @@
 // - class -----------------------------
 class Material {
 public:
-	using SHADERTYPE = ShaderProgram::SHADERTYPE; // alias the name
+	using SHADERTYPE = ShaderConstants::ShaderType; // alias the name
 
 public:
 	enum IMAGE_CLAMP_BEHAVIOUR {
@@ -36,8 +36,9 @@ public:
 	virtual void Init();
 
 	void SetShaderProgram(std::shared_ptr<ShaderProgram> _shaderProg);
-
 	int GetShader() const;
+
+
 
 	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 	virtual void ApplyUniforms() const;
@@ -65,6 +66,12 @@ public:
 	static std::array<GLubyte, 4> ColorToBytes(const glm::vec4& col);
 
 	
+
+
+
+	// - shader programs --------------------------------------
+
+
 protected:
 	GLint GetUniformLocation(const std::string& _uniformName) const;
 

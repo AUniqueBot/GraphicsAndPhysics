@@ -8,18 +8,23 @@ void PhongMaterial::Init() {
 
 
     // - loading shader ------------------
-    std::string vertexShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
-    std::string fragmentShaderSource = "#version 460 core\n" + ShaderProgram::ParseShaderCode("./Assets/Shaders/frag_phong.frag");
+    std::string vertexShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
+    std::string fragmentShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_phong.frag");
 
     ShaderProgram phongShader{};
-    GLuint vtxShaderId = ShaderProgram::CompileShader(vertexShaderSource.c_str(), ShaderProgram::VERTEX);
-    GLuint fragShaderId = ShaderProgram::CompileShader(fragmentShaderSource.c_str(), ShaderProgram::FRAG);
+    Shader vertexShader;
+    Shader fragmentShader;
 
-    std::vector<GLuint> shaderList{ vtxShaderId, fragShaderId };
-    GLuint programId{ ShaderProgram::BuildShaderProgram(shaderList) };
-    phongShader.SetShaderID(programId);
+    vertexShader.SetShaderCode(vertexShaderSource);
+    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
+    fragmentShader.SetShaderCode(fragmentShaderSource);
+    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+    vertexShader.Build();
+    fragmentShader.Build();
+    phongShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
+    phongShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
+    phongShader.Build();
     SetShaderProgram(std::make_shared<ShaderProgram>(phongShader));
-
 
     m_reservedColorTexId = GenerateEmptyColorTexture();
 

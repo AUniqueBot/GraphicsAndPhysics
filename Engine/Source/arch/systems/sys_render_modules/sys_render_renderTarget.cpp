@@ -34,7 +34,7 @@ void RenderTarget::Resize(glm::ivec2 _newDimensions) {
 		glBindTexture(GL_TEXTURE_2D, m_fboDepth);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	}
-
+	 
 	for (const ColorAttachment& ca : m_colorAttachments) {
 
 		ColorChannelCastData key{ ca.m_channelLayout, ca.m_scalarType };
@@ -157,6 +157,9 @@ bool RenderTarget::SetDepthAttachment(DepthAttachment _depthAttachment) {
 	m_depthAttachment = _depthAttachment;
 	return true;
 }
+
+
+
 
 
 
