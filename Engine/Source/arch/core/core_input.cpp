@@ -64,7 +64,7 @@ void InputSystem::Update() {
 
 void InputSystem::PostUpdate() {
 	if (m_freezeMousePosition) {
-		MoveMouse(m_prevMouseX, m_prevMouseY);
+		MoveMouse(static_cast<float>(m_prevMouseX), static_cast<float>(m_prevMouseY));
 	}
 }
 

@@ -36,8 +36,8 @@ public:
 		@brief
 			gets material list
 	*/
-	std::vector<std::shared_ptr<Material>>& GetMaterialList()			{ return m_materials; }
-	const std::vector<std::shared_ptr<Material>>& GetMaterialList() const { return m_materials; }
+	std::vector<std::shared_ptr<Material>>& GetMaterialList()				{ return m_materials; }
+	const std::vector<std::shared_ptr<Material>>& GetMaterialList() const	{ return m_materials; }
 
 	void AddMaterial(std::shared_ptr<Material> _material);
 	void RemoveMaterial(std::shared_ptr<Material> _material);

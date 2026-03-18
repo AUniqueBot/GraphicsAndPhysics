@@ -27,13 +27,6 @@ std::string ShaderGenerator::GenerateWorldObjectAttributes(const VAOHandler& _va
 		;
 	
 
-	// uniforms here
-	ss << 
-		"uniform mat4 " << U_OBJECT_MATRIX << ";\n" <<
-		"uniform mat4 " << U_CAMERA_MATRIX << ";\n" <<
-		"uniform mat4 " << U_PROJECTION_MATRIX << ";\n" <<
-		"\n";
-
 	// outputs here
 	const char* outputString =
 		"out vec3 frag_position;\n\n"

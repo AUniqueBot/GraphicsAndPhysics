@@ -163,7 +163,7 @@ void UIWidget_Outliner::Table() {
         TableSetColumnIndex(0);
 
         std::string labelName = entity.Name() + "##";
-        labelName += static_cast<unsigned long>(entity.GetID());
+        labelName += std::to_string(static_cast<unsigned long>(entity.GetID()));
         ImGui::AlignTextToFramePadding();
         //float y{ ImGui::GetCursorPosY() };
 

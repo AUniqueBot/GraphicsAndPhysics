@@ -11,7 +11,7 @@
 #include <arch/core/core_inputRouter.h>
 
 #include <arch/resources/res_resourceManager.h>
-
+#include <arch/resources/res_shaderManager.h>
 
 
 
@@ -66,7 +66,8 @@ public:
 	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
 	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
-
+	ShaderManager& GetShaderManager()				{ return m_shaderManager; };
+	const ShaderManager& GetShaderManager() const	{ return m_shaderManager; };
 
 
 
@@ -79,7 +80,9 @@ public:
 
 	template <std::derived_from<System> T>
 	void RegisterSystem() {
-		m_systemInstances.push_back(&T::GetInstance());
+		T* instance{ &T::GetInstance() };
+		instance->SetEngineContext(this);
+		m_systemInstances.push_back(instance);
 	}
 
 
@@ -113,6 +116,9 @@ private:
 	EntityRegistry m_registry;
 	EntityFactory m_entityFactory			{ m_registry };
 	ResourceManager m_resourceManager;
+	ShaderManager m_shaderManager;
+	
+
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;
 	double m_fixedDeltaTime					{ 1.0/60.0 };

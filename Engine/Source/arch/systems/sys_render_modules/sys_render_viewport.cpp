@@ -319,7 +319,7 @@ glm::vec3 Viewport::RotationEuler() const {
 	return glm::degrees(glm::eulerAngles(Rotation()));
 }
 
-const glm::vec3& Viewport::Forward() const {
+glm::vec3 Viewport::Forward() const {
 	return m_rotation * glm::vec3(0, 0, 1);
 }
 

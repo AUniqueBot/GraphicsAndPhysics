@@ -24,7 +24,7 @@ void PhongMaterial::Init() {
     phongShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
     phongShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
     phongShader.Build();
-    SetShaderProgram(std::make_shared<ShaderProgram>(phongShader));
+    SetShaderProgram(phongShader.GetShaderProgramID());
 
     m_reservedColorTexId = GenerateEmptyColorTexture();
 

@@ -1,14 +1,15 @@
 #pragma once
 #include <pch.h>
-#include <arch/core.h>
 #include <regex>
 #include <unordered_set>
+#include <arch/resources/res_resource.h>
+#include <arch/datatypes/type_sparseSet.h>
 
 
 
 
 namespace ShaderConstants {
-	constexpr GLuint C_INVALIDSHADERID				{ 0 };
+	inline constexpr GLuint C_INVALIDSHADERID				{ 0 };
 	enum class ShaderType {
 		VERTEX,
 		FRAG,

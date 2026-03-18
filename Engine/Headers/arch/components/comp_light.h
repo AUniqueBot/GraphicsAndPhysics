@@ -50,10 +50,10 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 	// get light type and shadow id.
 
 	void SetShadowID(int _id) {
-		m_lightTypeShadowId.y = _id;
+		m_lightTypeShadowId.y = static_cast<float>(_id);
 	}
 	void SetLightType(LightType _type) {
-		m_lightTypeShadowId.x = static_cast<int>(_type);
+		m_lightTypeShadowId.x = static_cast<float>(_type);
 	}
 
 	void SetMatrix(glm::mat4 _matrix, int _idx) {

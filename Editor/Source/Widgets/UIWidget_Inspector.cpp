@@ -208,7 +208,7 @@ void UIWidget_Inspector::Draw() {
 
 			for (const RES_ID& id : meshIDs) {
 				std::string imguiMeshID	{ "##meshID" };
-				imguiMeshID += id;
+				imguiMeshID += std::to_string(id);
 				PushID(imguiMeshID.c_str());
 
 				const auto& mesh = std::dynamic_pointer_cast<Mesh>(resPool.at(id));

@@ -10,6 +10,9 @@
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_transform.h>
 
+
+
+
 constexpr unsigned C_MAX_LIGHT_COUNT_LOW	{ 20 };
 constexpr unsigned C_MAX_LIGHT_COUNT_MED	{ 40 };
 constexpr unsigned C_MAX_LIGHT_COUNT_HIGH	{ 60 };
@@ -30,7 +33,6 @@ struct alignas(sizeof(glm::vec4)) CommonUBOData {
 	glm::vec3 m_cameraUp;
 	GLfloat m_deltaTime;
 };
-
 
 
 class RenderSystem final : public System, public Singleton<RenderSystem> {
@@ -138,6 +140,8 @@ public:
 	);
 
 
+	void Render(const MeshRenderer& _mr) const;
+
 	void DebugRenderPass(const unsigned& );
 
 public:
@@ -175,6 +179,9 @@ private:
 	void BindShadowShader();
 	void UnbindShadowShader();
 
+
+	void ResolveMeshRendererMaterials(MeshRenderer& _mr);
+	void ResolveDefaultMaterial(Material& _mr);
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };

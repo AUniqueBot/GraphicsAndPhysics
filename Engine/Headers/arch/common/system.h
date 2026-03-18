@@ -3,8 +3,7 @@
 #include <arch/common/entity.h>
 
 
-
-
+class Core;
 class System {
 public:
 	
@@ -22,8 +21,9 @@ public:
 	virtual void Stop()			{ /*if (!DISABLELOGGING) LOG_WITH_CONTEXT("Stop()");*/ };
 	virtual void Cleanup()		{ /*if (!DISABLELOGGING) LOG_WITH_CONTEXT("Cleanup()");*/ };
 
-
-	// --- 
+	inline Core& GetEngineContext()					{ return *m_core; };
+	inline const Core& GetEngineContext() const		{ return *m_core; };
+	inline void SetEngineContext(Core* _core)		{ m_core = _core; };
 private:
-	
+	Core* m_core	{};
 };

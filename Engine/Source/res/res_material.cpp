@@ -7,15 +7,17 @@ void Material::Init() {
     
 }
 
-void Material::SetShaderProgram(std::shared_ptr<ShaderProgram> shaderProg){
-	m_shader = std::move(shaderProg);
+void Material::SetShaderProgram(GLuint shaderProg){
+	m_shader =shaderProg;
 }
 
-int Material::GetShader() const {
-    return (m_shader.get() == nullptr) ? 0 : m_shader.get()->GetShaderProgramID();
+int Material::GetShaderProgram() const {
+	return m_shader;
 }
 
-
+Materials::ShadingModel Material::GetShadingModel() const {
+	return Materials::ShadingModel::NONE;
+}
 
 unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType) {
 	// TODO - Retrofit this function to save as a class for asset management.
@@ -159,32 +161,32 @@ std::array<GLubyte, 4> Material::ColorToBytes(const glm::vec4& col) {
 
 
 void Material::InitUniformLocations() {
-	if (m_shader.get()) {
-		int programId { m_shader.get()->GetShaderProgramID() };
-		GLint uniformCount{};
-		glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
+	if (!m_shader) return;
+	GLuint programId { m_shader };
+	GLint uniformCount{};
+	glGetProgramiv(programId, GL_ACTIVE_UNIFORMS, &uniformCount);
 
-		for (int i{}; i < uniformCount; ++i) {
-			std::string name(256, '\0');
-			GLint nameLen{};
-			GLint size{};
-			GLenum type{};
-			glGetActiveUniform(programId, i, static_cast<GLsizei>(name.size()), &nameLen, &size, &type, &name[0]);
-			name.resize(nameLen);
-			GLint location = glGetUniformLocation(programId, name.c_str());
-			if (-1 == location) {
-				LOG_WARN("Uniform '" << name << "' location is -1 (probably optimized out or inactive)");
-				continue;
-			}
-
-			// data here
-			UniformData u_data{};
-			u_data.m_type = type;
-			u_data.m_uniformLocation = location;
-			m_uniformData.emplace(name, u_data);
-			m_uniformLocations.emplace(name, location);
+	for (int i{}; i < uniformCount; ++i) {
+		std::string name(256, '\0');
+		GLint nameLen{};
+		GLint size{};
+		GLenum type{};
+		glGetActiveUniform(programId, i, static_cast<GLsizei>(name.size()), &nameLen, &size, &type, &name[0]);
+		name.resize(nameLen);
+		GLint location = glGetUniformLocation(programId, name.c_str());
+		if (-1 == location) {
+			LOG_WARN("Uniform '" << name << "' location is -1 (probably optimized out or inactive)");
+			continue;
 		}
+
+		// data here
+		UniformData u_data{};
+		u_data.m_type = type;
+		u_data.m_uniformLocation = location;
+		m_uniformData.emplace(name, u_data);
+		m_uniformLocations.emplace(name, location);
 	}
+	
 }
 
 void Material::SetUniform(std::string _uniformName, UniformData _data) const {
@@ -198,7 +200,7 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 }
 
 void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
-	glUseProgram(GetShader());
+	glUseProgram(GetShaderProgram());
 	GLint uniformLocation{};
 
 	// lambda function
@@ -223,14 +225,14 @@ void Material::ApplyUniforms() const {}
 
 
 GLint Material::GetUniformLocation(const std::string& _uniformName) const {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	if (!shaderId) return -1;
 	return glGetUniformLocation(shaderId, _uniformName.c_str());
 }
 
 
 void Material::SetUniformMatrix(std::string _uniformName, glm::mat4 _value) {
-	GLint shaderId{GetShader()};
+	GLint shaderId{GetShaderProgram()};
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName) ;
@@ -245,7 +247,7 @@ void Material::SetUniformMatrix(std::string _uniformName, glm::mat4 _value) {
 }
 
 void Material::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -258,7 +260,7 @@ void Material::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
 }
 
 void Material::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -274,7 +276,7 @@ void Material::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
 }
 
 void Material::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -289,7 +291,7 @@ void Material::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
 }
 
 void Material::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -305,7 +307,7 @@ void Material::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
 }
 
 void Material::SetUniformInt(std::string _uniformName, GLint _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -321,7 +323,7 @@ void Material::SetUniformInt(std::string _uniformName, GLint _value) {
 }
 
 void Material::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);
@@ -336,7 +338,7 @@ void Material::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
 }
 
 void Material::SetUniformFloat(std::string _uniformName, GLfloat _value) {
-	GLint shaderId{ GetShader() };
+	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
 		uniformLoc = GetUniformLocation(_uniformName);

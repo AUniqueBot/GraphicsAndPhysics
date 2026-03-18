@@ -401,5 +401,8 @@
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_enginecontext.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

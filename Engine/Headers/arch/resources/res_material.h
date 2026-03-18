@@ -9,6 +9,26 @@
 #include <arch/common/entityid.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 
+namespace Materials {
+	enum class ShadingModel {
+		LAMBERT,			//
+		PHONG,				//
+		BLINN_PHONG,		//
+		COOK_TORRENCE,
+		GGX,
+		BURLEY,				//
+		PRINCIPLED,
+		NONE,
+		_COUNT
+	};
+}
+
+struct MaterialFeatures {
+	bool isPBR;
+	bool isLit;
+	bool hasSpecular;
+};
+
 
 
 // - class -----------------------------
@@ -35,10 +55,11 @@ public:
 
 	virtual void Init();
 
-	void SetShaderProgram(std::shared_ptr<ShaderProgram> _shaderProg);
-	int GetShader() const;
+	void SetShaderProgram(GLuint _shaderProg);
+	int GetShaderProgram() const;
 
-
+	// - shader programs --------------------------------------
+	virtual Materials::ShadingModel GetShadingModel() const;
 
 	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 	virtual void ApplyUniforms() const;
@@ -67,21 +88,18 @@ public:
 
 	
 
-
-
-	// - shader programs --------------------------------------
-
-
+	
 protected:
 	GLint GetUniformLocation(const std::string& _uniformName) const;
 
 	void InitUniformLocations();
 	void SetUniform(std::string _uniformName, UniformData _data) const;
 
-	std::shared_ptr<ShaderProgram> m_shader;
+	GLuint m_shader;
 
 
 	std::map<std::string, UniformData> m_uniformData;
 	std::map<std::string, GLint> m_uniformLocations;
+
 
 };

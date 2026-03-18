@@ -46,7 +46,7 @@ public:
 	void RotationEuler(const glm::vec3& _rotationEulerDeg);
 	glm::vec3 RotationEuler() const;
 
-	const glm::vec3& Forward() const;
+	glm::vec3 Forward() const;
 
 
 	// - camera projection ----------------------------

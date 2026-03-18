@@ -167,6 +167,7 @@ void RenderSystem::PreUpdate() {
     // clear the buffer.
 
 
+
 }
 
 
@@ -255,7 +256,7 @@ void RenderSystem::UseViewport(const Viewport& _viewport) {
       
     rtPtr->Bind();
     glm::vec2 vpDims{ _viewport.ViewportDimensions() };
-    glViewport(0, 0, vpDims.x, vpDims.y);
+    glViewport(0, 0, static_cast<GLsizei>(vpDims.x), static_cast<GLsizei>(vpDims.y));
     glPolygonMode(_viewport.GetFaceToRender(), _viewport.GetRenderMode());
 }
 
@@ -306,8 +307,10 @@ void RenderSystem::RenderRangedLightShadows(
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
+
+
             //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
-            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
         }
     }
 }
@@ -336,7 +339,7 @@ void RenderSystem::RenderPointLightShadows(
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
-            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
         }
     }
 
@@ -526,8 +529,13 @@ void RenderSystem::LightingRenderPass(
         currentVAO.UseMesh(*mesh);
         // check if there is data here...
         FillObjectUBO(e, *trs);
+
+        ResolveMeshRendererMaterials(*mr);
         mr->ApplyShadowMap(m_directionalShadowMaps);
         mr->Render();
+
+        Render(*mr);
+
         m_vaoManager.UnbindVAO();
         
     }
@@ -640,6 +648,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
             glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
         }
     }
+    
 
     // once done pass this to the shadow UBO.
 }
@@ -660,6 +669,25 @@ void RenderSystem::SpotLightShadowRenderPass(
     const ComponentPool<MeshRenderer>& _mrPool
 ) {
 
+}
+
+void RenderSystem::Render(const MeshRenderer& _mr) const {
+    std::shared_ptr<const Mesh> mesh{ _mr.GetMesh() };
+    if (!mesh) return;
+    GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * 3) };
+    const std::vector<std::shared_ptr<Material>> matList    { _mr.GetMaterialList() };
+    // use the default material and render.
+    if (matList.size() == 0) {
+        //const Material& mat = GetDefaultMaterial();
+        //mat.ApplyUniforms();
+        //glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
+        return;
+    }
+    // go through all materials
+    for (const std::shared_ptr<Material> matPtr : matList) {
+        matPtr->ApplyUniforms();
+        glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
+    }
 }
 
 void RenderSystem::DebugRenderPass(const unsigned& textureId) {
@@ -886,6 +914,53 @@ void RenderSystem::BindShadowShader() {
 
 void RenderSystem::UnbindShadowShader() {
     glUseProgram(0);
+}
+
+void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
+    if (!_mr.GetMesh()) return; // no point resolving something can't be seen
+    for (std::shared_ptr<Material>& matPtr : _mr.GetMaterialList()) {
+        Material& mat{ *matPtr };
+        ResolveDefaultMaterial(mat);
+    }
+}
+
+void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
+    ShaderManager& sr{ Core::GetInstance().GetShaderManager() };
+    using namespace Materials;
+    ShadingModel type{ _mat.GetShadingModel() };
+    if (
+        _mat.GetShaderProgram() != ShaderConstants::C_INVALIDSHADERID ||
+        type == Materials::ShadingModel::NONE
+        ) return;
+    std::string shaderProgramAlias{};
+    switch (type) {
+    case ShadingModel::LAMBERT:
+        shaderProgramAlias = ShaderConstants::C_ID_LAMBERTSHADERPROG;
+        break;
+    case ShadingModel::PHONG:
+        shaderProgramAlias = ShaderConstants::C_ID_LAMBERTFRAGSHADER;
+        break;
+    case ShadingModel::BLINN_PHONG:
+        break;
+    case ShadingModel::COOK_TORRENCE:
+        break;
+    case ShadingModel::GGX:
+        break;
+    case ShadingModel::BURLEY:
+        break;
+    case ShadingModel::PRINCIPLED:
+        break;
+    default:
+        break;
+    }
+    if (!shaderProgramAlias.empty()) {
+        GLuint shaderId{ ShaderConstants::C_INVALIDSHADERID };
+        shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
+        LOG_INFO("Shader ID: " << shaderId);
+        _mat.SetShaderProgram(shaderId);
+        _mat.Init();
+    }
+
 }
 
 

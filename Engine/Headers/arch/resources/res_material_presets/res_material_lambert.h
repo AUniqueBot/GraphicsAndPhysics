@@ -8,7 +8,7 @@ class LambertMaterial : public Material {
 public:
 
 	void Init() override;
-
+	Materials::ShadingModel GetShadingModel() const override;
 
 	// - getters -------------------------------------
 	const glm::vec4& Color() const;

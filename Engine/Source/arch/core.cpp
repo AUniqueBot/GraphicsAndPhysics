@@ -41,7 +41,9 @@ void Core::Init() {
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
-		
+		std::shared_ptr<LambertMaterial> mat { std::make_shared<LambertMaterial>(LambertMaterial{}) };
+		mat->Color(0xaaaaeeff);
+		component->AddMaterial(mat);
 	}
 
 
@@ -64,10 +66,6 @@ void Core::Init() {
 
 	dirLight.GetComponent<Transform>()->Forward(glm::vec3(0, 0, 1));
 
-
-	LambertMaterial& mat = static_cast<LambertMaterial&>(obj1.GetComponent<MeshRenderer>()->GetDefaultMaterial());
-	mat.Color(0xaaaaeeff);
- 	
 
 	// initialise here.
 	for (System* s : m_systemInstances) {
@@ -138,8 +136,7 @@ void Core::Cleanup() {
 	for (auto s : m_systemInstances) {
 		s->Cleanup();
 	}
-
-
+	m_shaderManager.Cleanup();
 }
 
 void Core::SetWindow(GLFWwindow* _window) {
@@ -165,7 +162,7 @@ void Core::CoreInit() {
 	glfwSetWindowUserPointer(m_window, this);
 	m_inputSystem.Init(m_window);
 	m_resourceManager.Init(); 
-
+	m_shaderManager.Init();
 
 
 }

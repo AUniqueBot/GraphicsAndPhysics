@@ -163,7 +163,7 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 			(1.0f - (ndc.y * 0.5f + 0.5f))* vp.y
 		};
 		name += "##";
-		name += static_cast<unsigned long>(enttId);
+		name += std::to_string(static_cast<unsigned long>(enttId));
 
 
 

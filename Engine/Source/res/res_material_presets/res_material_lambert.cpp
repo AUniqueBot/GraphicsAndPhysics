@@ -1,42 +1,43 @@
 #include <arch/resources/res_material_presets/res_material_lambert.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
-
-
+#include <arch/resources/res_shaderManager.h>
+#include <arch/core.h>
 
 void LambertMaterial::Init() {
+    //SparseSetView<ShaderProgram> prg{ Core::GetInstance().GetShaderManager().GetShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG) };
 
+    //// - loading shader ------------------
+    //Shader vertexShader     {};
+    //Shader fragmentShader   {};
+    //vertexShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert"));
+    //fragmentShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_lambert.frag"));
 
-    // - loading shader ------------------
-    Shader vertexShader     {};
-    Shader fragmentShader   {};
-    vertexShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert"));
-    fragmentShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_lambert.frag"));
+    //vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
+    //fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+    //vertexShader.Build();
+    //fragmentShader.Build(); 
+    //ShaderProgram lambertShader{};
 
-    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-    vertexShader.Build();
-    fragmentShader.Build(); 
-    ShaderProgram lambertShader{};
+    //lambertShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
+    //lambertShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
 
-    lambertShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
-    lambertShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
-
-    GLuint vtxShaderId = vertexShader.GetShaderID();
-    GLuint fragShaderId = fragmentShader.GetShaderID();
-    lambertShader.Build();
-    //GLuint programId             { ShaderProgram::BuildShaderProgram() };
-    //lambertShader.SetShaderProgramID(programId);
-
-    SetShaderProgram(std::make_shared<ShaderProgram>(lambertShader));
+    //GLuint vtxShaderId = vertexShader.GetShaderID();
+    //GLuint fragShaderId = fragmentShader.GetShaderID();
+    //lambertShader.Build();
+    ////GLuint programId             { ShaderProgram::BuildShaderProgram() };
+    ////lambertShader.SetShaderProgramID(programId);
+    //SetShaderProgram(lambertShader.GetShaderProgramID());
 
 
     m_reservedColorTexId = GenerateEmptyColorTexture();
-
     // - setting up uniforms -------------
     InitUniformLocations();
-
     UpdateTextureID();
+}
+
+Materials::ShadingModel LambertMaterial::GetShadingModel() const {
+    return Materials::ShadingModel::LAMBERT;
 }
 
 

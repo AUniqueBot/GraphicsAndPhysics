@@ -22,7 +22,6 @@ void MeshRenderer::End() {
 
 void MeshRenderer::SetMesh(std::shared_ptr<Mesh> _mesh) {
 	m_mesh = _mesh;
-
 }
 
 std::shared_ptr<const Mesh> MeshRenderer::GetMesh() const { 
@@ -58,18 +57,18 @@ void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 }
 
 void MeshRenderer::Render() {
-	
+	GLsizei meshFloatCount { static_cast<GLsizei>(m_mesh->GetIndexDataCount() * 3) };
 	// use the default material and render.
 	if (m_materials.size() == 0) {
 		const Material& mat = GetDefaultMaterial();
 		mat.ApplyUniforms();
-		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
 		return;
 	}
 	// go through all materials
 	for (const std::shared_ptr<Material> matPtr: m_materials) {
 		matPtr->ApplyUniforms();
-		glDrawElements(GL_TRIANGLES, m_mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, (m_mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
 	}
 }
 

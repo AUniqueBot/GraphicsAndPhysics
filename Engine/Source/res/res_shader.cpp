@@ -141,7 +141,6 @@ int ShaderProgram::GetShaderProgramID() const {
 };
 
 void ShaderProgram::Build() {
-
 	std::vector<GLuint> shaderList{ GetShaderVectorList() };
 	
 	if (shaderList.empty()) {

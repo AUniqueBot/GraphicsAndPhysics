@@ -13,8 +13,8 @@
 
 
 
-constexpr unsigned C_RENDER_MATERIAL	{ 0 };
-constexpr unsigned C_RENDER_OBJECTID	{ 1 };
+inline constexpr unsigned C_RENDER_MATERIAL	{ 0 };
+inline constexpr unsigned C_RENDER_OBJECTID	{ 1 };
 
 
 class RenderTarget	 {
