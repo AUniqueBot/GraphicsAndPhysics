@@ -1,11 +1,11 @@
 #include <arch/components/comp_light.h>
 
 
-LightType Light::Type() const {
+const LightType& Light::Type() const {
     return m_lightType;
 }
 
-void Light::Type(LightType _type) {
+void Light::Type(const LightType& _type) {
     if (_type == m_lightType) {
         return;
     }
@@ -146,6 +146,19 @@ std::vector<PropertyMD::Property>& Light::GetProps() {
             true
             ),
         PropertyMD::MakeProperty<Light>("Casts Shadow", PropertyType::Boolean, Shape::Scalar, 3, &Light::GetCastShadow, &Light::SetCastShadow),
+        PropertyMD::MakeEnumProperty<Light, LightType>("Light Type", 
+            static_cast<const LightType& (Light::*)() const>(&Light::Type),
+            static_cast<void (Light::*)(const LightType& )>(&Light::Type),
+            {
+                {"Point",       static_cast<int>(LightType::POINT) },
+                {"Ambient",     static_cast<int>(LightType::AMBIENT) },
+                {"Spot",        static_cast<int>(LightType::SPOT) },
+                {"Directional", static_cast<int>(LightType::DIRECTIONAL) }
+            }
+          
+        )
+
+
     };
     return props;
 }

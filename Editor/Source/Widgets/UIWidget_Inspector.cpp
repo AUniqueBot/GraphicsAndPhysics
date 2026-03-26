@@ -71,8 +71,6 @@ void UIWidget_Inspector::Draw() {
 	if (trsV) {
 		std::string tableId{ obj.Name() + "##Transform_Table" };
 		Transform& trs = *trsV;
-	
-
 		for (const PropertyMD::Property& prop: trs.GetComponentProperties()) {
 			DrawPropertyElement(&trs, prop, prop.m_name);
 		}
@@ -87,11 +85,7 @@ void UIWidget_Inspector::Draw() {
 		auto& matList{ mr.GetMaterialList() };
 		if (matList.size() == 0) {
 			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
-
-
 			glm::vec4 col{mat.Color()};
-
-
 			if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
 				mat.Color(col);
 			}
@@ -172,11 +166,6 @@ void UIWidget_Inspector::Draw() {
 		}
 	}
 
-	//
-	auto camV = obj.GetComponent<Camera>();
-	if (camV) {
-
-	}
 
 
 	auto lightV = obj.GetComponent<Light>();
@@ -186,26 +175,26 @@ void UIWidget_Inspector::Draw() {
 		for (const PropertyMD::Property& prop : light.GetComponentProperties()) {
 			DrawPropertyElement(&light, prop, prop.m_name);
 		}
-		bool flag{light.GetCastShadow()};
-		const char* currentLight{
-			light.Type() == POINT ? "Point" :
-			light.Type() == SPOT ? "Spot" :
-			light.Type() == DIRECTIONAL ? "Directional":
-			"Ambient"
-		};
+		//bool flag{light.GetCastShadow()};
+		//const char* currentLight{
+		//	light.Type() == POINT ? "Point" :
+		//	light.Type() == SPOT ? "Spot" :
+		//	light.Type() == DIRECTIONAL ? "Directional":
+		//	"Ambient"
+		//};
 
-		if (ImGui::BeginCombo("Light Type", currentLight)) {
-			if (ImGui::Selectable("Point")) {
-				light.Type(POINT);
-			}
-			if (ImGui::Selectable("Directional")) {
-				light.Type(DIRECTIONAL);
-			}
-			if (ImGui::Selectable("Ambient")) {
-				light.Type(AMBIENT);
-			}
-			ImGui::EndCombo();
-		}
+		//if (ImGui::BeginCombo("Light Type", currentLight)) {
+		//	if (ImGui::Selectable("Point")) {
+		//		light.Type(POINT);
+		//	}
+		//	if (ImGui::Selectable("Directional")) {
+		//		light.Type(DIRECTIONAL);
+		//	}
+		//	if (ImGui::Selectable("Ambient")) {
+		//		light.Type(AMBIENT);
+		//	}
+		//	ImGui::EndCombo();
+		//}
 
 	}
 
@@ -465,7 +454,7 @@ void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Pro
 	if (ImGui::BeginCombo(key.c_str(), currentOption)) {
 		for (const PropertyMD::Option& option: prop.m_options) {
 			if (ImGui::Selectable(option.label, val == option.value)) {
-				prop.m_set(object, &val);
+				prop.m_set(object, &option.value);
 			}
 		}
 

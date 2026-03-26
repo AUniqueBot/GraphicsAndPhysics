@@ -110,8 +110,8 @@ public:
 public:
 	void Init() override {}
 
-	LightType Type() const;
-	void Type(LightType _type);
+	const LightType& Type() const;
+	void Type(const LightType& _type);
 	
 	float Power() const;
 	void Power(float _value);
