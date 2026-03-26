@@ -20,6 +20,11 @@ namespace PropertyMD {
 		DynamicList
 	};
 
+	struct Option {
+		const char* label;
+		int value;
+	};
+
 	struct Property {
 		std::string m_name;
 		PropertyType m_type;
@@ -28,6 +33,12 @@ namespace PropertyMD {
 		bool m_draggable;
 		std::function<void(void*, void*)> m_get;
 		std::function<void(void*, const void*)> m_set;
+
+
+
+		bool m_isEnum;
+		std::vector<Option> m_options;
+
 
 		struct List {
 			std::function<int(void*)> m_size;
@@ -72,7 +83,7 @@ namespace PropertyMD {
 		using ReturnT = std::invoke_result_t<Getter, const T*>;
 		using ValueT = std::remove_cv_t<std::remove_reference_t<ReturnT>>;
 
-		return Property(
+		Property prop = Property(
 			name,
 			base,
 			shape,
@@ -91,5 +102,44 @@ namespace PropertyMD {
 			},
 			draggable
 		);
+
+		prop.m_isEnum = false;
+		return prop;
 	}
+
+	template<typename T, typename Enum>
+	Property MakeEnumProperty(
+		const std::string& name,
+		const Enum& (T::* getter)() const,
+		void (T::* setter)(const Enum&),
+		std::vector<Option> options
+	)
+	{
+		Property prop(
+			name,
+			PropertyType::Int,
+			Shape::Scalar,
+			1,
+
+			// GET
+			[getter](void* obj, void* out) {
+				T* t = static_cast<T*>(obj);
+				int value = static_cast<int>((t->*getter)());
+				*static_cast<int*>(out) = value;
+			},
+
+			// SET
+			[setter](void* obj, const void* in) {
+				T* t = static_cast<T*>(obj);
+				int value = *static_cast<const int*>(in);
+				(t->*setter)(static_cast<Enum>(value));
+			}
+		);
+
+		prop.m_isEnum = true;
+		prop.m_options = std::move(options);
+
+		return prop;
+	}
+
 }

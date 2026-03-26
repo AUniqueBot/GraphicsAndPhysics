@@ -16,7 +16,7 @@ struct alignas(sizeof(glm::vec4)) ObjectUBOData {
 
 class Transform : public Component {
 public:
-	enum class ROTATION_ORDER {
+	enum class RotationOrder_ {
 		XYZ,
 		XZY,
 		YXZ,
@@ -43,8 +43,8 @@ public:
 	void RotationEuler(glm::vec3);
 	const glm::vec3& RotationEuler() const;
 
-	void RotationOrder(ROTATION_ORDER _rotOrder)	{ m_rotOrder = _rotOrder; }
-	ROTATION_ORDER RotationOrder() const			{ return m_rotOrder; }
+	void RotationOrder(const RotationOrder_& _rotOrder)	{ m_rotOrder = _rotOrder; }
+	const RotationOrder_& RotationOrder() const		{ return m_rotOrder; }
 
 	void Scale(glm::vec3 _scale)					{ m_scl = _scale; };
 	const glm::vec3& Scale() const					{ return m_scl; };
@@ -86,7 +86,7 @@ private:
 
 	glm::mat4 m_transformMtx		{ 1.f };
 
-	ROTATION_ORDER m_rotOrder		{ ROTATION_ORDER::XYZ };
+	RotationOrder_ m_rotOrder		{ RotationOrder_::XYZ };
 
 	COMPONENT_DECLAREPROPS(Transform);
 

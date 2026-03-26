@@ -29,6 +29,7 @@ private:
     void DrawPropertyBoolean(void* object, const PropertyMD::Property& prop, const std::string& key);
     void DrawPropertyString(void* object, const PropertyMD::Property& prop, const std::string& key);
 
+    void DrawPropertyOptions(void* object, const PropertyMD::Property& prop, const std::string& key);
 
 
 };

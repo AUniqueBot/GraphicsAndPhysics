@@ -3,6 +3,7 @@
 #include <arch/components/comp_transform.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/euler_angles.hpp>
 #include <algorithm>
 
 Transform::Transform() {
@@ -27,23 +28,25 @@ void Transform::RotationEuler(glm::vec3 _rotation) {
 	glm::quat qy = glm::angleAxis(_rotation.y, glm::vec3(0, 1, 0));
 	glm::quat qz = glm::angleAxis(_rotation.z, glm::vec3(0, 0, 1));
 
+
+
 	switch (m_rotOrder) {
-	case ROTATION_ORDER::XYZ:
+	case RotationOrder_::XYZ:
 		m_rot = qz * qy * qx;
 		break;
-	case ROTATION_ORDER::XZY:
+	case RotationOrder_::XZY:
 		m_rot = qy * qz * qx;
 		break;
-	case ROTATION_ORDER::YXZ:
+	case RotationOrder_::YXZ:
 		m_rot = qz * qx * qy;
 		break;
-	case ROTATION_ORDER::YZX:
+	case RotationOrder_::YZX:
 		m_rot = qx * qz * qy;
 		break;
-	case ROTATION_ORDER::ZXY:
+	case RotationOrder_::ZXY:
 		m_rot = qy * qx * qz;
 		break;
-	case ROTATION_ORDER::ZYX:
+	case RotationOrder_::ZYX:
 		m_rot = qx * qy * qz;
 		break;
 	}
@@ -51,12 +54,12 @@ void Transform::RotationEuler(glm::vec3 _rotation) {
 
 const glm::vec3& Transform::RotationEuler() const {
 	return
-		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
-		m_rotOrder == ROTATION_ORDER::XZY ? QuatToXZY() :
-		m_rotOrder == ROTATION_ORDER::YXZ ? QuatToYXZ() :
-		m_rotOrder == ROTATION_ORDER::YZX ? QuatToYZX() :
-		m_rotOrder == ROTATION_ORDER::ZXY ? QuatToZXY() :
-		m_rotOrder == ROTATION_ORDER::ZYX ? QuatToZYX() : QuatToXYZ();
+		m_rotOrder == RotationOrder_::XYZ ? QuatToXYZ() :
+		m_rotOrder == RotationOrder_::XZY ? QuatToXZY() :
+		m_rotOrder == RotationOrder_::YXZ ? QuatToYXZ() :
+		m_rotOrder == RotationOrder_::YZX ? QuatToYZX() :
+		m_rotOrder == RotationOrder_::ZXY ? QuatToZXY() :
+		m_rotOrder == RotationOrder_::ZYX ? QuatToZYX() : QuatToXYZ();
 }
 
 
@@ -93,46 +96,40 @@ glm::mat4 Transform::WorldTransformMtx() const {
 
 
 glm::vec3 Transform::QuatToXYZ() const  {
-	return glm::vec3(
-		atan2(2.0f * (m_rot.w * m_rot.x - m_rot.y * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.y * m_rot.y) + 1.0f),
-		asin(2.0f * (m_rot.w * m_rot.y + m_rot.x * m_rot.z)),
-		atan2(2.0f * (m_rot.w * m_rot.z - m_rot.x * m_rot.y), -2.0f * (m_rot.y * m_rot.y + m_rot.z * m_rot.z) + 1.0f)
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleXYZ(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 glm::vec3 Transform::QuatToXZY() const  {
-	return glm::vec3(
-		atan2(2.0f * (m_rot.w * m_rot.x + m_rot.y * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.z * m_rot.z) + 1.0f),
-		atan2(2.0f * (m_rot.w * m_rot.y - m_rot.x * m_rot.z), -2.0f * (m_rot.y * m_rot.y + m_rot.z * m_rot.z) + 1.0f),
-		asin(2.0f * (m_rot.w * m_rot.z - m_rot.x * m_rot.y))
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleXZY(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 glm::vec3 Transform::QuatToYXZ() const  {
-	return glm::vec3(
-		asin(2.0f * (m_rot.w * m_rot.x - m_rot.y * m_rot.z)),
-		atan2(2.0f * (m_rot.w * m_rot.y + m_rot.x * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.y * m_rot.y) + 1.0f),
-		atan2(2.0f * (m_rot.w * m_rot.z + m_rot.x * m_rot.y), -2.0f * (m_rot.x * m_rot.x + m_rot.z * m_rot.z) + 1.0f)
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleYXZ(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 glm::vec3 Transform::QuatToYZX() const  {
-	return glm::vec3(
-		atan2(2.0f * (m_rot.w * m_rot.x - m_rot.y * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.z * m_rot.z) + 1.0f),
-		atan2(2.0f * (m_rot.w * m_rot.y - m_rot.x * m_rot.z), -2.0f * (m_rot.y * m_rot.y + m_rot.z * m_rot.z) + 1.0f),
-		asin(2.0f * (m_rot.w * m_rot.z + m_rot.x * m_rot.y))
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleYZX(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 glm::vec3 Transform::QuatToZXY() const  {
-	return glm::vec3(
-		asin(2.0f * (m_rot.w * m_rot.x + m_rot.y * m_rot.z)),
-		atan2(2.0f * (m_rot.w * m_rot.y - m_rot.x * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.y * m_rot.y) + 1.0f),
-		atan2(2.0f * (m_rot.w * m_rot.z - m_rot.x * m_rot.y), -2.0f * (m_rot.x * m_rot.x + m_rot.z * m_rot.z) + 1.0f)
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleZXY(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 glm::vec3 Transform::QuatToZYX() const  {
-	return glm::vec3(
-		atan2(2.0f * (m_rot.w * m_rot.x + m_rot.y * m_rot.z), -2.0f * (m_rot.x * m_rot.x + m_rot.y * m_rot.y) + 1.0f),
-		asin(2.0f * (m_rot.w * m_rot.y - m_rot.x * m_rot.z)),
-		atan2(2.0f * (m_rot.w * m_rot.z + m_rot.x * m_rot.y), -2.0f * (m_rot.y * m_rot.y + m_rot.z * m_rot.z) + 1.0f)
-	);
+	glm::mat4 quatCast{ glm::mat4_cast(m_rot) };
+	glm::vec3 rot{};
+	glm::extractEulerAngleZYX(quatCast, rot.x, rot.y, rot.z);
+	return glm::degrees(rot);
 }
 
 
@@ -160,6 +157,19 @@ std::vector<PropertyMD::Property>& Transform::GetProps() {
 			static_cast<void (Transform::*)(glm::quat)>(&Transform::Rotation),
 			true
 		),
+		PropertyMD::MakeEnumProperty<Transform, RotationOrder_>("Rotation Order", 
+		static_cast<const RotationOrder_& (Transform::*)() const>(&Transform::RotationOrder),
+		static_cast<void (Transform::*)(const RotationOrder_&) >(&Transform::RotationOrder),
+			{
+				{ "XYZ", static_cast<int>(RotationOrder_::XYZ) },
+				{ "XZY", static_cast<int>(RotationOrder_::XZY) },
+				{ "YXZ", static_cast<int>(RotationOrder_::YXZ) },
+				{ "YZX", static_cast<int>(RotationOrder_::YZX) },
+				{ "ZXY", static_cast<int>(RotationOrder_::ZXY) },
+				{ "ZYX", static_cast<int>(RotationOrder_::ZYX) }
+
+			}
+			),
 	};
 	return props;
 }

@@ -225,6 +225,11 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 	name += "##";
 	name += key;
 	
+
+	if (prop.m_isEnum) {
+		DrawPropertyOptions(object, prop, name);
+		return;
+	}
 	
 	switch (prop.m_type) {
 	case PropertyType::Color:
@@ -443,5 +448,27 @@ void UIWidget_Inspector::DrawPropertyString(void* object, const PropertyMD::Prop
 	prop.m_get(object, &val);
 	if (ImGui::InputText(key.c_str(), &val)) {
 		prop.m_set(object, &val);
+	}
+}
+
+void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	int val{};
+	prop.m_get(object, &val);
+	const char* currentOption{};
+
+	// search id.
+	for (const PropertyMD::Option& option : prop.m_options) {
+		if (val == option.value) {
+			currentOption = option.label;
+		}
+	}
+	if (ImGui::BeginCombo(key.c_str(), currentOption)) {
+		for (const PropertyMD::Option& option: prop.m_options) {
+			if (ImGui::Selectable(option.label, val == option.value)) {
+				prop.m_set(object, &val);
+			}
+		}
+
+		ImGui::EndCombo();
 	}
 }
