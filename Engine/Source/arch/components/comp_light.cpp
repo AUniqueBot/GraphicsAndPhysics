@@ -23,10 +23,10 @@ void Light::Power(float _value) {
     m_lightDataMismatch = true;
 }
 
-const glm::vec3& Light::Color() const { return m_color; }
+const glm::vec3& Light::GetColor() const { return m_color; }
 
 
-void Light::Color(glm::vec3 _col) {
+void Light::SetColor(const glm::vec3& _col) {
     if (m_color == _col) return;
     m_color = _col;
     m_lightDataMismatch = true;
@@ -94,7 +94,6 @@ void Light::SetShadowDataAtlasSize(int level, const glm::vec2& size) const {
     m_shadowData.SetAtlasSize(size, level);
 }
 
-
 const LightData& Light::GetLightData() const {
     if (m_lightDataMismatch) {
         UpdateLightData();
@@ -135,3 +134,18 @@ void Light::UpdateShadowData() const {
 }
 
 
+
+
+std::vector<PropertyMD::Property>& Light::GetProps() {
+    using namespace PropertyMD;
+    static std::vector<Property> props{
+        PropertyMD::MakeProperty<Light>("Color", PropertyType::Color, Shape::FixedArray, 3, &Light::GetColor, &Light::SetColor),
+        PropertyMD::MakeProperty<Light>("Power", PropertyType::Float, Shape::Scalar, 1,
+            static_cast<float (Light::*)() const>(&Light::Power),   // getter
+            static_cast<void (Light::*)(float)>(&Light::Power),      // setter
+            true
+            ),
+        PropertyMD::MakeProperty<Light>("Casts Shadow", PropertyType::Boolean, Shape::Scalar, 3, &Light::GetCastShadow, &Light::SetCastShadow),
+    };
+    return props;
+}

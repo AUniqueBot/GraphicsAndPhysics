@@ -105,7 +105,7 @@ EntityView EntityFactory::CreatePointLight(
 		ComponentView<Light> light{ e.GetComponent<Light>() };
 		if (light) {
 			light->Power(_intensity);
-			light->Color(_col);
+			light->SetColor(_col);
 			light->Type(LightType::POINT);
 		}
 		e.GetComponent<Transform>()->Position(pos);
@@ -127,7 +127,7 @@ EntityView EntityFactory::CreateAmbientLight(
 		ComponentView<Light> light{ e.GetComponent<Light>() };
 		if (light) {
 			light->Power(_intensity);
-			light->Color(_col);
+			light->SetColor(_col);
 			light->Type(LightType::AMBIENT);
 		}
 		e.GetComponent<Transform>()->Position(pos);
@@ -149,7 +149,7 @@ EntityView EntityFactory::CreateDirectionalLight(
 		ComponentView<Light> light{ e.GetComponent<Light>() };
 		if (light) {
 			light->Power(_intensity);
-			light->Color(_col);
+			light->SetColor(_col);
 			light->Type(LightType::DIRECTIONAL);
 		}
 		e.GetComponent<Transform>()->Position(pos);

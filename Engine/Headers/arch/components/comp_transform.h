@@ -41,7 +41,7 @@ public:
 	const glm::quat& Rotation() const				{ return m_rot; };
 	
 	void RotationEuler(glm::vec3);
-	glm::vec3 RotationEuler() const;
+	const glm::vec3& RotationEuler() const;
 
 	void RotationOrder(ROTATION_ORDER _rotOrder)	{ m_rotOrder = _rotOrder; }
 	ROTATION_ORDER RotationOrder() const			{ return m_rotOrder; }
@@ -88,6 +88,7 @@ private:
 
 	ROTATION_ORDER m_rotOrder		{ ROTATION_ORDER::XYZ };
 
+	COMPONENT_DECLAREPROPS(Transform);
 
 };
 

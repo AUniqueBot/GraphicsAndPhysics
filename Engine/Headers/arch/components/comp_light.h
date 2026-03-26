@@ -116,8 +116,8 @@ public:
 	float Power() const;
 	void Power(float _value);
 
-	const glm::vec3& Color() const;
-	void Color(glm::vec3 _col);
+	const glm::vec3& GetColor() const;
+	void SetColor(const glm::vec3& _col);
 
 	
 	const LightData& GetLightData() const;
@@ -191,10 +191,14 @@ private:
 
 	mutable ShadowData m_shadowData					{};
 	mutable bool m_shadowDataMismatch				{};
+
+	// ---------------------------------------------------------------------------------
+	// - prop declaration ------------------------------------
+	COMPONENT_DECLAREPROPS(Light);
+
 };
 
 
 
 
-// ---------------------------------------------------------------------------------
 

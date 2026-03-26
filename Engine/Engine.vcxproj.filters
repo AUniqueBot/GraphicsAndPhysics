@@ -150,9 +150,6 @@
     <ClCompile Include="Headers\arch\common\component_properties.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\common\component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">

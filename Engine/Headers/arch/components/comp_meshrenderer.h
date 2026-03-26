@@ -73,6 +73,8 @@ public:
 
 private:
 	inline static std::vector<PropertyMD::Property>& GetMRProperties() {
+		using namespace PropertyMD;
+		
 		static std::vector<PropertyMD::Property> s_property{};
 		return s_property;
 	}

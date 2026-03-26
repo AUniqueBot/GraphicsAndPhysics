@@ -71,50 +71,10 @@ void UIWidget_Inspector::Draw() {
 	if (trsV) {
 		std::string tableId{ obj.Name() + "##Transform_Table" };
 		Transform& trs = *trsV;
-		
-		
-		bool tableInit = ImGui::BeginTable(tableId.c_str(), 2);
-		if (tableInit) {
+	
 
-			float posBuffer[3]{
-				trs.Position().x,
-				trs.Position().y,
-				trs.Position().z,
-			};
-			float rotBuffer[4]{
-				trs.Rotation().w,
-				trs.Rotation().x,
-				trs.Rotation().y,
-				trs.Rotation().z,
-			};
-			float sclBuffer[3]{
-				trs.Scale().x,
-				trs.Scale().y,
-				trs.Scale().z,
-			};
-		
-		
-					
-			TableNextRow();
-			TableSetColumnIndex(0);
-			if (InputFloat3("Position##Transform", posBuffer) && EnterOrTabPressed()) {
-				trs.Position(glm::vec3(posBuffer[0], posBuffer[1], posBuffer[2]));
-			}
-
-
-			TableNextRow();
-			TableSetColumnIndex(0);
-			if (InputFloat4("Rotation##Transform", rotBuffer) && EnterOrTabPressed()) {
-				trs.Rotation(glm::quat(rotBuffer[0], rotBuffer[1], rotBuffer[2], rotBuffer[3]));
-			}
-
-			TableNextRow();
-			TableSetColumnIndex(0);
-			if (InputFloat3("Scale##Transform", sclBuffer) && EnterOrTabPressed()) {
-				trs.Scale(glm::vec3(sclBuffer[0], sclBuffer[1], sclBuffer[2]));
-			}
-
-			EndTable();
+		for (const PropertyMD::Property& prop: trs.GetComponentProperties()) {
+			DrawPropertyElement(&trs, prop, prop.m_name);
 		}
 
 	}
@@ -210,15 +170,9 @@ void UIWidget_Inspector::Draw() {
 			}
 			EndCombo();
 		}
-		// dropdown list.
-	
-
-		
-
-
-
 	}
 
+	//
 	auto camV = obj.GetComponent<Camera>();
 	if (camV) {
 
@@ -229,23 +183,10 @@ void UIWidget_Inspector::Draw() {
 	if (lightV) {
 		Light& light = *lightV;
 		
-
-		float colBuffer[3] {
-			light.Color().x,
-			light.Color().y,
-			light.Color().z,
-		};
-		if (ColorEdit3("Colour##Light", colBuffer)) {
-			light.Color(glm::vec3(colBuffer[0], colBuffer[1], colBuffer[2]));
+		for (const PropertyMD::Property& prop : light.GetComponentProperties()) {
+			DrawPropertyElement(&light, prop, prop.m_name);
 		}
-
-		float pwrBuffer	{ light.Power() };
-		if (InputFloat("Power##Light", &pwrBuffer)) {
-			light.Power(pwrBuffer);
-		}
-
 		bool flag{light.GetCastShadow()};
-
 		const char* currentLight{
 			light.Type() == POINT ? "Point" :
 			light.Type() == SPOT ? "Spot" :
@@ -265,9 +206,7 @@ void UIWidget_Inspector::Draw() {
 			}
 			ImGui::EndCombo();
 		}
-		if (light.Type() != AMBIENT && Checkbox("Casts Shadow##Light", &flag)) {
-			light.SetCastShadow(flag);
-		}
+
 	}
 
 	
@@ -278,3 +217,231 @@ void UIWidget_Inspector::Exit() {
 
 }
 
+
+
+void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	using namespace PropertyMD;
+	std::string name{prop.m_name};
+	name += "##";
+	name += key;
+	
+	
+	switch (prop.m_type) {
+	case PropertyType::Color:
+		DrawPropertyColor(object, prop, name);
+		return;
+	case PropertyType::Int:
+		DrawPropertyInt(object, prop, name);
+		return;
+	case PropertyType::Float:
+		DrawPropertyFloat(object, prop, name);
+		return;
+	case PropertyType::Double:
+		DrawPropertyDouble(object, prop, name);
+		return;
+	case PropertyType::Boolean:
+		DrawPropertyBoolean(object, prop, name);
+		return;
+	case PropertyType::String:
+		DrawPropertyString(object, prop, name);
+		return;
+	default:
+		break;
+	}
+
+}
+
+
+void UIWidget_Inspector::DrawPropertyInt(void* object, const  PropertyMD::Property& prop, const std::string& key){
+	int componentCount{ prop.m_componentCount };
+	if (prop.m_draggable) {
+		switch (componentCount) {
+		case 1: {
+			int val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragInt(key.c_str(), &val)) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 2: {
+			glm::ivec2 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragInt2(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 3: {
+			glm::ivec3 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragInt3(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 4: {
+			glm::ivec4 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragInt4(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		}
+	}
+	else {
+		switch (componentCount) {
+		case 1: {
+			int val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputInt(key.c_str(), &val)) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 2: {
+			glm::ivec2 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputInt2(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 3: {
+			glm::ivec3 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputInt3(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 4: {
+			glm::ivec4 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputInt4(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		}
+	}
+}
+void UIWidget_Inspector::DrawPropertyFloat(void* object, const PropertyMD::Property& prop, const std::string& key){
+	int componentCount{ prop.m_componentCount };
+	if (prop.m_draggable) {
+		switch (componentCount) {
+		case 1: {
+			float val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragFloat(key.c_str(), &val)) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 2: {
+			glm::vec2 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragFloat2(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 3: {
+			glm::vec3 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragFloat3(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 4: {
+			glm::vec4 val{};
+			prop.m_get(object, &val);
+			if (ImGui::DragFloat4(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		}
+	}
+	else {
+		switch (componentCount) {
+		case 1: {
+			float val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputFloat(key.c_str(), &val)) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 2: {
+			glm::vec2 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputFloat2(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 3: {
+			glm::vec3 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputFloat3(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		case 4: {
+			glm::vec4 val{};
+			prop.m_get(object, &val);
+			if (ImGui::InputFloat4(key.c_str(), glm::value_ptr(val))) {
+				prop.m_set(object, &val);
+			}
+			break;
+		}
+		}
+	}
+}
+void UIWidget_Inspector::DrawPropertyDouble(void* object, const PropertyMD::Property& prop, const std::string& key){
+	double val{};
+	prop.m_get(object, &val);
+
+	if (ImGui::InputDouble(key.c_str(), &val)) {
+		prop.m_set(object, &val);
+	}
+
+}
+
+
+void UIWidget_Inspector::DrawPropertyColor(void* object, const  PropertyMD::Property& prop, const std::string& key){
+	if (prop.m_componentCount == 3) {
+		glm::vec3 val{};
+		prop.m_get(object, &val);
+		if (ImGui::ColorEdit3(key.c_str(), glm::value_ptr(val))) {
+			prop.m_set(object, &val);
+		}
+	}
+	else {
+		glm::vec4 val{};
+		prop.m_get(object, &val);
+		if (ImGui::ColorEdit4(key.c_str(), glm::value_ptr(val))) {
+			prop.m_set(object, &val);
+		}
+	}
+}
+
+
+void UIWidget_Inspector::DrawPropertyBoolean(void* object, const  PropertyMD::Property& prop, const std::string& key) {
+	bool val{};
+	prop.m_get(object, &val);
+	if (ImGui::Checkbox(key.c_str(), &val)) {
+		prop.m_set(object, &val);
+	}
+}
+void UIWidget_Inspector::DrawPropertyString(void* object, const PropertyMD::Property& prop, const std::string& key){
+	std::string val{};
+	prop.m_get(object, &val);
+	if (ImGui::InputText(key.c_str(), &val)) {
+		prop.m_set(object, &val);
+	}
+}

@@ -49,7 +49,7 @@ void Transform::RotationEuler(glm::vec3 _rotation) {
 	}
 }
 
-glm::vec3 Transform::RotationEuler() const {
+const glm::vec3& Transform::RotationEuler() const {
 	return
 		m_rotOrder == ROTATION_ORDER::XYZ ? QuatToXYZ() :
 		m_rotOrder == ROTATION_ORDER::XZY ? QuatToXZY() :
@@ -133,4 +133,33 @@ glm::vec3 Transform::QuatToZYX() const  {
 		asin(2.0f * (m_rot.w * m_rot.y - m_rot.x * m_rot.z)),
 		atan2(2.0f * (m_rot.w * m_rot.z + m_rot.x * m_rot.y), -2.0f * (m_rot.y * m_rot.y + m_rot.z * m_rot.z) + 1.0f)
 	);
+}
+
+
+// definition in cpp to reduce compile time.
+
+std::vector<PropertyMD::Property>& Transform::GetProps() {
+	using namespace PropertyMD;
+	static std::vector<Property> props{
+		PropertyMD::MakeProperty<Transform>("Position", PropertyType::Float, Shape::FixedArray, 3,
+			static_cast<const glm::vec3 & (Transform::*)()const>(&Transform::Position),
+			static_cast<void (Transform::*)(glm::vec3)>(&Transform::Position),
+			true
+			),
+		PropertyMD::MakeProperty<Transform>("Rotation", PropertyType::Float, Shape::FixedArray, 3,
+			static_cast<const glm::vec3 & (Transform::*)() const>(&Transform::RotationEuler),
+			static_cast<void (Transform::*)(glm::vec3)>(&Transform::RotationEuler),
+			true
+			),
+		PropertyMD::MakeProperty<Transform>("Scale", PropertyType::Float, Shape::FixedArray, 3,
+			static_cast<const glm::vec3 & (Transform::*)() const>(&Transform::Scale),
+			static_cast<void (Transform::*)(glm::vec3)>(&Transform::Scale)
+		),
+		PropertyMD::MakeProperty<Transform>("Quaternion", PropertyType::Float, Shape::FixedArray, 4,
+			static_cast<const glm::quat & (Transform::*)() const>(&Transform::Rotation),
+			static_cast<void (Transform::*)(glm::quat)>(&Transform::Rotation),
+			true
+		),
+	};
+	return props;
 }

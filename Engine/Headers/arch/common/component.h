@@ -5,6 +5,7 @@
 #include <arch/common/component_properties.h>
 
 
+
 class Component {
 	
 public:
@@ -23,8 +24,10 @@ public:
 	// serialization function
 	static void Register() { LOG_INFO("Registering Component - Generic. If you see this, you didn't override this in your component."); };
 
-	virtual std::vector<PropertyMD::Property>& GetComponentProperties();
-	
+	inline virtual std::vector<PropertyMD::Property>& GetComponentProperties() {
+		static std::vector<PropertyMD::Property> props;
+		return props;
+	};
 
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 private:
@@ -35,3 +38,9 @@ private:
 
 template <typename T>
 concept TemplateComponentType = std::derived_from<T, Component>;
+
+#define COMPONENT_DECLAREPROPS(TYPE) \
+public:\
+inline std::vector<PropertyMD::Property>& GetComponentProperties() override { return TYPE::GetProps(); }; \
+private:\
+static std::vector<PropertyMD::Property>& GetProps();
