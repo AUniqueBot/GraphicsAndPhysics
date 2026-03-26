@@ -127,42 +127,29 @@ void UIWidget_Inspector::Draw() {
 		auto& matList{ mr.GetMaterialList() };
 		if (matList.size() == 0) {
 			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
-			float colBuffer[4]{
-				mat.Color()[0],
-				mat.Color()[1],
-				mat.Color()[2],
-				mat.Color()[3],
-			};
 
-			if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
-				mat.Color(glm::vec4(
-					colBuffer[0], 
-					colBuffer[1], 
-					colBuffer[2], 
-					colBuffer[3] 
-					));
+
+			glm::vec4 col{mat.Color()};
+
+
+			if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
+				mat.Color(col);
 			}
 		}
 
 		else {
 
+			// foreach loop, then typecast it.
+			// need self-reflection.
 			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(matList[0].get());
-			float colBuffer[4]{
-				mat.Color()[0],
-				mat.Color()[1],
-				mat.Color()[2],
-				mat.Color()[3],
-			};
 
-			if (ColorEdit4("Color##MeshRenderer", colBuffer)) {
-				mat.Color(glm::vec4(
-					colBuffer[0],
-					colBuffer[1],
-					colBuffer[2],
-					colBuffer[3]
-				));
+			// creating a call function for the component is the incorrect method about going through this.
+
+
+			glm::vec4 col{mat.Color()};
+			if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
+				mat.Color(col);
 			}
-			
 		}
 
 		const auto& selectedMesh = mr.GetMesh();

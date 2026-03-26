@@ -5,32 +5,9 @@
 #include <arch/core.h>
 
 void LambertMaterial::Init() {
-    //SparseSetView<ShaderProgram> prg{ Core::GetInstance().GetShaderManager().GetShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG) };
-
-    //// - loading shader ------------------
-    //Shader vertexShader     {};
-    //Shader fragmentShader   {};
-    //vertexShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert"));
-    //fragmentShader.SetShaderCode("#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_lambert.frag"));
-
-    //vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-    //fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-    //vertexShader.Build();
-    //fragmentShader.Build(); 
-    //ShaderProgram lambertShader{};
-
-    //lambertShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
-    //lambertShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
-
-    //GLuint vtxShaderId = vertexShader.GetShaderID();
-    //GLuint fragShaderId = fragmentShader.GetShaderID();
-    //lambertShader.Build();
-    ////GLuint programId             { ShaderProgram::BuildShaderProgram() };
-    ////lambertShader.SetShaderProgramID(programId);
-    //SetShaderProgram(lambertShader.GetShaderProgramID());
-
 
     m_reservedColorTexId = GenerateEmptyColorTexture();
+    UpdateColorTexture(m_reservedColorTexId, m_color);
     // - setting up uniforms -------------
     InitUniformLocations();
     UpdateTextureID();

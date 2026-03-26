@@ -21,7 +21,7 @@ public:
 	void UsesColor(bool _usesTexture);
 	bool UsesColor() const;
 
-	inline GLuint TextureID() const { return m_texId; }
+	inline GLuint GetTextureID() const { return m_texId; }
 
 
 

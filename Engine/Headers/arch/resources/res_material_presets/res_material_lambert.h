@@ -18,7 +18,9 @@ public:
 	void UsesColor(bool _usesTexture);
 	bool UsesColor() const;
 
-	inline GLuint TextureID() const { return m_texId; }
+
+	inline void SetTextureID(const GLuint& texId) { m_texId = texId; };
+	inline GLuint GetTextureID() const { return m_texId; }
 
 
 	void ApplyUniforms() const override;
@@ -35,5 +37,7 @@ private:
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
 	GLuint m_reservedColorTexId {}; // texture identifier, storage of color texture.
+	
+	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
 };
 

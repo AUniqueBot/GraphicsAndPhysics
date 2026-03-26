@@ -78,7 +78,7 @@ protected:
 	void DrawWidget(); 
 
 
-	ImGuiWindowFlags m_flags						{};
+	ImGuiWindowFlags m_flags						{ ImGuiWindowFlags_NoScrollbar };
 protected:
 	UI_Core* m_uiCore								{};
 	std::string m_widgetName;

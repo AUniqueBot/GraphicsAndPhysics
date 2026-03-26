@@ -409,7 +409,7 @@ void RenderSystem::ShadowRenderPass(
     glm::ivec2 fbSize = m_directionalShadowMaps.GetFramebufferSize();
     
 
-    if (!m_directionalShadowMaps.FBO() || !m_directionalShadowMaps.TextureID()) {
+    if (!m_directionalShadowMaps.FBO() || !m_directionalShadowMaps.GetTextureID()) {
         LOG_ERROR("No shadow map bound to this light!");
         return;
     }
@@ -959,6 +959,7 @@ void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
         LOG_INFO("Shader ID: " << shaderId);
         _mat.SetShaderProgram(shaderId);
         _mat.Init();
+        _mat.ApplyUniforms();
     }
 
 }

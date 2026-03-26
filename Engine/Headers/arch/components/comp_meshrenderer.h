@@ -67,5 +67,14 @@ private:
 	bool m_staticShadow					{};
 
 
+public:
+	
+	std::vector<PropertyMD::Property>& GetComponentProperties();
+
+private:
+	inline static std::vector<PropertyMD::Property>& GetMRProperties() {
+		static std::vector<PropertyMD::Property> s_property{};
+		return s_property;
+	}
 };
 

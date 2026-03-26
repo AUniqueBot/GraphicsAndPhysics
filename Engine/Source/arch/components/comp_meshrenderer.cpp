@@ -35,6 +35,7 @@ std::shared_ptr<Mesh> MeshRenderer::GetMesh() {
 void MeshRenderer::AddMaterial(std::shared_ptr<Material> _material) {
 	_material->Init();
 	m_materials.push_back(_material);
+
 }
 
 void MeshRenderer::RemoveMaterial(std::shared_ptr<Material> _material) {
@@ -86,6 +87,8 @@ Material& MeshRenderer::GetDefaultMaterial() {
 }
 
 
-
+std::vector<PropertyMD::Property>& MeshRenderer::GetComponentProperties() {
+	return GetMRProperties();
+}
 
 

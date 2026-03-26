@@ -41,7 +41,7 @@ public:
 
 
 	unsigned FBO() const;
-	unsigned TextureID() const;
+	unsigned GetTextureID() const;
 	 
 
 	bool ValidateID(unsigned _id) const;

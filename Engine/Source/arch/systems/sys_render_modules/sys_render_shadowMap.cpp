@@ -129,7 +129,7 @@ void ShadowMap::Unbind() {
 
 unsigned ShadowMap::FBO() const { return m_fbo; }
 
-unsigned ShadowMap::TextureID() const {
+unsigned ShadowMap::GetTextureID() const {
 	return m_shadowTex;
 }
 

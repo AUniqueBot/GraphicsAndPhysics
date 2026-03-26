@@ -114,7 +114,8 @@ void Material::DeleteTexture(const GLuint& _id) {
 
 void Material::UpdateColorTexture(const GLuint& _id, const glm::vec4& _col) {
 	if (!_id) {
-		LOG_WARN("attempting to update a non existent texture");
+		LOG_INFO("attempting to update a non existent texture");
+		return;
 	}
 	glBindTexture(GL_TEXTURE_2D, _id);
 
@@ -216,7 +217,7 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 	uniformLocation = GetUniform(U_SHADOWMAP);
 	if (-1 != uniformLocation) {
 		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, _shadowMap.TextureID());
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _shadowMap.GetTextureID());
 		glUniform1i(uniformLocation, 1);
 	}
 }

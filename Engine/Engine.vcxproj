@@ -175,6 +175,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Headers\arch\common\component_properties.h" />
+    <ClCompile Include="Source\arch\common\component.cpp" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />

@@ -2,15 +2,12 @@
 #include <pch.h>
 #include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
-
-
-
+#include <arch/common/component_properties.h>
 
 
 class Component {
 	
 public:
-	
 	template <std::derived_from<Component> T>
 	friend class ComponentPool;
 
@@ -25,8 +22,10 @@ public:
 	
 	// serialization function
 	static void Register() { LOG_INFO("Registering Component - Generic. If you see this, you didn't override this in your component."); };
+
+	virtual std::vector<PropertyMD::Property>& GetComponentProperties();
 	
-protected:
+
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 private:
 	ComponentType m_type						{ __INVALID };
