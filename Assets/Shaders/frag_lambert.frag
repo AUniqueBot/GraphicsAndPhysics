@@ -135,12 +135,12 @@ float CalculateDirectionalShadow(
     float shadowLowest = 1.0;
     float fragDepth = -viewPosition.z;
     int fragDepthIndex = min(int(fragDepth / 50.0), 4);
+    
 
-
-
-    vec2 tileOffset = shadowData.m_atlasOffsetSize.xy;
-    vec2 tileSize = shadowData.m_atlasOffsetSize.zw;
-    int shadowId = int(shadowData.m_lightTypeShadowId.y);
+    
+    vec2 tileOffset = shadowData.atlasOffsetSize[fragDepthIndex].xy;
+    vec2 tileSize = shadowData.atlasOffsetSize[fragDepthIndex].zw;
+    int shadowId = int(shadowData.lightTypeShadowId.y);
     // get distance away from camera
     return shadowLowest;
 }
