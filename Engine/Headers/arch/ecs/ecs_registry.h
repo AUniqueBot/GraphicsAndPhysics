@@ -32,8 +32,12 @@ public:
 	virtual ~IComponentPool() = default;
 	virtual size_t size() const { return 0; } // test value 3.
 
+	virtual Component* GetComponent(EntityID _from) = 0;
+	virtual const Component* GetComponent(EntityID _from) const = 0;
+
 	virtual bool Add(EntityID _addTo) = 0;
 	virtual bool Remove(EntityID _removeFrom) = 0;
+	virtual bool ComponentExistsForEntity(const EntityID& _id) = 0;
 };
 
 
@@ -62,8 +66,25 @@ public:
 
 	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.At(_id)); }
 
+
 	ComponentView<T> Get(EntityID _client);
 	ComponentView<const T> Get(EntityID _client) const;
+	
+	Component* GetComponent(EntityID _from) override {
+		ComponentView<T> view{ m_compPool.At(_from) };
+		if (!view) {
+			return nullptr;
+		}
+		return &*view;
+	}
+	const Component* GetComponent(EntityID _from) const override {
+		ComponentView<const T> view{ m_compPool.At(_from) };
+		if (!view) {
+			return nullptr;
+		}
+		return &*view;
+	}
+	
 	size_t size() const override { return m_compPool.size(); };
 
 	void clear() { m_compPool.clear(); };
@@ -110,11 +131,24 @@ struct ComponentPackedData {
 	std::shared_ptr<IComponentPool> m_componentPool;
 };
 
+
+
+struct ComponentHandle {
+	Component* m_componentPtr;
+	ComponentMetadata* m_componentMetadata;
+};
+
+
+
+
 // ------------------------------------------------------------------------------------
 class EntityRegistry {
 
 	friend class Entity;
 	friend class EntityID;
+
+	using CompTypeID = std::type_index;
+	using CompID = unsigned;
 
 public:
 
@@ -169,13 +203,16 @@ public:
 	template<std::derived_from<Component> T>
 	SparseSetView<const ComponentPool<T>> GetComponentPool() const;
 
+
+
 	std::deque<Entity>& GetEntityList()					{ return m_entityList.Data(); }
 	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
 	
 
 	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.At(_id); };
 	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.At(_id); };
-
+	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id);
+	const std::vector<ComponentHandle>& GetEntityComponents(const EntityID& _id) const;
 	
 	// component handling.
 
@@ -233,8 +270,7 @@ private:
 	SparseSet<EntityID, Entity> m_entityList;
 	std::vector<EntityID> m_selectedEntitiesList;
 private:
-	using CompTypeID = std::type_index;
-	using CompID = unsigned;
+
 
 	// 1 lookup integer mapped to 1 
 	SparseSet<CompID, CompTypeID> m_componentIDLookup;

@@ -194,8 +194,8 @@ private:
 
 	// ---------------------------------------------------------------------------------
 	// - prop declaration ------------------------------------
-	COMPONENT_DECLAREPROPS(Light);
-
+	INSPECTABLE_DECLAREPROPS(Light);
+	
 };
 
 

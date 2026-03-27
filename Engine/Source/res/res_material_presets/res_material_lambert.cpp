@@ -23,7 +23,7 @@ const glm::vec4& LambertMaterial::Color() const {
 }
 
 
-void LambertMaterial::Color(glm::vec4 _newColor) {
+void LambertMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
     UpdateColorTexture(m_reservedColorTexId, m_color);
@@ -49,6 +49,8 @@ void LambertMaterial::UpdateTextureID() {
 }
 
 
+
+
 void LambertMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glActiveTexture(GL_TEXTURE0);
@@ -57,3 +59,16 @@ void LambertMaterial::ApplyUniforms() const {
     }
 }
 
+
+
+std::vector<PropertyMD::Property>& LambertMaterial::GetProps() {
+    using namespace PropertyMD;
+    static std::vector<Property> props{
+        PropertyMD::MakeProperty<LambertMaterial>(
+            "Color", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
+            static_cast<const glm::vec4 & (LambertMaterial::*)() const>(&LambertMaterial::Color),
+            static_cast<void(LambertMaterial::*)(const glm::vec4&)>(&LambertMaterial::Color)
+        ),
+    };
+    return props;
+}

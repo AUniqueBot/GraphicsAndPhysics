@@ -87,8 +87,17 @@ Material& MeshRenderer::GetDefaultMaterial() {
 }
 
 
-std::vector<PropertyMD::Property>& MeshRenderer::GetComponentProperties() {
-	return GetMRProperties();
-}
 
+
+std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
+	using namespace PropertyMD;
+	static std::vector<PropertyMD::Property> props{
+		MakeListProperty<MeshRenderer, std::shared_ptr<Material>>(
+			"Materials",
+			static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList)
+		),
+	};
+	
+	return props;
+}
 

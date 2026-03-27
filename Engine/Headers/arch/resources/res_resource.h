@@ -1,6 +1,8 @@
 #pragma once
 #include <pch.h>
 #include <typeindex>
+#include <arch/common/inspectable.h>
+//#include <arch/common/properties.h>
 /*
 	Goals -> management of resources
 
@@ -38,7 +40,7 @@ private:
 	std::type_index m_typeInfo;
 };
 
-class BaseResource {
+class BaseResource: public Inspectable {
 private:
 public:
 
@@ -106,8 +108,13 @@ public :
 		static const RESTYPE_ID id = GenerateResourceTypeID();
 		return id;
 	}
-};
 
+
+	inline virtual std::vector<PropertyMD::Property>& GetProperties() {
+		static std::vector< PropertyMD::Property> prop;
+		return prop;
+	}
+};
 
 class ResourceContainer {
 public:
@@ -115,3 +122,6 @@ public:
 private:
 	std::unique_ptr<BaseResource> m_resPtr;
 };
+
+
+

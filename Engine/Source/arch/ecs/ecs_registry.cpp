@@ -2,6 +2,10 @@
 #include <arch/ecs/ecs_fwdDecl_entityRegistry.h>
 #include <arch/components/comp_transform.h>
 #include <arch/datatypes/type_sparseSet_viewHandle.h>
+
+
+
+
 EntityRegistry::~EntityRegistry() {
 	Clear();
 }
@@ -24,6 +28,35 @@ void EntityRegistry::PrintDebugInfo() const {
 
 	ss << "\n=============================================================\n";
 	std::cout << ss.str();
+}
+
+std::vector<ComponentHandle> EntityRegistry::GetEntityComponents(const EntityID& _entityId) {
+	std::vector<ComponentHandle> comps;
+	EntityView entity{ GetEntity(_entityId) };
+
+	for (const CompID& compId : entity->GetAttachedComponents()) {
+		// access.
+		SparseSetView<CompTypeID> compType{ m_componentIDLookup.At(compId) };
+		if (!compType) continue;
+		Component* ptr = m_componentData.at(*compType).m_componentPool->GetComponent(_entityId);
+		if (ptr) comps.push_back(ComponentHandle{ ptr, &m_componentData.at(*compType).m_componentMetadata });
+	}
+	return comps;
+}
+
+const std::vector<ComponentHandle>& EntityRegistry::GetEntityComponents(const EntityID& _entityId) const {
+	std::vector<ComponentHandle> comps;
+	EntityViewConst entity { GetEntity(_entityId) };
+
+	for (const CompID& compId : entity->GetAttachedComponents()) {
+		// access.
+		SparseSetView<const CompTypeID> compType{ m_componentIDLookup.At(compId) };
+		if (!compType) continue;
+		Component* ptr = m_componentData.at(*compType).m_componentPool->GetComponent(_entityId);
+		if (ptr) comps.push_back(ComponentHandle{ptr});
+	}
+	// TODO: insert return statement here
+	return comps;
 }
 
 

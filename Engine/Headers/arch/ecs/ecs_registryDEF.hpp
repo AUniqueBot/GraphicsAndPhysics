@@ -130,6 +130,7 @@ bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 
 template<std::derived_from<Component> T>
 inline ComponentView<T> ComponentPool<T>::Get(EntityID _client) {
+	
 	return m_compPool.At(_client);
 }
 
@@ -138,6 +139,8 @@ template<std::derived_from<Component> T>
 inline ComponentView<const T> ComponentPool<T>::Get(EntityID _client) const {
 	return m_compPool.At(_client);
 }
+
+
 
 
 

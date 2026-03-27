@@ -2,11 +2,11 @@
 #include <pch.h>
 #include <arch/common/entityid.h>
 #include <arch/components/componentList.h>
-#include <arch/common/component_properties.h>
+#include <arch/common/properties.h>
+#include <arch/common/inspectable.h>
 
 
-
-class Component {
+class Component : public Inspectable {
 	
 public:
 	template <std::derived_from<Component> T>
@@ -24,7 +24,7 @@ public:
 	// serialization function
 	static void Register() { LOG_INFO("Registering Component - Generic. If you see this, you didn't override this in your component."); };
 
-	inline virtual std::vector<PropertyMD::Property>& GetComponentProperties() {
+	inline virtual std::vector<PropertyMD::Property>& GetProperties() {
 		static std::vector<PropertyMD::Property> props;
 		return props;
 	};
@@ -38,9 +38,3 @@ private:
 
 template <typename T>
 concept TemplateComponentType = std::derived_from<T, Component>;
-
-#define COMPONENT_DECLAREPROPS(TYPE) \
-public:\
-inline std::vector<PropertyMD::Property>& GetComponentProperties() override { return TYPE::GetProps(); }; \
-private:\
-static std::vector<PropertyMD::Property>& GetProps();

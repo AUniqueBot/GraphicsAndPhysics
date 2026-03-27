@@ -149,7 +149,7 @@ GLuint ShaderManager::GetNewShaderID() {
 }
 
 GLuint ShaderManager::GetNewShaderProgramID() {
-	if (m_shaderProgramCounterFree.empty()) return ++m_shaderProgramCounter;
+	if (m_shaderProgramCounterFree.empty()) return static_cast<GLuint>(++m_shaderProgramCounter);
 	GLuint retVal{ m_shaderProgramCounterFree.front() };
 	m_shaderProgramCounterFree.pop();
 	return retVal;

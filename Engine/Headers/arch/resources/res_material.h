@@ -32,7 +32,7 @@ struct MaterialFeatures {
 
 
 // - class -----------------------------
-class Material {
+class Material : public Resource<Material> {
 public:
 	using SHADERTYPE = ShaderConstants::ShaderType; // alias the name
 

@@ -175,7 +175,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Headers\arch\common\component_properties.h" />
+    <ClCompile Include="Headers\arch\common\properties.h" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />
@@ -228,6 +228,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\entityDEF.hpp" />
     <ClInclude Include="Headers\arch\common\entityid.h" />
     <ClInclude Include="Headers\arch\common\eventSystem.h" />
+    <ClInclude Include="Headers\arch\common\inspectable.h" />
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />

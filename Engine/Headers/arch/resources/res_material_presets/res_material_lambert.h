@@ -12,7 +12,7 @@ public:
 
 	// - getters -------------------------------------
 	const glm::vec4& Color() const;
-	void Color(glm::vec4 _newColor);
+	void Color(const glm::vec4& _newColor);
 	void Color(unsigned _newColor);
 
 	void UsesColor(bool _usesTexture);
@@ -39,5 +39,7 @@ private:
 	GLuint m_reservedColorTexId {}; // texture identifier, storage of color texture.
 	
 	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
+	
+	INSPECTABLE_DECLAREPROPS(LambertMaterial);
 };
 

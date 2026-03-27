@@ -1,6 +1,6 @@
 #pragma once
 #include <UI_Widget.h>
-#include <arch/common/component_properties.h>
+#include <arch/common/properties.h>
 
 class UIWidget_Inspector : public UIWidget {
 public:
@@ -31,7 +31,9 @@ private:
 
     void DrawPropertyOptions(void* object, const PropertyMD::Property& prop, const std::string& key);
 
+    void DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key);
 
+    void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
 };
 
 

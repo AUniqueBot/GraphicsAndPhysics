@@ -60,7 +60,6 @@ template<typename T>
 ComponentView<T> Entity::GetComponent() const {
 	if (!m_registry) 
 		return ComponentView<T>(std::nullopt);
-	
 	SparseSetView<ComponentPool<T>> compPoolValue
 		= m_registry->GetComponentPool<T>();
 	

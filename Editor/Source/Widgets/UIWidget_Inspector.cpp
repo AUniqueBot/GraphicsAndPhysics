@@ -46,13 +46,18 @@ void UIWidget_Inspector::Draw() {
 
 	UI_Core& uic = *puic;
 	Core& core = *papc;
-
+	EntityRegistry& er = core.GetRegistry();
 	EntityID selectedID = core.GetRegistry().SelectedEntity();
 	EntityView selectedObj = core.GetRegistry().GetEntity(selectedID);
+
+
+
+
 	if (!selectedObj) {
 		Text("No object selected with ID [%i]", selectedID);
 		return;
 	}
+	
 
 
 
@@ -66,16 +71,24 @@ void UIWidget_Inspector::Draw() {
 
 	// render components here.
 
-	//ImGui::
-	auto trsV = obj.GetComponent<Transform>();
-	if (trsV) {
-		std::string tableId{ obj.Name() + "##Transform_Table" };
-		Transform& trs = *trsV;
-		for (const PropertyMD::Property& prop: trs.GetComponentProperties()) {
-			DrawPropertyElement(&trs, prop, prop.m_name);
-		}
 
+	for (auto& compHandle : er.GetEntityComponents(selectedID)) {
+		Component* comp{ compHandle.m_componentPtr };
+		ImGui::Separator();
+
+		const std::vector<PropertyMD::Property>& props{ comp->GetProperties() };
+		if (props.size()) {
+
+			if (ImGui::CollapsingHeader(compHandle.m_componentMetadata->GetComponentName().c_str())) {
+				for (const PropertyMD::Property& prop : props) {
+					DrawPropertyElement(comp, prop, prop.m_name);
+				}
+			}
+		}
+		
 	}
+
+
 
 
 	auto meshV = obj.GetComponent<MeshRenderer>();
@@ -165,40 +178,6 @@ void UIWidget_Inspector::Draw() {
 			EndCombo();
 		}
 	}
-
-
-
-	auto lightV = obj.GetComponent<Light>();
-	if (lightV) {
-		Light& light = *lightV;
-		
-		for (const PropertyMD::Property& prop : light.GetComponentProperties()) {
-			DrawPropertyElement(&light, prop, prop.m_name);
-		}
-		//bool flag{light.GetCastShadow()};
-		//const char* currentLight{
-		//	light.Type() == POINT ? "Point" :
-		//	light.Type() == SPOT ? "Spot" :
-		//	light.Type() == DIRECTIONAL ? "Directional":
-		//	"Ambient"
-		//};
-
-		//if (ImGui::BeginCombo("Light Type", currentLight)) {
-		//	if (ImGui::Selectable("Point")) {
-		//		light.Type(POINT);
-		//	}
-		//	if (ImGui::Selectable("Directional")) {
-		//		light.Type(DIRECTIONAL);
-		//	}
-		//	if (ImGui::Selectable("Ambient")) {
-		//		light.Type(AMBIENT);
-		//	}
-		//	ImGui::EndCombo();
-		//}
-
-	}
-
-	
 }
 
 
@@ -214,6 +193,12 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 	name += "##";
 	name += key;
 	
+
+	if (prop.m_list.m_valid) {
+		DrawPropertiesDynamicList(object, prop, name);
+		return;
+	}
+
 
 	if (prop.m_isEnum) {
 		DrawPropertyOptions(object, prop, name);
@@ -239,6 +224,9 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 	case PropertyType::String:
 		DrawPropertyString(object, prop, name);
 		return;
+	case PropertyType::Object:
+		DrawPropertyObject(object, prop, name);
+		break;
 	default:
 		break;
 	}
@@ -460,4 +448,28 @@ void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Pro
 
 		ImGui::EndCombo();
 	}
+}
+
+void UIWidget_Inspector::DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	// this object must provide a thing.
+	void* val{};
+	//prop.m_get(object, val);
+
+
+	// assume the object provides this function.
+
+	
+
+}
+
+void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	// explain how it works.
+	if (!prop.m_list.m_valid) return;
+
+	void* val{};
+	const PropertyMD::Property::List& ls{ prop.m_list };
+	val = ls.m_listAccessor(object);
+
+	val;
+
 }

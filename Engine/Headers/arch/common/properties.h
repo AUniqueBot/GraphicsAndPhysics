@@ -20,32 +20,44 @@ namespace PropertyMD {
 		DynamicList
 	};
 
+	enum class DynamicListType {
+		Vector,
+		SparseSet,
+		None
+	};
+
 	struct Option {
 		const char* label;
 		int value;
 	};
+
+
+
+
+
 
 	struct Property {
 		std::string m_name;
 		PropertyType m_type;
 		Shape m_shape;
 		int m_componentCount;
-		bool m_draggable;
-		std::function<void(void*, void*)> m_get;
-		std::function<void(void*, const void*)> m_set;
+		bool m_draggable = false;
+		std::function<void(void*, void*)> m_get = nullptr;
+		std::function<void(void*, const void*)> m_set = nullptr;
 
 
 
-		bool m_isEnum;
+		bool m_isEnum = false;
 		std::vector<Option> m_options;
 
 
 		struct List {
-			std::function<int(void*)> m_size;
-			std::function<void* (void*, int)> m_get;
-			std::function<void(void*)> m_add;
-			std::function<void(void*, int)> m_remove;
-
+			std::function<int(void*)> m_size = nullptr;
+			std::function<void* (void*, int)> m_get = nullptr;
+			std::function<void*(void*)> m_listAccessor = nullptr;
+			std::function<void(void*)> m_add = nullptr;
+			std::function<void(void*, int)> m_remove = nullptr;
+			std::function<void* (void*)> m_getObject = nullptr;
 			bool m_valid = false;
 		} m_list;
 
@@ -141,5 +153,58 @@ namespace PropertyMD {
 
 		return prop;
 	}
+
+	template<typename T, typename Element>
+	Property MakeListProperty(
+		const char* name,
+		std::function<std::vector<Element>& (T*)> listAccessor
+	)
+	{
+		Property prop(
+			name,
+			PropertyType::Object,          // or Element type if you want stricter typing
+			Shape::DynamicList,
+			1,
+			nullptr,
+			nullptr
+		);
+		Property::List& ls{prop.m_list};
+
+		ls.m_valid = true;
+		ls.m_listAccessor = [listAccessor](void* obj) {
+			T* t = static_cast<T*>(obj);
+			auto& list = std::invoke(listAccessor, t);
+			return &list;
+		};
+		ls.m_size = [listAccessor](void* obj) -> int {
+			T* t = static_cast<T*>(obj);
+			return (int)std::invoke(listAccessor, t).size();
+			};
+
+		ls.m_get = [listAccessor](void* obj, int index) -> void* {
+			T* t = static_cast<T*>(obj);
+			return &std::invoke(listAccessor, t)[index];
+			};
+
+		ls.m_add = [listAccessor](void* obj) {
+			T* t = static_cast<T*>(obj);
+			std::invoke(listAccessor, t).emplace_back();
+			};
+
+		ls.m_remove = [listAccessor](void* obj, int index) {
+			T* t = static_cast<T*>(obj);
+			auto& vec = std::invoke(listAccessor, t);
+			vec.erase(vec.begin() + index);
+			};
+		
+		
+
+
+		return prop;
+	}
+
+
+
+
 
 }

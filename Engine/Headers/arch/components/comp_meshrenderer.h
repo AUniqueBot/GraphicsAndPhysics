@@ -69,14 +69,6 @@ private:
 
 public:
 	
-	std::vector<PropertyMD::Property>& GetComponentProperties();
-
-private:
-	inline static std::vector<PropertyMD::Property>& GetMRProperties() {
-		using namespace PropertyMD;
-		
-		static std::vector<PropertyMD::Property> s_property{};
-		return s_property;
-	}
+	INSPECTABLE_DECLAREPROPS(MeshRenderer);
 };
 

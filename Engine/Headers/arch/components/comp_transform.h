@@ -88,7 +88,7 @@ private:
 
 	RotationOrder_ m_rotOrder		{ RotationOrder_::XYZ };
 
-	COMPONENT_DECLAREPROPS(Transform);
+	INSPECTABLE_DECLAREPROPS(Transform);
 
 };
 
