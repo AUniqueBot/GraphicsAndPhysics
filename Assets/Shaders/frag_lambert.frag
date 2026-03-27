@@ -1,4 +1,4 @@
-﻿// #version 440 core // hide this on compile
+﻿// #version 460 core // hide this on compile
 
 
 #define LIGHT_POINT 0.0
@@ -16,6 +16,7 @@ in VertexOutput {
     vec3 frag_position;
     vec3 frag_normal;
     vec2 frag_uv;
+	vec3 frag_viewPosition;
 } VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
@@ -41,6 +42,7 @@ layout (std140, binding=1) uniform ObjectUBO {
 } OBJECTPARAMS;
 
 
+
 // ------------------------------------------------------------------------------------
 // ubos light
 struct LightData {
@@ -60,7 +62,7 @@ struct ShadowData {
     mat4 lightMatrix[SHADOW_MAP_MATRIX_COUNT];
     vec4 atlasOffsetSize[SHADOW_MAP_MATRIX_COUNT];
     vec4 lightTypeShadowId;
-} ;
+};
 layout (std140, binding=3) uniform ShadowMapUBO {
     ShadowData shadowData[MAX_SHADOW_COUNT];
 	vec4 directionalAtlasResAndTexelSize;
@@ -123,14 +125,22 @@ float PercentageCloserFilter(
 float CalculateDirectionalShadow(
     ShadowData shadowData,
     vec3 fragPosition,
+    vec3 viewPosition,
     vec2 texelSize, 
     vec2 framebufferSize,
     float bias
 ) {
+    // range of the thing. idk.
+
     float shadowLowest = 1.0;
-    // vec2 tileOffset = shadowData.m_atlasOffsetSize.xy;
-    // vec2 tileSize = shadowData.m_atlasOffsetSize.zw;
-    // int shadowId = int(shadowData.m_lightTypeShadowId.y);
+    float fragDepth = -viewPosition.z;
+    int fragDepthIndex = min(int(fragDepth / 50.0), 4);
+
+
+
+    vec2 tileOffset = shadowData.m_atlasOffsetSize.xy;
+    vec2 tileSize = shadowData.m_atlasOffsetSize.zw;
+    int shadowId = int(shadowData.m_lightTypeShadowId.y);
     // get distance away from camera
     return shadowLowest;
 }
@@ -235,13 +245,28 @@ void main() {
 	vec4 color = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     out_objectId = OBJECTPARAMS.objectId;
     // out_color = float(u_objectId % 256u) / 255.0; // testing
-    out_color = color * vec4(
-        CalculateLighting(
-            VERTEXOUTPUT.frag_position,
-             VERTEXOUTPUT.frag_normal
-             ), 
-             1.0 // no alpha needed
-    );
+    // out_color = color * vec4(
+    //     CalculateLighting(
+    //         VERTEXOUTPUT.frag_position,
+    //          VERTEXOUTPUT.frag_normal
+    //          ), 
+    //          1.0 // no alpha needed
+    // );
+    vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
+    vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
+    vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
+
+
+    float depth = -VERTEXOUTPUT.frag_viewPosition.z;
+    
+    int depthIndex = min(int(depth/50.0), 2);
+
+    
+    
+    out_color = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : color_BLUE;
+
+    // distance checking
+    // mix();
 }
 
 

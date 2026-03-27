@@ -215,11 +215,9 @@ void RenderSystem::Render(const Viewport& _viewport) {
     EntityRegistry& registry = Core::GetInstance().GetRegistry();
 
     const std::vector<Light*> culledLights          { CullLights(_viewport, registry) };
+    UpdateLightingData(culledLights, registry);
     const std::vector<LightData> lightData          { GetLightData(culledLights) };
     const std::vector<ShadowData> shadowData        { GetShadowData(culledLights) };
-    
-    
-    UpdateLightingData(culledLights, registry);
 
     FillLightBufferUBO(lightData);
     FillShadowMapUBO(shadowData);
@@ -358,6 +356,7 @@ void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLight
 
 void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataList) {
     m_smData.m_directionalCount = std::min(static_cast<int>(_shadowDataList.size()), C_MAX_SHADOWS);
+    if (!m_smData.m_directionalCount) return;
     for (int i{}; i < m_smData.m_directionalCount; ++i) {
         m_smData.m_shadowData[i] = _shadowDataList[i];
     }
@@ -790,6 +789,9 @@ void RenderSystem::UpdateLightingData(
 
         sd.SetShadowID(light->GetShadowMapID());
         sd.SetLightType(light->Type());
+
+
+        
     }
 }
 

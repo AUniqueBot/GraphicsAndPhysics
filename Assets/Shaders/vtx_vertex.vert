@@ -26,16 +26,19 @@ out VertexOutput {
     vec3 frag_position;
     vec3 frag_normal;
     vec2 frag_uv;
+	vec3 frag_viewPosition;
 } VERTEXOUTPUT;
 
 
 void main(){
     vec4 worldPos = OBJECTPARAMS.objectMatrix * vec4(a_position, 1.0);
-    gl_Position = COMMONPARAMS.projectionMatrix * COMMONPARAMS.cameraMatrix * worldPos;
+	vec4 viewPos = COMMONPARAMS.cameraMatrix * worldPos;
+    gl_Position = COMMONPARAMS.projectionMatrix * viewPos;
 
     mat3 normalMatrix = transpose(inverse(mat3(OBJECTPARAMS.objectMatrix)));
 
     VERTEXOUTPUT.frag_position = worldPos.xyz;
     VERTEXOUTPUT.frag_normal = normalize(normalMatrix * a_normal);
     VERTEXOUTPUT.frag_uv = a_uv;
+	VERTEXOUTPUT.frag_viewPosition = viewPos.xyz;
 }
