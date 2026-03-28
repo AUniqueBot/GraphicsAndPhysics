@@ -1,0 +1,20 @@
+{
+  "dependencies": [
+    "fmt",
+    "opengl",
+    "glfw3",
+    "glew",
+    "glm",
+    "assimp",
+    "stb",
+    {
+        "name": "imgui",
+        "features": [
+          "docking-experimental", 
+          "glfw-binding",
+          "opengl3-binding"
+        ]
+    },
+    "imguizmo"
+  ]
+}

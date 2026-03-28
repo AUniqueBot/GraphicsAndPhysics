@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /Extern/inc/glm
 /book_pdf.pdf
+
+/vcpkg_installed

@@ -6,10 +6,9 @@
 #include <iostream>
 #include <sstream>
 
-#include <imgui/imgui_impl_glfw.h>
-#include <imgui/imgui_impl_opengl3.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 #include <imnodes.h>
-
 
 
 #include <Widgets/UIWidget_Outliner.h>

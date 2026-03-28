@@ -1,8 +1,7 @@
 
 #include <UI_Core.h>
 #include <Widgets/UIWidget_Inspector.h>
-#include <imgui/misc/cpp/imgui_stdlib.h>
-
+#include <imgui_stdlib.h>
 
 
 #include <arch/components/comp_transform.h>

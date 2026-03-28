@@ -45,13 +45,16 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)Headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
-    <IncludePath>$(ProjectDir)Headers;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -59,13 +62,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc\assimp;$(SolutionDir)Extern\inc\GL;$(SolutionDir)Extern\inc\GLFW;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc;$(SolutionDir)Extern\src\imnodes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
@@ -80,13 +83,13 @@ xcopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /E /I /Y /Q</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc\assimp;$(SolutionDir)Extern\inc\GL;$(SolutionDir)Extern\inc\GLFW;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Editor\Headers;$(SolutionDir)Engine\Headers;$(SolutionDir)Extern\inc;$(SolutionDir)Extern\src\imnodes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Extern\lib\glfw\glfw3.lib;$(SolutionDir)Extern\lib\glew\glew32.lib;$(SolutionDir)Extern\lib\assimp\assimp-vc143-mt.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q</Command>

@@ -44,14 +44,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(ProjectDir)/Headers;$(ProjectDir)/Extern/src;$(ProjectDir)/Extern/src/imgui;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Extern\lib;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(ProjectDir)/Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(ProjectDir)/Headers;$(ProjectDir)/Extern/src;$(ProjectDir)/Extern/src/imgui;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes</IncludePath>
     <LibraryPath>$(SolutionDir)Extern\lib;$(LibraryPath)</LibraryPath>
     <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Label="Vcpkg">
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -75,7 +78,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;C:\Users\Aaron Goh\Desktop\____Projects\Code\GraphicsAndPhysics\Extern\src\imgui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Extern\inc;$(SolutionDir)Engine\Headers;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -84,19 +87,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Extern\src\imgui\imconfig.h" />
-    <ClInclude Include="Extern\src\imgui\imgui.h" />
-    <ClInclude Include="Extern\src\imgui\ImGuizmo.h" />
-    <ClInclude Include="Extern\src\imgui\imgui_impl_glfw.h" />
-    <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3.h" />
-    <ClInclude Include="Extern\src\imgui\imgui_impl_opengl3_loader.h" />
-    <ClInclude Include="Extern\src\imgui\imgui_internal.h" />
-    <ClInclude Include="Extern\src\imgui\imnodes.h" />
-    <ClInclude Include="Extern\src\imgui\imnodes_internal.h" />
-    <ClInclude Include="Extern\src\imgui\imstb_rectpack.h" />
-    <ClInclude Include="Extern\src\imgui\imstb_textedit.h" />
-    <ClInclude Include="Extern\src\imgui\imstb_truetype.h" />
-    <ClInclude Include="Extern\src\imgui\misc\cpp\imgui_stdlib.h" />
     <ClInclude Include="Headers\UI_Core.h" />
     <ClInclude Include="Headers\UI_Menu.h" />
     <ClInclude Include="Headers\UI_Widget.h" />
@@ -105,17 +95,7 @@
     <ClInclude Include="Headers\Widgets\UIWidget_Viewport.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Extern\src\imgui\imgui.cpp" />
-    <ClCompile Include="Extern\src\imgui\ImGuizmo.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_demo.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_draw.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_impl_glfw.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_impl_opengl3.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_tables.cpp" />
-    <ClCompile Include="Extern\src\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="Extern\src\imgui\imnodes.cpp" />
-    <ClCompile Include="Extern\src\imgui\misc\cpp\imgui_stdlib.cpp" />
-    <ClCompile Include="Extern\src\imgui\misc\fonts\binary_to_compressed_c.cpp" />
+    <ClCompile Include="..\Extern\src\imnodes\imnodes.cpp" />
     <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h" />
     <ClCompile Include="Source\UI_Menu.cpp" />
     <ClCompile Include="Source\Utility\UI_LoadImage.cpp" />

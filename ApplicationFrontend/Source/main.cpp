@@ -6,10 +6,6 @@
 #include <arch/core/core_inputRouter.h>
 
 
-
-//
-//#include <imgui/imgui_impl_glfw.h>
-//#include <imgui/imgui_impl_opengl3.h>
 const unsigned C_VERSION_MAJOR = 4;
 const unsigned C_VERSION_MINOR = 6;
 

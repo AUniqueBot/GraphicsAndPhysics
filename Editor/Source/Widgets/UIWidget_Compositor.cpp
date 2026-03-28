@@ -1,6 +1,6 @@
 #include <Widgets/UIWidget_Compositor.h>
 #include <arch/systems/sys_render.h>
-
+#include <imnodes.h>
 
 UIWidget_Compositor::UIWidget_Compositor(std::string _widgetName) : UIWidget(_widgetName) {
 	m_flags = { ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar };
