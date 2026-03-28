@@ -8,12 +8,8 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_camera.h>
-
 #include <arch/resources/res_mesh_presets/res_mesh_types.h>
-
-
 #include <arch/resources/res_material_presets/res_material_lambert.h>
-
 
 
 UIWidget_Inspector::UIWidget_Inspector(std::string _widgetName) : UIWidget(_widgetName) {
@@ -53,7 +49,7 @@ void UIWidget_Inspector::Draw() {
 
 
 	if (!selectedObj) {
-		Text("No object selected with ID [%i]", selectedID);
+		Text("No object selected with ID [%i]", selectedID); 
 		return;
 	}
 	

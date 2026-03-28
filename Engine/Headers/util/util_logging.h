@@ -58,7 +58,12 @@
 
 template <unsigned N, typename T, glm::qualifier Q>
 std::ostream& operator<<(std::ostream & os, const glm::vec<N,T,Q> & v) {
-    os << "[" << v.x << ", " << v.y << ", " << v.z << "]";
+    os << "[";
+    for (int i{}; i < N; ++i) {
+        os << v[i];
+        if (i + 1 != N) os << ", ";
+    }
+    os << "]";
     return os;
 }
 

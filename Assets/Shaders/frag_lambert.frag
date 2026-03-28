@@ -20,7 +20,7 @@ in VertexOutput {
 } VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
-uniform sampler2DArray u_directionalShadowMap;
+uniform sampler2DArrayShadow u_directionalShadowMap;
 uniform sampler2DArray u_spotLightShadowMap;
 uniform samplerCubeArray u_pointLightShadowMap;
 uniform float u_deltaTime;
@@ -126,34 +126,63 @@ float CalculateDirectionalShadow(
     ShadowData shadowData,
     vec3 fragPosition,
     vec3 viewPosition,
-    vec2 texelSize, 
     vec2 framebufferSize,
     float bias
 ) {
     // range of the thing. idk.
 
     float shadowLowest = 1.0;
-    float fragDepth = -viewPosition.z;
+    float fragDepth = abs(viewPosition.z);
     int fragDepthIndex = min(int(fragDepth / 50.0), 4);
-    
-
-    
+    if (fragDepthIndex == 4) return 1.0;
+    // based on index pick or something.
     vec2 tileOffset = shadowData.atlasOffsetSize[fragDepthIndex].xy;
     vec2 tileSize = shadowData.atlasOffsetSize[fragDepthIndex].zw;
     int shadowId = int(shadowData.lightTypeShadowId.y);
+
+    // frag_pos -> light space.
+    mat4 lightSpaceMatrix = shadowData.lightMatrix[fragDepthIndex];
+    vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
+    vec3 fragClipSpace = fragLightSpace.xyz / fragLightSpace.w;
+    fragClipSpace = fragClipSpace * 0.5 + 0.5;
+    
+    
+    // quick rejects
+    if (fragClipSpace.x < 0.0 || fragClipSpace.x > 1.0) return 1.0;
+    if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
+    if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
+
+    // sampling 
+    vec2 tileMinNormalized = tileOffset / framebufferSize;
+    vec2 tileSpaceNormalized = tileSize / framebufferSize;
+    vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
+
+    shadowLowest = texture(
+        u_directionalShadowMap,
+        vec4(coords, shadowId, fragClipSpace.z - bias)
+    );
     // get distance away from camera
+    // return vec3(coords, 0.0).x;
     return shadowLowest;
 }
 
 
 
 float CalculateShadow() {
-    float shadowLowest = 0.0;
+    float shadowLowest = 1.0;
     for (int i= 0; i < SHADOWPARAMS.directionalShadowCount; ++i) {
         ShadowData currentShadowData = SHADOWPARAMS.shadowData[i]; 
         int lightType = int(currentShadowData.lightTypeShadowId.x);
         if (LIGHT_DIRECTIONAL == lightType) {
-            shadowLowest = -1.0;
+            shadowLowest = min(
+                CalculateDirectionalShadow(
+                currentShadowData, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_viewPosition, 
+                SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
+                0.01
+                ), shadowLowest
+                );
             // sample the texture.
         }
         else if (LIGHT_POINT == lightType) {
@@ -165,7 +194,7 @@ float CalculateShadow() {
 
     }
 
-    return 1.0 + shadowLowest;
+    return shadowLowest;
 
 }
 
@@ -196,8 +225,6 @@ vec3 CalculatePointLighting(LightData _currentLight, vec3 _fragPosition, vec3 _f
     vec3 lightColor = _currentLight.color_power.xyz;
     return lightColor * power * NdotL;
 }
-
-
 
 vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     vec3 N = normalize(fragNormal);
@@ -235,7 +262,6 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     ambientRes = clamp(ambientRes, 0.0, 1.0);
     // result *= 1;
     return result * CalculateShadow() + ambientRes;
-    // return result + ambientRes;
 }
 
 // ------------------------------------------------------------------------------------
@@ -245,28 +271,29 @@ void main() {
 	vec4 color = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     out_objectId = OBJECTPARAMS.objectId;
     // out_color = float(u_objectId % 256u) / 255.0; // testing
-    // out_color = color * vec4(
-    //     CalculateLighting(
-    //         VERTEXOUTPUT.frag_position,
-    //          VERTEXOUTPUT.frag_normal
-    //          ), 
-    //          1.0 // no alpha needed
-    // );
+    out_color = color * vec4(
+        CalculateLighting(
+            VERTEXOUTPUT.frag_position,
+             VERTEXOUTPUT.frag_normal
+             ), 
+             1.0 // no alpha needed
+    );
     vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
     vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
     vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
 
 
     float depth = -VERTEXOUTPUT.frag_viewPosition.z;
+    int depthIndex = min(int(depth/50.0), 3);
+    vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0,0,0,1.0);
+    float sValue = CalculateShadow();
+    if (sValue != 1.0) {
+        out_color = mix(out_color, shadowCol, 0.5);;
+    }
     
-    int depthIndex = min(int(depth/50.0), 2);
-
-    
-    
-    out_color = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : color_BLUE;
-
-    // distance checking
-    // mix();
+    // out_color = vec4(vec3(s), 1.0);
+  
+    return;
 }
 
 

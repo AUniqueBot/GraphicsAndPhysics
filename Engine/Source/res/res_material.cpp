@@ -214,7 +214,7 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 
 		};
 
-	uniformLocation = GetUniform(U_SHADOWMAP);
+	uniformLocation = GetUniform(U_DIRECTIONALSHADOWMAP);
 	if (-1 != uniformLocation) {
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, _shadowMap.GetTextureID());

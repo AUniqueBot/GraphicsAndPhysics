@@ -69,16 +69,10 @@ void Light::CleanCastShadow() const {
 }
 
 const ShadowData& Light::GetShadowData() const {
-    if (m_shadowDataMismatch) {
-        UpdateShadowData();
-    }
     return m_shadowData;
 }
 
 ShadowData& Light::GetShadowData() {
-    if (m_shadowDataMismatch) {
-        UpdateShadowData();
-    }
     return m_shadowData;
 }
 

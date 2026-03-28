@@ -1,3 +1,5 @@
+// #version 460 core // hide on thing idk
+
 out vec2 v_uv;
 const vec2 vertices[3] = vec2[](
     vec2(-1.0, -1.0),

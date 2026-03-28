@@ -65,8 +65,8 @@ void ShadowMap::BuildShadowMap() {
 
 
 	glClearTexImage(m_shadowTex, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
 	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	
@@ -82,7 +82,9 @@ void ShadowMap::BuildShadowMap() {
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadowTex, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
+	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	m_isBuilt = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	if (!m_isBuilt) {
 		Destroy();
 	}

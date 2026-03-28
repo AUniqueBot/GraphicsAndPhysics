@@ -52,15 +52,28 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 	void SetShadowID(int _id) {
 		m_lightTypeShadowId.y = static_cast<float>(_id);
 	}
+	int GetShadowID() const {
+		return static_cast<int>(m_lightTypeShadowId.y);
+	}
 	void SetLightType(LightType _type) {
 		m_lightTypeShadowId.x = static_cast<float>(_type);
+	}
+	LightType GetLightType() const {
+		return static_cast<LightType>(m_lightTypeShadowId.x);
 	}
 
 	void SetMatrix(glm::mat4 _matrix, int _idx) {
 		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
 		m_lightMatrix[_idx] = _matrix;
 	}
-
+	glm::mat4& GetMatrix(int _idx) {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		return m_lightMatrix[_idx];
+	}
+	const glm::mat4& GetMatrix(int _idx) const {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		return m_lightMatrix[_idx];
+	}
 
 	void SetAtlasOffset(const glm::vec2& _offset, int _idx) {
 		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
@@ -68,10 +81,25 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 		m_atlasOffsetSize[_idx].y = _offset.y;
 	}
 
+	glm::vec2 GetAtlasOffset(int _idx) {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		return glm::vec2 { 
+			m_atlasOffsetSize[_idx].x,
+			m_atlasOffsetSize[_idx].y
+		};
+	}
 	void SetAtlasSize(const glm::vec2& _tileSize, int _idx) {
 		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
 		m_atlasOffsetSize[_idx].z = _tileSize.x;
 		m_atlasOffsetSize[_idx].w = _tileSize.y;
+	}
+
+	glm::vec2 GetAtlasSize(int _idx) {
+		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		return glm::vec2{
+			m_atlasOffsetSize[_idx].z,
+			m_atlasOffsetSize[_idx].w
+		};
 	}
 };
 
