@@ -150,6 +150,9 @@
     <ClCompile Include="Headers\arch\common\properties.h">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">

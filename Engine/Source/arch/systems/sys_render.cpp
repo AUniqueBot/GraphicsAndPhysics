@@ -195,7 +195,7 @@ void RenderSystem::Update() {
     auto& viewportMap					{ m_viewportManager.ViewportList() };
 
 
-
+    // game render /
     for (const Viewport::ViewportID& id : vpRenderOrder) {
         Viewport& currentViewport	{ *viewportMap.at(id ) };
         currentViewport.Update();
@@ -359,6 +359,8 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
     int shadowCount{ std::min(static_cast<int>(_shadowDataList.size()), C_MAX_SHADOWS) };
     // - directional light data -----------------------------------------------------
     for (int i{}; i < shadowCount; ++i) {
+
+
         if (_shadowDataList[i].GetLightType() != LightType::DIRECTIONAL) continue;
         m_smData.m_shadowData[i] = _shadowDataList[i];
     }
@@ -538,9 +540,8 @@ void RenderSystem::LightingRenderPass(
         FillObjectUBO(e, *trs);
 
         ResolveMeshRendererMaterials(*mr);
-        mr->ApplyShadowMap(m_directionalShadowMaps);
-        mr->Render();
-
+        //mr->ApplyShadowMap(m_directionalShadowMaps);
+        ApplyShadowMap(*mr);
         Render(*mr);
 
         m_vaoManager.UnbindVAO();
@@ -926,6 +927,18 @@ void RenderSystem::UnbindShadowShader() {
     glUseProgram(0);
 }
 
+void RenderSystem::ApplyShadowMap(MeshRenderer& mr) {
+    std::vector<std::shared_ptr<Material>>& matList{ mr.GetMaterialList() };
+    if (matList.size() == 0) {
+        const Material& mat{ MeshRenderer::GetDefaultMaterial() };
+        mat.ApplyShadowMap(m_directionalShadowMaps);
+    }
+
+    for (const auto& matPtr : matList) {
+        matPtr->ApplyShadowMap(m_directionalShadowMaps);
+    }
+}
+
 void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
     if (!_mr.GetMesh()) return; // no point resolving something can't be seen
     for (std::shared_ptr<Material>& matPtr : _mr.GetMaterialList()) {
@@ -948,7 +961,7 @@ void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
         shaderProgramAlias = ShaderConstants::C_ID_LAMBERTSHADERPROG;
         break;
     case ShadingModel::PHONG:
-        shaderProgramAlias = ShaderConstants::C_ID_LAMBERTFRAGSHADER;
+        shaderProgramAlias = ShaderConstants::C_ID_LAMBERTSHADERPROG;
         break;
     case ShadingModel::BLINN_PHONG:
         break;

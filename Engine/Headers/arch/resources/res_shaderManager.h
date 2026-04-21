@@ -14,6 +14,7 @@ namespace ShaderConstants {
 	inline constexpr const char* C_ID_LAMBERTFRAGSHADER			{ "C_LAMBERTFRAG_SHADER" };
 	// - shader Program 0000---------------------------------------------------
 	inline constexpr const char* C_ID_LAMBERTSHADERPROG			{ "BRDF_LAMBERT" };
+	inline constexpr const char* C_ID_PHONGSHADERPROG			{ "BRDF_PHONG" };
 }
 
 struct ShaderProgramDesc {

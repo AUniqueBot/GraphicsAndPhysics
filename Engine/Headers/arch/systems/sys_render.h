@@ -60,7 +60,7 @@ public:
 
 	// run the logic to render one of the cameras.
 	void Render(const Viewport& _viewport);
-	 
+	
 private: 
 	
 	void ClearBuffers(const Viewport& _viewport);
@@ -105,8 +105,6 @@ private:
 	);
 private: 
 	// shadow passes.
-
-
 
 	void RenderRangedLightShadows(
 		const Light& light,
@@ -178,6 +176,7 @@ private:
 	void PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix);
 	void BindShadowShader();
 	void UnbindShadowShader();
+	void ApplyShadowMap(MeshRenderer& mat);
 
 
 	void ResolveMeshRendererMaterials(MeshRenderer& _mr);
