@@ -1,4 +1,4 @@
-// #version 460 core // hide this on compile
+#version 460 core // hide this on compile
 
 
 #define LIGHT_POINT 0.0
@@ -20,7 +20,9 @@ in VertexOutput {
 } VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
-uniform float u_exponent;
+uniform sampler2D u_specular;
+uniform sampler2D u_gloss;
+
 uniform sampler2DArrayShadow u_directionalShadowMap;
 uniform sampler2DArray u_spotLightShadowMap;
 uniform samplerCubeArray u_pointLightShadowMap;
@@ -203,17 +205,45 @@ float CalculateShadow() {
 // ------------------------------------------------------------------------------------
 // lighting helper functions
 
-vec3 CalculateDirectionalLighting(LightData _currentLight, vec3 _fragNormal){
+float CalculateSpecularHighlight(
+    vec3 _lightDir, vec3 _fragNormal, 
+    vec3 _viewPosition, vec3 _fragPosition,
+    int _shininess, float _specularStrength
+    ){
+    // specular
+    vec3 reflectDir = reflect(-_lightDir, _fragNormal);  
+    vec3 viewDir = _viewPosition - _fragPosition; 
+    return pow(max(dot(viewDir, reflectDir), 0.0), 32);
+}
+vec3 CalculateDirectionalLighting(
+    LightData _currentLight, 
+    vec3 _fragNormal, 
+    vec3 _viewPosition,
+    vec3 _fragPosition 
+    ){
     // Direction is assumed to be the light direction (e.g., from which light comes)
     vec3 lightDir = normalize(_currentLight.direction_roll.xyz);
     float NdotL = max(dot(_fragNormal, -lightDir), 0.0);
 
+    // basic
     vec3 lightColor = _currentLight.color_power.xyz;
     float power = _currentLight.color_power.w;
-    return lightColor * power *  NdotL;
+
+    float specularPower = CalculateSpecularHighlight(
+        lightDir, _fragNormal, 
+        _viewPosition, _fragPosition, 
+        32, 1.0
+        );
+    return  lightColor * power *  NdotL * specularPower;
 }
 
-vec3 CalculatePointLighting(LightData _currentLight, vec3 _fragPosition, vec3 _fragNormal) {
+
+vec3 CalculatePointLighting(
+    LightData _currentLight, 
+    vec3 _fragNormal,
+    vec3 _viewPosition,
+    vec3 _fragPosition 
+    ) {
     vec3 lightPosition = _currentLight.position_type.xyz;
     vec3 lightVec = _fragPosition - lightPosition;
     vec3 nLightVec = normalize(lightVec);
@@ -227,19 +257,20 @@ vec3 CalculatePointLighting(LightData _currentLight, vec3 _fragPosition, vec3 _f
     return lightColor * power * NdotL;
 }
 
-vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
+vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal, vec3 cameraPosition) {
     vec3 N = normalize(fragNormal);
     vec3 result = vec3(0.0);
     vec3 ambientRes = vec3(0.0);
+
+    
     for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
         LightData currentLight = LIGHTPARAMS.m_lightData[i];
         int lightType = int(currentLight.position_type.w);
         // point light
         if (lightType == LIGHT_POINT) {
             result += CalculatePointLighting(
-                currentLight,
-                 fragPosition,
-                  N
+                currentLight,N,
+                cameraPosition,fragPosition
                 );
         }
 
@@ -247,8 +278,8 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
         // directional
         else if (lightType == LIGHT_DIRECTIONAL) {
             result += CalculateDirectionalLighting(
-                currentLight,
-                 N
+                currentLight, N,
+                cameraPosition, fragPosition
                 );
         }
 
@@ -275,7 +306,8 @@ void main() {
     out_color = color * vec4(
         CalculateLighting(
             VERTEXOUTPUT.frag_position,
-             VERTEXOUTPUT.frag_normal
+             VERTEXOUTPUT.frag_normal,
+             VERTEXOUTPUT.frag_viewPosition
              ), 
              1.0 // no alpha needed
     );

@@ -103,6 +103,36 @@ GLuint Material::GenerateEmptyColorTexture() {
 	return texId;
 }
 
+GLuint Material::Generate1x1Texture() {
+	// WIP function
+	// TODOs -> expose image types, expose wrap types
+
+	GLuint texId{};
+	glGenTextures(1, &texId);
+	glBindTexture(GL_TEXTURE_2D, texId);
+
+	GLubyte color[4]{};
+	glTexImage2D(
+		GL_TEXTURE_2D,
+		0,
+		GL_RGBA,
+		1, 1,
+		0,
+		GL_RGBA,
+		GL_UNSIGNED_BYTE,
+		color
+	);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+
+	return texId;
+}
+
 void Material::DeleteTexture(const GLuint& _id) {
 	if (!_id) {
 		LOG_INFO("Attempting to delete an unassigned texture");

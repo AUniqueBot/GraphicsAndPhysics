@@ -82,6 +82,8 @@ public:
 
 	// - tex generator ----------------------------------------
 	static GLuint GenerateEmptyColorTexture();									// this function generates a 1x1 texture. No data is filled.
+	static GLuint Generate1x1Texture();
+
 	static void DeleteTexture(const GLuint& _id);								// this function deletes any texture.
 	static void UpdateColorTexture(const GLuint& _id, const glm::vec4& _col);	// this function changes a 1x1 texture color.
 	static std::array<GLubyte, 4> ColorToBytes(const glm::vec4& col);

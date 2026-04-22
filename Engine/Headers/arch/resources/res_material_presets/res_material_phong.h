@@ -3,7 +3,7 @@
 #include <arch/resources/res_material.h>
 
 
-
+#include <optional>
 
 
 class PhongMaterial : public Material {
@@ -14,14 +14,38 @@ public:
 
 
 	// - getters -------------------------------------
-	const glm::vec4& Color() const;
-	void Color(glm::vec4 _newColor);
-	void Color(unsigned _newColor);
+	
+	// color
+	const glm::vec4& GetColor() const;
+	void SetColor(glm::vec4 _newColor);
+	void SetColor(unsigned _newColor);
+	const GLuint& GetColorImageTexture() const;
+	void SetColorImageTexture(GLuint _textureId);
 
-	void UsesColor(bool _usesTexture);
-	bool UsesColor() const;
+	void SetUsesColorValue(bool _usesColorValue);
+	bool UsesColorValue() const;
 
-	inline GLuint GetTextureID() const { return m_texId; }
+	// specular
+	const glm::vec4& GetSpecular() const;
+	void SetSpecular(const glm::vec4& _newValue);
+	void SetSpecular(unsigned _newColor);
+	const GLuint& GetSpecularImageTexture() const;
+	void SetSpecularImageTexture(const GLuint&) ;
+
+	void SetUsesSpecularValue(bool _usesSpecularValue);
+	bool UsesSpecularValue() const;
+
+
+	// gloss
+	const float& GetGloss() const;
+	void SetGloss(float _value);
+	const GLuint& GetGlossImageTexture() const;
+	void SetGlossImageTexture(const GLuint& _texture);
+
+
+	const GLuint& GetColorTextureID() const;
+	const GLuint& GetSpecularTextureID() const;
+	const GLuint& GetGlossTextureID() const;
 
 
 
@@ -35,10 +59,22 @@ private:
 
 	// - color ---------------------------------------
 	glm::vec4 m_color{};
-	bool m_usesColor{ true };
-	GLuint m_texId{}; // texture identifier, sent via uniform
+	bool m_usesColorValue{ true };
 
-	GLuint m_reservedImageTexId{}; // texture identifier, storage of image texture.
-	GLuint m_reservedColorTexId{}; // texture identifier, storage of color texture.
+	glm::vec4 m_specularCol{ 1.0f };
+	bool m_usesSpecularValue{ true };
+
+	float m_glossVal{ 1.0f };
+	bool m_usesGlossValue{ true };
+
+	GLuint m_reservedColorTexId{};		// texture identifier, storage of color texture.
+	GLuint m_reservedColorImageTexId{}; // texture identifier, storage of image texture.
+
+	GLuint m_reservedSpecularTexId{};		// texture identifier, storage of specular 1x1 texture.
+	GLuint m_reservedSpecularImageTexId{};	// texture identifier, storage of specular map texture.
+
+	GLuint m_reservedGlossTexId{};
+	GLuint m_reservedGlossImageTexId{};
+
 };
 
