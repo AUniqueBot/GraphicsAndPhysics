@@ -171,6 +171,8 @@ bool RenderTarget::Build() {
 	Bind();
 	const size_t colAttachCount	{ m_colorAttachments.size() };
 	std::vector<unsigned> texBuffer(colAttachCount);
+	// rework this bit to build textures in m_colorTextures;
+
 	glGenTextures(static_cast<GLsizei>(colAttachCount), texBuffer.data());
 	for (unsigned i{}; i < colAttachCount; ++i) {
 
