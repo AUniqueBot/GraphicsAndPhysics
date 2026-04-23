@@ -6,6 +6,73 @@
 class Texture;
 namespace TextureCreation {
 
+	enum class PixelDataType : GLenum {
+		UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
+		BYTE = GL_BYTE,
+		UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
+		SHORT = GL_SHORT,
+		FLOAT = GL_FLOAT
+	};
+
+	enum class PixelFormat : GLenum {
+		RED = GL_RED,
+		RG = GL_RG,
+		RGB = GL_RGB,
+		RGBA = GL_RGBA,
+		DEPTH = GL_DEPTH_COMPONENT
+	};
+
+	enum class InternalImageFormat : GLenum {
+		R8 = GL_R8,
+		RGB8 = GL_RGB8,
+		RGBA8 = GL_RGBA8,
+
+		SRGB8 = GL_SRGB8,
+		SRGBA8 = GL_SRGB8_ALPHA8,
+
+		R16F = GL_R16F,
+		RGB16F = GL_RGB16F,
+		RGBA16F = GL_RGBA16F,
+
+		DEPTH24 = GL_DEPTH_COMPONENT24,
+		DEPTH32F = GL_DEPTH_COMPONENT32F
+	};
+
+
+	struct TextureCreationInfo {
+		glm::ivec2 m_resolution = { 1, 1 };
+
+		InternalImageFormat m_internalFormat = InternalImageFormat::RGBA8;   // GPU storage format
+		PixelFormat m_format = PixelFormat::RGBA;    // input data format
+		PixelDataType m_type = PixelDataType::UNSIGNED_BYTE;
+
+		int m_mipLevels = 1; // 0 = autogenerate. N > 0 = specified number of mips.
+	};
+
+
+
+	Texture CreateTexture(
+		const TextureCreationInfo& _info,
+		const void* _data = nullptr
+	);
+
+	// - load from file -----------------------------------------------
+
+	enum class ImagePrecision {
+		UINT8,
+		UINT16,
+		FLOAT32
+	};
+
+	// uint8 is the default image precision. override this if you are loading images such as hdris.
+	Texture LoadTextureFromFile(
+		const std::filesystem::path& _path,
+		ImagePrecision _precision = ImagePrecision::UINT8 
+	);
+}
+
+
+namespace TextureSettings {
 	enum class WrapBehaviour : int {
 		REPEAT = GL_REPEAT,
 		MIRROR_REPEAT = GL_MIRRORED_REPEAT,
@@ -18,120 +85,82 @@ namespace TextureCreation {
 		NEAREST = GL_NEAREST
 	};
 
-
-	// image channel count. automatic.
-	enum class ImageFormat : int {
-		RGB = GL_RGB,
-		RGBA = GL_RGBA
-	};
-
-	// how image is internally stored.
-	enum class ImageFormatInternal : int {
-		RGB = GL_RGB,
-		RGBA = GL_RGBA
-	};
-
-
-	struct TextureInfo {
-		glm::ivec2 m_resolution = { 1, 1 };
-
-		GLenum m_internalFormat = GL_RGBA8;   // GPU storage format
-		GLenum m_format = GL_RGBA;    // input data format
-		GLenum m_type = GL_UNSIGNED_BYTE;
-
-		int m_mipLevels = 1;
-
-		// sampling
-		GLenum m_wrapU = GL_REPEAT;
-		GLenum m_wrapV = GL_REPEAT;
-
-		GLenum m_minFilter = GL_LINEAR;
-		GLenum m_magFilter = GL_LINEAR;
-
-		bool m_generateMipmaps = true;
-	};
-
-
-
-	Texture CreateTexture(
-		const TextureInfo& _info,
-		const void* _data = nullptr
-	);
-	Texture CreateTextureFromFile(
-		const std::filesystem::path& path
-	);
 }
-
 
 
 class Texture : public Resource<Texture> {
 private:
 public:
+	using PixelFormat = TextureCreation::PixelFormat;
+	using PixelDataType = TextureCreation::PixelDataType;
+	using InternalImageFormat = TextureCreation::InternalImageFormat;
 
+	using WrapBehaviour = TextureSettings::WrapBehaviour;
+	using FilterBehaviour = TextureSettings::FilterBehaviour;
 
-
-	using TEX_ID = unsigned;
+	using TextureID = unsigned;
 public:
 	// either path or image.
 
 
 	// - settings -------------------
-	void SetWrappingBehavior(TextureCreation::WrapBehaviour _u, TextureCreation::WrapBehaviour _v);
-	void SetWrappingBehaviorU(TextureCreation::WrapBehaviour _setting);
-	void SetWrappingBehaviorV(TextureCreation::WrapBehaviour _setting);
-	std::pair<TextureCreation::WrapBehaviour, TextureCreation::WrapBehaviour> GetWrappingBehaviour() const;
-	const TextureCreation::WrapBehaviour& GetWrappingBehaviourU() const;
-	const TextureCreation::WrapBehaviour& GetWrappingBehaviourV() const;
+	void SetWrappingBehavior(WrapBehaviour _u, WrapBehaviour _v);
+	void SetWrappingBehaviorU(WrapBehaviour _setting);
+	void SetWrappingBehaviorV(WrapBehaviour _setting);
+	std::pair<WrapBehaviour, WrapBehaviour> GetWrappingBehaviour() const;
+	const WrapBehaviour& GetWrappingBehaviourU() const;
+	const WrapBehaviour& GetWrappingBehaviourV() const;
 
 
 
-	void SetFilterBehavior(TextureCreation::FilterBehaviour _h, TextureCreation::FilterBehaviour _v);
-	void SetFilterBehaviorU(TextureCreation::FilterBehaviour _setting);
-	void SetFilterBehaviorV(TextureCreation::FilterBehaviour _setting);
-	std::pair<TextureCreation::FilterBehaviour, TextureCreation::FilterBehaviour> GetFilterBehaviour() const;
-	const TextureCreation::FilterBehaviour& GetFilterBehaviourU() const;
-	const TextureCreation::FilterBehaviour& GetFilterBehaviourV() const;
-
-	
-	void SetMipmapCount(int _setting);
-	void FlipVertically(bool _setting);
+	void SetFilterBehavior(FilterBehaviour _h, FilterBehaviour _v);
+	void SetFilterBehaviorMin(FilterBehaviour _setting);
+	void SetFilterBehaviorMag(FilterBehaviour _setting);
+	std::pair<FilterBehaviour, FilterBehaviour> GetFilterBehaviour() const;
+	const FilterBehaviour& GetFilterBehaviourMin() const;
+	const FilterBehaviour& GetFilterBehaviourMag() const;
 
 
+	// - readonly parameters -------
+	int GetMipCount() const;
+	const glm::ivec2& GetDimensions() const;
+	const TextureID& GetTextureID() const;
 
-	// - getters --------------------
-	void SetTextureId(const TEX_ID& _textureId); 
-	TEX_ID GetTextureID() const;
-	glm::vec2 GetDimensions() const;
-
+	const PixelFormat& GetPixelFormat() const;
+	const PixelDataType& GetPixelDataType() const;
+	const InternalImageFormat& GetInternalImageFormat() const;
 
 	
 private:
-	bool BindTexture() const;
+	// - friend function -----------
+	friend Texture TextureCreation::CreateTexture(const TextureCreationInfo& _info, const void* _data);
+	void SetTextureID(const TextureID& _textureId); 
+	void SetDimensions(const glm::ivec2& _dimensions);
+	void SetMipmapCount(int _setting);
 
+
+private:
+	// to be removed.
+	bool BindTexture() const;
 	void UpdateResourceParameters();
 
-private:
-	
-	// - engine stuff --------------------------------------------
-	TEX_ID m_textureID		{ 0 };
-	
-	// - image properties ------------------------
-	glm::vec2 m_dimensions				{ 0, 0 }; // automatically read on loading of image.
-	
-	int m_channelCount					{ 0 };
 
+	// - readonly parameters -------------------------------------
+	TextureID m_textureID					{ 0 };
+	glm::ivec2 m_dimensions					{ 0, 0 };	// automatically read on loading of image.	
+	int m_mipmapCount						{ 1 };		// default 1, no mips created.
 
-	TextureCreation::WrapBehaviour m_wrapU				{ TextureCreation::WrapBehaviour::REPEAT };
-	TextureCreation::WrapBehaviour m_wrapV				{ TextureCreation::WrapBehaviour::REPEAT };
+	PixelFormat m_pixelFormat				{ PixelFormat::RGBA };
+	PixelDataType m_pixelDataType			{ PixelDataType::UNSIGNED_BYTE };
+	InternalImageFormat m_iImageFormat		{ InternalImageFormat::RGBA8 };
 	
-	TextureCreation::FilterBehaviour m_filterU			{ TextureCreation::FilterBehaviour::LINEAR };
-	TextureCreation::FilterBehaviour m_filterV			{ TextureCreation::FilterBehaviour::LINEAR };
+	// - sampling parameters -------------------------------------
+	WrapBehaviour m_wrapU					{ WrapBehaviour::REPEAT };
+	WrapBehaviour m_wrapV					{ WrapBehaviour::REPEAT };
 	
-	bool m_flipImage					{ false };
-	int m_mipmapCount					{ 4 }; // default 4, nice number.
-
-	TextureCreation::ImageFormat m_imageFormat				{ TextureCreation::ImageFormat::RGB };
-	TextureCreation::ImageFormatInternal m_imageFormatI	{ TextureCreation::ImageFormatInternal::RGB };
+	FilterBehaviour m_filterMin				{ FilterBehaviour::LINEAR };
+	FilterBehaviour m_filterMag				{ FilterBehaviour::LINEAR };
+	
 
 
 };
