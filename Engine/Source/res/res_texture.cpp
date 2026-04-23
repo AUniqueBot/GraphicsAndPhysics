@@ -1,61 +1,108 @@
 #include <pch.h>
 #include <arch/resources/res_texture.h>
+#include <stb_image.h>
 
 
+namespace TextureCreation {
+	Texture CreateTexture(
+		const TextureInfo& _info,
+		const void* _data
+	) {
+		Texture tex{};
+		GLuint texId{};
 
-
-bool Texture::Load() {
+		glGenTextures(1, &texId);
+		glBindTexture(GL_TEXTURE_2D, texId);
+		glTexImage2D(
+			GL_TEXTURE_2D, 
+			0, 
+			_info.m_internalFormat, 
+			_info.m_resolution.x, _info.m_resolution.y, 
+			0, 
+			_info.m_format, _info.m_type, 
+			_data
+		);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		
-	glGenTextures(1, &m_textureID);
-	if (!BindTexture()) {
-		std::stringstream ss;
-		ss << m_resPath.filename() << ":: Failed to generate texture memory" << std::endl;
-		LOG_ERROR(ss.str());
+
+		return tex;
 	}
-
-	
-	// do texture things here.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrapU);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrapV);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filterU);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filterV);
-	// unsigned char* imgData = stbi(m_resPath.str().c_str(), m_dimensions[0], m_dimensions[1], &m_channelCount, 0);
-	// 
-
-	return LoadImage();
+	Texture CreateTextureFromFile(
+		const std::filesystem::path& path
+	) {
+		TextureInfo texInfo{};
+		int channels{};
+		unsigned char* imgData { stbi_load(path.string().c_str(), &texInfo.m_resolution.x, &texInfo.m_resolution.y, &channels, 0) };
+		return CreateTexture(texInfo, imgData);
+	}
 }
 
-void Texture::SetWrappingBehavior(WRAP_BEHAVIOUR _h, WRAP_BEHAVIOUR _v) {
-	SetWrappingBehaviorH(_h);
+
+
+
+
+bool Texture::BindTexture() const {
+	if (m_textureID != 0) glBindTexture(GL_TEXTURE_2D, m_textureID);
+	return m_textureID != 0;
+}
+
+void Texture::SetWrappingBehavior(TextureCreation::WrapBehaviour _u, TextureCreation::WrapBehaviour _v) {
+	SetWrappingBehaviorU(_u);
 	SetWrappingBehaviorV(_v);
 
 }
 
-void Texture::SetWrappingBehaviorH(WRAP_BEHAVIOUR _setting) {
-	m_wrapUDirty = true;
+void Texture::SetWrappingBehaviorU(TextureCreation::WrapBehaviour _setting) {
 	m_wrapU = _setting;
 }
 
-void Texture::SetWrappingBehaviorV(WRAP_BEHAVIOUR _setting) {
-	m_wrapVDirty = true;
+void Texture::SetWrappingBehaviorV(TextureCreation::WrapBehaviour _setting) {
 	m_wrapV = _setting;
 }
 
+std::pair<
+	TextureCreation::WrapBehaviour, 
+	TextureCreation::WrapBehaviour
+> Texture::GetWrappingBehaviour() const {
+	return { GetWrappingBehaviourU(), GetWrappingBehaviourV() };
+}
+
+const TextureCreation::WrapBehaviour& Texture::GetWrappingBehaviourU() const {
+	return m_wrapU;
+}
+
+const TextureCreation::WrapBehaviour& Texture::GetWrappingBehaviourV() const {
+	return m_wrapV;
+}
 
 
-void Texture::SetFilterBehavior(FILTER_BEHAVIOUR _h, FILTER_BEHAVIOUR _v) {
-	SetFilterBehaviorH(_h);
+
+void Texture::SetFilterBehavior(TextureCreation::FilterBehaviour _h, TextureCreation::FilterBehaviour _v) {
+	SetFilterBehaviorU(_h);
 	SetFilterBehaviorV(_v);
 }
 
-void Texture::SetFilterBehaviorH(FILTER_BEHAVIOUR _setting) {
-	m_filterUDirty = true;
+void Texture::SetFilterBehaviorU(TextureCreation::FilterBehaviour _setting) {
 	m_filterU = _setting;
 }
 
-void Texture::SetFilterBehaviorV(FILTER_BEHAVIOUR _setting) {
-	m_filterVDirty = true;
+void Texture::SetFilterBehaviorV(TextureCreation::FilterBehaviour _setting) {
 	m_filterV = _setting;
+}
+
+std::pair<
+	TextureCreation::FilterBehaviour, 
+	TextureCreation::FilterBehaviour
+> Texture::GetFilterBehaviour() const {
+	return { GetFilterBehaviourU(), GetFilterBehaviourV() };
+}
+
+const TextureCreation::FilterBehaviour& Texture::GetFilterBehaviourU() const {
+	return m_filterU;
+}
+
+const TextureCreation::FilterBehaviour& Texture::GetFilterBehaviourV() const {
+	return m_filterV;
 }
 
 void Texture::SetMipmapCount(int _setting) {
@@ -66,61 +113,12 @@ void Texture::FlipVertically(bool _setting) {
 	m_flipImage = _setting;
 }
 
-bool Texture::LoadImage() {
-	
-	unsigned char* imgData		{ nullptr };
-	// stbi_set_flip_vertically_on_load(m_flipImage);
-	if (!imgData) {
-		std::stringstream ss;
-		ss << m_resPath.filename() << ":: Failed to load texture" << std::endl;
-		LOG_ERROR(ss.str());
-		return false;
-	}
-	glTexImage2D(
-		GL_TEXTURE_2D, 
-		0, 
-		static_cast<GLint>(m_imageFormatI),
-		m_dimensions.x,
-		m_dimensions.y,
-		0,
-		static_cast<GLint>(m_imageFormat),
-		GL_UNSIGNED_BYTE,
-		imgData
-	);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-
-	
-	return true;
-}
-
 void Texture::UpdateResourceParameters() {
 	if (!BindTexture()) return;
-	// adjust params here.
-
-
-	if (m_wrapUDirty) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrapU);
-		m_wrapUDirty = false;
-	}
-
-	if (m_wrapVDirty) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrapV);
-		m_wrapVDirty = false;
-	}
-
-	if (m_filterUDirty) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, m_filterU);
-		m_filterUDirty = false;
-	}
-
-
-	if (m_filterVDirty) {
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, m_filterV);
-		m_filterVDirty = false;
-	}
-
-
-
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, static_cast<GLint>(m_wrapU));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, static_cast<GLint>(m_wrapV));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, static_cast<GLint>(m_filterU));
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_filterV));
 }
+
+

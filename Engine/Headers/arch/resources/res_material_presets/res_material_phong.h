@@ -67,11 +67,13 @@ private:
 	float m_glossVal{ 1.0f };
 	bool m_usesGlossValue{ true };
 
-	GLuint m_reservedColorTexId{};		// texture identifier, storage of color texture.
-	GLuint m_reservedColorImageTexId{}; // texture identifier, storage of image texture.
+	GLuint m_reservedColorTexId{};
+	GLuint m_reservedColorImageTexId{};
 
-	GLuint m_reservedSpecularTexId{};		// texture identifier, storage of specular 1x1 texture.
-	GLuint m_reservedSpecularImageTexId{};	// texture identifier, storage of specular map texture.
+	GLuint m_reservedSpecularTexId{};
+	GLuint m_reservedSpecularImageTexId{};
+
+	
 
 	GLuint m_reservedGlossTexId{};
 	GLuint m_reservedGlossImageTexId{};
