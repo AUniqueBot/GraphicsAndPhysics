@@ -119,10 +119,29 @@ bool Texture::BindTexture() const {
 	return m_textureID != 0;
 }
 
+Texture::Texture(Texture&& _texture) noexcept {
+	m_textureID = _texture.m_textureID;
+	m_dimensions = _texture.m_dimensions;
+	m_mipmapCount = _texture.m_mipmapCount;
+
+	m_pixelFormat = _texture.m_pixelFormat;
+	m_pixelDataType = _texture.m_pixelDataType;
+	m_iImageFormat = _texture.m_iImageFormat;
+
+	m_wrapU = _texture.m_wrapU;
+	m_wrapV = _texture.m_wrapV;
+
+	m_filterMin = _texture.m_filterMin;
+	m_filterMag = _texture.m_filterMag;
+}
+
+Texture::~Texture() {
+	Destroy();
+}
+
 void Texture::SetWrappingBehavior(WrapBehaviour _u, WrapBehaviour _v) {
 	SetWrappingBehaviorU(_u);
 	SetWrappingBehaviorV(_v);
-
 }
 
 void Texture::SetWrappingBehaviorU(WrapBehaviour _setting) {
@@ -221,4 +240,9 @@ void Texture::UpdateResourceParameters() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, static_cast<GLint>(m_filterMag));
 }
 
+
+void Texture::Destroy() {
+	glDeleteTextures(1, &m_textureID);
+	m_textureID = 0;
+}
 

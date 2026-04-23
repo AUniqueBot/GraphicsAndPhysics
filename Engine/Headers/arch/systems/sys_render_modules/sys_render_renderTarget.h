@@ -61,8 +61,8 @@ public:
 	// - building ------------------------------------------------------------------------
 
 	// builds the render target
-	bool Build();
-	void Destroy();
+	bool Build();		// to destroy textures.
+	void Destroy();		// textures.
 
 	unsigned FBO() const;
 
@@ -106,6 +106,6 @@ private:
 
 
 	// TODO - > attach the Texture class here.
-	std::vector<std::unique_ptr<Texture>> m_colorTextures;
-	std::unique_ptr<Texture> m_depthTexture;
+	std::vector<std::shared_ptr<Texture>> m_colorTextures;
+	std::shared_ptr<Texture> m_depthTexture;
 };

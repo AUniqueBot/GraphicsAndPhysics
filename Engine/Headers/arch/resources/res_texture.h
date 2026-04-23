@@ -100,6 +100,18 @@ public:
 
 	using TextureID = unsigned;
 public:
+	// constructors
+	Texture() = default;
+	Texture(Texture& _texture) = delete;
+	Texture(const Texture& _texture) = delete;
+	Texture& operator=(const Texture&) = delete;
+
+	Texture(Texture&& _texture) noexcept;
+
+	~Texture();
+
+
+public:
 	// either path or image.
 
 
@@ -144,7 +156,11 @@ private:
 	bool BindTexture() const;
 	void UpdateResourceParameters();
 
+private:
+	void Destroy();
 
+
+private:
 	// - readonly parameters -------------------------------------
 	TextureID m_textureID					{ 0 };
 	glm::ivec2 m_dimensions					{ 0, 0 };	// automatically read on loading of image.	
