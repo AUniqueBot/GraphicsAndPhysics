@@ -42,11 +42,19 @@ unsigned ShadowMap::GetLayers() const {
 	return m_layers;
 }
 
-void ShadowMap::BuildShadowMap() {	
-	glCreateTextures(m_shadowMapType, 1, &m_shadowTex);
+void ShadowMap::BuildShadowMap() {
+	using namespace TextureProperties;
+	m_shadowTexture.SetDimensions({m_framebufferSize.x, m_framebufferSize.y, m_layers});
+	m_shadowTexture.SetMipmapCount(1);
+	m_shadowTexture.SetTextureType(TextureProperties::TextureType::TEXTURE_2D_ARRAY);
+	m_shadowTexture.SetFilterBehavior(FilterBehaviour::LINEAR, FilterBehaviour::LINEAR);
+	m_shadowTexture.SetWrappingBehavior(WrapBehaviour::REPEAT, WrapBehaviour::REPEAT);
 
+
+	glCreateTextures(m_shadowMapType, 1, &m_shadowTextureId);
+	
 	glTextureStorage3D(
-		m_shadowTex,
+		m_shadowTextureId,
 		1,
 		GL_DEPTH_COMPONENT32F,
 		m_framebufferSize.x,
@@ -54,24 +62,24 @@ void ShadowMap::BuildShadowMap() {
 		m_layers
 	);
 
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
 
 	// 2. Set the comparison function (usually LEQUAL for depth)
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_COMPARE_FUNC, GL_LEQUAL);
 
 	// 3. Set to LINEAR to enable 4-tap Hardware PCF
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-	glClearTexImage(m_shadowTex, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTextureParameteri(m_shadowTex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+	glClearTexImage(m_shadowTextureId, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTextureParameteri(m_shadowTextureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	
 	float borderColor[] = { 1,1,1,1 };
-	glTextureParameterfv(m_shadowTex, GL_TEXTURE_BORDER_COLOR, borderColor);
+	glTextureParameterfv(m_shadowTextureId, GL_TEXTURE_BORDER_COLOR, borderColor);
 
 	glCreateFramebuffers(1, &m_fbo);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_NONE);
@@ -79,7 +87,7 @@ void ShadowMap::BuildShadowMap() {
 
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadowTex, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadowTextureId, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -101,9 +109,9 @@ void ShadowMap::Destroy() {
 		m_fbo = 0;
 	}
 
-	if (m_shadowTex) {
-		glDeleteTextures(1, &m_shadowTex);
-		m_shadowTex = 0;
+	if (m_shadowTextureId) {
+		glDeleteTextures(1, &m_shadowTextureId);
+		m_shadowTextureId = 0;
 	}
 	m_isBuilt = false;
 }
@@ -121,7 +129,7 @@ void ShadowMap::SetBoundLayer(unsigned _layer) const {
 	assert(_layer < m_layers);
 	if (m_currentBoundLayer == _layer) return;
 	m_currentBoundLayer = _layer;
-	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, m_shadowTex, 0, _layer);
+	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, m_shadowTextureId, 0, _layer);
 }
 
 
@@ -132,7 +140,7 @@ void ShadowMap::Unbind() {
 unsigned ShadowMap::FBO() const { return m_fbo; }
 
 unsigned ShadowMap::GetTextureID() const {
-	return m_shadowTex;
+	return m_shadowTextureId;
 }
 
 bool ShadowMap::ValidateID(unsigned _id) const {

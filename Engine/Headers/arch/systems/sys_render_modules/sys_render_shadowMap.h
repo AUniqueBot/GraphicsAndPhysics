@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/resources/res_texture.h>
 
 
 
@@ -63,11 +63,13 @@ private:
 	glm::ivec2 m_baseTileSize				{ 2048, 2048 };	// 2048, 1024, 512, 256
 	unsigned m_layers						{ 8 };
 	unsigned m_fbo							{ 0 };
-	unsigned m_shadowTex					{ 0 };
+	unsigned m_shadowTextureId					{ 0 };
 	unsigned m_levels						{ 4 };
 	bool m_isBuilt							{};
 	mutable unsigned m_currentBoundLayer	{ 0 };
 	unsigned m_currentLayerCount			{ 0 }; 
 	std::vector<unsigned> m_freeLayers		{ };
 	
+	
+	Texture m_shadowTexture;
 };

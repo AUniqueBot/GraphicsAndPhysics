@@ -4,53 +4,17 @@
 
 
 namespace TextureCreation {
+	using namespace TextureProperties;
+
 	Texture CreateTexture(
 		const TextureCreationInfo& _info,
-		const void* _data
+		std::optional<TextureProperties::TextureUploadInfo> _imageData
 	) {
 		Texture tex{};
-		GLuint texId{};
-
-		glGenTextures(1, &texId);
-		glBindTexture(GL_TEXTURE_2D, texId);
-
-		GLenum internalFormat		{ static_cast<GLenum>(_info.m_internalFormat) };
-		GLenum pixelFormat			{ static_cast<GLenum>(_info.m_format) };
-		GLenum pixelType			{ static_cast<GLenum>(_info.m_type) };
-		
-
-		int width{ _info.m_resolution.x  };
-		int height{ _info.m_resolution.y };
-		int mipLevels				{ _info.m_mipLevels };
-		bool autoGenerateMips		{ mipLevels == 0 };
-		if (autoGenerateMips)		mipLevels = 1;
-
-		for (int mipLevel{}; mipLevel < mipLevels; ++mipLevel) {
-			int width	{ _info.m_resolution.x >> mipLevel };
-			int height	{ _info.m_resolution.y >> mipLevel };
-			glTexImage2D(GL_TEXTURE_2D, mipLevel,
-				internalFormat,
-				width, height,
-				0,
-				pixelFormat,
-				pixelType,
-				_data
-			);
-		}
-		if (autoGenerateMips) {
-			glGenerateTextureMipmap(GL_TEXTURE_2D);
-			mipLevels = std::floor(std::log2(std::max(width,height))) + 1;
-		}
-		glBindTexture(GL_TEXTURE_2D, 0);
-
-		// set alloc'd params.
-		tex.SetTextureID(texId);
-		tex.SetMipmapCount(mipLevels);
-		tex.SetDimensions({width, height});
-
-
+		tex.Build(_info, _imageData);
 		return tex;
 	}
+
 
 	// - image loading ----------------------------------------------
 	static Texture _LoadImageFromFile(
@@ -81,9 +45,20 @@ namespace TextureCreation {
 		}
 		
 		void* imgData { fn(path.string().c_str(), &texInfo.m_resolution.x, &texInfo.m_resolution.y, &channels, 0) };
-		texInfo.m_type = _pixType;
+		texInfo.m_pixelDataType = _pixType;
 
-		Texture tex{ CreateTexture(texInfo, imgData) };
+		TextureProperties::TextureUploadInfo info;
+		
+		
+		info.m_faces = 1;
+		info.m_layerCount = 1;
+		info.m_mipLevels = 1;
+		info.m_textureDimensionCount = 2;
+		info.m_imageData = {};
+		info.m_imageData.push_back({1, 1, imgData});
+
+
+		Texture tex{ CreateTexture(texInfo) };
 		stbi_image_free(imgData);
 
 		return tex;
@@ -95,18 +70,20 @@ namespace TextureCreation {
 		ImagePrecision _precision
 	) {
 		std::function<Texture(const std::filesystem::path&)> fn;
+		PixelDataType type{ PixelDataType::UNSIGNED_BYTE };
 		switch (_precision) {
 		case ImagePrecision::UINT8:
-			fn = [](const std::filesystem::path& _path) { return _LoadImageFromFile(_path, PixelDataType::UNSIGNED_BYTE); };
+			type = PixelDataType::UNSIGNED_BYTE;
 			break;
 		case ImagePrecision::UINT16:
-			fn = [](const std::filesystem::path& _path) { return _LoadImageFromFile(_path, PixelDataType::UNSIGNED_SHORT); };
+			type = PixelDataType::UNSIGNED_SHORT;
 			break;
 		case ImagePrecision::FLOAT32:
-			fn = [](const std::filesystem::path& _path) { return _LoadImageFromFile(_path, PixelDataType::FLOAT); };
+			type = PixelDataType::FLOAT;
 			break;
 		}
-		return fn(path);
+
+		return _LoadImageFromFile(path, type);
 	}
 }
 
@@ -133,6 +110,11 @@ Texture::Texture(Texture&& _texture) noexcept {
 
 	m_filterMin = _texture.m_filterMin;
 	m_filterMag = _texture.m_filterMag;
+
+	m_resizeAllowed = _texture.m_resizeAllowed;
+
+	// you are required to call generate texture if you want to actually use it.
+	// mandated.
 }
 
 Texture::~Texture() {
@@ -182,17 +164,136 @@ void Texture::SetFilterBehaviorMag(FilterBehaviour _setting) {
 	m_filterMag = _setting;
 }
 
-const TextureCreation::PixelFormat& Texture::GetPixelFormat() const {
+const TextureProperties::PixelFormat& Texture::GetPixelFormat() const {
 	return m_pixelFormat;
 }
 
-const TextureCreation::PixelDataType& Texture::GetPixelDataType() const {
+const TextureProperties::PixelDataType& Texture::GetPixelDataType() const {
 	return m_pixelDataType;
 }
 
-const TextureCreation::InternalImageFormat& Texture::GetInternalImageFormat() const {
+const TextureProperties::InternalImageFormat& Texture::GetInternalImageFormat() const {
 	return m_iImageFormat;
 }
+
+void Texture::Build(
+	const TextureProperties::TextureCreationInfo& _info,
+	std::optional<TextureProperties::TextureUploadInfo> _imageData
+) {
+
+	SetTextureType(_info.m_textureType);
+	SetMipmapCount(_info.m_mipLevels);
+	SetDimensions(_info.m_resolution);
+	SetPixelFormat(_info.m_pixelFormat);
+	SetPixelDataType(_info.m_pixelDataType);
+	SetInternalImageFormat(_info.m_internalImageFormat);
+	SetResizeAllowed(!_imageData.has_value());
+
+	GenerateTexture(_imageData);
+}
+
+void Texture::GenerateTexture(std::optional<TextureProperties::TextureUploadInfo> _imageData) {
+	Destroy();
+	
+	GLenum texType			{ static_cast<GLenum>(m_textureType) };
+
+	// useful for 2D 
+
+	GLenum internalFormat	{ static_cast<GLenum>(m_iImageFormat) };
+	GLenum pixelFormat		{ static_cast<GLenum>(m_pixelFormat) };
+	GLenum pixelType		{ static_cast<GLenum>(m_pixelDataType) };
+	int width				{ m_dimensions.x };
+	int height				{ m_dimensions.y };
+	int depth				{ m_dimensions.z };	// treated as depth or index value for arrays.
+	int mipLevels			{ m_mipmapCount };
+
+	glGenTextures(1, &m_textureID);
+	glBindTexture(texType, m_textureID);
+	
+	// texture types
+	// resolution
+
+	// mips
+	bool autoGenerateMips{ mipLevels == 0 };
+	if (autoGenerateMips)		mipLevels = 1;
+
+	// array
+	bool isArray{};
+	int imageDimCount{ 0 };
+	int layers{0}; // only for array type stuff.
+
+	// allocation
+	switch (m_textureType) {
+	case TextureType::TEXTURE_1D:
+		glTexStorage1D(texType, mipLevels, internalFormat, width);
+		imageDimCount = 1;
+		break;
+	case TextureType::TEXTURE_1D_ARRAY:
+		glTexStorage2D(texType, mipLevels, internalFormat, width, height);
+		imageDimCount = 1;
+		layers = height;
+		isArray = true;
+		break;
+	case TextureType::TEXTURE_2D:
+		glTexStorage2D(texType, mipLevels, internalFormat, width, height);
+		imageDimCount = 2;
+		break;
+	case TextureType::TEXTURE_2D_ARRAY:
+		glTexStorage3D(texType, mipLevels, internalFormat, width, height, depth);
+		imageDimCount = 2;
+		layers = depth;
+		isArray = true;
+		break;
+	case TextureType::TEXTURE_3D:
+		glTexStorage3D(texType, mipLevels, internalFormat, width, height, depth);
+		imageDimCount = 3;
+		break;
+	case TextureType::CUBEMAP:
+		glTexStorage2D(texType, mipLevels, internalFormat, width, height);
+		imageDimCount = 2;
+		break;
+	case TextureType::CUBEMAP_ARRAY:
+		glTexStorage3D(texType, mipLevels, internalFormat, width, height, 6 * depth);
+		imageDimCount = 2;
+		layers = depth;
+		isArray = true;
+		break;
+	}
+
+
+	if (autoGenerateMips) {
+		glGenerateTextureMipmap(texType);
+		mipLevels = std::floor(std::log2(std::max(width, height))) + 1;
+		// update the mip count automatically.
+		SetMipmapCount(mipLevels);
+	}
+	glBindTexture(texType, 0);
+	SetTextureID(m_textureID);
+}
+
+
+void Texture::Resize(const glm::ivec3& _dimensions) {
+	if (!GetResizeAllowed()) return;
+	if (m_dimensions == _dimensions) return;
+	m_dimensions = _dimensions;
+	Build(GetTextureCreationInfo());
+}
+
+bool Texture::IsArray() const {
+	return 
+		m_textureType == TextureType::CUBEMAP_ARRAY ||
+		m_textureType == TextureType::TEXTURE_1D_ARRAY||
+		m_textureType == TextureType::TEXTURE_2D_ARRAY		
+		;
+}
+
+int Texture::DimensionCount() const {
+	return 
+		(m_textureType == TextureType::TEXTURE_1D || m_textureType == TextureType::TEXTURE_1D_ARRAY) ? 1 : 
+		(m_textureType == TextureType::TEXTURE_3D) ? 3 : 
+		2;
+}
+
 
 
 
@@ -216,6 +317,22 @@ void Texture::SetMipmapCount(int _setting) {
 	m_mipmapCount = _setting;
 }
 
+void Texture::SetResizeAllowed(bool _setting) {
+	m_resizeAllowed = _setting;
+}
+
+void Texture::SetPixelFormat(const PixelFormat& _format) {
+	m_pixelFormat = _format;
+}
+
+void Texture::SetPixelDataType(const PixelDataType& _pixelDataType) {
+	m_pixelDataType = _pixelDataType;
+}
+
+void Texture::SetInternalImageFormat(const InternalImageFormat& _format) {
+	m_iImageFormat = _format;
+}
+
 int Texture::GetMipCount() const {
 	return m_mipmapCount;
 }
@@ -224,12 +341,20 @@ void Texture::SetTextureID(const Texture::TextureID& _id) {
 	m_textureID = _id;
 }
 
-void Texture::SetDimensions(const glm::ivec2& _dimensions) {
+void Texture::SetTextureType(const TextureType& _type) {
+	m_textureType = _type;
+}
+
+void Texture::SetDimensions(const glm::ivec3& _dimensions) {
 	m_dimensions = _dimensions;
 }
 
 const Texture::TextureID& Texture::GetTextureID() const {
 	return m_textureID;
+}
+
+const bool& Texture::GetResizeAllowed() const {
+	return m_resizeAllowed;
 }
 
 void Texture::UpdateResourceParameters() {
@@ -241,8 +366,24 @@ void Texture::UpdateResourceParameters() {
 }
 
 
+TextureProperties::TextureCreationInfo Texture::GetTextureCreationInfo() const {
+	TextureProperties::TextureCreationInfo info{};
+
+	info.m_pixelFormat			= m_pixelFormat;
+	info.m_pixelDataType		= m_pixelDataType;
+	info.m_internalImageFormat	= m_iImageFormat;
+	
+	info.m_resolution			= m_dimensions;
+	info.m_mipLevels			= m_mipmapCount;
+
+	return info;
+}
+
 void Texture::Destroy() {
+	if (m_textureID == 0) return;
 	glDeleteTextures(1, &m_textureID);
 	m_textureID = 0;
 }
+
+
 
