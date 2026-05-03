@@ -179,6 +179,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Headers\arch\resources\res_texture\res_cubemap.h" />
+    <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h" />
+    <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
@@ -220,7 +223,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\res\res_resourceManager.cpp" />
     <ClCompile Include="Source\res\res_shader.cpp" />
     <ClCompile Include="Source\res\res_shader_generation\res_shader_generator.cpp" />
-    <ClCompile Include="Source\res\res_texture.cpp" />
+    <ClCompile Include="Source\res\res_texture\res_texture.cpp" />
+    <ClCompile Include="Source\res\res_texture\res_texture2d.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\util\util_graphics_debugging.cpp" />
     <ClCompile Include="Source\util\util_serialisation.cpp" />
@@ -279,7 +283,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
-    <ClInclude Include="Headers\arch\resources\res_texture.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h" />

@@ -43,12 +43,10 @@ unsigned ShadowMap::GetLayers() const {
 }
 
 void ShadowMap::BuildShadowMap() {
-	using namespace TextureProperties;
-	m_shadowTexture.SetDimensions({m_framebufferSize.x, m_framebufferSize.y, m_layers});
-	m_shadowTexture.SetMipmapCount(1);
-	m_shadowTexture.SetTextureType(TextureProperties::TextureType::TEXTURE_2D_ARRAY);
-	m_shadowTexture.SetFilterBehavior(FilterBehaviour::LINEAR, FilterBehaviour::LINEAR);
-	m_shadowTexture.SetWrappingBehavior(WrapBehaviour::REPEAT, WrapBehaviour::REPEAT);
+
+	
+
+	
 
 
 	glCreateTextures(m_shadowMapType, 1, &m_shadowTextureId);

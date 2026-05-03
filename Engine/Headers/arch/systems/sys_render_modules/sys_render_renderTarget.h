@@ -6,7 +6,7 @@
 #include <unordered_map>
 #include <set>
 #include <arch/systems/sys_render_modules/sys_render_renderTargetAttachments.h>
-#include <arch/resources/res_texture.h>
+
 
 /*
 	class to handle render targets - where the gpu pastes it's render data to 
@@ -105,7 +105,4 @@ private:
 
 
 
-	// TODO - > attach the Texture class here.
-	std::vector<std::shared_ptr<Texture>> m_colorTextures;
-	std::shared_ptr<Texture> m_depthTexture;
 };

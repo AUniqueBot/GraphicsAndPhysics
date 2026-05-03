@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-#include <arch/resources/res_texture.h>
+
 
 
 
@@ -70,6 +70,5 @@ private:
 	unsigned m_currentLayerCount			{ 0 }; 
 	std::vector<unsigned> m_freeLayers		{ };
 	
-	
-	Texture m_shadowTexture;
+
 };

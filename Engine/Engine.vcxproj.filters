@@ -93,7 +93,7 @@
     <ClCompile Include="Source\res\res_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_texture.cpp">
+    <ClCompile Include="Source\res\res_texture\res_texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\util\util_convenient_conversions.cpp">
@@ -151,6 +151,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\resources\res_texture\res_cubemap.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\res\res_texture\res_texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -269,7 +281,7 @@
     <ClInclude Include="Headers\arch\resources\res_shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_texture.h">
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h">
@@ -411,6 +423,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\inspectable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
