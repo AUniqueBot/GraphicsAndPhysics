@@ -62,8 +62,8 @@ private:
 	glm::ivec2 m_framebufferSize			{ 4096, 4096 };
 	glm::ivec2 m_baseTileSize				{ 2048, 2048 };	// 2048, 1024, 512, 256
 	unsigned m_layers						{ 8 };
-	unsigned m_fbo							{ 0 };
-	unsigned m_shadowTextureId					{ 0 };
+	unsigned m_fbo							{ 0 }; 
+	unsigned m_shadowTextureId				{ 0 };
 	unsigned m_levels						{ 4 };
 	bool m_isBuilt							{};
 	mutable unsigned m_currentBoundLayer	{ 0 };

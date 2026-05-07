@@ -19,5 +19,4 @@ public:
 	int GetHeight() const;
 
 
-	void Upload(TextureProperties::TextureUploadData _imageData = std::nullopt);
 };

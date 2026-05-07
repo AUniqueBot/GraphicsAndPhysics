@@ -4,34 +4,49 @@
 void ShaderManager::Init() {
 	GLuint vtxShaderId				{ CreateShader(ShaderConstants::C_ID_VERTEXSHADER) };
 	GLuint lambertFragShaderId		{ CreateShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER) };
+	GLuint phongFragShaderId		{ CreateShader(ShaderConstants::C_ID_PHONGSHADERPROG) };
+	
 	Shader& vertexShader			{ *GetShader(vtxShaderId) };
 	Shader& lambertFragShader		{ *GetShader(lambertFragShaderId) };
+	Shader& phongFragShader			{ *GetShader(phongFragShaderId) };
 
 	std::string vertexShaderSrc { 
-		"#version 460 core\n" + 
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_VERTEXSHADERPATH) 
 	};
 	std::string lambertFragSrc { 
-		"#version 460 core\n" + 
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_LAMBERTFRAGSHADERPATH) 
+	};
+	std::string phongFragSrc{
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_PHONGFRAGSHADERPATH)
 	};
 
 	vertexShader.SetShaderCode(vertexShaderSrc);
 	vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
 	lambertFragShader.SetShaderCode(lambertFragSrc);
 	lambertFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+	phongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+
+
 	vertexShader.Build();
 	lambertFragShader.Build();
+	phongFragShader.Build();
 	
 	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
 	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
+	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, phongFragShader);
 
 	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
+	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
 	ShaderProgram& lambertShader	{ *GetShaderProgram(lambertShaderId) };
+	ShaderProgram& phongShader		{ *GetShaderProgram(phongShaderId) };
 
 	lambertShader.SetShader(vertexShader, vertexShader.GetShaderType());
 	lambertShader.SetShader(lambertFragShader, lambertFragShader.GetShaderType());
 	lambertShader.Build();
+
+	phongShader.SetShader(vertexShader, vertexShader.GetShaderType());
+	phongShader.SetShader(phongFragShader, phongFragShader.GetShaderType());
+
 	LOG_INFO("Initialised shader manager");
 }
 

@@ -1,4 +1,4 @@
-﻿// #version 460 core // hide this on compile
+﻿#version 460 core // hide this on compile
 
 
 #define LIGHT_POINT 0.0

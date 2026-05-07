@@ -165,6 +165,9 @@
     <ClCompile Include="Source\res\res_texture\res_texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\res\res_texture\res_texture2darray.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">

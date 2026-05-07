@@ -215,6 +215,8 @@ float CalculateSpecularHighlight(
     vec3 viewDir = _viewPosition - _fragPosition; 
     return pow(max(dot(viewDir, reflectDir), 0.0), 32);
 }
+
+
 vec3 CalculateDirectionalLighting(
     LightData _currentLight, 
     vec3 _fragNormal, 

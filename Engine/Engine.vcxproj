@@ -225,6 +225,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\res\res_shader_generation\res_shader_generator.cpp" />
     <ClCompile Include="Source\res\res_texture\res_texture.cpp" />
     <ClCompile Include="Source\res\res_texture\res_texture2d.cpp" />
+    <ClCompile Include="Source\res\res_texture\res_texture2darray.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
     <ClCompile Include="Source\util\util_graphics_debugging.cpp" />
     <ClCompile Include="Source\util\util_serialisation.cpp" />

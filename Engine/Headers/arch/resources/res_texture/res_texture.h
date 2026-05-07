@@ -88,6 +88,7 @@ namespace TextureProperties {
 	};
 
 	struct ImageUploadData {
+		int m_mipLevel;
 		glm::ivec3 m_dimensions{};
 		void* m_textureData;
 	};
@@ -143,6 +144,18 @@ public:
 	void Create();
 	void Destroy();
 	void Allocate();
+	void Upload(TextureProperties::TextureUploadData _imageData = std::nullopt);
+
+private:
+	//void Upload1DTextureData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	//void UploadTexture1DArrayData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	void UploadTexture2DData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	void UploadCubemapData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	void Upload3DTextureData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	void UploadCubemapArrayData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+	void UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
+
+
 protected:
 	void UpdateTextureProperties();
 protected:

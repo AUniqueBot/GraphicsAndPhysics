@@ -8,8 +8,8 @@ void PhongMaterial::Init() {
 
 
     // - loading shader ------------------
-    std::string vertexShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
-    std::string fragmentShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_phong.frag");
+    std::string vertexShaderSource =  ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
+    std::string fragmentShaderSource = ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_phong.frag");
 
     ShaderProgram phongShader{};
     Shader vertexShader;
