@@ -158,9 +158,12 @@ void RenderSystem::Init() {
     m_compositor.Init();
 
     // - shadows -------------------------------
+    // TODO -> use the texture manager to create shadow maps.
     SetupShadowProgram();
     SetupShadowBuffers();
 
+    // testing loading of textures to GPU.
+    m_textureManager.LoadTexture("./Assets/Images/awesomeface.png");
 }
  
 void RenderSystem::PreUpdate() {
@@ -909,7 +912,15 @@ void RenderSystem::SetupShadowBuffers() {
 
     m_pointLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
     m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::CUBEMAP);
-    m_pointLightShadowMaps.BuildShadowMap(); 
+    m_pointLightShadowMaps.BuildShadowMap();
+
+
+    //TextureIDInfo texID = m_textureManager.Create2DTexture(SHADOW_WH, SHADOW_WH);
+    //m_directionalShadowMaps.SetTextureIDInfo(texID);
+ //   SparseSetView<TextureGPU> tex = m_textureManager.GetTexture(texID.GetTextureID());
+ //   if (tex) {
+ //       LOG_INFO("Success at allocating texture");
+	//}
 }
 
 void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {

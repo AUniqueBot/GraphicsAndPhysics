@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/resources/res_texture/res_texture.h>
 
 
 
@@ -52,7 +52,8 @@ public:
 	unsigned GetLODLevels() const;
 	void SetLODLevels(unsigned _levels);
 
-
+	void SetTextureIDInfo(TextureIDInfo _info);
+	const TextureIDInfo& GetTextureIDInfo() const;
 private:
 
 private:
@@ -70,5 +71,7 @@ private:
 	unsigned m_currentLayerCount			{ 0 }; 
 	std::vector<unsigned> m_freeLayers		{ };
 	
+	// reference to texture in tex manager; to be created when render system is init.
+	TextureIDInfo m_textureIdInfo;	// TextureIDInfo handle is temporary; will be replaced with a proper texture 2D array handle.
 
 };

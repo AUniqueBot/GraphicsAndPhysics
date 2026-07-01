@@ -43,12 +43,6 @@ unsigned ShadowMap::GetLayers() const {
 }
 
 void ShadowMap::BuildShadowMap() {
-
-	
-
-	
-
-
 	glCreateTextures(m_shadowMapType, 1, &m_shadowTextureId);
 	
 	glTextureStorage3D(
@@ -171,5 +165,13 @@ unsigned ShadowMap::GetLODLevels() const {
 
 void ShadowMap::SetLODLevels(unsigned _levels) {
 	m_levels = _levels;
+}
+
+void ShadowMap::SetTextureIDInfo(TextureIDInfo _info) {
+	m_textureIdInfo = _info;
+}
+
+const TextureIDInfo& ShadowMap::GetTextureIDInfo() const {
+	return m_textureIdInfo;
 }
 

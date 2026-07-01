@@ -5,18 +5,23 @@
 
 class Texture2D : public Texture {
 public:
-	Texture2D(int _width, int _height);
+	Texture2D(const TextureIDInfo& _info); 
+	Texture2D(const Texture2D&) = default;
+	Texture2D& operator=(const Texture2D&) = default;
 
-	Texture2D(const Texture2D&) = delete;
-	Texture2D& operator=(const Texture2D&) = delete;
-	
 
-	void SetDimensions(glm::ivec2 _dimensions);
 	glm::ivec2 GetDimensions() const;
-	void SetWidth(int _width);
+	void SetDimensions(glm::ivec2 _dims);
+
+
 	int GetWidth() const;
-	void SetHeight(int _height);
 	int GetHeight() const;
 
+	void SetWidth(int _width);
+	void SetHeight(int _width);
+
+	// special functions.
+	void SetColor(unsigned _hexCol); // hexadecimal variant.
+	void SetColor(glm::vec4 _col);	 // col represented as 0-1 ranges for each of the channels
 
 };

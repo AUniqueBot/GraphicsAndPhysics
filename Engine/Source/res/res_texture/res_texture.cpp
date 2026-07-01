@@ -1,144 +1,205 @@
 #include <pch.h>
 #include <arch/resources/res_texture/res_texture.h>
+#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
 #include <stb_image.h>
 
 // MUST use opengl ver 4.5+ for DSA.
 
 namespace TextureCreation {
-	void AllocateTexture(Texture& _texture) {
 
-	}
 }
 
 
 
-Texture::Texture(TextureProperties::TextureType _type) {
+TextureGPU::TextureGPU(
+	TextureProperties::TextureType _type, 
+	glm::ivec3 _dims, 
+	TextureProperties::TextureProps _props
+) {
 	using namespace TextureProperties;
-	TextureProps props{};
 	m_textureType = _type;
-	m_dimensions = glm::ivec3(1, 1, 1);
-	props.m_filterMag = props.m_filterMin = FilterBehaviour::LINEAR;
-	props.m_wrapU = props.m_wrapV = WrapBehaviour::REPEAT;
-
- 
-	Create();
-}
-
-Texture::Texture(TextureProperties::TextureProps _props) {
+	m_dimensions = _dims;
 	m_textureProperties = _props;
-
-	Create();
 }
 
-Texture::~Texture() {
-	glDeleteTextures(1, &m_textureId);
+
+
+TextureGPU::~TextureGPU() {
+	if (!m_glTextureHandle) return;
+	glDeleteTextures(1, &m_glTextureHandle);
 }
 
-Texture::Texture(Texture&& _old) noexcept {
-	m_textureId = _old.m_textureId;
-	m_textureProperties = _old.m_textureProperties;
-	m_dimensions = _old.m_dimensions;
-
+TextureGPU::TextureGPU(TextureGPU&& _old) noexcept {
+	if (&_old == this) return;
+	m_textureType = std::move(_old.m_textureType);
+	m_dimensions = std::move(_old.m_dimensions);
+	m_textureProperties = std::move(_old.m_textureProperties);
+	m_glTextureHandle = std::move(_old.m_glTextureHandle);
+	
+	_old.m_glTextureHandle = 0;
 }
 
-Texture& Texture::operator=(Texture&& _old) noexcept {
-	m_textureId = _old.m_textureId;
-	m_textureProperties = _old.m_textureProperties;
-	m_dimensions = _old.m_dimensions;
+TextureGPU& TextureGPU::operator=(TextureGPU&& _old) noexcept {
+	if (&_old == this) return *this;
+	m_textureType = std::move(_old.m_textureType);
+	m_dimensions = std::move(_old.m_dimensions);
+	m_textureProperties = std::move(_old.m_textureProperties);
+	m_glTextureHandle = std::move(_old.m_glTextureHandle);
+	
+	// ensure this one doesn't get it.
+	_old.m_glTextureHandle = 0;
 	return *this;
 }
 
-const GLuint& Texture::GetTextureID() const {
-	return m_textureId;
+const GLuint& TextureGPU::GetTextureID() const {
+	return m_glTextureHandle;
 }
 
-const TextureProperties::TextureType& Texture::GetTextureType() const {
+const TextureProperties::TextureType& TextureGPU::GetTextureType() const {
 	return m_textureType;
 }
 
-const TextureProperties::InternalImageFormat& Texture::GetInternalImageFormat() const {
+const TextureProperties::InternalImageFormat& TextureGPU::GetInternalImageFormat() const {
 	return m_textureProperties.m_internalImageFormat;
 }
 
-void Texture::SetInternalImageFormat(const TextureProperties::InternalImageFormat& _format) {
+void TextureGPU::SetInternalImageFormat(const TextureProperties::InternalImageFormat& _format) {
 	if (_format == m_textureProperties.m_internalImageFormat) return;
 	m_textureProperties.m_internalImageFormat = _format;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::PixelDataType& Texture::GetPixelDataType() const {
+const TextureProperties::PixelDataType& TextureGPU::GetPixelDataType() const {
 	return m_textureProperties.m_pixelDataType;
 }
 
-void Texture::SetPixelDataType(const TextureProperties::PixelDataType& _pixelDataType) {
+
+
+void TextureGPU::SetPixelDataType(const TextureProperties::PixelDataType& _pixelDataType) {
 	if (_pixelDataType == m_textureProperties.m_pixelDataType) return;
 	m_textureProperties.m_pixelDataType = _pixelDataType;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::PixelFormat& Texture::GetPixelFormat() const {
+const TextureProperties::PixelFormat& TextureGPU::GetPixelFormat() const {
 	return m_textureProperties.m_pixelFormat;
 }
 
-void Texture::SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat) {
+void TextureGPU::SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat) {
 	if (_pixelFormat == m_textureProperties.m_pixelFormat) return;
 	m_textureProperties.m_pixelFormat = _pixelFormat;
 	m_reallocateDirty = true;
 }
 
-void Texture::SetWrapBehaviourU(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
-
+void TextureGPU::SetWrapBehaviourU(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+	if (m_textureProperties.m_wrapU == _wrapBehaviour) return;
+	m_textureProperties.m_wrapU = _wrapBehaviour;
+	m_samplingDirty = true;
 }
 
-const TextureProperties::WrapBehaviour& Texture::GetWrapBehaviourU() const {
+const TextureProperties::WrapBehaviour& TextureGPU::GetWrapBehaviourU() const {
 	return m_textureProperties.m_wrapU;
 }
 
-void Texture::SetWrapBehaviourV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+void TextureGPU::SetWrapBehaviourV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+	if (m_textureProperties.m_wrapV == _wrapBehaviour) return;
+	m_textureProperties.m_wrapV = _wrapBehaviour;
+	m_samplingDirty = true;
 }
 
-const TextureProperties::WrapBehaviour& Texture::GetWrapBehaviourV() const {
+const TextureProperties::WrapBehaviour& TextureGPU::GetWrapBehaviourV() const {
 	return m_textureProperties.m_wrapV;
 }
 
-void Texture::SetFilterBehaviourMin(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+void TextureGPU::SetFilterBehaviourMin(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+	if (m_textureProperties.m_filterMin == _filterBehaviour) return;
+	m_textureProperties.m_filterMin = _filterBehaviour;
+	m_samplingDirty = true;
 }
 
-const TextureProperties::FilterBehaviour& Texture::GetFilterBehaviourMin() const {
+const TextureProperties::FilterBehaviour& TextureGPU::GetFilterBehaviourMin() const {
 	return m_textureProperties.m_filterMin;
 }
 
-void Texture::SetFilterBehaviourMag(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+void TextureGPU::SetFilterBehaviourMag(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+	if (m_textureProperties.m_filterMag == _filterBehaviour) return;
+	m_textureProperties.m_filterMag = _filterBehaviour;
+	m_samplingDirty = true;
 }
 
-const TextureProperties::FilterBehaviour& Texture::GetFilterBehaviourMag() const {
+const TextureProperties::FilterBehaviour& TextureGPU::GetFilterBehaviourMag() const {
 	return m_textureProperties.m_filterMag;
 }
 
-void Texture::UpdateTextureProperties() {
+void TextureGPU::SetDimensions(glm::ivec3 _dims) {	
+	assert(_dims.x > 0 && _dims.y > 0 && _dims.z > 0 && "attempting to set invalid dimensions");
+	if (m_dimensions == _dims) return;
+	m_dimensions = _dims;
+	m_reallocateDirty = true;
+}
+
+const glm::ivec3& TextureGPU::GetDimensions(glm::ivec3 _dims) const {
+	return m_dimensions;
+}
+
+const int& TextureGPU::GetX() const {
+	return m_dimensions.x;
+}
+
+const int& TextureGPU::GetY() const {
+	return m_dimensions.y;
+}
+
+const int& TextureGPU::GetZ() const {
+	return m_dimensions.z;
+}
+
+void TextureGPU::SetX(const int& _val) {
+	assert(_val > 0 && "attempting to set to invalid size");
+	if (_val == m_dimensions.x) return;
+	m_dimensions.x = _val;
+	m_reallocateDirty = true;
+}
+
+void TextureGPU::SetY(const int& _val) {
+	assert(_val > 0 && "attempting to set to invalid size");
+	if (_val == m_dimensions.y) return;
+	m_dimensions.y = _val;
+	m_reallocateDirty = true;
+}
+
+void TextureGPU::SetZ(const int& _val) {
+	assert(_val > 0 && "attempting to set to invalid size");
+	if (_val == m_dimensions.z) return;
+	m_dimensions.z = _val;
+	m_reallocateDirty = true;
+}
+
+void TextureGPU::UpdateTextureProperties() const {
 	if (!m_samplingDirty) return;
-	glTextureParameteri(m_textureId, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
-	glTextureParameteri(m_textureId, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
-	glTextureParameteri(m_textureId, GL_TEXTURE_WRAP_S, static_cast<GLenum>(m_textureProperties.m_wrapU));
-	glTextureParameteri(m_textureId, GL_TEXTURE_WRAP_T, static_cast<GLenum>(m_textureProperties.m_wrapV));
+	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
+	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
+	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_S, static_cast<GLenum>(m_textureProperties.m_wrapU));
+	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_T, static_cast<GLenum>(m_textureProperties.m_wrapV));
 }
 
-void Texture::Create() {
-	if (m_textureId != 0) return;
-	glCreateTextures(static_cast<GLenum>(m_textureType), 1, &m_textureId);
-	assert(m_textureId != 0 && "Failed to create texture.");
+void TextureGPU::Create() {
+	if (m_glTextureHandle != 0) return;
+	glCreateTextures(static_cast<GLenum>(m_textureType), 1, &m_glTextureHandle);
+	assert(m_glTextureHandle != 0 && "Failed to create texture.");
 }
 
-void Texture::Destroy() {
-	if (m_textureId == 0) return;
-	glDeleteTextures(1, &m_textureId);
-	m_textureId = 0;
+void TextureGPU::Destroy() {
+	if (m_glTextureHandle == 0) return;
+	glDeleteTextures(1, &m_glTextureHandle);
+	m_glTextureHandle = 0;
 	m_allocated = false;
 	m_uploaded = false;
 }
 
-void Texture::Allocate() {
+void TextureGPU::Allocate() {
 	using namespace TextureProperties;
+	LOG_DEBUG("Allocating for texture handle [" << m_glTextureHandle << "] as " << m_textureType);
 	TextureType textureType = m_textureType;
 	int uploadDimensionCount = 0;
 
@@ -161,25 +222,25 @@ void Texture::Allocate() {
 
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
-	int depth = m_dimensions.y;
-	GLenum internalFormat = (GLenum)m_textureProperties.m_internalImageFormat;
-	int mipCount = 0;
+	int depth = m_dimensions.z;
+	GLenum internalFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
+	int mipCount = m_textureProperties.m_mipmapCount > 0 ? m_textureProperties.m_mipmapCount : 1;
 	switch (uploadDimensionCount) {
 	case 1:
-		glTextureStorage1D(m_textureId, mipCount, internalFormat, width);
+		glTextureStorage1D(m_glTextureHandle, mipCount, internalFormat, width);
 		break;
 	case 2:
-		glTextureStorage2D(m_textureId, mipCount, internalFormat, width, height);
+		glTextureStorage2D(m_glTextureHandle, mipCount, internalFormat, width, height);
 		break;
 	case 3:
-		glTextureStorage3D(m_textureId, mipCount, internalFormat, width, height, depth);
+		glTextureStorage3D(m_glTextureHandle, mipCount, internalFormat, width, height, depth);
 		break;
 	}
 	m_allocated = true;
 }	
 
 
-void Texture::Upload(TextureProperties::TextureUploadData _imageData) {
+void TextureGPU::Upload(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
@@ -193,12 +254,12 @@ void Texture::Upload(TextureProperties::TextureUploadData _imageData) {
 			hasExternalData = false;
 			_imageData = std::nullopt;
 		}
-		if (!autogenMips && _imageData.value().size() != mipCount) {
+		if (!autogenMips && _imageData.has_value() && _imageData.value().size() != mipCount) {
 			throw std::runtime_error("mismatch mip count and image data");
 		}
 	}
 
-	GLenum internalImageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
+	GLenum pixelFormat = static_cast<GLenum>(m_textureProperties.m_pixelFormat);
 	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
 
 
@@ -222,10 +283,10 @@ void Texture::Upload(TextureProperties::TextureUploadData _imageData) {
 				imageData = data.m_textureData;
 			}
 			glTextureSubImage2D(
-				m_textureId,
+				m_glTextureHandle,
 				mipLevel, 0, 0,
 				mipWidth, mipHeight,
-				internalImageFormat,
+				pixelFormat,
 				pixelType,
 				imageData
 			);
@@ -242,54 +303,38 @@ void Texture::Upload(TextureProperties::TextureUploadData _imageData) {
 				ss << "expected dimensions: " << glm::ivec2(width, height) << "\n";
 				throw std::runtime_error(ss.str());
 			}
+			//LOG_INFO("Buffer Size: "<< (width * height));
 			imageData = data.m_textureData;
 		}
 
+		LOG_INFO("Uploading Texture Data: [" << width << "x" << height << "], "
+				<< "internal format: [" << m_textureProperties.m_internalImageFormat << "]"
+				<< "and pixel type: [" << m_textureProperties.m_pixelDataType << "]"
+		);
+
 		glTextureSubImage2D(
-			m_textureId,
+			m_glTextureHandle,
 			0, 0, 0,
 			width, height,
-			internalImageFormat,
+			pixelFormat,
 			pixelType,
 			imageData
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
+			glGenerateTextureMipmap(m_glTextureHandle);
 		}
 
 	}
 }
-/*
-void Texture::Upload1DTextureData(TextureProperties::TextureUploadData _imageData) const {
-	int width = m_dimensions.x;
-	int mipCount = m_textureProperties.m_mipmapCount;
-	bool autogenMips = m_textureProperties.m_autogenerateMipmaps;
-	bool hasExternalData = _imageData != std::nullopt;
-
-	GLenum imageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
-
-	if (hasExternalData) {
-		LOG_WARN("Uploading 1D textures not supported");
-		_imageData = std::nullopt;
-		hasExternalData = false;
-	}
-	if (mipCount > 1) {
-		for (int mipLevel = 0; mipLevel < mipCount; ++mipLevel) {
-			int mipWidth = width >> mipLevel;
-			glTextureSubImage1D(m_textureId, mipLevel, 0, mipWidth, imageFormat, pixelType, nullptr);
-		}
-	}
-	else {
-		glTextureSubImage1D(m_textureId, 0, 0, width, imageFormat, pixelType, nullptr);
-		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
-		}
-	}
+bool TextureGPU::NeedUpdate() const {
+	return m_uploadNeedUpdate;
 }
-*/
+bool TextureGPU::NeedAllocate() const {
+	return !m_allocated || m_reallocateDirty;
+}
 
-void Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageData) const {
+
+void TextureGPU::UploadTexture2DData(TextureProperties::TextureUploadData _imageData) const {
 
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
@@ -297,7 +342,7 @@ void Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageDat
 	bool autogenMips = m_textureProperties.m_autogenerateMipmaps;
 	bool hasExternalData = _imageData != std::nullopt;
 
-	GLenum imageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
+	GLenum pixelFormat = static_cast<GLenum>(m_textureProperties.m_pixelFormat);
 	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
 
 	if (hasExternalData) {
@@ -324,10 +369,10 @@ void Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageDat
 				imageData = data.m_textureData;
 			}
 			glTextureSubImage2D(
-				m_textureId, 
+				m_glTextureHandle, 
 				mipLevel, 0, 0, 
 				mipWidth, mipHeight, 
-				imageFormat, 
+				pixelFormat, 
 				pixelType, 
 				imageData
 			);
@@ -347,20 +392,20 @@ void Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageDat
 			imageData = data.m_textureData;
 		}
 		glTextureSubImage2D(
-			m_textureId, 0, 
+			m_glTextureHandle, 0, 
 			0, 0, 
 			width, height, 
-			imageFormat, 
+			pixelFormat, 
 			pixelType, 
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
+			glGenerateTextureMipmap(m_glTextureHandle);
 		}
 	}
 }
 
-void Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData) const {
+void TextureGPU::UploadCubemapData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int mipCount = m_textureProperties.m_mipmapCount;
@@ -409,7 +454,7 @@ void Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData)
 					
 				}
 				glTextureSubImage3D(
-					m_textureId, mipLevel,
+					m_glTextureHandle, mipLevel,
 					0, 0, i,
 					mipWidth, mipHeight, 1,
 					imageFormat,
@@ -438,7 +483,7 @@ void Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData)
 				}
 			}
 			glTextureSubImage3D(
-				m_textureId, 0,
+				m_glTextureHandle, 0,
 				0, 0, i,
 				width, height, 1,
 				imageFormat,
@@ -447,12 +492,12 @@ void Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData)
 			);
 		}
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
+			glGenerateTextureMipmap(m_glTextureHandle);
 		}
 	}
 }
 
-void Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageData) const {
+void TextureGPU::Upload3DTextureData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
@@ -474,7 +519,7 @@ void Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageDat
 			int mipHeight = height >> mipLevel;
 			int mipDepth = depth >> mipLevel;
 			glTextureSubImage3D(
-				m_textureId, mipLevel,
+				m_glTextureHandle, mipLevel,
 				0, 0, 0,
 				mipWidth, mipHeight, mipDepth,
 				imageFormat,
@@ -485,7 +530,7 @@ void Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageDat
 	}
 	else {
 		glTextureSubImage3D(
-			m_textureId, 0,
+			m_glTextureHandle, 0,
 			0, 0, 0,
 			width, height, depth,
 			imageFormat,
@@ -493,12 +538,15 @@ void Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageDat
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
+			glGenerateTextureMipmap(m_glTextureHandle);
 		}
 	}
 }
 
-void Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData) const {
+void TextureGPU::UploadCubemapArrayData(TextureProperties::TextureUploadData _imageData) const {
+}
+
+void TextureGPU::UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int layerCount = m_dimensions.z;
@@ -525,7 +573,7 @@ void Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _ima
 			int mipWidth = width >> mipLevel;
 			int mipHeight = height >> mipLevel;
 			glTextureSubImage3D(
-				m_textureId, mipLevel,
+				m_glTextureHandle, mipLevel,
 				0, 0, 0,
 				mipWidth, mipHeight, layerCount,
 				imageFormat,
@@ -537,7 +585,7 @@ void Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _ima
 
 	else {
 		glTextureSubImage3D(
-			m_textureId, 0,
+			m_glTextureHandle, 0,
 			0, 0, 0,
 			width, height, layerDepth,
 			imageFormat,
@@ -545,7 +593,250 @@ void Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _ima
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_textureId);
+			glGenerateTextureMipmap(m_glTextureHandle);
 		}
 	}
+}
+
+TextureIDInfo& TextureIDInfo::operator=(const TextureIDInfo& _other) {
+	m_textureID = _other.m_textureID;
+	m_textureManager = _other.m_textureManager;
+	return *this;
+}
+
+bool TextureIDInfo::IsValid() const {
+	return m_textureID != C_INVALID_TEXTURE_ID && m_textureManager;
+}
+TextureID TextureIDInfo::GetTextureID() const { 
+	return m_textureID; 
+}
+TextureManager* TextureIDInfo::GetTextureManager() const { 
+	return m_textureManager; 
+}
+
+
+// -----------------------------------------------------------------
+
+
+Texture::Texture(const TextureIDInfo& _info) {
+	m_textureIdInfo = _info;
+}
+
+
+bool Texture::IsValid() const {
+	return m_textureIdInfo.IsValid();
+}
+
+const TextureIDInfo& Texture::GetTextureIDInfo() const {
+	return m_textureIdInfo;
+}
+
+void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	if (!texHandle) return;
+	TextureGPU& tex = *texHandle;
+	tex.SetFilterBehaviourMin(_filterBehaviour);
+}
+
+void Texture::SetMagFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	if (!texHandle) return;
+	TextureGPU& tex = *texHandle;
+	tex.SetFilterBehaviourMag(_filterBehaviour);
+}
+
+TextureProperties::FilterBehaviour Texture::GetMinFilter() const {
+	TextureGPU& texHandle = *m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	return texHandle.GetFilterBehaviourMin(); 
+}
+
+TextureProperties::FilterBehaviour Texture::GetMagFilter() const {
+	TextureGPU& texHandle = *m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	return texHandle.GetFilterBehaviourMag();
+}
+
+void Texture::SetWrapU(const TextureProperties::WrapBehaviour& _wrapBehaviour)
+{
+}
+
+void Texture::SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour)
+{
+}
+
+
+void Texture::SetInternalFormat(const TextureProperties::InternalImageFormat& _format) {
+	
+
+}
+void Texture::SetPixelDataType(const TextureProperties::PixelDataType& _pixelType){
+
+}
+void Texture::SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat)  {
+
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+		case TextureType::TEXTURE_1D:
+			_os << "TEXTURE_1D";
+			break;
+		case TextureType::TEXTURE_1D_ARRAY:
+			_os << "TEXTURE_1D_ARRAY";
+			break;
+		case TextureType::TEXTURE_2D:
+			_os << "TEXTURE_2D";
+			break;
+		case TextureType::TEXTURE_2D_ARRAY:
+			_os << "TEXTURE_2D_ARRAY";
+			break;
+		case TextureType::TEXTURE_3D:
+			_os << "TEXTURE_3D";
+			break;
+		case TextureType::CUBEMAP:
+			_os << "TEXTURE_CUBEMAP";
+			break;
+		case TextureType::CUBEMAP_ARRAY:
+			_os << "CUBEMAP_ARRAY";
+			break;
+		default:
+			_os << "UNKNOWN_TEXTURE_TYPE";
+			break;
+	}
+	
+	return _os;
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelDataType& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+	case PixelDataType::UNSIGNED_BYTE:
+		_os << "UNSIGNED_BYTE";
+		break;
+	case PixelDataType::BYTE:
+		_os << "BYTE";
+		break;
+	case PixelDataType::UNSIGNED_SHORT:
+		_os << "UNSIGNED_SHORT";
+		break;
+	case PixelDataType::SHORT:
+		_os << "SHORT";
+		break;
+	case PixelDataType::FLOAT:
+		_os << "FLOAT";
+		break;
+	default:
+		_os << "UNKNOWN_PIXEL_TYPE";
+	}
+	return _os;
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelFormat& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+	case PixelFormat::DEPTH:
+		_os << "DEPTH";
+		break;
+	case PixelFormat::RED:
+		_os << "RED";
+		break;
+	case PixelFormat::RG:
+		_os << "RG";
+		break;
+	case PixelFormat::RGB:
+		_os << "RGB";
+		break;
+	case PixelFormat::RGBA:
+		_os << "RGBA";
+		break;
+	default:
+		_os << "UNKNOWN_PIXEL_FORMAT";
+	}
+	return _os;
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::InternalImageFormat& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+	case InternalImageFormat::R8:
+		_os << "R8";
+		break;
+	case InternalImageFormat::RGB8:
+		_os << "RGB8";
+		break;
+	case InternalImageFormat::RGBA8:
+		_os << "RGBA8";
+		break;
+
+
+
+	case InternalImageFormat::SRGB8:
+		_os << "SRGB8";
+		break;
+	case InternalImageFormat::SRGBA8:
+		_os << "SRGBA8";
+		break;
+
+
+
+	case InternalImageFormat::R16F:
+		_os << "R16F";
+		break;
+	case InternalImageFormat::RGB16F:
+		_os << "RGB16F";
+		break;
+	case InternalImageFormat::RGBA16F:
+		_os << "RGBA16F";
+		break;
+
+
+	case InternalImageFormat::DEPTH24:
+		_os << "DEPTH24";
+		break;
+	case InternalImageFormat::DEPTH32F:
+		_os << "DEPTH32F";
+		break;
+
+
+	default:
+		_os << "UNKNOWN_IMAGE_FORMAT";
+	}
+	return _os;
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::WrapBehaviour& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+	case WrapBehaviour::MIRROR_REPEAT:
+		_os << "MIRROR_REPEAT";
+		break;
+	case WrapBehaviour::REPEAT:
+		_os << "REPEAT";
+		break;
+	case WrapBehaviour::TO_BORDER:
+		_os << "TO_BORDER";
+		break;
+	case WrapBehaviour::TO_EDGE:
+		_os << "TO_EDGE";
+		break;
+	default:
+		_os << "_UNDEFINED_WRAP_BEHAVIOUR";
+	}
+	return _os;
+
+}
+
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::FilterBehaviour& _type) {
+	using namespace TextureProperties;
+	switch (_type) {
+	case FilterBehaviour::LINEAR:
+		_os << "LINEAR";
+		break;
+	case FilterBehaviour::NEAREST:
+		_os << "NEAREST";
+		break;
+	default:
+		_os << "_UNDEFINED_FILTER_BEHAVIOUR";
+	}
+	return _os;
 }

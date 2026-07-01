@@ -183,6 +183,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
+    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp" />
@@ -300,6 +301,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_shadowMap.h" />
+    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_textureManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />

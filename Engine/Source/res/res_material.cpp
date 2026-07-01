@@ -1,6 +1,8 @@
 #include <arch/resources/res_material.h>
-#define STB_IMAGE_IMPLEMENTATION
-#include "stb_image.h"
+//#ifndef STB_IMAGE_IMPLEMENTATION
+//#define STB_IMAGE_IMPLEMENTATION
+//#endif
+//#include <stb_image.h>
 
 
 void Material::Init() {
@@ -59,19 +61,19 @@ unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAV
 	// load and generate the texture
 	int width, height, nrChannels;
 
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
-	GLint format = _hasAlpha ? GL_RGBA : GL_RGB;
+	//stbi_set_flip_vertically_on_load(true);
+	//unsigned char* data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+	//GLint format = _hasAlpha ? GL_RGBA : GL_RGB;
 
-	if (!data) {
-		LOG_ERROR("Failed to load texture");
-		stbi_image_free(data);
-		return id;
-	}
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-	glGenerateMipmap(GL_TEXTURE_2D);
-	LOG_ERROR("Load OK");
-	stbi_image_free(data);
+	//if (!data) {
+	//	LOG_ERROR("Failed to load texture");
+	//	//stbi_image_free(data);
+	//	return id;
+	//}
+	//glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+	//glGenerateMipmap(GL_TEXTURE_2D);
+	//LOG_ERROR("Load OK");
+	//stbi_image_free(data);
 
 	return id;
 }

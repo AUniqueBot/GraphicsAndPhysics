@@ -1,7 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_material.h>
-
+#include <arch/resources/res_texture/res_texture2d.h>
 
 class LambertMaterial : public Material {
 
@@ -40,6 +40,13 @@ private:
 	
 	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
 	
+
+	// 
+	//Texture2D m_default	{};
+
+	
+
+
 	INSPECTABLE_DECLAREPROPS(LambertMaterial);
 };
 
