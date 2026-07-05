@@ -1,11 +1,79 @@
 #include <pch.h>
+#include <stb_image.h>
 #include <arch/resources/res_texture/res_texture.h>
 #include <arch/systems/sys_render_modules/sys_render_textureManager.h>
-#include <stb_image.h>
+
+#include <util/util_color.h>
 
 // MUST use opengl ver 4.5+ for DSA.
 
-namespace TextureCreation {
+namespace TextureProperties {
+
+	struct InternalImageDecomposed {
+		PixelDataType m_pixelDataType;
+		PixelFormat m_pixelFormat;
+	};
+
+	// Hidden from headers.
+	static InternalImageDecomposed OpenGL_ToDecomposed(InternalImageFormat _format) {
+		InternalImageDecomposed decomposed{};
+		switch (_format) {
+		case InternalImageFormat::R8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RED;
+				break;
+		case InternalImageFormat::RG8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RG;
+				break;
+		case InternalImageFormat::RGB8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RGB;
+				break;
+		case InternalImageFormat::RGBA8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RGBA;
+				break;
+		case InternalImageFormat::SRGB8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RGB;
+				break;
+		case InternalImageFormat::SRGBA8:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::RGBA;
+				break;
+		case InternalImageFormat::R16F:
+			decomposed.m_pixelDataType = PixelDataType::FLOAT;
+			decomposed.m_pixelFormat = PixelFormat::RED;
+				break;
+		case InternalImageFormat::RG16F:
+			decomposed.m_pixelDataType = PixelDataType::FLOAT;
+			decomposed.m_pixelFormat = PixelFormat::RG;
+				break;
+		case InternalImageFormat::RGB16F:
+			decomposed.m_pixelDataType = PixelDataType::FLOAT;
+			decomposed.m_pixelFormat = PixelFormat::RGB;
+				break;
+		case InternalImageFormat::RGBA16F:
+			decomposed.m_pixelDataType = PixelDataType::FLOAT;
+			decomposed.m_pixelFormat = PixelFormat::RGBA;
+				break;
+
+		// depth components.
+		case InternalImageFormat::DEPTH24:
+			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
+			decomposed.m_pixelFormat = PixelFormat::DEPTH;
+				break;
+		case InternalImageFormat::DEPTH32F:
+			decomposed.m_pixelDataType = PixelDataType::FLOAT;
+			decomposed.m_pixelFormat = PixelFormat::DEPTH;
+			break;
+		}
+
+		return decomposed;
+	}
+
+	
 
 }
 
@@ -51,7 +119,7 @@ TextureGPU& TextureGPU::operator=(TextureGPU&& _old) noexcept {
 	return *this;
 }
 
-const GLuint& TextureGPU::GetTextureID() const {
+const GLuint& TextureGPU::GetTextureHandle() const {
 	return m_glTextureHandle;
 }
 
@@ -138,7 +206,7 @@ void TextureGPU::SetDimensions(glm::ivec3 _dims) {
 	m_reallocateDirty = true;
 }
 
-const glm::ivec3& TextureGPU::GetDimensions(glm::ivec3 _dims) const {
+const glm::ivec3& TextureGPU::GetDimensions() const {
 	return m_dimensions;
 }
 
@@ -173,6 +241,48 @@ void TextureGPU::SetZ(const int& _val) {
 	if (_val == m_dimensions.z) return;
 	m_dimensions.z = _val;
 	m_reallocateDirty = true;
+}
+
+void TextureGPU::SetPixelColor(unsigned _col, glm::ivec3 _pixelPos) {
+	if (!m_allocated || !m_uploaded) return;
+	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
+	using namespace TextureProperties;
+	InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);// this controls
+	int pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
+	int pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
+	
+	// we are assuming the image data matches the data
+
+	switch (m_textureType) {
+	case TextureType::TEXTURE_1D:
+		assert(x < m_dimensions.x && x >= 0);
+		glTextureSubImage1D(
+			m_glTextureHandle, 0, x, 1, 
+			pixelFormat,
+			pixelType,
+			glm::value_ptr(HexToVec4(_col))
+			// set color here.
+		);
+		break;
+	
+	case TextureType::TEXTURE_1D_ARRAY:
+	case TextureType::TEXTURE_2D:
+		assert(x < m_dimensions.x && x >= 0);
+		assert(y < m_dimensions.y && y >= 0);
+		
+	
+	case TextureType::TEXTURE_2D_ARRAY:
+	case TextureType::CUBEMAP:
+	case TextureType::CUBEMAP_ARRAY:
+	case TextureType::TEXTURE_3D:
+		assert(x < m_dimensions.x && x >= 0);
+		assert(y < m_dimensions.y && y >= 0);
+		assert(z < m_dimensions.z && z >= 0);
+
+
+		break;
+	}
+
 }
 
 void TextureGPU::UpdateTextureProperties() const {
@@ -342,8 +452,10 @@ void TextureGPU::UploadTexture2DData(TextureProperties::TextureUploadData _image
 	bool autogenMips = m_textureProperties.m_autogenerateMipmaps;
 	bool hasExternalData = _imageData != std::nullopt;
 
-	GLenum pixelFormat = static_cast<GLenum>(m_textureProperties.m_pixelFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
+	const auto decomposed = TextureProperties::OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
+
+	GLenum pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
+	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
 
 	if (hasExternalData) {
 		if (!autogenMips && _imageData.value().size() != mipCount) {
@@ -668,11 +780,20 @@ void Texture::SetInternalFormat(const TextureProperties::InternalImageFormat& _f
 	
 
 }
-void Texture::SetPixelDataType(const TextureProperties::PixelDataType& _pixelType){
 
+
+TextureGPU& Texture::GetTextureGPU() {
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	assert(texHandle && "No such texture exists.");
+	return *texHandle;
 }
-void Texture::SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat)  {
 
+const TextureGPU& Texture::GetTextureGPU() const {
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	assert(texHandle && "No such texture exists.");
+	return *texHandle;
 }
 
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType& _type) {

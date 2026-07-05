@@ -1,7 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_texture/res_texture.h>
-
+#include <arch/resources/res_texture/res_texture2darray.h>
 
 
 
@@ -73,5 +73,7 @@ private:
 	
 	// reference to texture in tex manager; to be created when render system is init.
 	TextureIDInfo m_textureIdInfo;	// TextureIDInfo handle is temporary; will be replaced with a proper texture 2D array handle.
+
+
 
 };

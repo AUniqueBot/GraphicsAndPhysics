@@ -92,11 +92,15 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
-Texture2D TextureManager::Create2DTexture(int width, int height) {
+Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperties::TextureProps _props) {
+	
+	
 	TextureIDInfo info = GenerateTextureIDInfo();
 	TextureGPU tex = {
 		TextureProperties::TextureType::TEXTURE_2D,
-		{ width, height, 1 }
+		{ width, height, 1 },
+		_props
+		
 	};
 	m_storage.Add(std::move(tex), info.GetTextureID());
 	tex.Create();
@@ -106,22 +110,24 @@ Texture2D TextureManager::Create2DTexture(int width, int height) {
 	return texHandle;
 }
 
-TextureIDInfo TextureManager::Create3DTexture(int width, int height, int depth) {
+TextureIDInfo TextureManager::Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
 	TextureGPU tex = { 
 		TextureProperties::TextureType::TEXTURE_3D,
-		{ width, height, depth } 
+		{ width, height, depth },
+		_props
 	};
 	m_storage.Add(std::move(tex),info.GetTextureID());
 	return info;
 }
 
-TextureIDInfo TextureManager::Create2DArrayTexture(int width, int height, int layers) {
+TextureIDInfo TextureManager::Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
 	m_storage.Add(
 		TextureGPU(
 			TextureProperties::TextureType::TEXTURE_2D_ARRAY,
-			{ width, height, layers }
+			{ width, height, layers },
+			_props
 		),
 		info.GetTextureID()
 	);
@@ -129,12 +135,13 @@ TextureIDInfo TextureManager::Create2DArrayTexture(int width, int height, int la
 	return info;
 }
 
-TextureIDInfo TextureManager::CreateCubemapTexture(int width, int height) {
+TextureIDInfo TextureManager::CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
 	m_storage.Add(
 		TextureGPU(
 			TextureProperties::TextureType::CUBEMAP,
-			{ width, height, 6 }
+			{ width, height, 6 },
+			_props
 		),
 		info.GetTextureID()
 	);

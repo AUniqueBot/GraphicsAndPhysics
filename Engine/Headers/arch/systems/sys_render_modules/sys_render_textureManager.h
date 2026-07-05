@@ -11,12 +11,12 @@ class TextureManager {
 public:
 	friend class Texture;
 	Texture2D LoadTexture(const std::filesystem::path& _path);
-	Texture2D Create2DTexture(int width, int height);
+	Texture2D Create2DTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	// you can ignore these for the time being.
-	TextureIDInfo Create3DTexture(int width, int height, int depth);
-	TextureIDInfo Create2DArrayTexture(int width, int height, int layers);
-	TextureIDInfo CreateCubemapTexture(int width, int height);
+	TextureIDInfo Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props = {});
+	TextureIDInfo Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
+	TextureIDInfo CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	
 	SparseSetView<TextureGPU> GetTexture(TextureID _id);

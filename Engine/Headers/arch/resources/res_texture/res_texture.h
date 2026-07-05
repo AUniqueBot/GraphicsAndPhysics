@@ -5,7 +5,7 @@
 
 class Texture;
 using TextureID = uint16_t;
-const TextureID C_INVALID_TEXTURE_ID = 0;
+inline const TextureID C_INVALID_TEXTURE_ID = 0;
 
 class TextureManager;	// fwd declaration
 
@@ -62,20 +62,26 @@ namespace TextureProperties {
 	
 	enum class InternalImageFormat : GLenum {
 		R8 = GL_R8,
+
+		RG8 = GL_RG8,
+		
 		RGB8 = GL_RGB8,
 		RGBA8 = GL_RGBA8,
 		
-
 		SRGB8 = GL_SRGB8,
 		SRGBA8 = GL_SRGB8_ALPHA8,
 
 		R16F = GL_R16F,
+		RG16F = GL_RG16F,
 		RGB16F = GL_RGB16F,
 		RGBA16F = GL_RGBA16F,
 
 		DEPTH24 = GL_DEPTH_COMPONENT24,
 		DEPTH32F = GL_DEPTH_COMPONENT32F
 	};
+
+
+
 
 	enum class WrapBehaviour : int {
 		REPEAT = GL_REPEAT,
@@ -120,6 +126,7 @@ namespace TextureProperties {
 		int m_mipLevel;
 		glm::ivec3 m_dimensions{};
 		void* m_textureData;
+		bool m_textureIsFlipped { false };
 	};
 
 	using TextureUploadData = std::optional<std::vector<TextureProperties::ImageUploadData>>;
@@ -156,7 +163,7 @@ public:
 	TextureGPU(TextureGPU& _old) = delete;
 	TextureGPU& operator=(TextureGPU& _old) = delete;
 public:
-	const GLuint& GetTextureID() const;
+	const GLuint& GetTextureHandle() const;
 
 
 	const TextureProperties::TextureType& GetTextureType() const;
@@ -184,7 +191,7 @@ public:
 
 	// - dimension setters ---------------
 	void SetDimensions(glm::ivec3 _dims);
-	const glm::ivec3& GetDimensions(glm::ivec3 _dims) const;
+	const glm::ivec3& GetDimensions() const;
 	const int& GetX() const;
 	void SetX(const int& _val);
 
@@ -193,6 +200,15 @@ public:
 	
 	const int& GetZ() const;
 	void SetZ(const int& _val);
+
+
+	// - pixel setter -------------------
+	void SetPixelColor(unsigned _col, glm::ivec3 _pixelPos); // hexadecimal color
+	void SetPixelColor(glm::vec4 _col, glm::ivec3 _pixelPos);
+
+	// assumes to set for the entire texture.
+	void SetTextureColor(unsigned _col);
+	void SetTextureColor(glm::vec4 _col);
 
 public:
 	void Create();
@@ -251,14 +267,16 @@ public:
 	void SetWrapU(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 	void SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 
-	
-	
 	void SetInternalFormat(const TextureProperties::InternalImageFormat& _format); 
 	void SetPixelDataType(const TextureProperties::PixelDataType& _pixelType);
 	void SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat);
 
-
-
+	void SetPixelColor(unsigned _col, int _x, int _y); // hexadecimal color
+	void SetPixelColor(glm::vec4 _col, int _x, int _y);
+protected:
+	// be careful when using this as this assumes it is valid.
+	TextureGPU& GetTextureGPU();
+	const TextureGPU& GetTextureGPU() const;
 
 protected:
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.

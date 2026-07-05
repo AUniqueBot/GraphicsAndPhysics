@@ -13,15 +13,13 @@ public:
 	glm::ivec2 GetDimensions() const;
 	void SetDimensions(glm::ivec2 _dims);
 
-
 	int GetWidth() const;
 	int GetHeight() const;
 
 	void SetWidth(int _width);
-	void SetHeight(int _width);
+	void SetHeight(int _height);
 
-	// special functions.
-	void SetColor(unsigned _hexCol); // hexadecimal variant.
-	void SetColor(glm::vec4 _col);	 // col represented as 0-1 ranges for each of the channels
+
+private:
 
 };
