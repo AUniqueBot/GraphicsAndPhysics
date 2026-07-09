@@ -5,7 +5,7 @@
 
 class Texture;
 using TextureID = uint16_t;
-inline const TextureID C_INVALID_TEXTURE_ID = 0;
+const TextureID C_INVALID_TEXTURE_ID = 0;
 
 class TextureManager;	// fwd declaration
 
@@ -203,12 +203,11 @@ public:
 
 
 	// - pixel setter -------------------
-	void SetPixelColor(unsigned _col, glm::ivec3 _pixelPos); // hexadecimal color
-	void SetPixelColor(glm::vec4 _col, glm::ivec3 _pixelPos);
+	void SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos);	// r
+	void SetPixelColor(glm::u8vec2 _col, glm::ivec3 _pixelPos);	// rg
+	void SetPixelColor(glm::u8vec3 _col, glm::ivec3 _pixelPos);	// rgb
+	void SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos);	// rgba
 
-	// assumes to set for the entire texture.
-	void SetTextureColor(unsigned _col);
-	void SetTextureColor(glm::vec4 _col);
 
 public:
 	void Create();

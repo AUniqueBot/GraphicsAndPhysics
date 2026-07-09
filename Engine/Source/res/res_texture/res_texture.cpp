@@ -243,7 +243,7 @@ void TextureGPU::SetZ(const int& _val) {
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetPixelColor(unsigned _col, glm::ivec3 _pixelPos) {
+void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 	if (!m_allocated || !m_uploaded) return;
 	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
 	using namespace TextureProperties;
@@ -251,7 +251,7 @@ void TextureGPU::SetPixelColor(unsigned _col, glm::ivec3 _pixelPos) {
 	int pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
 	int pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
 	
-	// we are assuming the image data matches the data
+	
 
 	switch (m_textureType) {
 	case TextureType::TEXTURE_1D:
@@ -260,7 +260,7 @@ void TextureGPU::SetPixelColor(unsigned _col, glm::ivec3 _pixelPos) {
 			m_glTextureHandle, 0, x, 1, 
 			pixelFormat,
 			pixelType,
-			glm::value_ptr(HexToVec4(_col))
+			glm::value_ptr(_col)
 			// set color here.
 		);
 		break;
@@ -269,7 +269,14 @@ void TextureGPU::SetPixelColor(unsigned _col, glm::ivec3 _pixelPos) {
 	case TextureType::TEXTURE_2D:
 		assert(x < m_dimensions.x && x >= 0);
 		assert(y < m_dimensions.y && y >= 0);
-		
+		glTextureSubImage2D(
+			m_glTextureHandle, 0, x, y, 1, 1,
+			pixelFormat,
+			pixelType,
+			glm::value_ptr(_col)
+			// set color here.
+		);
+		break;
 	
 	case TextureType::TEXTURE_2D_ARRAY:
 	case TextureType::CUBEMAP:
@@ -418,7 +425,7 @@ void TextureGPU::Upload(TextureProperties::TextureUploadData _imageData) const {
 		}
 
 		LOG_INFO("Uploading Texture Data: [" << width << "x" << height << "], "
-				<< "internal format: [" << m_textureProperties.m_internalImageFormat << "]"
+				<< "internal format: [" << m_textureProperties.m_internalImageFormat << "] "
 				<< "and pixel type: [" << m_textureProperties.m_pixelDataType << "]"
 		);
 
@@ -767,18 +774,23 @@ TextureProperties::FilterBehaviour Texture::GetMagFilter() const {
 	return texHandle.GetFilterBehaviourMag();
 }
 
-void Texture::SetWrapU(const TextureProperties::WrapBehaviour& _wrapBehaviour)
-{
+void Texture::SetWrapU(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	TextureGPU& texHandle = GetTextureGPU();
+	texHandle.SetWrapBehaviourU(_wrapBehaviour);
 }
 
-void Texture::SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour)
-{
+void Texture::SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	TextureGPU& texHandle = GetTextureGPU();
+	texHandle.SetWrapBehaviourV(_wrapBehaviour);
 }
 
 
 void Texture::SetInternalFormat(const TextureProperties::InternalImageFormat& _format) {
-	
-
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	TextureGPU& texHandle = GetTextureGPU();
+	texHandle.SetInternalImageFormat(_format);
 }
 
 
@@ -875,7 +887,7 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelFormat
 	}
 	return _os;
 }
-
+	
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::InternalImageFormat& _type) {
 	using namespace TextureProperties;
 	switch (_type) {

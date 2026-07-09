@@ -22,6 +22,7 @@ namespace Color {
 	std::vector<glm::u8vec4> ConvertData_UCharToRGBA(unsigned char* _data, int _width, int _height, int _channelCount) {
 		// run multithreaded approach.
 		std::vector<glm::u8vec4> converted((_width * _height), {1, 1, 1, 1});
+
 		for (int i{}; i < _width * _height; ) {
 			converted[i].r = _data[i * _channelCount];
 			if (_channelCount > 1) converted[i].g = _data[i * _channelCount + 1];
@@ -30,6 +31,7 @@ namespace Color {
 		}
 		return converted;
 	}
+
 
 
 

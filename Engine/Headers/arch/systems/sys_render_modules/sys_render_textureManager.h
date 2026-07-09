@@ -28,6 +28,12 @@ private:
 	void ReclaimTextureIDInfo(TextureIDInfo _id);
 	bool TextureExists(TextureID _id) const;	
 	void Resolve(TextureGPU& _texture);
+
+
+
+	// u8 variant
+	
+
 private:
 
 	// store textures.
@@ -36,3 +42,4 @@ private:
 	std::queue<TextureID> m_freeIds;
 	TextureID m_nextID{ 1 };
 };
+
