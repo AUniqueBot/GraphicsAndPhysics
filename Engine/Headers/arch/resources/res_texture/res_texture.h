@@ -47,8 +47,8 @@ namespace TextureProperties {
 	enum class PixelDataType : GLenum {
 		UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
 		BYTE = GL_BYTE,
-		UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
-		SHORT = GL_SHORT,
+		//UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
+		//SHORT = GL_SHORT,
 		FLOAT = GL_FLOAT
 	};
 
