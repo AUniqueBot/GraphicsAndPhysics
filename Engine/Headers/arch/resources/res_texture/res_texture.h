@@ -44,23 +44,23 @@ namespace TextureProperties {
 	};
 
 
-	enum class PixelDataType : GLenum {
-		UNSIGNED_BYTE = GL_UNSIGNED_BYTE,
-		BYTE = GL_BYTE,
-		//UNSIGNED_SHORT = GL_UNSIGNED_SHORT,
-		//SHORT = GL_SHORT,
-		FLOAT = GL_FLOAT
+	enum class ImageDataType : GLenum {
+		UINT_8 = GL_UNSIGNED_BYTE,
+		//INT_8 = GL_BYTE,
+		//UINT_16 = GL_UNSIGNED_SHORT,
+		//INT_16 = GL_SHORT,
+		FLOAT_32 = GL_FLOAT
 	};
 
-	enum class PixelFormat : GLenum {
-		RED = GL_RED,
+	enum class ImageChannels : GLenum {
+		Red = GL_RED,
 		RG = GL_RG,
 		RGB = GL_RGB,
 		RGBA = GL_RGBA,
-		DEPTH = GL_DEPTH_COMPONENT
+		Depth = GL_DEPTH_COMPONENT
 	};
 	
-	enum class InternalImageFormat : GLenum {
+	enum class TextureFormat : GLenum {
 		R8 = GL_R8,
 
 		RG8 = GL_RG8,
@@ -101,9 +101,9 @@ namespace TextureProperties {
 		
 		int m_mipmapCount							{ 1 };
 		bool m_autogenerateMipmaps					{ false };
-		InternalImageFormat m_internalImageFormat	{ InternalImageFormat::RGBA8 };
-		PixelDataType m_pixelDataType				{ PixelDataType::UNSIGNED_BYTE };
-		PixelFormat m_pixelFormat					{ PixelFormat::RGBA };
+		TextureFormat m_internalImageFormat	{ TextureFormat::RGBA8 };
+		ImageDataType m_pixelDataType				{ ImageDataType::UINT_8 };
+		ImageChannels m_pixelFormat					{ ImageChannels::RGBA };
 
 		WrapBehaviour m_wrapU		{ TextureProperties::WrapBehaviour::REPEAT };
 		WrapBehaviour m_wrapV		{ TextureProperties::WrapBehaviour::REPEAT };
@@ -134,9 +134,9 @@ namespace TextureProperties {
 }
 
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType& _type);
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelDataType& _type);
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelFormat& _type);
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::InternalImageFormat& _type);
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageDataType& _type);
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageChannels& _type);
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureFormat& _type);
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::WrapBehaviour& _type);
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::FilterBehaviour& _type);
 
@@ -170,12 +170,12 @@ public:
 
 	
 	// - tex properties ------------------
-	const TextureProperties::InternalImageFormat& GetInternalImageFormat() const;
-	void SetInternalImageFormat(const TextureProperties::InternalImageFormat& _format);
-	const TextureProperties::PixelDataType& GetPixelDataType() const;
-	void SetPixelDataType(const TextureProperties::PixelDataType& _pixelDataType);
-	const TextureProperties::PixelFormat& GetPixelFormat() const;
-	void SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat);
+	const TextureProperties::TextureFormat& GetInternalImageFormat() const;
+	void SetInternalImageFormat(const TextureProperties::TextureFormat& _format);
+	const TextureProperties::ImageDataType& GetDataType() const;
+	void SetDataType(const TextureProperties::ImageDataType& _pixelDataType);
+	const TextureProperties::ImageChannels& GetChannels() const;
+	void SetChannels(const TextureProperties::ImageChannels& _pixelFormat);
 
 
 	// - sampling behaviours -------------
@@ -266,9 +266,9 @@ public:
 	void SetWrapU(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 	void SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 
-	void SetInternalFormat(const TextureProperties::InternalImageFormat& _format); 
-	void SetPixelDataType(const TextureProperties::PixelDataType& _pixelType);
-	void SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat);
+	void SetInternalFormat(const TextureProperties::TextureFormat& _format); 
+	void SetPixelDataType(const TextureProperties::ImageDataType& _pixelType);
+	void SetPixelFormat(const TextureProperties::ImageChannels& _pixelFormat);
 
 	void SetPixelColor(unsigned _col, int _x, int _y); // hexadecimal color
 	void SetPixelColor(glm::vec4 _col, int _x, int _y);

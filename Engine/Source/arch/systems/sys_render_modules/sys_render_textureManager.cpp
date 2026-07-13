@@ -8,64 +8,70 @@
 
 namespace {
 	// loading helpers
-	enum class ImageChannels {
-		Red = 1,
-		RG = 2,
-		RGB = 3,
-		RGBA = 4
-	};
-	enum class ImageDataType {
-		UINT8,
-		UINT16,
-		FLOAT32,
-	};
+
 
 	size_t GetPixelCount(glm::ivec3 _dimensions) {
 		return static_cast<size_t>(_dimensions.x) * _dimensions.y * _dimensions.z;
 	}
 
-	size_t GetByteSize(ImageDataType _dataType) {
+	size_t GetByteSize(TextureProperties::ImageDataType _dataType) {
+		using namespace TextureProperties;
 		switch (_dataType) {
-		case ImageDataType::UINT8:   return 1;
-		case ImageDataType::UINT16:  return 2;
-		case ImageDataType::FLOAT32: return 4;
+		case ImageDataType::UINT_8:   return 1;
+		//case ImageDataType::UINT16:  return 2;
+		case ImageDataType::FLOAT_32: return 4;
+		}
+		return 0;
+	}
+
+	size_t GetChannelCount(TextureProperties::ImageChannels _channels) {
+		using namespace TextureProperties;
+		switch (_channels) {
+		case ImageChannels::Red: return 1;
+		case ImageChannels::RG: return 2;
+		case ImageChannels::RGB: return 3;
+		case ImageChannels::RGBA: return 4;
+		case ImageChannels::Depth: return 0;
 		}
 		return 0;
 	}
 
 	struct ImageData {
-		std::vector<uint8_t> m_data;
+		std::vector<std::byte> m_data;
 		glm::ivec3 m_dimensions;
-		ImageChannels m_channels;
-		ImageChannels m_originalChannels;
-		ImageDataType m_dataType;
+		TextureProperties::ImageChannels m_channels;
+		TextureProperties::ImageChannels m_originalChannels;
+		TextureProperties::ImageDataType m_dataType;
 
 		ImageData(
 			const void* _src,
 			glm::ivec3 _dims,
-			ImageChannels _ogChannels,
-			ImageDataType _dataType
+			TextureProperties::ImageChannels _ogChannels,
+			TextureProperties::ImageDataType _dataType
 		)
 			: m_dimensions(_dims),
 			m_originalChannels(_ogChannels),
-			m_channels(ImageChannels::RGBA),
+			m_channels(TextureProperties::ImageChannels::RGBA),
 			m_dataType(_dataType)
 		{
-			size_t size = GetPixelCount(_dims) * GetByteSize(m_dataType) * static_cast<int>(m_channels);
+			size_t size = GetPixelCount(_dims) * GetByteSize(m_dataType) * GetChannelCount(m_channels);
 			m_data.resize(size);
 			std::memcpy(m_data.data(), _src, size);
 		}
 		ImageData(const ImageData&) = default;
 		ImageData& operator=(const ImageData&) = default;
 
-
-		const float* GetFloatData() const {
-			return dynamic_cast<const float*>(m_data.data());
-		}
-		const uint8_t* GetByteData() const {
-			return m_data.data();
+		template <typename T>
+		const T* GetData() const {
+			return reinterpret_cast<const T*>(m_data.data());
 		}
 
+		size_t GetImagePixelCount() const {
+			return GetPixelCount(m_dimensions);
+		}
+		size_t GetComponentCount() const {
+			return GetImagePixelCount() * static_cast<size_t>(m_channels);
+		}
 	};
 	
 
@@ -74,77 +80,84 @@ namespace {
 		glm::ivec3 dimensions{ 0, 0, 1 };
 		int channelCount{};
 
-
-		if (stbi_is_hdr(_path)) {
-			const float* data = stbi_loadf(_path, &dimensions.x, &dimensions.y, &channelCount, 4);
-			ImageChannels ogChannels =
-				channelCount == 1 ? ImageChannels::Red :
-				channelCount == 2 ? ImageChannels::RG :
-				channelCount == 3 ? ImageChannels::RGB :
-				ImageChannels::RGBA;
-			ImageData output(data, dimensions, ogChannels, ImageDataType::FLOAT32);
-			stbi_image_free((void*)data);
-			return output;
-		}
-		else {
-			const unsigned char* data = stbi_load(_path, &dimensions.x, &dimensions.y, &channelCount, 4);
-			ImageChannels ogChannels =
-				channelCount == 1 ? ImageChannels::Red :
-				channelCount == 2 ? ImageChannels::RG :
-				channelCount == 3 ? ImageChannels::RGB :
-				ImageChannels::RGBA;
-			ImageData output(data, dimensions, ogChannels, ImageDataType::FLOAT32);
-			stbi_image_free((void*)data);
-			return output;
-		}
+		bool isHDR = stbi_is_hdr(_path);
+		void* data = isHDR ? 
+			reinterpret_cast<void*>(stbi_loadf(_path, &dimensions.x, &dimensions.y, &channelCount, 4)) : // hdr
+			reinterpret_cast<void*>(stbi_load(_path, &dimensions.x, &dimensions.y, &channelCount, 4));   // sdr
+		using namespace TextureProperties;
+		
+		ImageChannels ogChannels =
+			channelCount == 1 ? ImageChannels::Red :
+			channelCount == 2 ? ImageChannels::RG :
+			channelCount == 3 ? ImageChannels::RGB :
+			ImageChannels::RGBA;
+		ImageData output(data, dimensions, ogChannels, isHDR ? ImageDataType::FLOAT_32 : ImageDataType::UINT_8);
+		stbi_image_free(data);
+		return output;
 	}
 
-
-	static std::vector<float> ConvertRGBAToOtherChannel(
-		const std::vector<float>& _data, 
-		ImageChannels _destinationChannel
+	template <typename T>
+	static std::vector<T> ConvertRGBAToOtherChannel(
+		const T* _data,
+		size_t _pixelCount,
+		TextureProperties::ImageChannels _destinationChannel
 	) {
-		size_t pixelCount { _data.size() / 4 };
-		size_t newChannelSize { static_cast<int>(_destinationChannel) };
+		size_t pixelCount { _pixelCount };
+		size_t newChannelSize { GetChannelCount(_destinationChannel) };
 		size_t newSize = pixelCount * newChannelSize;
-		std::vector<float> output(newSize);
+		std::vector<T> output(newSize);
 		for (size_t i{}; i < pixelCount; ++i) {
-			output[i * newChannelSize] = _data[i * 4];
-			if (newChannelSize <= 2) output[i * newChannelSize + 1] = _data[i * 4 + 1];
-			if (newChannelSize <= 3) output[i * newChannelSize + 2] = _data[i * 4 + 2];
-			if (newChannelSize <= 4) output[i * newChannelSize + 3] = _data[i * 4 + 3];
+			size_t oldStrideStart = i * 4;
+			size_t newStrideStart = i * newChannelSize;
+
+			output[newStrideStart] = _data[oldStrideStart];
+			if (newChannelSize < 2) continue;
+			output[newStrideStart + 1] = _data[oldStrideStart + 1];
+			if (newChannelSize < 3) continue;
+			output[newStrideStart + 2] = _data[oldStrideStart + 2];
+			if (newChannelSize < 4) continue;
+			output[newStrideStart + 3] = _data[oldStrideStart + 3];
 		}
 		return output;
 	}
 
 
-	static std::vector<uint8_t> ConvertFloatToUInt8(
-		const std::vector<float>& _data
-	) {
-		std::vector<uint8_t> output(_data.size());
-		for (size_t i{}; i < _data.size(); ++i) {
+	template <typename Src, typename Dst>
+	inline static std::vector<Dst> ConvertDataType(const Src* _data, size_t _componentCount) {
+		std::vector<Dst> output(_data, _data + _componentCount);
+		return output;
+	}
+
+	template <>
+	inline static std::vector<float> ConvertDataType(const uint8_t* _data, size_t _componentCount) {
+		std::vector<float> output(_componentCount);
+		for (size_t i{}; i < _componentCount; ++i) {
+			output[i] = _data[i] / static_cast<float>(0xff);
+		}
+		return output;
+	}
+
+	template <>
+	inline static std::vector<uint8_t> ConvertDataType(const float* _data, size_t _componentCount) {
+		std::vector<uint8_t> output(_componentCount);
+		for (size_t i{}; i < _componentCount; ++i) {
 			output[i] = static_cast<uint8_t>(_data[i] * 0xff);
 		}
 		return output;
 	}
+	
+	
 
-	static std::vector<uint16_t> ConvertFloatToUInt18T(
-		const std::vector<float>& _data
-	) {
-		std::vector<uint16_t> output(_data.size());
-		for (size_t i{}; i < _data.size(); ++i) {
-			output[i] = static_cast<uint16_t>(_data[i] * 0xffff);
-		}
-		return output;
-	}
 
-		// convert to other type.
+
+
 	
 
 
 	namespace OpenGL {
 		// specifically for images a depth component image is not possible so it's ignored.
-		static GLenum ResolveChannels(ImageChannels _channels) {
+		static GLenum ResolveChannels(TextureProperties::ImageChannels _channels) {
+			using namespace TextureProperties;
 			return
 				_channels == ImageChannels::Red ? GL_RED :
 				_channels == ImageChannels::RG ? GL_RG :
@@ -152,15 +165,19 @@ namespace {
 				GL_RGBA;
 		}
 
-		static GLenum ResolveDataType(ImageDataType _dataType) {
+		static GLenum ResolveDataType(TextureProperties::ImageDataType _dataType) {
+			using namespace TextureProperties;
 			return
-				_dataType == ImageDataType::UINT8 ? GL_UNSIGNED_BYTE :
-				_dataType == ImageDataType::UINT16 ? GL_UNSIGNED_SHORT :
+				_dataType == ImageDataType::UINT_8 ? GL_UNSIGNED_BYTE :
+				//_dataType == ImageDataType::UINT_16 ? GL_UNSIGNED_SHORT :
 				GL_FLOAT;
 		}
+
 	}
 
 
+
+	
 
 
 }
@@ -207,6 +224,10 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	int width = img.m_dimensions.x, height = img.m_dimensions.y;
 
 	LOG_INFO("Loaded Metadata: [Width: " << width << ", Height: " << height << ", Channels: " << channelCount << "]");
+	img.m_channels;
+	img.m_dataType;
+	img.m_originalChannels;
+	
 
 	// init required objects 
 	TextureIDInfo info = GenerateTextureIDInfo();
@@ -214,21 +235,21 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	TextureProperties::TextureProps props;
 	switch (channelCount) {
 	case 1:
-		props.m_internalImageFormat = InternalImageFormat::R8;
-		props.m_pixelFormat = PixelFormat::RED;
+		props.m_internalImageFormat = TextureFormat::R8;
+		props.m_pixelFormat = ImageChannels::Red;
 		break;
 	case 3:
-		props.m_internalImageFormat = InternalImageFormat::RGB8;
-		props.m_pixelFormat = PixelFormat::RGB;
+		props.m_internalImageFormat = TextureFormat::RGB8;
+		props.m_pixelFormat = ImageChannels::RGB;
 		break;
 	case 4:
-		props.m_internalImageFormat = InternalImageFormat::RGBA8;
-		props.m_pixelFormat = PixelFormat::RGBA;
+		props.m_internalImageFormat = TextureFormat::RGBA8;
+		props.m_pixelFormat = ImageChannels::RGBA;
 		break;
 	default:
 		LOG_WARN("Unsupported number of channels: " << channelCount << ". Defaulting to RGBA8");
-		props.m_internalImageFormat = InternalImageFormat::RGBA8;
-		props.m_pixelFormat = PixelFormat::RGBA;
+		props.m_internalImageFormat = TextureFormat::RGBA8;
+		props.m_pixelFormat = ImageChannels::RGBA;
 		break;
 	}
 
@@ -243,7 +264,39 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 
 	// upload data
 	TextureProperties::ImageUploadData uploadData;
-	uploadData.m_textureData = img.m_data.data();
+	// do conversion here.
+	auto channelConverted = ConvertRGBAToOtherChannel(img.m_data.data(), img.GetImagePixelCount(), img.m_originalChannels);
+	
+	std::vector<uint8_t> tempByte8Buffer;
+	std::vector<uint16_t> tempByte16Buffer;
+	std::vector<float> tempFloatBuffer;
+
+
+	void* upload = nullptr;
+	if (img.m_dataType == tex.GetDataType()) upload = channelConverted.data();
+	else {
+		size_t componentCount = img.GetImagePixelCount() * GetChannelCount(img.m_originalChannels);
+
+		switch (img.m_dataType) {
+		case ImageDataType::UINT_8: {
+			tempByte8Buffer = ConvertDataType<float, uint8_t>(
+				reinterpret_cast<const float*>(channelConverted.data()), 
+				img.GetComponentCount()
+			);
+			upload = tempByte8Buffer.data();
+			break;
+		}
+		case ImageDataType::FLOAT_32: {
+			tempFloatBuffer = ConvertDataType<uint8_t, float>(
+				reinterpret_cast<const uint8_t*>(channelConverted.data()), 
+				img.GetImagePixelCount()
+			);
+			upload = tempFloatBuffer.data();
+			break;
+		}
+		}
+	}
+	uploadData.m_textureData = upload;
 	uploadData.m_dimensions = { width, height, 1 };
 	uploadData.m_mipLevel = 0;
 	

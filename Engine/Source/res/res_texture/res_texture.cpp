@@ -10,63 +10,63 @@
 namespace TextureProperties {
 
 	struct InternalImageDecomposed {
-		PixelDataType m_pixelDataType;
-		PixelFormat m_pixelFormat;
+		ImageDataType m_pixelDataType;
+		ImageChannels m_pixelFormat;
 	};
 
 	// Hidden from headers.
-	static InternalImageDecomposed OpenGL_ToDecomposed(InternalImageFormat _format) {
+	static InternalImageDecomposed OpenGL_ToDecomposed(TextureFormat _format) {
 		InternalImageDecomposed decomposed{};
 		switch (_format) {
-		case InternalImageFormat::R8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RED;
+		case TextureFormat::R8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::Red;
 				break;
-		case InternalImageFormat::RG8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RG;
+		case TextureFormat::RG8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::RG;
 				break;
-		case InternalImageFormat::RGB8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RGB;
+		case TextureFormat::RGB8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::RGB;
 				break;
-		case InternalImageFormat::RGBA8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RGBA;
+		case TextureFormat::RGBA8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::RGBA;
 				break;
-		case InternalImageFormat::SRGB8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RGB;
+		case TextureFormat::SRGB8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::RGB;
 				break;
-		case InternalImageFormat::SRGBA8:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::RGBA;
+		case TextureFormat::SRGBA8:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::RGBA;
 				break;
-		case InternalImageFormat::R16F:
-			decomposed.m_pixelDataType = PixelDataType::FLOAT;
-			decomposed.m_pixelFormat = PixelFormat::RED;
+		case TextureFormat::R16F:
+			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelFormat = ImageChannels::Red;
 				break;
-		case InternalImageFormat::RG16F:
-			decomposed.m_pixelDataType = PixelDataType::FLOAT;
-			decomposed.m_pixelFormat = PixelFormat::RG;
+		case TextureFormat::RG16F:
+			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelFormat = ImageChannels::RG;
 				break;
-		case InternalImageFormat::RGB16F:
-			decomposed.m_pixelDataType = PixelDataType::FLOAT;
-			decomposed.m_pixelFormat = PixelFormat::RGB;
+		case TextureFormat::RGB16F:
+			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelFormat = ImageChannels::RGB;
 				break;
-		case InternalImageFormat::RGBA16F:
-			decomposed.m_pixelDataType = PixelDataType::FLOAT;
-			decomposed.m_pixelFormat = PixelFormat::RGBA;
+		case TextureFormat::RGBA16F:
+			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelFormat = ImageChannels::RGBA;
 				break;
 
 		// depth components.
-		case InternalImageFormat::DEPTH24:
-			decomposed.m_pixelDataType = PixelDataType::UNSIGNED_BYTE;
-			decomposed.m_pixelFormat = PixelFormat::DEPTH;
+		case TextureFormat::DEPTH24:
+			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelFormat = ImageChannels::Depth;
 				break;
-		case InternalImageFormat::DEPTH32F:
-			decomposed.m_pixelDataType = PixelDataType::FLOAT;
-			decomposed.m_pixelFormat = PixelFormat::DEPTH;
+		case TextureFormat::DEPTH32F:
+			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelFormat = ImageChannels::Depth;
 			break;
 		}
 
@@ -127,33 +127,33 @@ const TextureProperties::TextureType& TextureGPU::GetTextureType() const {
 	return m_textureType;
 }
 
-const TextureProperties::InternalImageFormat& TextureGPU::GetInternalImageFormat() const {
+const TextureProperties::TextureFormat& TextureGPU::GetInternalImageFormat() const {
 	return m_textureProperties.m_internalImageFormat;
 }
 
-void TextureGPU::SetInternalImageFormat(const TextureProperties::InternalImageFormat& _format) {
+void TextureGPU::SetInternalImageFormat(const TextureProperties::TextureFormat& _format) {
 	if (_format == m_textureProperties.m_internalImageFormat) return;
 	m_textureProperties.m_internalImageFormat = _format;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::PixelDataType& TextureGPU::GetPixelDataType() const {
+const TextureProperties::ImageDataType& TextureGPU::GetDataType() const {
 	return m_textureProperties.m_pixelDataType;
 }
 
 
 
-void TextureGPU::SetPixelDataType(const TextureProperties::PixelDataType& _pixelDataType) {
+void TextureGPU::SetDataType(const TextureProperties::ImageDataType& _pixelDataType) {
 	if (_pixelDataType == m_textureProperties.m_pixelDataType) return;
 	m_textureProperties.m_pixelDataType = _pixelDataType;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::PixelFormat& TextureGPU::GetPixelFormat() const {
+const TextureProperties::ImageChannels& TextureGPU::GetChannels() const {
 	return m_textureProperties.m_pixelFormat;
 }
 
-void TextureGPU::SetPixelFormat(const TextureProperties::PixelFormat& _pixelFormat) {
+void TextureGPU::SetChannels(const TextureProperties::ImageChannels& _pixelFormat) {
 	if (_pixelFormat == m_textureProperties.m_pixelFormat) return;
 	m_textureProperties.m_pixelFormat = _pixelFormat;
 	m_reallocateDirty = true;
@@ -787,7 +787,7 @@ void Texture::SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
 }
 
 
-void Texture::SetInternalFormat(const TextureProperties::InternalImageFormat& _format) {
+void Texture::SetInternalFormat(const TextureProperties::TextureFormat& _format) {
 	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
 	TextureGPU& texHandle = GetTextureGPU();
 	texHandle.SetInternalImageFormat(_format);
@@ -840,22 +840,22 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType
 	return _os;
 }
 
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelDataType& _type) {
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageDataType& _type) {
 	using namespace TextureProperties;
 	switch (_type) {
-	case PixelDataType::UNSIGNED_BYTE:
+	case ImageDataType::UINT_8:
 		_os << "UNSIGNED_BYTE";
 		break;
-	case PixelDataType::BYTE:
-		_os << "BYTE";
-		break;
-	case PixelDataType::UNSIGNED_SHORT:
-		_os << "UNSIGNED_SHORT";
-		break;
-	case PixelDataType::SHORT:
-		_os << "SHORT";
-		break;
-	case PixelDataType::FLOAT:
+	//case ImageDataType::INT_8:
+		//_os << "BYTE";
+		//break;
+	//case PixelDataType::UNSIGNED_SHORT:
+	//	_os << "UNSIGNED_SHORT";
+	//	break;
+	//case PixelDataType::SHORT:
+	//	_os << "SHORT";
+	//	break;
+	case ImageDataType::FLOAT_32:
 		_os << "FLOAT";
 		break;
 	default:
@@ -864,22 +864,22 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelDataTy
 	return _os;
 }
 
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelFormat& _type) {
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageChannels& _type) {
 	using namespace TextureProperties;
 	switch (_type) {
-	case PixelFormat::DEPTH:
+	case ImageChannels::Depth:
 		_os << "DEPTH";
 		break;
-	case PixelFormat::RED:
+	case ImageChannels::Red:
 		_os << "RED";
 		break;
-	case PixelFormat::RG:
+	case ImageChannels::RG:
 		_os << "RG";
 		break;
-	case PixelFormat::RGB:
+	case ImageChannels::RGB:
 		_os << "RGB";
 		break;
-	case PixelFormat::RGBA:
+	case ImageChannels::RGBA:
 		_os << "RGBA";
 		break;
 	default:
@@ -888,45 +888,45 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::PixelFormat
 	return _os;
 }
 	
-std::ostream& operator<<(std::ostream& _os, const TextureProperties::InternalImageFormat& _type) {
+std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureFormat& _type) {
 	using namespace TextureProperties;
 	switch (_type) {
-	case InternalImageFormat::R8:
+	case TextureFormat::R8:
 		_os << "R8";
 		break;
-	case InternalImageFormat::RGB8:
+	case TextureFormat::RGB8:
 		_os << "RGB8";
 		break;
-	case InternalImageFormat::RGBA8:
+	case TextureFormat::RGBA8:
 		_os << "RGBA8";
 		break;
 
 
 
-	case InternalImageFormat::SRGB8:
+	case TextureFormat::SRGB8:
 		_os << "SRGB8";
 		break;
-	case InternalImageFormat::SRGBA8:
+	case TextureFormat::SRGBA8:
 		_os << "SRGBA8";
 		break;
 
 
 
-	case InternalImageFormat::R16F:
+	case TextureFormat::R16F:
 		_os << "R16F";
 		break;
-	case InternalImageFormat::RGB16F:
+	case TextureFormat::RGB16F:
 		_os << "RGB16F";
 		break;
-	case InternalImageFormat::RGBA16F:
+	case TextureFormat::RGBA16F:
 		_os << "RGBA16F";
 		break;
 
 
-	case InternalImageFormat::DEPTH24:
+	case TextureFormat::DEPTH24:
 		_os << "DEPTH24";
 		break;
-	case InternalImageFormat::DEPTH32F:
+	case TextureFormat::DEPTH32F:
 		_os << "DEPTH32F";
 		break;
 
