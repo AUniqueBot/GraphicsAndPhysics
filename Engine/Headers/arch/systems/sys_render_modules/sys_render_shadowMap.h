@@ -15,7 +15,8 @@ class ShadowMap {
 
 
 public:
-	
+	void Init(const TextureIDInfo& _ref);
+
 	void SetShadowMapType(ShadowMapType type);
 	const ShadowMapType& GetShadowMapType() const;
 
@@ -52,13 +53,15 @@ public:
 	unsigned GetLODLevels() const;
 	void SetLODLevels(unsigned _levels);
 
+
+
 	void SetTextureIDInfo(TextureIDInfo _info);
 	const TextureIDInfo& GetTextureIDInfo() const;
 private:
 
 private:
 
-	ShadowMapType m_shadowMapType			{ ShadowMapType::TEXTURE };
+	ShadowMapType m_shadowMapType			{ ShadowMapType::TEXTURE }; // to be converted to the new texture class.
 
 	glm::ivec2 m_framebufferSize			{ 4096, 4096 };
 	glm::ivec2 m_baseTileSize				{ 2048, 2048 };	// 2048, 1024, 512, 256
@@ -73,7 +76,8 @@ private:
 	
 	// reference to texture in tex manager; to be created when render system is init.
 	TextureIDInfo m_textureIdInfo;	// TextureIDInfo handle is temporary; will be replaced with a proper texture 2D array handle.
-
+	Texture2DArray m_textureHandle			{ TextureIDInfo{} }; // needs a proper constructor.
+	bool m_initialized						{ false };
 
 
 };

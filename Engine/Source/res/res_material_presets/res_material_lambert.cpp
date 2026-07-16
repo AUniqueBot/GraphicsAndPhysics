@@ -1,4 +1,5 @@
 #include <arch/resources/res_material_presets/res_material_lambert.h>
+#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
 #include <arch/resources/res_shaderManager.h>
@@ -10,6 +11,7 @@ void LambertMaterial::Init() {
     UpdateColorTexture(m_reservedColorTexId, m_color);
     // - setting up uniforms -------------
     InitUniformLocations();
+    SetupTextures();
     UpdateTextureID();
 }
 
@@ -27,10 +29,12 @@ void LambertMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
     UpdateColorTexture(m_reservedColorTexId, m_color);
+    
+    m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
 }
 
 void LambertMaterial::Color(unsigned _newColor) {
-    Color(HexToVec4(_newColor));
+    Color(HexToVec4F(_newColor));
 }
 
 void LambertMaterial::UsesColor(bool _usesColor) {
@@ -45,7 +49,24 @@ bool LambertMaterial::UsesColor() const {
 
 
 void LambertMaterial::UpdateTextureID() {
-    m_texId = m_usesColor ? m_reservedColorTexId : m_reservedImageTexId;
+    if (!m_usesColor) {
+        m_texId = m_reservedImageTexId;
+        return;
+    }
+    m_texId = m_textureColor.GetTextureHandle();
+}
+
+void LambertMaterial::SetupTextures() {
+    if (!m_texManagerReference) {
+        LOG_WARN("Skipping Texture Setup");
+        return;
+    }
+    TextureManager& texManager{ *m_texManagerReference };
+    using namespace TextureProperties;
+    TextureProps props;
+    props.m_internalImageFormat = TextureFormat::RGBA8;
+    m_textureColor = texManager.Create2DTexture(1, 1);
+    m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 }
 
 

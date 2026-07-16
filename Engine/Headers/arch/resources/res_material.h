@@ -30,7 +30,7 @@ struct MaterialFeatures {
 };
 
 
-
+class RenderSystem; // fwd decl.
 // - class -----------------------------
 class Material : public Resource<Material> {
 public:
@@ -90,7 +90,13 @@ public:
 
 	
 
+	// - config -----------------------------------------------
+	TextureManager* GetTextureManager();
+	const TextureManager* GetTextureManager() const;
+	void SetTextureManager(TextureManager* _manager);
 	
+	
+
 protected:
 	GLint GetUniformLocation(const std::string& _uniformName) const;
 
@@ -103,5 +109,5 @@ protected:
 	std::map<std::string, UniformData> m_uniformData;
 	std::map<std::string, GLint> m_uniformLocations;
 
-
+	TextureManager* m_texManagerReference		{};
 };

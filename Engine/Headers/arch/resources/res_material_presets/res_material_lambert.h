@@ -28,6 +28,9 @@ public:
 	// need a resource manager for textures
 private:
 	void UpdateTextureID();
+
+	void SetupTextures();
+
 private:
 
 	// - color ---------------------------------------
@@ -40,11 +43,7 @@ private:
 	
 	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
 	
-
-	// 
-	//Texture2D m_default	{};
-
-	
+	Texture2D m_textureColor	{ TextureIDInfo{} }; // starts with a useless one for correctness
 
 
 	INSPECTABLE_DECLAREPROPS(LambertMaterial);

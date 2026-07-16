@@ -21,6 +21,18 @@ Materials::ShadingModel Material::GetShadingModel() const {
 	return Materials::ShadingModel::NONE;
 }
 
+
+void Material::SetTextureManager(TextureManager* _manager) {
+	m_texManagerReference = _manager;
+}
+
+TextureManager* Material::GetTextureManager() {
+	return m_texManagerReference;
+}
+const TextureManager* Material::GetTextureManager() const {
+	return m_texManagerReference;
+}
+
 unsigned Material::LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType) {
 	// TODO - Retrofit this function to save as a class for asset management.
 

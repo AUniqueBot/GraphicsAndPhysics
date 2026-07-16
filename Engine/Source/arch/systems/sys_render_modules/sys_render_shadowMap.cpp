@@ -2,6 +2,15 @@
 
 
 
+void ShadowMap::Init(const TextureIDInfo& _ref) {
+	if (!_ref.IsValid()) {
+		LOG_WARN("Passed TextureIDInfo is invalid. ShadowMap is disabled.");
+		return;
+	}
+	m_initialized = true;
+	m_textureHandle = _ref;
+}
+
 void ShadowMap::SetShadowMapType(ShadowMapType type) {
 	m_shadowMapType = type;
 }
@@ -122,6 +131,10 @@ void ShadowMap::SetBoundLayer(unsigned _layer) const {
 	if (m_currentBoundLayer == _layer) return;
 	m_currentBoundLayer = _layer;
 	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, m_shadowTextureId, 0, _layer);
+
+	//m_textureIdInfo
+
+	//glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, m_textureIdInfo.GetTextureID(), 0, _layer);
 }
 
 

@@ -73,11 +73,33 @@ namespace TextureProperties {
 		return decomposed;
 	}
 
-	
+
+	static inline int GetUploadDimension(TextureProperties::TextureType _type) {
+		using namespace TextureProperties;
+		switch (_type)
+		{
+		case TextureType::TEXTURE_1D:
+			return 1;
+
+		case TextureType::TEXTURE_1D_ARRAY:
+		case TextureType::TEXTURE_2D:
+			return 2;
+
+		case TextureType::TEXTURE_2D_ARRAY:
+		case TextureType::TEXTURE_3D:
+		case TextureType::CUBEMAP:
+		case TextureType::CUBEMAP_ARRAY:
+			return 3;
+
+		default:
+			throw std::runtime_error("Unsupported texture type.");
+		}
+	}
 
 }
 
-
+namespace {
+}
 
 TextureGPU::TextureGPU(
 	TextureProperties::TextureType _type, 
@@ -94,26 +116,41 @@ TextureGPU::TextureGPU(
 
 TextureGPU::~TextureGPU() {
 	if (!m_glTextureHandle) return;
+	LOG_INFO("Destroying Texture with handle [" << m_glTextureHandle << "]");
 	glDeleteTextures(1, &m_glTextureHandle);
 }
 
 TextureGPU::TextureGPU(TextureGPU&& _old) noexcept {
-	if (&_old == this) return;
-	m_textureType = std::move(_old.m_textureType);
-	m_dimensions = std::move(_old.m_dimensions);
-	m_textureProperties = std::move(_old.m_textureProperties);
-	m_glTextureHandle = std::move(_old.m_glTextureHandle);
-	
+	m_textureType = _old.m_textureType;
+	m_glTextureHandle = _old.m_glTextureHandle;
+	m_dimensions = _old.m_dimensions;
+	m_textureProperties = _old.m_textureProperties;
+
+	m_allocated = _old.m_allocated;
+	m_uploaded = _old.m_uploaded;
+	m_uploadNeedUpdate = _old.m_uploadNeedUpdate;
+	m_reallocateDirty = _old.m_reallocateDirty;
+	m_samplingDirty = _old.m_samplingDirty;
+
+
+
 	_old.m_glTextureHandle = 0;
 }
 
 TextureGPU& TextureGPU::operator=(TextureGPU&& _old) noexcept {
-	if (&_old == this) return *this;
-	m_textureType = std::move(_old.m_textureType);
-	m_dimensions = std::move(_old.m_dimensions);
-	m_textureProperties = std::move(_old.m_textureProperties);
-	m_glTextureHandle = std::move(_old.m_glTextureHandle);
+	m_textureType = _old.m_textureType;
+	m_dimensions = _old.m_dimensions;
+	m_textureProperties = _old.m_textureProperties;
+	m_glTextureHandle = _old.m_glTextureHandle;
 	
+
+	m_allocated = _old.m_allocated;
+	m_uploaded = _old.m_uploaded;
+	m_uploadNeedUpdate = _old.m_uploadNeedUpdate;
+	m_reallocateDirty = _old.m_reallocateDirty;
+	m_samplingDirty = _old.m_samplingDirty;
+
+
 	// ensure this one doesn't get it.
 	_old.m_glTextureHandle = 0;
 	return *this;
@@ -243,18 +280,33 @@ void TextureGPU::SetZ(const int& _val) {
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
-	if (!m_allocated || !m_uploaded) return;
+void TextureGPU::SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos) {
+	if (!m_allocated) return;
 	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
 	using namespace TextureProperties;
 	InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);// this controls
 	int pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
 	int pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
-	
-	
+	int uploadDimCount = GetUploadDimension(m_textureType);
+}
 
-	switch (m_textureType) {
-	case TextureType::TEXTURE_1D:
+void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
+	if (!m_allocated) return;
+	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
+	using namespace TextureProperties;
+	InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
+	int pixelFormat = OpenGL::ResolveChannels(decomposed.m_pixelFormat);
+	int pixelType = OpenGL::ResolveDataType(decomposed.m_pixelDataType);
+	int uploadDimCount = GetUploadDimension(m_textureType);
+	
+	glm::u8vec4 u8vec4col = {};
+	glm::vec4 vec4col = {};
+
+
+
+
+	switch (uploadDimCount) {
+	case 1:
 		assert(x < m_dimensions.x && x >= 0);
 		glTextureSubImage1D(
 			m_glTextureHandle, 0, x, 1, 
@@ -264,9 +316,7 @@ void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 			// set color here.
 		);
 		break;
-	
-	case TextureType::TEXTURE_1D_ARRAY:
-	case TextureType::TEXTURE_2D:
+	case 2:
 		assert(x < m_dimensions.x && x >= 0);
 		assert(y < m_dimensions.y && y >= 0);
 		glTextureSubImage2D(
@@ -278,10 +328,7 @@ void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 		);
 		break;
 	
-	case TextureType::TEXTURE_2D_ARRAY:
-	case TextureType::CUBEMAP:
-	case TextureType::CUBEMAP_ARRAY:
-	case TextureType::TEXTURE_3D:
+	case 3:
 		assert(x < m_dimensions.x && x >= 0);
 		assert(y < m_dimensions.y && y >= 0);
 		assert(z < m_dimensions.z && z >= 0);
@@ -317,25 +364,7 @@ void TextureGPU::Destroy() {
 void TextureGPU::Allocate() {
 	using namespace TextureProperties;
 	LOG_DEBUG("Allocating for texture handle [" << m_glTextureHandle << "] as " << m_textureType);
-	TextureType textureType = m_textureType;
-	int uploadDimensionCount = 0;
-
-	switch (textureType) {
-	case TextureType::TEXTURE_1D:
-		uploadDimensionCount = 1;
-		break;
-	case TextureType::TEXTURE_1D_ARRAY:
-	case TextureType::TEXTURE_2D:
-	case TextureType::CUBEMAP:
-		uploadDimensionCount = 2;
-		break;
-
-	case TextureType::TEXTURE_2D_ARRAY:
-	case TextureType::TEXTURE_3D:
-	case TextureType::CUBEMAP_ARRAY:
-		uploadDimensionCount = 3;
-		break;
-	}
+	int uploadDimensionCount = GetUploadDimension(m_textureType);
 
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
@@ -734,6 +763,7 @@ TextureManager* TextureIDInfo::GetTextureManager() const {
 }
 
 
+
 // -----------------------------------------------------------------
 
 
@@ -748,6 +778,10 @@ bool Texture::IsValid() const {
 
 const TextureIDInfo& Texture::GetTextureIDInfo() const {
 	return m_textureIdInfo;
+}
+
+void Texture::SetTextureIDInfo(const TextureIDInfo& _info) {
+	m_textureIdInfo = _info;
 }
 
 void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
@@ -793,6 +827,21 @@ void Texture::SetInternalFormat(const TextureProperties::TextureFormat& _format)
 	texHandle.SetInternalImageFormat(_format);
 }
 
+void Texture::SetPixelColor(unsigned _col, int _x, int _y, int _z) {
+	SetPixelColor(HexToVec4F(_col), _x, _y, _z);
+}
+
+void Texture::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
+	if (!m_textureIdInfo.IsValid()) return;
+	TextureGPU& tex{ GetTextureGPU() };
+	glm::u8vec4 colData{};
+	colData.r = _col.r * 0xff;
+	colData.g = _col.g * 0xff;
+	colData.b = _col.b * 0xff;
+	colData.a = _col.a * 0xff;
+	tex.SetPixelColor(colData, glm::ivec3{_x, _y, _z});
+}
+
 
 TextureGPU& Texture::GetTextureGPU() {
 	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
@@ -807,6 +856,15 @@ const TextureGPU& Texture::GetTextureGPU() const {
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
 }
+
+GLuint Texture::GetTextureHandle() const {
+	if (!m_textureIdInfo.IsValid()) return 0;
+	SparseSetView<TextureGPU> texHandle{ m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID()) };
+	if (!texHandle) return 0;
+	const TextureGPU& tex { *texHandle };
+	return tex.GetTextureHandle();
+}
+
 
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType& _type) {
 	using namespace TextureProperties;

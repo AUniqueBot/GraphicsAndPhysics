@@ -101,7 +101,7 @@ namespace TextureProperties {
 		
 		int m_mipmapCount							{ 1 };
 		bool m_autogenerateMipmaps					{ false };
-		TextureFormat m_internalImageFormat	{ TextureFormat::RGBA8 };
+		TextureFormat m_internalImageFormat			{ TextureFormat::RGBA8 };
 		ImageDataType m_pixelDataType				{ ImageDataType::UINT_8 };
 		ImageChannels m_pixelFormat					{ ImageChannels::RGBA };
 
@@ -131,6 +131,29 @@ namespace TextureProperties {
 
 	using TextureUploadData = std::optional<std::vector<TextureProperties::ImageUploadData>>;
 
+
+	namespace OpenGL {
+		// specifically for images a depth component image is not possible so it's ignored.
+		inline GLenum ResolveChannels(TextureProperties::ImageChannels _channels) {
+			using namespace TextureProperties;
+			return
+				_channels == ImageChannels::Red ? GL_RED :
+				_channels == ImageChannels::RG ? GL_RG :
+				_channels == ImageChannels::RGB ? GL_RGB :
+				_channels == ImageChannels::RGBA ? GL_RGBA : 
+				GL_DEPTH_COMPONENT;
+		}
+
+		inline GLenum ResolveDataType(TextureProperties::ImageDataType _dataType) {
+			using namespace TextureProperties;
+			return
+				_dataType == ImageDataType::UINT_8 ? GL_UNSIGNED_BYTE :
+				//_dataType == ImageDataType::UINT_16 ? GL_UNSIGNED_SHORT :
+				GL_FLOAT;
+		}
+
+	}
+
 }
 
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureType& _type);
@@ -140,10 +163,7 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::TextureForm
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::WrapBehaviour& _type);
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::FilterBehaviour& _type);
 
-namespace TextureCreation {
 
-
-}
 
 
 
@@ -206,7 +226,7 @@ public:
 	void SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos);	// r
 	void SetPixelColor(glm::u8vec2 _col, glm::ivec3 _pixelPos);	// rg
 	void SetPixelColor(glm::u8vec3 _col, glm::ivec3 _pixelPos);	// rgb
-	void SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos);	// rgba
+	void SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos);	// rgba 
 
 
 public:
@@ -216,6 +236,9 @@ public:
 	void Upload(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
 	bool NeedUpdate() const;
 	bool NeedAllocate() const;
+public:
+
+
 private:
 	void UploadTexture2DData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
 	void UploadCubemapData(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
@@ -254,6 +277,7 @@ public:
 
 	bool IsValid() const;
 	const TextureIDInfo& GetTextureIDInfo() const;
+	void SetTextureIDInfo(const TextureIDInfo& _info);
 
 	// functions here assume you can access the texture.
 	// getters particularly do not have safety checks so write accordingly
@@ -267,11 +291,14 @@ public:
 	void SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 
 	void SetInternalFormat(const TextureProperties::TextureFormat& _format); 
-	void SetPixelDataType(const TextureProperties::ImageDataType& _pixelType);
-	void SetPixelFormat(const TextureProperties::ImageChannels& _pixelFormat);
+	//void SetPixelDataType(const TextureProperties::ImageDataType& _pixelType);
+	//void SetPixelFormat(const TextureProperties::ImageChannels& _pixelFormat);
 
-	void SetPixelColor(unsigned _col, int _x, int _y); // hexadecimal color
-	void SetPixelColor(glm::vec4 _col, int _x, int _y);
+	void SetPixelColor(unsigned _col, int _x, int _y, int _z); // hexadecimal color
+	void SetPixelColor(glm::vec4 _col, int _x, int _y, int _z);
+
+	GLuint GetTextureHandle() const;
+
 protected:
 	// be careful when using this as this assumes it is valid.
 	TextureGPU& GetTextureGPU();

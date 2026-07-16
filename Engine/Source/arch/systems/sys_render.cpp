@@ -992,6 +992,7 @@ void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
         shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
         LOG_INFO("Shader ID: " << shaderId);
         _mat.SetShaderProgram(shaderId);
+        _mat.SetTextureManager(&m_textureManager);
         _mat.Init();
         _mat.ApplyUniforms();
     }

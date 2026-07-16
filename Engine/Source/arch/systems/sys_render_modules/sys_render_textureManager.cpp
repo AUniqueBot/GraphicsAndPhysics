@@ -145,40 +145,6 @@ namespace {
 		}
 		return output;
 	}
-	
-	
-
-
-
-
-	
-
-
-	namespace OpenGL {
-		// specifically for images a depth component image is not possible so it's ignored.
-		static GLenum ResolveChannels(TextureProperties::ImageChannels _channels) {
-			using namespace TextureProperties;
-			return
-				_channels == ImageChannels::Red ? GL_RED :
-				_channels == ImageChannels::RG ? GL_RG :
-				_channels == ImageChannels::RGB ? GL_RGB :
-				GL_RGBA;
-		}
-
-		static GLenum ResolveDataType(TextureProperties::ImageDataType _dataType) {
-			using namespace TextureProperties;
-			return
-				_dataType == ImageDataType::UINT_8 ? GL_UNSIGNED_BYTE :
-				//_dataType == ImageDataType::UINT_16 ? GL_UNSIGNED_SHORT :
-				GL_FLOAT;
-		}
-
-	}
-
-
-
-	
-
 
 }
 
@@ -313,18 +279,16 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperties::TextureProps _props) {
-	
-	
 	TextureIDInfo info = GenerateTextureIDInfo();
-	TextureGPU tex = {
+	TextureID at = info.GetTextureID();
+	TextureGPU tex{
 		TextureProperties::TextureType::TEXTURE_2D,
 		{ width, height, 1 },
 		_props
-		
 	};
-	m_storage.Add(std::move(tex), info.GetTextureID());
 	tex.Create();
 	tex.Allocate();
+	m_storage.Add(std::move(tex), at);
 	LOG_INFO("Allocating 2D Texture of size: [" << width << ", " << height << "]");
 	Texture2D texHandle = { info };
 	return texHandle;
@@ -332,12 +296,16 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 
 TextureIDInfo TextureManager::Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
+	TextureID at = info.GetTextureID();
 	TextureGPU tex = { 
 		TextureProperties::TextureType::TEXTURE_3D,
 		{ width, height, depth },
 		_props
 	};
-	m_storage.Add(std::move(tex),info.GetTextureID());
+	tex.Create();
+	tex.Allocate();
+	m_storage.Add(std::move(tex), at);
+	///
 	return info;
 }
 

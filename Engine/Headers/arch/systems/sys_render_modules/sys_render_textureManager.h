@@ -5,6 +5,7 @@
 #include <arch/datatypes/type_sparseSet.h>
 
 #include <arch/resources/res_texture/res_texture2d.h>
+#include <arch/resources/res_texture/res_texture2darray.h>
 
 
 class TextureManager {
