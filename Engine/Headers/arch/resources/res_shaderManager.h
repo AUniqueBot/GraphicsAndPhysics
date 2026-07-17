@@ -12,6 +12,7 @@ namespace ShaderConstants {
 	// - shader identifiers ---------------------------------------------------
 	inline constexpr const char* C_ID_VERTEXSHADER				{ "C_VERTEX_SHADER" };
 	inline constexpr const char* C_ID_LAMBERTFRAGSHADER			{ "C_LAMBERTFRAG_SHADER" };
+	inline constexpr const char* C_ID_PHONGFRAGSHADER			{ "C_PHONGFRAG_SHADER" };
 	// - shader Program 0000---------------------------------------------------
 	inline constexpr const char* C_ID_LAMBERTSHADERPROG			{ "BRDF_LAMBERT" };
 	inline constexpr const char* C_ID_PHONGSHADERPROG			{ "BRDF_PHONG" };

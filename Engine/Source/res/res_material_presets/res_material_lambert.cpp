@@ -6,13 +6,9 @@
 #include <arch/core.h>
 
 void LambertMaterial::Init() {
-
-    m_reservedColorTexId = GenerateEmptyColorTexture();
-    UpdateColorTexture(m_reservedColorTexId, m_color);
     // - setting up uniforms -------------
     InitUniformLocations();
     SetupTextures();
-    UpdateTextureID();
 }
 
 Materials::ShadingModel LambertMaterial::GetShadingModel() const {
@@ -27,9 +23,7 @@ const glm::vec4& LambertMaterial::Color() const {
 
 void LambertMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
-    m_color = _newColor;
-    UpdateColorTexture(m_reservedColorTexId, m_color);
-    
+    m_color = _newColor;    
     m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
 }
 
@@ -40,20 +34,14 @@ void LambertMaterial::Color(unsigned _newColor) {
 void LambertMaterial::UsesColor(bool _usesColor) {
     if (_usesColor == m_usesColor) return;
     m_usesColor = _usesColor;
-    UpdateTextureID();
 }
 
 bool LambertMaterial::UsesColor() const {
     return m_usesColor;
 }
 
-
-void LambertMaterial::UpdateTextureID() {
-    if (!m_usesColor) {
-        m_texId = m_reservedImageTexId;
-        return;
-    }
-    m_texId = m_textureColor.GetTextureHandle();
+const GLuint& LambertMaterial::GetColorTextureID() const {
+    return m_usesColor ? m_textureColor.GetTextureHandle() : m_reservedImageTexId;
 }
 
 void LambertMaterial::SetupTextures() {
@@ -74,8 +62,9 @@ void LambertMaterial::SetupTextures() {
 
 void LambertMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
+        // would be better if applied in the system instead of over here.
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, m_texId);
+        glBindTexture(GL_TEXTURE_2D, GetColorTextureID());
         glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
     }
 }

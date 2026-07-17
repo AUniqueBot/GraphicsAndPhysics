@@ -1,6 +1,7 @@
 #include <arch/resources/res_material_presets/res_material_phong.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
+#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
 
 
 
@@ -26,13 +27,10 @@ void PhongMaterial::Init() {
     phongShader.Build();
     SetShaderProgram(phongShader.GetShaderProgramID());
 
-    m_reservedColorTexId = GenerateEmptyColorTexture();
-    m_reservedSpecularTexId = GenerateEmptyColorTexture();
-    m_reservedGlossTexId = GenerateEmptyColorTexture();
+
 
     // - setting up uniforms -------------
     InitUniformLocations();
-
     UpdateTextureID();
 }
 
@@ -45,7 +43,7 @@ const glm::vec4& PhongMaterial::GetColor() const {
 void PhongMaterial::SetColor(glm::vec4 _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
-    UpdateColorTexture(m_reservedColorTexId, m_color);
+
 }
 
 void PhongMaterial::SetColor(unsigned _newColor) {
@@ -63,7 +61,6 @@ void PhongMaterial::SetColorImageTexture(GLuint _textureId) {
 void PhongMaterial::SetUsesColorValue(bool _usesColor) {
     if (_usesColor == m_usesColorValue) return;
     m_usesColorValue = _usesColor;
-    UpdateTextureID();
 }
 
 bool PhongMaterial::UsesColorValue() const {
@@ -81,7 +78,7 @@ const glm::vec4& PhongMaterial::GetSpecular() const {
 void PhongMaterial::SetSpecular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
-    UpdateColorTexture(m_reservedSpecularTexId, m_specularCol);
+
 }
 
 void PhongMaterial::SetSpecular(unsigned _newColor) {
@@ -111,7 +108,6 @@ const float& PhongMaterial::GetGloss() const {
 
 void PhongMaterial::SetGloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
-    UpdateColorTexture(m_reservedGlossImageTexId, glm::vec4(m_glossVal));
 }
 
 const GLuint& PhongMaterial::GetGlossImageTexture() const {
@@ -127,7 +123,8 @@ void PhongMaterial::SetSpecularImageTexture(const GLuint& _texture) {
 }
 
 const GLuint& PhongMaterial::GetColorTextureID() const {
-    return m_usesColorValue ? m_reservedColorTexId : m_reservedColorImageTexId;
+    if (!m_usesColorValue) return m_reservedColorImageTexId;
+    return m_textureColor.GetTextureHandle();
 }
 
 const GLuint& PhongMaterial::GetSpecularTextureID() const {
@@ -138,6 +135,19 @@ const GLuint& PhongMaterial::GetGlossTextureID() const {
     return m_usesGlossValue ? m_reservedGlossTexId : m_reservedGlossImageTexId;
 }
 
+void PhongMaterial::SetupTextures() {
+    if (!m_texManagerReference) {
+        LOG_WARN("Skipping Texture Setup");
+        return;
+    }
+    TextureManager& texManager { *m_texManagerReference };
+    
+    using namespace TextureProperties;
+    TextureProps props;
+    props.m_internalImageFormat = TextureFormat::RGBA8;
+    m_textureColor = texManager.Create2DTexture(1, 1);
+    m_textureColor.SetPixelColor(m_color, 0, 0, 0);
+}
 
 
 
@@ -154,7 +164,7 @@ void PhongMaterial::ApplyUniforms() const {
     }
     if (m_uniformLocations.contains(U_GLOSS)) {
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GetSpecularTextureID());
+        glBindTexture(GL_TEXTURE_2D, GetGlossTextureID());
         glUniform1i(m_uniformLocations.at(U_GLOSS), 0);
     }
 }

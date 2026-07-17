@@ -972,7 +972,7 @@ void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
         shaderProgramAlias = ShaderConstants::C_ID_LAMBERTSHADERPROG;
         break;
     case ShadingModel::PHONG:
-        shaderProgramAlias = ShaderConstants::C_ID_LAMBERTSHADERPROG;
+        shaderProgramAlias = ShaderConstants::C_ID_PHONGSHADERPROG;
         break;
     case ShadingModel::BLINN_PHONG:
         break;

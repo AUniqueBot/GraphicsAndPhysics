@@ -18,32 +18,25 @@ public:
 	void UsesColor(bool _usesTexture);
 	bool UsesColor() const;
 
-
-	inline void SetTextureID(const GLuint& texId) { m_texId = texId; };
-	inline GLuint GetTextureID() const { return m_texId; }
-
-
 	void ApplyUniforms() const override;
 
+	const GLuint& GetColorTextureID() const;
 	// need a resource manager for textures
 private:
-	void UpdateTextureID();
-
 	void SetupTextures();
 
 private:
 
 	// - color ---------------------------------------
-	glm::vec4 m_color			{};
+	glm::vec4 m_color			{ };
 	bool m_usesColor			{ true };
-	GLuint m_texId				{}; // texture identifier, sent via uniform
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
-	GLuint m_reservedColorTexId {}; // texture identifier, storage of color texture.
-	
-	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
 	
 	Texture2D m_textureColor	{ TextureIDInfo{} }; // starts with a useless one for correctness
+
+	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
+
 
 
 	INSPECTABLE_DECLAREPROPS(LambertMaterial);

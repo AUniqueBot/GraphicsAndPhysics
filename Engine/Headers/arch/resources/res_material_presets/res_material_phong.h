@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_material.h>
+#include <arch/resources/res_texture/res_texture2d.h>
 
 
 #include <optional>
@@ -55,6 +56,7 @@ public:
 	// need a resource manager for textures
 private:
 	void UpdateTextureID();
+	void SetupTextures();
 private:
 
 	// - color ---------------------------------------
@@ -67,6 +69,8 @@ private:
 	float m_glossVal{ 1.0f };
 	bool m_usesGlossValue{ true };
 
+
+	Texture2D m_textureColor			{ TextureIDInfo{} };
 	GLuint m_reservedColorTexId{};
 	GLuint m_reservedColorImageTexId{};
 

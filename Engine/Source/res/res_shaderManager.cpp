@@ -33,7 +33,7 @@ void ShaderManager::Init() {
 	
 	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
 	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
-	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, phongFragShader);
+	AddShader(ShaderConstants::C_ID_PHONGFRAGSHADER, phongFragShader);
 
 	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
 	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
