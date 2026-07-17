@@ -226,16 +226,22 @@ vec3 CalculatePointLighting(LightData _currentLight, vec3 _fragPosition, vec3 _f
     return lightColor * power * NdotL;
 }
 
-vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
+
+struct LightingResult {
+    vec3 diffuse;
+    vec3 ambient;
+};
+
+LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     vec3 N = normalize(fragNormal);
-    vec3 result = vec3(0.0);
+    vec3 diffuseRes = vec3(0.0);
     vec3 ambientRes = vec3(0.0);
     for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
         LightData currentLight = LIGHTPARAMS.m_lightData[i];
         int lightType = int(currentLight.position_type.w);
         // point light
         if (lightType == LIGHT_POINT) {
-            result += CalculatePointLighting(
+            diffuseRes += CalculatePointLighting(
                 currentLight,
                  fragPosition,
                   N
@@ -245,7 +251,7 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
 
         // directional
         else if (lightType == LIGHT_DIRECTIONAL) {
-            result += CalculateDirectionalLighting(
+            diffuseRes += CalculateDirectionalLighting(
                 currentLight,
                  N
                 );
@@ -261,7 +267,7 @@ vec3 CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
     }
     ambientRes = clamp(ambientRes, 0.0, 1.0);
     // result *= 1;
-    return result * CalculateShadow() + ambientRes;
+    return LightingResult(diffuseRes, ambientRes);
 }
 
 // ------------------------------------------------------------------------------------
@@ -271,13 +277,18 @@ void main() {
 	vec4 color = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     out_objectId = OBJECTPARAMS.objectId;
     // out_color = float(u_objectId % 256u) / 255.0; // testing
-    out_color = color * vec4(
+    LightingResult lighting =
         CalculateLighting(
             VERTEXOUTPUT.frag_position,
-             VERTEXOUTPUT.frag_normal
-             ), 
-             1.0 // no alpha needed
-    );
+            VERTEXOUTPUT.frag_normal
+            );
+
+    // values here.
+    out_color = vec4(lighting.diffuse, 1.0) * CalculateShadow();
+    out_color += vec4(lighting.ambient, 1.0);
+    out_color *= color;
+
+
     vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
     vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
     vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);

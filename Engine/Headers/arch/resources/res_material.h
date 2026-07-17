@@ -30,7 +30,7 @@ struct MaterialFeatures {
 };
 
 
-class RenderSystem; // fwd decl.
+class RenderSystem; // fwd decl. 
 // - class -----------------------------
 class Material : public Resource<Material> {
 public:

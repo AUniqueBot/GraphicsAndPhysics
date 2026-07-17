@@ -24,6 +24,7 @@ void ShaderManager::Init() {
 	vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
 	lambertFragShader.SetShaderCode(lambertFragSrc);
 	lambertFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+	phongFragShader.SetShaderCode(phongFragSrc);
 	phongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
 
 
@@ -37,6 +38,7 @@ void ShaderManager::Init() {
 
 	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
 	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
+
 	ShaderProgram& lambertShader	{ *GetShaderProgram(lambertShaderId) };
 	ShaderProgram& phongShader		{ *GetShaderProgram(phongShaderId) };
 
@@ -46,6 +48,7 @@ void ShaderManager::Init() {
 
 	phongShader.SetShader(vertexShader, vertexShader.GetShaderType());
 	phongShader.SetShader(phongFragShader, phongFragShader.GetShaderType());
+	phongShader.Build();
 
 	LOG_INFO("Initialised shader manager");
 }
