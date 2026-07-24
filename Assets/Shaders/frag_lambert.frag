@@ -20,6 +20,7 @@ in VertexOutput {
 } VERTEXOUTPUT;
 
 uniform sampler2D u_albedo;
+
 uniform sampler2DArrayShadow u_directionalShadowMap;
 uniform sampler2DArray u_spotLightShadowMap;
 uniform samplerCubeArray u_pointLightShadowMap;

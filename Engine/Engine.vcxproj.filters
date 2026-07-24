@@ -177,6 +177,12 @@
     <ClCompile Include="Source\serialization\serialize_reader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\common\scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\serialization\serialize_jsonfile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -452,16 +458,22 @@
     <ClInclude Include="Source\util\util_color.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\serialization\serialize_write.h">
+    <ClInclude Include="Headers\serialization\serialize_writer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\serialization\serialize_reader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\serialization\serialize_filedata.h">
+    <ClInclude Include="Headers\serialization\serialize_jsonfile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\common\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\core\core_sceneManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\serialization\serialize_jsonfileDEF.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

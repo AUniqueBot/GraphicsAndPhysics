@@ -10,6 +10,7 @@
 #include <arch/components/comp_camera.h>
 #include <arch/resources/res_mesh_presets/res_mesh_types.h>
 #include <arch/resources/res_material_presets/res_material_lambert.h>
+#include <arch/resources/res_material_presets/res_material_phong.h>
 
 
 UIWidget_Inspector::UIWidget_Inspector(std::string _widgetName) : UIWidget(_widgetName) {
@@ -92,26 +93,28 @@ void UIWidget_Inspector::Draw() {
 		ResourceManager& resmgr = papc->GetResourceManager();
 		auto& matList{ mr.GetMaterialList() };
 		if (matList.size() == 0) {
-			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(&mr.GetDefaultMaterial());
-			glm::vec4 col{mat.Color()};
-			if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
-				mat.Color(col);
-			}
+			//Material& mat = &mr.GetDefaultMaterial();
+
+			//if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
+			//	mat.Color(col);
+			//}
 		}
 
 		else {
 
 			// foreach loop, then typecast it.
 			// need self-reflection.
+
+
 			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(matList[0].get());
 
 			// creating a call function for the component is the incorrect method about going through this.
 
 
-			glm::vec4 col{mat.Color()};
-			if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
-				mat.Color(col);
-			}
+			//glm::vec4 col{mat.Color()};
+			//if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
+				//mat.Color(col);
+			//}
 		}
 
 		const auto& selectedMesh = mr.GetMesh();

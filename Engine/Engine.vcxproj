@@ -182,6 +182,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_cubemap.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
+    <ClCompile Include="Source\arch\common\scene.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
@@ -227,6 +228,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\res\res_texture\res_texture.cpp" />
     <ClCompile Include="Source\res\res_texture\res_texture2d.cpp" />
     <ClCompile Include="Source\res\res_texture\res_texture2darray.cpp" />
+    <ClCompile Include="Source\serialization\serialize_jsonfile.cpp" />
     <ClCompile Include="Source\serialization\serialize_reader.cpp" />
     <ClCompile Include="Source\util\util_color.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
@@ -245,6 +247,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />
+    <ClInclude Include="Headers\arch\core\core_sceneManager.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
     <ClInclude Include="Headers\arch\components\componentList.h" />
@@ -315,9 +318,10 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\graphics\gfx_uniformNamingDefines.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
-    <ClInclude Include="Headers\serialization\serialize_filedata.h" />
+    <ClInclude Include="Headers\serialization\serialize_jsonfile.h" />
+    <ClInclude Include="Headers\serialization\serialize_jsonfileDEF.hpp" />
     <ClInclude Include="Headers\serialization\serialize_reader.h" />
-    <ClInclude Include="Headers\serialization\serialize_write.h" />
+    <ClInclude Include="Headers\serialization\serialize_writer.h" />
     <ClInclude Include="Headers\util\util_bitshifting.h" />
     <ClInclude Include="Headers\util\util_color.h" />
     <ClInclude Include="Headers\util\util_component_reference.h" />

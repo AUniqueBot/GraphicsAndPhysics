@@ -7,47 +7,28 @@
 
 void PhongMaterial::Init() {
 
-
-    // - loading shader ------------------
-    std::string vertexShaderSource =  ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_vertex.vert");
-    std::string fragmentShaderSource = ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_phong.frag");
-
-    ShaderProgram phongShader{};
-    Shader vertexShader;
-    Shader fragmentShader;
-
-    vertexShader.SetShaderCode(vertexShaderSource);
-    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-    fragmentShader.SetShaderCode(fragmentShaderSource);
-    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-    vertexShader.Build();
-    fragmentShader.Build();
-    phongShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);
-    phongShader.SetShader(fragmentShader, ShaderConstants::ShaderType::FRAG);
-    phongShader.Build();
-    SetShaderProgram(phongShader.GetShaderProgramID());
-
-
-
     // - setting up uniforms -------------
     InitUniformLocations();
-    UpdateTextureID();
+    SetupTextures();
 }
 
 
-const glm::vec4& PhongMaterial::GetColor() const {
+Materials::ShadingModel PhongMaterial::GetShadingModel() const { 
+    return Materials::ShadingModel::PHONG; 
+}
+
+const glm::vec4& PhongMaterial::Color() const {
     return m_color;
 }
 
 
-void PhongMaterial::SetColor(glm::vec4 _newColor) {
+void PhongMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
-
 }
 
-void PhongMaterial::SetColor(unsigned _newColor) {
-    SetColor(HexToVec4F(_newColor));
+void PhongMaterial::Color(unsigned _newColor) {
+    Color(HexToVec4F(_newColor));
 }
 
 const GLuint& PhongMaterial::GetColorImageTexture() const {
@@ -71,18 +52,18 @@ bool PhongMaterial::UsesColorValue() const {
 
 
 // -----------------------------------------------------------------------------
-const glm::vec4& PhongMaterial::GetSpecular() const {
+const glm::vec4& PhongMaterial::Specular() const {
     return m_specularCol;
 }
 
-void PhongMaterial::SetSpecular(const glm::vec4& _newValue) {
+void PhongMaterial::Specular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
 
 }
 
-void PhongMaterial::SetSpecular(unsigned _newColor) {
-    SetSpecular(HexToVec4F(_newColor));
+void PhongMaterial::Specular(unsigned _newColor) {
+    Specular(HexToVec4F(_newColor));
 }
 
 const GLuint& PhongMaterial::GetSpecularImageTexture() const {
@@ -101,12 +82,12 @@ bool PhongMaterial::UsesSpecularValue() const {
 
 
 // -----------------------------------------------------------------------------
-const float& PhongMaterial::GetGloss() const {
+const float& PhongMaterial::Gloss() const {
     // TODO: insert return statement here
     return m_glossVal;
 }
 
-void PhongMaterial::SetGloss(float _value) {
+void PhongMaterial::Gloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
 }
 
@@ -123,16 +104,15 @@ void PhongMaterial::SetSpecularImageTexture(const GLuint& _texture) {
 }
 
 const GLuint& PhongMaterial::GetColorTextureID() const {
-    if (!m_usesColorValue) return m_reservedColorImageTexId;
-    return m_textureColor.GetTextureHandle();
+    return m_usesColorValue ? m_textureColor.GetTextureHandle() : m_reservedColorImageTexId;
 }
 
 const GLuint& PhongMaterial::GetSpecularTextureID() const {
-    return m_usesSpecularValue ? m_reservedSpecularTexId : m_reservedSpecularImageTexId;
+    return m_usesSpecularValue ? m_textureSpecular.GetTextureHandle() : m_reservedSpecularImageTexId;
 }
 
 const GLuint& PhongMaterial::GetGlossTextureID() const {
-    return m_usesGlossValue ? m_reservedGlossTexId : m_reservedGlossImageTexId;
+    return m_usesGlossValue ? m_textureGloss.GetTextureHandle() : m_reservedGlossImageTexId;
 }
 
 void PhongMaterial::SetupTextures() {
@@ -145,8 +125,17 @@ void PhongMaterial::SetupTextures() {
     using namespace TextureProperties;
     TextureProps props;
     props.m_internalImageFormat = TextureFormat::RGBA8;
-    m_textureColor = texManager.Create2DTexture(1, 1);
+    m_textureColor = texManager.Create2DTexture(1, 1, props);
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
+
+
+    m_textureSpecular = texManager.Create2DTexture(1, 1, props);
+    m_textureSpecular.SetPixelColor(m_specularCol, 0, 0, 0);
+
+
+    props.m_internalImageFormat = TextureFormat::R8;
+    m_textureGloss = texManager.Create2DTexture(1, 1, props);
+    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 }
 
 
@@ -169,3 +158,14 @@ void PhongMaterial::ApplyUniforms() const {
     }
 }
 
+std::vector<PropertyMD::Property>& PhongMaterial::GetProps() {
+    using namespace PropertyMD;
+    static std::vector<Property> props{
+        PropertyMD::MakeProperty<PhongMaterial>(
+            "Color", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
+            static_cast<const glm::vec4 & (PhongMaterial::*)() const>(&PhongMaterial::Color),
+            static_cast<void(PhongMaterial::*)(const glm::vec4&)>(&PhongMaterial::Color)
+        ),
+    };
+    return props;
+}

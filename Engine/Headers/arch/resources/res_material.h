@@ -19,7 +19,8 @@ namespace Materials {
 		BURLEY,				//
 		PRINCIPLED,
 		NONE,
-		_COUNT
+		_COUNT,
+		CUSTOM				// for custom materials
 	};
 }
 

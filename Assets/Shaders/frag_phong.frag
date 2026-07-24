@@ -230,28 +230,20 @@ vec3 CalculateDirectionalLighting(LightData _currentLight, vec3 _fragNormal){
 }
 
 
-vec3 CalculatePointLighting(
-    LightData _currentLight, 
-    vec3 _fragPosition, 
-    vec3 _fragNormal
-    ) {
-    vec3 lightColor = _currentLight.color_power.xyz;
+vec3 CalculatePointLighting(LightData _currentLight, vec3 _fragPosition, vec3 _fragNormal) {
     vec3 lightPosition = _currentLight.position_type.xyz;
-
-
-    vec3 lightDir = _fragPosition - lightPosition;
-    vec3 nLightVec = normalize(lightDir);
+    vec3 lightVec = _fragPosition - lightPosition;
+    vec3 nLightVec = normalize(lightVec);
     // we need distance and attenuation values as well to make this work.
-
-    float dist = length(lightDir);
+    float dist = length(lightVec);
     float power = _currentLight.color_power.w / (dist * dist); // quadratic loss.
     // assumes distance falls off immediately for now.
 
     float NdotL = max(dot(_fragNormal, -nLightVec), 0.0);
-
-
+    vec3 lightColor = _currentLight.color_power.xyz;
     return lightColor * power * NdotL;
 }
+
 
 
 
@@ -261,7 +253,13 @@ struct LightingResult {
     vec3 ambient;
 };
 
-LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal, vec3 cameraPosition) {
+LightingResult CalculateLighting(
+    vec3 fragPosition, 
+    vec3 fragNormal, 
+    vec3 cameraPosition, 
+    int glossiness,
+    float strength
+    ) {
     vec3 N = normalize(fragNormal);
 
     vec3 diffuseRes = vec3(0.0);
@@ -286,7 +284,7 @@ LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal, vec3 camera
                 cameraPosition, 
                 fragPosition, 
                 N,
-                32, 1.0
+                glossiness, strength
             );
 
         }
@@ -306,7 +304,7 @@ LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal, vec3 camera
                 cameraPosition, 
                 fragPosition, 
                 N,
-                32, 1.0
+                glossiness, strength
             );
 
         }
@@ -334,34 +332,37 @@ LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal, vec3 camera
 void main() {
 	
     
+    out_objectId = OBJECTPARAMS.objectId;
     vec4 diff = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     vec4 spec = texture(u_specular, VERTEXOUTPUT.frag_uv);
     vec4 gloss = texture(u_gloss, VERTEXOUTPUT.frag_uv);
 
-    LightingResult lighting = CalculateLighting(
-        VERTEXOUTPUT.frag_position, 
-        VERTEXOUTPUT.frag_normal,
-        VERTEXOUTPUT.frag_viewPosition
-    );
-
-    out_objectId = OBJECTPARAMS.objectId;
-    // out_color = float(u_objectId % 256u) / 255.0; // testing
-    diff = diff * vec4(
-        lighting.diffuse,
-        1.0 // no alpha needed
-    );
     vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
     vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
     vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
+    
+    
+    LightingResult lighting = CalculateLighting(
+        VERTEXOUTPUT.frag_position, 
+        VERTEXOUTPUT.frag_normal,
+        VERTEXOUTPUT.frag_viewPosition,
+        int(gloss.r * 128.0), 0.25
+    );
+    float sValue = CalculateShadow();
 
-    out_color = diff + 
-        spec * vec4(lighting.specular, 0.0) + 
-        gloss *vec4(lighting.ambient, 0.0);
+    vec3 ambientComponent  = lighting.ambient * diff.rgb;
+    vec3 diffuseComponent  = lighting.diffuse * diff.rgb * sValue;
+    vec3 specularComponent = lighting.specular * spec.rgb * sValue; // Masked by spec texture
+
+    // Combine everything for the final frag color
+    vec3 finalColor = ambientComponent + diffuseComponent + specularComponent;
+
+
 
     float depth = -VERTEXOUTPUT.frag_viewPosition.z;
     int depthIndex = min(int(depth/50.0), 3);
     vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0.0, 0.0, 0.0, 1.0);
-    float sValue = CalculateShadow();
+
     if (sValue != 1.0) {
         out_color = mix(out_color, shadowCol, 0.5);;
     }

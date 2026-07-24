@@ -12,14 +12,14 @@ class PhongMaterial : public Material {
 public:
 
 	void Init() override;
-
+	Materials::ShadingModel GetShadingModel() const override;
 
 	// - getters -------------------------------------
 	
 	// color
-	const glm::vec4& GetColor() const;
-	void SetColor(glm::vec4 _newColor);
-	void SetColor(unsigned _newColor);
+	const glm::vec4& Color() const;
+	void Color(const glm::vec4& _newColor);
+	void Color(unsigned _newColor);
 	const GLuint& GetColorImageTexture() const;
 	void SetColorImageTexture(GLuint _textureId);
 
@@ -27,9 +27,9 @@ public:
 	bool UsesColorValue() const;
 
 	// specular
-	const glm::vec4& GetSpecular() const;
-	void SetSpecular(const glm::vec4& _newValue);
-	void SetSpecular(unsigned _newColor);
+	const glm::vec4& Specular() const;
+	void Specular(const glm::vec4& _newValue);
+	void Specular(unsigned _newColor);
 	const GLuint& GetSpecularImageTexture() const;
 	void SetSpecularImageTexture(const GLuint&) ;
 
@@ -38,8 +38,8 @@ public:
 
 
 	// gloss
-	const float& GetGloss() const;
-	void SetGloss(float _value);
+	const float& Gloss() const;
+	void Gloss(float _value);
 	const GLuint& GetGlossImageTexture() const;
 	void SetGlossImageTexture(const GLuint& _texture);
 
@@ -55,32 +55,34 @@ public:
 
 	// need a resource manager for textures
 private:
-	void UpdateTextureID();
-	void SetupTextures();
+	void SetupTextures(); 
 private:
 
 	// - color ---------------------------------------
-	glm::vec4 m_color{};
-	bool m_usesColorValue{ true };
+	glm::vec4 m_color					{ 0.5f, 0.75f, 1.0f, 1.0f };
+	bool m_usesColorValue				{ true };
 
-	glm::vec4 m_specularCol{ 1.0f };
-	bool m_usesSpecularValue{ true };
+	glm::vec4 m_specularCol				{ 1.0f, 0.0f, 0.0f, 1.0f };
+	bool m_usesSpecularValue			{ true };
 
-	float m_glossVal{ 1.0f };
-	bool m_usesGlossValue{ true };
+	float m_glossVal					{ 0.95f };
+	bool m_usesGlossValue				{ true };
 
 
 	Texture2D m_textureColor			{ TextureIDInfo{} };
 	GLuint m_reservedColorTexId{};
 	GLuint m_reservedColorImageTexId{};
 
+	Texture2D m_textureSpecular			{ TextureIDInfo{} };
 	GLuint m_reservedSpecularTexId{};
 	GLuint m_reservedSpecularImageTexId{};
 
-	
 
+	Texture2D m_textureGloss			{ TextureIDInfo{} };
 	GLuint m_reservedGlossTexId{};
 	GLuint m_reservedGlossImageTexId{};
+
+	INSPECTABLE_DECLAREPROPS(PhongMaterial);
 
 };
 

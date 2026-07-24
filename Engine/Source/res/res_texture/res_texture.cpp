@@ -302,9 +302,6 @@ void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 	glm::u8vec4 u8vec4col = {};
 	glm::vec4 vec4col = {};
 
-
-
-
 	switch (uploadDimCount) {
 	case 1:
 		assert(x < m_dimensions.x && x >= 0);
@@ -842,9 +839,9 @@ void Texture::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
 	tex.SetPixelColor(colData, glm::ivec3{_x, _y, _z});
 }
 
-
+ 
 TextureGPU& Texture::GetTextureGPU() {
-	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
+	assert(m_textureIdInfo.IsValid() && "Texture Info invalid"); 
 	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
@@ -923,7 +920,7 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageDataTy
 }
 
 std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageChannels& _type) {
-	using namespace TextureProperties;
+	using namespace TextureProperties; 
 	switch (_type) {
 	case ImageChannels::Depth:
 		_os << "DEPTH";

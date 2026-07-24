@@ -2,6 +2,7 @@
 #include <util/util_serialisation.h>
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 #include <arch/resources/res_material_presets/res_material_lambert.h>
+#include <arch/resources/res_material_presets/res_material_phong.h>
 
 
 // - method function ------------------------
@@ -33,9 +34,7 @@ std::shared_ptr<Mesh> MeshRenderer::GetMesh() {
 
 
 void MeshRenderer::AddMaterial(std::shared_ptr<Material> _material) {
-	_material->Init();
 	m_materials.push_back(_material);
-
 }
 
 void MeshRenderer::RemoveMaterial(std::shared_ptr<Material> _material) {
@@ -75,7 +74,7 @@ void MeshRenderer::Render() {
 
 Material& MeshRenderer::GetDefaultMaterial() {
 
-	static LambertMaterial m_defaultMaterial{};
+	static PhongMaterial m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
 	if (!defaultMatInit) {
 		m_defaultMaterial.Init();

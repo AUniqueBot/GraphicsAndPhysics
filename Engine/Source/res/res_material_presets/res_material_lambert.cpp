@@ -53,7 +53,7 @@ void LambertMaterial::SetupTextures() {
     using namespace TextureProperties;
     TextureProps props;
     props.m_internalImageFormat = TextureFormat::RGBA8;
-    m_textureColor = texManager.Create2DTexture(1, 1);
+    m_textureColor = texManager.Create2DTexture(1, 1, props);
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 }
 

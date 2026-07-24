@@ -2,5 +2,7 @@
 
 
 namespace Serialization {
+	class Writer {
 
+	};
 }
