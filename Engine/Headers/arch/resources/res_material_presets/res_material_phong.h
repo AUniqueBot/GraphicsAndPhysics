@@ -62,7 +62,7 @@ private:
 	glm::vec4 m_color					{ 0.5f, 0.75f, 1.0f, 1.0f };
 	bool m_usesColorValue				{ true };
 
-	glm::vec4 m_specularCol				{ 1.0f, 1.0f, 1.0f, 1.0f };
+	glm::vec4 m_specularCol				{ 0.0f, 1.0f, 1.0f, 1.0f };
 	bool m_usesSpecularValue			{ true };
 	 
 	float m_glossVal					{ 1.0f };

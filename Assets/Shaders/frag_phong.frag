@@ -102,28 +102,68 @@ const vec2 poissonDisk[16] = vec2[](
 // ------------------------------------------------------------------------------------
 // shadows
 
-float PercentageCloserFilter(
+float GetRandomAngle(vec2 position) {
+    return fract(sin(dot(position.xy, vec2(12.9898, 78.233))) * 43758.5453) * 6.28318530718; // 2 * pi
+}
+
+float PCF_Grid(
     vec2 position, 
     vec2 texelSize, 
     int layerid,
     int halfKernelLength, 
     float currentDepth, 
     float bias,
-    sampler2DArray shadowMap
+    sampler2DArrayShadow shadowMap
     ) {
-
+    
     float accShadowVal = 0;
     // PCF shading
     for (float u = -halfKernelLength; u <= halfKernelLength; ++u) {
         for (float v = -halfKernelLength; v <= halfKernelLength ; ++v) {
             vec2 offset = texelSize * vec2(u,v);
-            float closestDepth = texture(shadowMap, vec3(position + offset, layerid)).r;
+            float closestDepth = texture(shadowMap, vec4(position + offset, layerid, currentDepth - bias));
             accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
         }
     }
     float kernel = float(2 * halfKernelLength + 1);
     return accShadowVal /= (kernel * kernel);
 }
+
+
+float PCF_PoissonDisk(
+    vec2 position, 
+    vec2 texelSize,
+    int layerid,
+    float filterRadius,
+    float currentDepth,
+    float bias,
+    sampler2DArrayShadow shadowMap
+) {
+    float accShadowVal = 0;
+    float angle = GetRandomAngle(position);
+    float cosAngle = cos(angle);
+    float sinAngle = sin(angle);
+    
+    
+    for (int i = 0; i < 16; ++i) {
+        vec2 rotatedDisk = poissonDisk[i];
+
+        rotatedDisk = vec2(
+            rotatedDisk.x * cosAngle - rotatedDisk.y * sinAngle,
+            rotatedDisk.x * sinAngle + rotatedDisk.y * cosAngle
+        );
+
+        vec2 sampledPosition = poissonDisk[i] * texelSize * filterRadius;
+        float closestDepth = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
+        accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+    }
+
+    return accShadowVal / 16.0;
+}
+
+
+
+
 
 float CalculateDirectionalShadow(
     ShadowData shadowData,
@@ -160,10 +200,19 @@ float CalculateDirectionalShadow(
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
 
-    shadowLowest = texture(
-        u_directionalShadowMap,
-        vec4(coords, shadowId, fragClipSpace.z - bias)
+    // poisson disk sampling.
+    vec2 texelSize = 1.0 / framebufferSize;
+
+    shadowLowest = PCF_PoissonDisk(
+        coords,
+        texelSize,
+        shadowId,
+        4,
+        fragClipSpace.z,
+        bias,
+        u_directionalShadowMap
     );
+
     // get distance away from camera
     // return vec3(coords, 0.0).x;
     return shadowLowest;
@@ -347,7 +396,7 @@ void main() {
         VERTEXOUTPUT.frag_position, 
         VERTEXOUTPUT.frag_normal,
         VERTEXOUTPUT.frag_viewPosition,
-        int(gloss.r * 32.0), 1.0
+        int(gloss.r * 16.0), 1.0
     );
     float sValue = CalculateShadow();
 

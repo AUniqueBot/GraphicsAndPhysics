@@ -119,7 +119,7 @@ void PhongMaterial::SetupTextures() {
     if (!m_texManagerReference) {
         LOG_WARN("Skipping Texture Setup");
         return;
-    } 
+    }
     TextureManager& texManager { *m_texManagerReference };
     
     using namespace TextureProperties;
@@ -141,7 +141,7 @@ void PhongMaterial::SetupTextures() {
 }
  
 
- 
+
 void PhongMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glActiveTexture(GL_TEXTURE0);
