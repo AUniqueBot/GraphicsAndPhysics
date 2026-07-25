@@ -275,8 +275,10 @@ LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
 
 
 void main() {
-	vec4 color = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     out_objectId = OBJECTPARAMS.objectId;
+
+
+	vec4 diff = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     // out_color = float(u_objectId % 256u) / 255.0; // testing
     LightingResult lighting =
         CalculateLighting(
@@ -285,23 +287,25 @@ void main() {
             );
 
     // values here.
-    out_color = vec4(lighting.diffuse, 1.0) * CalculateShadow();
-    out_color += vec4(lighting.ambient, 1.0);
-    out_color *= color;
-
-
-    vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
-    vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
-    vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
-
-
-    float depth = -VERTEXOUTPUT.frag_viewPosition.z;
-    int depthIndex = min(int(depth/50.0), 3);
-    vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0,0,0,1.0);
     float sValue = CalculateShadow();
-    if (sValue != 1.0) {
-        out_color = mix(out_color, shadowCol, 0.5);;
-    }
+    vec3 ambientComponent = lighting.ambient * diff.rgb;
+    vec3 diffuseComponent = lighting.diffuse * diff.rgb * sValue;
+
+
+    out_color += vec4(diffuseComponent, 1.0);
+    out_color += vec4(ambientComponent, 1.0);
+
+
+    // vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
+    // vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
+    // vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
+
+    // float depth = -VERTEXOUTPUT.frag_viewPosition.z;
+    // int depthIndex = min(int(depth/50.0), 3);
+    // vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0,0,0,1.0);
+    // if (sValue != 1.0) {
+    //     out_color = mix(out_color, shadowCol, 0.5);;
+    // }
     
     // out_color = vec4(vec3(s), 1.0);
   

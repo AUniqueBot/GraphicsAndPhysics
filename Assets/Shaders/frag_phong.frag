@@ -337,18 +337,12 @@ LightingResult CalculateLighting(
 
 
 void main() {
-	
-    
+	    
     out_objectId = OBJECTPARAMS.objectId;
     vec4 diff = texture(u_albedo, VERTEXOUTPUT.frag_uv);
     vec4 spec = texture(u_specular, VERTEXOUTPUT.frag_uv);
     vec4 gloss = texture(u_gloss, VERTEXOUTPUT.frag_uv);
 
-    vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
-    vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
-    vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
-    
-    
     LightingResult lighting = CalculateLighting(
         VERTEXOUTPUT.frag_position, 
         VERTEXOUTPUT.frag_normal,
@@ -367,10 +361,13 @@ void main() {
     out_color += vec4(diffuseComponent, 1.0);
     out_color += vec4(specularComponent, 1.0);
 
-    float depth = -VERTEXOUTPUT.frag_viewPosition.z;
-    int depthIndex = min(int(depth/50.0), 3);
-    vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0.0, 0.0, 0.0, 1.0);
-
+    // CSM testing.
+    // vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
+    // vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
+    // vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
+    // float depth = -VERTEXOUTPUT.frag_viewPosition.z;
+    // int depthIndex = min(int(depth/50.0), 3);
+    // vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0.0, 0.0, 0.0, 1.0);
     // if (sValue != 1.0) {
     //     out_color = mix(out_color, shadowCol, 0.5);;
     // }
