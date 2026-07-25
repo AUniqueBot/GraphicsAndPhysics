@@ -775,7 +775,7 @@ bool Texture::IsValid() const {
 
 const TextureIDInfo& Texture::GetTextureIDInfo() const {
 	return m_textureIdInfo;
-}
+} 
 
 void Texture::SetTextureIDInfo(const TextureIDInfo& _info) {
 	m_textureIdInfo = _info;
@@ -789,7 +789,7 @@ void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBeha
 }
 
 void Texture::SetMagFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
-	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
+	SparseSetView<TextureGPU> texHandle = m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID()); 
 	if (!texHandle) return;
 	TextureGPU& tex = *texHandle;
 	tex.SetFilterBehaviourMag(_filterBehaviour);
@@ -800,7 +800,7 @@ TextureProperties::FilterBehaviour Texture::GetMinFilter() const {
 	return texHandle.GetFilterBehaviourMin(); 
 }
 
-TextureProperties::FilterBehaviour Texture::GetMagFilter() const {
+TextureProperties::FilterBehaviour Texture::GetMagFilter() const { 
 	TextureGPU& texHandle = *m_textureIdInfo.GetTextureManager()->GetTexture(m_textureIdInfo.GetTextureID());
 	return texHandle.GetFilterBehaviourMag();
 }
@@ -822,7 +822,7 @@ void Texture::SetInternalFormat(const TextureProperties::TextureFormat& _format)
 	assert(m_textureIdInfo.IsValid() && "Texture Info invalid");
 	TextureGPU& texHandle = GetTextureGPU();
 	texHandle.SetInternalImageFormat(_format);
-}
+} 
 
 void Texture::SetPixelColor(unsigned _col, int _x, int _y, int _z) {
 	SetPixelColor(HexToVec4F(_col), _x, _y, _z);
@@ -910,7 +910,7 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::ImageDataTy
 	//case PixelDataType::SHORT:
 	//	_os << "SHORT";
 	//	break;
-	case ImageDataType::FLOAT_32:
+	case ImageDataType::FLOAT_32: 
 		_os << "FLOAT";
 		break;
 	default:
@@ -1028,3 +1028,4 @@ std::ostream& operator<<(std::ostream& _os, const TextureProperties::FilterBehav
 	}
 	return _os;
 }
+   

@@ -210,12 +210,17 @@ float CalculateSpecularHighlight(
     vec3 _viewPosition, 
     vec3 _fragPosition, 
     vec3 _fragNormal,
-    int _shininess, float _specularStrength
-    ){
-    // specular
-    vec3 reflectDir = reflect(-_lightDir, _fragNormal);  
-    vec3 viewDir = _viewPosition - _fragPosition; 
-    return pow(max(dot(viewDir, reflectDir), 0.0), _shininess) * _specularStrength;
+    int _shininess, 
+    float _specularStrength
+){
+    vec3 N = normalize(_fragNormal);
+    vec3 incidentLightDir = normalize(_lightDir); 
+    vec3 reflectDir = reflect(incidentLightDir, N);  
+    vec3 viewDir = normalize(_viewPosition - _fragPosition); 
+    float specDot = max(dot(viewDir, reflectDir), 0.0);
+
+    // Compute the final generic Phong power formula
+    return pow(specDot, float(_shininess)) * _specularStrength;
 }
 
 
@@ -279,7 +284,8 @@ LightingResult CalculateLighting(
                 );
 
             vec3 lightDir = normalize(fragPosition - currentLight.position_type.xyz);
-            specularRes += CalculateSpecularHighlight(
+            vec3 lightColor = currentLight.color_power.rgb;
+            specularRes +=  lightColor * CalculateSpecularHighlight(
                 lightDir, 
                 cameraPosition, 
                 fragPosition, 
@@ -299,7 +305,8 @@ LightingResult CalculateLighting(
                 );
 
             vec3 lightDir = normalize(currentLight.direction_roll.xyz);
-            specularRes += CalculateSpecularHighlight(
+            vec3 lightColor = currentLight.color_power.rgb;
+            specularRes += lightColor * CalculateSpecularHighlight(
                 lightDir, 
                 cameraPosition, 
                 fragPosition, 
@@ -346,7 +353,7 @@ void main() {
         VERTEXOUTPUT.frag_position, 
         VERTEXOUTPUT.frag_normal,
         VERTEXOUTPUT.frag_viewPosition,
-        int(gloss.r * 128.0), 0.25
+        int(gloss.r * 32.0), 1.0
     );
     float sValue = CalculateShadow();
 
@@ -354,18 +361,19 @@ void main() {
     vec3 diffuseComponent  = lighting.diffuse * diff.rgb * sValue;
     vec3 specularComponent = lighting.specular * spec.rgb * sValue; // Masked by spec texture
 
+
     // Combine everything for the final frag color
-    vec3 finalColor = ambientComponent + diffuseComponent + specularComponent;
-
-
+    out_color += vec4(ambientComponent, 1.0); 
+    out_color += vec4(diffuseComponent, 1.0);
+    out_color += vec4(specularComponent, 1.0);
 
     float depth = -VERTEXOUTPUT.frag_viewPosition.z;
     int depthIndex = min(int(depth/50.0), 3);
     vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0.0, 0.0, 0.0, 1.0);
 
-    if (sValue != 1.0) {
-        out_color = mix(out_color, shadowCol, 0.5);;
-    }
+    // if (sValue != 1.0) {
+    //     out_color = mix(out_color, shadowCol, 0.5);;
+    // }
     
     // out_color = vec4(vec3(s), 1.0);
   

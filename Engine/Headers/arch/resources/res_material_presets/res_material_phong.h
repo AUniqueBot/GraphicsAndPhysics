@@ -35,54 +35,53 @@ public:
 
 	void SetUsesSpecularValue(bool _usesSpecularValue);
 	bool UsesSpecularValue() const;
-
-
+	 
+	 
 	// gloss
 	const float& Gloss() const;
 	void Gloss(float _value);
-	const GLuint& GetGlossImageTexture() const;
-	void SetGlossImageTexture(const GLuint& _texture);
-
+	const GLuint& GetGlossImageTexture() const; 
+	void SetGlossImageTexture(const GLuint& _texture); 
+	 
 
 	const GLuint& GetColorTextureID() const;
 	const GLuint& GetSpecularTextureID() const;
-	const GLuint& GetGlossTextureID() const;
-
+	const GLuint& GetGlossTextureID() const; 
+	 
 
 
 	// need a better name!.
-	void ApplyUniforms() const override;
+	void ApplyUniforms() const override; 
 
 	// need a resource manager for textures
 private:
-	void SetupTextures(); 
+	void SetupTextures();  
 private:
-
+	 
 	// - color ---------------------------------------
 	glm::vec4 m_color					{ 0.5f, 0.75f, 1.0f, 1.0f };
 	bool m_usesColorValue				{ true };
 
-	glm::vec4 m_specularCol				{ 1.0f, 0.0f, 0.0f, 1.0f };
+	glm::vec4 m_specularCol				{ 1.0f, 1.0f, 1.0f, 1.0f };
 	bool m_usesSpecularValue			{ true };
-
-	float m_glossVal					{ 0.95f };
+	 
+	float m_glossVal					{ 1.0f };
 	bool m_usesGlossValue				{ true };
+	 
 
-
-	Texture2D m_textureColor			{ TextureIDInfo{} };
-	GLuint m_reservedColorTexId{};
+	Texture2D m_textureColor			{ TextureIDInfo{} }; 
+	GLuint m_reservedColorTexId{}; 
 	GLuint m_reservedColorImageTexId{};
 
 	Texture2D m_textureSpecular			{ TextureIDInfo{} };
 	GLuint m_reservedSpecularTexId{};
-	GLuint m_reservedSpecularImageTexId{};
+	GLuint m_reservedSpecularImageTexId{};  
 
-
-	Texture2D m_textureGloss			{ TextureIDInfo{} };
-	GLuint m_reservedGlossTexId{};
-	GLuint m_reservedGlossImageTexId{};
-
+	 
+	Texture2D m_textureGloss			{ TextureIDInfo{} }; 
+	GLuint m_reservedGlossTexId{}; 
+	GLuint m_reservedGlossImageTexId{};  
+	 
 	INSPECTABLE_DECLAREPROPS(PhongMaterial);
 
-};
-
+};  

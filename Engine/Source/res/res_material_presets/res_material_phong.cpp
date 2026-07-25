@@ -119,27 +119,29 @@ void PhongMaterial::SetupTextures() {
     if (!m_texManagerReference) {
         LOG_WARN("Skipping Texture Setup");
         return;
-    }
+    } 
     TextureManager& texManager { *m_texManagerReference };
     
     using namespace TextureProperties;
-    TextureProps props;
-    props.m_internalImageFormat = TextureFormat::RGBA8;
-    m_textureColor = texManager.Create2DTexture(1, 1, props);
+    TextureProps colProps;
+    colProps.m_internalImageFormat = TextureFormat::RGBA8;
+    m_textureColor = texManager.Create2DTexture(1, 1, colProps);
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 
-
-    m_textureSpecular = texManager.Create2DTexture(1, 1, props);
+    TextureProps specProps;
+    specProps.m_internalImageFormat = TextureFormat::RGBA8;
+    m_textureSpecular = texManager.Create2DTexture(1, 1, specProps);
     m_textureSpecular.SetPixelColor(m_specularCol, 0, 0, 0);
 
 
-    props.m_internalImageFormat = TextureFormat::R8;
-    m_textureGloss = texManager.Create2DTexture(1, 1, props);
-    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
+    TextureProps glossProps;
+    glossProps.m_internalImageFormat = TextureFormat::R8;
+    m_textureGloss = texManager.Create2DTexture(1, 1, glossProps);
+    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0); 
 }
+ 
 
-
-
+ 
 void PhongMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
         glActiveTexture(GL_TEXTURE0);
@@ -147,12 +149,12 @@ void PhongMaterial::ApplyUniforms() const {
         glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
     }
     if (m_uniformLocations.contains(U_SPECULAR)) {
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0 + 1);
         glBindTexture(GL_TEXTURE_2D, GetSpecularTextureID());
         glUniform1i(m_uniformLocations.at(U_SPECULAR), 0);
     }
     if (m_uniformLocations.contains(U_GLOSS)) {
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0 + 2);
         glBindTexture(GL_TEXTURE_2D, GetGlossTextureID());
         glUniform1i(m_uniformLocations.at(U_GLOSS), 0);
     }
