@@ -2,6 +2,11 @@
 #include <pch.h>
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
+#include <arch/ecs/ecs_entityFactory.h>
+
+#include <arch/core.h>
+
+
 
 
 
@@ -24,10 +29,16 @@ namespace Serialization {
 		template <typename T>
 		std::optional<T> Get(const char* _itemName);
 
+		rapidjson::Value& GetMember(const char* _itemName);
+		const rapidjson::Value& GetMember(const char* _itemName) const;
+
 	private:
 		rapidjson::Document m_document;
 
 	};
+
+	EntityID LoadEntity(const rapidjson::Value& _entityData);
+	void LoadEntity(const rapidjson::Value& _entityData, EntityID _id);
 }
 
 #include <serialization/serialize_jsonfileDEF.hpp>

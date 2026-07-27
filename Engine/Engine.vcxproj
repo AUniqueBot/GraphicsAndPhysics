@@ -183,6 +183,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
     <ClCompile Include="Source\arch\common\scene.cpp" />
+    <ClCompile Include="Source\arch\core\core_scenemanager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp" />
     <ClCompile Include="Source\res\res_shaderManager.cpp" />
@@ -247,7 +248,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />
-    <ClInclude Include="Headers\arch\core\core_sceneManager.h" />
+    <ClInclude Include="Headers\arch\core\core_scenemanager.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
     <ClInclude Include="Headers\arch\components\componentList.h" />

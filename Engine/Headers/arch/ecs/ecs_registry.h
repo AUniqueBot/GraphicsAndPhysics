@@ -38,6 +38,8 @@ public:
 	virtual bool Add(EntityID _addTo) = 0;
 	virtual bool Remove(EntityID _removeFrom) = 0;
 	virtual bool ComponentExistsForEntity(const EntityID& _id) = 0;
+
+	virtual void Clear() = 0;
 };
 
 
@@ -65,7 +67,7 @@ public:
 	bool Remove(EntityID _removeFrom) override;
 
 	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.At(_id)); }
-
+	void Clear() { m_compPool.clear(); }
 
 	ComponentView<T> Get(EntityID _client);
 	ComponentView<const T> Get(EntityID _client) const;
@@ -234,13 +236,15 @@ public:
 
 	// creates an entity.
 	EntityView Instantiate();
+	EntityView Instantiate(EntityID _existingID);
 
 	///! @brief destroys the specified entity
 	///! @param Entity: entity to remove
 	///! @param EntityID: ALT entityID to remove
-	///! @param
+	///! @param EntityID: ALT list - IDs of entities to remove
 	void Destroy(Entity _remove, bool _recursiveDeleteChildren = true);
 	void Destroy(EntityID _remove, bool _recursiveDeleteChildren = true);
+	void Destroy(std::vector<EntityID> _remove, bool _recursiveDeleteChildren = true);
 
 
 	// - existence checks -------------------------------------------------
@@ -262,10 +266,13 @@ public:
 	void ClearSelection();
 	bool EntityIsSelected(EntityID _id, bool _isCurrentSelection = true) const;
 
+	void ClearEntitiesAndComponentData();
+
+
 
 private:
 
-	void Clear();
+	void ClearAllData();
 	// map would be a better idea
 	SparseSet<EntityID, Entity> m_entityList;
 	std::vector<EntityID> m_selectedEntitiesList;

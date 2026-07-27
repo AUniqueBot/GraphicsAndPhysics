@@ -7,7 +7,7 @@
 
 
 EntityRegistry::~EntityRegistry() {
-	Clear();
+	ClearAllData();
 }
 
 void EntityRegistry::PrintDebugInfo() const {
@@ -61,7 +61,7 @@ const std::vector<ComponentHandle>& EntityRegistry::GetEntityComponents(const En
 
 
 EntityView EntityRegistry::Instantiate() {
-	Entity newEntt	{ this };
+	Entity newEntt{ this };
 	EntityID refID = newEntt.GetID();
 	m_entityList.Add(std::move(newEntt), refID);
 	// map version.
@@ -74,6 +74,21 @@ EntityView EntityRegistry::Instantiate() {
 	toRet->AddComponent<Transform>(); // it will ALWAYS add a transform component.
 
 	return m_entityList.At(refID);
+}
+
+EntityView EntityRegistry::Instantiate(EntityID _existingID) {
+	Entity newEntt	{ this, _existingID };
+	m_entityList.Add(std::move(newEntt), _existingID);
+	// map version.
+	// m_entityList.Add(std::move(newEntt), newEntt.GetID());	
+	// m_entityList.emplace(std::make_pair(refID, std::move(newEntt)));
+	// return m_entityList.at(refID);
+
+	// note to add a transform component.
+	auto toRet = m_entityList.At(_existingID);
+	toRet->AddComponent<Transform>(); // it will ALWAYS add a transform component.
+
+	return m_entityList.At(_existingID);
 }
 
 void EntityRegistry::Destroy(Entity _remove, bool _recursiveDeleteChildren) {
@@ -94,6 +109,12 @@ void EntityRegistry::Destroy(EntityID _id, bool _recursiveDeleteChildren) {
 	if (EntityID::ENTITYID_INVALID == _id) return;
 	EntityView e { GetEntity(_id) };
 	if (e) Destroy(*e, _recursiveDeleteChildren);
+}
+
+void EntityRegistry::Destroy(std::vector<EntityID> _remove, bool _recursiveDeleteChildren) {
+	for (EntityID id : _remove) {
+		Destroy(id, _recursiveDeleteChildren);
+	}
 }
 
 
@@ -168,9 +189,19 @@ bool EntityRegistry::EntityIsSelected(EntityID _id, bool _isCurrentSelection) co
 	return itr != m_selectedEntitiesList.end();
 }
 
+void EntityRegistry::ClearEntitiesAndComponentData() {
+	for (auto& [_, componentPools] : m_componentData) {
+		componentPools.m_componentPool->Clear();
+	}
+	m_entityList.clear();
+	m_selectedEntitiesList.clear();
+}
 
-void EntityRegistry::Clear() {
+
+void EntityRegistry::ClearAllData() {
 	// ensure no dangling references.
+	ClearEntitiesAndComponentData();
 	m_componentData.clear();
+	m_componentIDLookup.clear();
 }
 

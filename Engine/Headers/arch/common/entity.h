@@ -15,6 +15,7 @@ class Entity {
 
 public:
 	Entity(EntityRegistry* _registry) : m_registry{ _registry }	{};
+	Entity(EntityRegistry* _registry, EntityID _id) : m_registry{ _registry }, m_id{ _id } {};
 	~Entity()													{ m_registry = nullptr; }
 
 	EntityID GetID() const										{ return m_id; };

@@ -1,9 +1,36 @@
 #include <algorithm>
 #include <arch/common/scene.h>
 #include <arch/ecs/ecs_registry.h>
-Scene::Scene(EntityRegistry* _registry) : m_entityRegistry { _registry } {
+#include <serialization/serialize_jsonfile.h>
 
+bool Scene::LoadScene(std::filesystem::path _path) {
+	if (!_path.has_filename()) {
+		LOG_ERROR("Provided path is not a file, returning false... (path provided: " << _path << ")");
+		return false;
+	}
+
+	Serialization::JSONFile file(_path);
+	
+
+	// - scene loading ----------------------------------------------------
+
+
+	// - entity loading ---------------------------------------------------
+	if (!file.HasMember("emtities")) {
+		LOG_INFO("No entities listed. Ending.");
+		return true;
+	}
+	rapidjson::Value& entityListObj = file.GetMember("entities");
+	
+	for (const auto& entityObj : entityListObj.GetObj()) {
+		unsigned long savedId = std::stoul(entityObj.name.GetString());
+		EntityID id(savedId);
+		Serialization::LoadEntity(entityObj.value, id);
+		m_entities.push_back(id);
+	}
+	return true;
 }
+
 bool Scene::AddEntity(EntityID _id) {
 	if (_id == EntityID::ENTITYID_INVALID) return false;
 	m_entities.push_back(_id);

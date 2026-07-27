@@ -183,6 +183,9 @@
     <ClCompile Include="Source\serialization\serialize_jsonfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\arch\core\core_scenemanager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -470,7 +473,7 @@
     <ClInclude Include="Headers\arch\common\scene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\core\core_sceneManager.h">
+    <ClInclude Include="Headers\arch\core\core_scenemanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\serialization\serialize_jsonfileDEF.hpp">

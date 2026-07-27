@@ -314,7 +314,7 @@ void UIWidget_Viewport::UpdateGizmo() {
 	if (!m_viewportPointer) return;
 	Core* c								{ ApplicationCore() };
 	if (!c) return;
-	EntityRegistry registry = c->GetRegistry();
+	EntityRegistry& registry = c->GetRegistry();
 
 	Viewport& vp						{ *m_viewportPointer };
 	EntityID selectedEntityID			{ registry.SelectedEntity() };
