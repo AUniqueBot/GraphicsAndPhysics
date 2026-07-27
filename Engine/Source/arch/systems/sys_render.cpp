@@ -971,6 +971,7 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
     case ShadingModel::PRINCIPLED:
         break;
     default:
+        shaderProgramAlias = ShaderConstants::C_ID_ERRORSHADERPROG;
         break;
     }
     if (shaderProgramAlias.empty()) { 
@@ -984,7 +985,6 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
             
         shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
         _mat.SetShaderProgram(shaderId);
-            
         _mat.SetTextureManager(&m_textureManager);
         _mat.Init();
     }

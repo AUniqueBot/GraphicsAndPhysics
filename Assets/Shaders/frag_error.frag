@@ -19,18 +19,23 @@ layout (std140, binding=1) uniform ObjectUBO {
 	uint objectId;
 } OBJECTPARAMS;
 
+float scale = 20.0;
 
 void main() {
     out_objectId = OBJECTPARAMS.objectId;
 
+    vec4 checkerColor1 = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 checkerColor2 = vec4(1.0, 0.0, 1.0, 1.0);
+    vec2 currentUv = VERTEXOUTPUT.frag_uv;
 
+    // uv range - [0, 1] normalized.
+    // normalized ranges.
+    // ranges [0, 0.5] x, [0, 0.5] y - magenta
+    // ranges [0.5, 1] x, [0, 0.5] y - black
+    // ranges [0, 0.5] x, [0.5, 1] y - black
+    // ranges [0.5, 1] x, [0.5, 1] y - magenta
 
-    out_color = vec4(1.0, 0.0, 1.0, 1.0);
-    // checkerboard pattern based on uv.
-    // colors - magenta and black.
-
-    
-
-
+    vec2 scaledUV = currentUv * float(scale);
+    out_color = mod(floor(scaledUV.x) + floor(scaledUV.y), 2.0) < 1.0 ? checkerColor1 : checkerColor2;
     return;
 }

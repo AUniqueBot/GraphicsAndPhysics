@@ -50,7 +50,7 @@ Material& MeshRenderer::GetDefaultMaterial() {
 	static LambertMaterial m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
 	if (!defaultMatInit) {
-		m_defaultMaterial.Color(0xbadbedff);
+		m_defaultMaterial.Color(0xaaaaaaff);
 		// - init is true -----------------------------------------
 		defaultMatInit = true;
 	}
