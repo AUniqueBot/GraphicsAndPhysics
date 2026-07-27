@@ -7,7 +7,6 @@ class LambertMaterial : public Material {
 
 public:
 
-	void Init() override;
 	Materials::ShadingModel GetShadingModel() const override;
 
 	// - getters -------------------------------------
@@ -22,6 +21,10 @@ public:
 
 	const GLuint& GetColorTextureID() const;
 	// need a resource manager for textures
+
+protected:
+	void InitInternal() override;
+
 private:
 	void SetupTextures();
 

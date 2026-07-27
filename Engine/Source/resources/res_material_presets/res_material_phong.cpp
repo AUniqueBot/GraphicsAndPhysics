@@ -5,7 +5,7 @@
 
 
 
-void PhongMaterial::Init() {
+void PhongMaterial::InitInternal() {
 
     // - setting up uniforms -------------
     InitUniformLocations();

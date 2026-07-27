@@ -541,10 +541,7 @@ void RenderSystem::LightingRenderPass(
         currentVAO.UseMesh(*mesh);
         // check if there is data here...
         FillObjectUBO(e, *trs);
-
         ResolveMeshRendererMaterials(*mr);
-        //mr->ApplyShadowMap(m_directionalShadowMaps);
-        ApplyShadowMap(*mr);
         Render(*mr);
 
         m_vaoManager.UnbindVAO();
@@ -688,20 +685,8 @@ void RenderSystem::SpotLightShadowRenderPass(
 void RenderSystem::Render(const MeshRenderer& _mr) const {
     std::shared_ptr<const Mesh> mesh{ _mr.GetMesh() };
     if (!mesh) return;
-    GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * 3) };
-    const std::vector<std::shared_ptr<Material>> matList    { _mr.GetMaterialList() };
-    // use the default material and render.
-    if (matList.size() == 0) {
-        //const Material& mat = GetDefaultMaterial();
-        //mat.ApplyUniforms();
-        //glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
-        return;
-    }
-    // go through all materials
-    for (const std::shared_ptr<Material> matPtr : matList) {
-        matPtr->ApplyUniforms();
-        glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
-    }
+    GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * glm::vec3::length()) };
+    glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
 }
 
 void RenderSystem::DebugRenderPass(const unsigned& textureId) {
@@ -915,6 +900,12 @@ void RenderSystem::SetupShadowBuffers() {
     m_pointLightShadowMaps.BuildShadowMap();
 
 
+    TextureProperties::TextureProps props;
+    props.m_internalImageFormat = TextureProperties::TextureFormat::DEPTH32F;
+    glm::ivec2 framebufferSize = m_directionalShadowMaps.GetFramebufferSize();
+    glm::ivec3 dims = { framebufferSize.x, framebufferSize.y, m_directionalShadowMaps.GetLayers() };
+    m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+
     //TextureIDInfo texID = m_textureManager.Create2DTexture(SHADOW_WH, SHADOW_WH);
     //m_directionalShadowMaps.SetTextureIDInfo(texID);
  //   SparseSetView<TextureGPU> tex = m_textureManager.GetTexture(texID.GetTextureID());
@@ -938,34 +929,29 @@ void RenderSystem::UnbindShadowShader() {
     glUseProgram(0);
 }
 
-void RenderSystem::ApplyShadowMap(MeshRenderer& mr) {
-    std::vector<std::shared_ptr<Material>>& matList{ mr.GetMaterialList() };
-    if (matList.size() == 0) {
-        const Material& mat{ MeshRenderer::GetDefaultMaterial() };
-        mat.ApplyShadowMap(m_directionalShadowMaps);
-    }
-
-    for (const auto& matPtr : matList) {
-        matPtr->ApplyShadowMap(m_directionalShadowMaps);
-    }
-}
 
 void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
     if (!_mr.GetMesh()) return; // no point resolving something can't be seen
-    for (std::shared_ptr<Material>& matPtr : _mr.GetMaterialList()) {
+    std::vector<std::shared_ptr<Material>>& materialList = _mr.GetMaterialList();
+    if (materialList.empty()) {
+        ResolveMaterial(MeshRenderer::GetDefaultMaterial());
+        return;
+    }
+
+    for (std::shared_ptr<Material>& matPtr : materialList) {
         Material& mat{ *matPtr };
-        ResolveDefaultMaterial(mat);
+        ResolveMaterial(mat);
     }
 }
 
-void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
+void RenderSystem::ResolveMaterial(Material& _mat) {
     ShaderManager& sr{ Core::GetInstance().GetShaderManager() };
     using namespace Materials;
     ShadingModel type{ _mat.GetShadingModel() };
-    if (
-        _mat.GetShaderProgram() != ShaderConstants::C_INVALIDSHADERID ||
-        type == Materials::ShadingModel::NONE
-        ) return;
+
+    if (type == Materials::ShadingModel::NONE) return;
+
+
     std::string shaderProgramAlias{};
     switch (type) {
     case ShadingModel::LAMBERT:
@@ -987,15 +973,26 @@ void RenderSystem::ResolveDefaultMaterial(Material& _mat) {
     default:
         break;
     }
-    if (!shaderProgramAlias.empty()) {
+    if (shaderProgramAlias.empty()) { 
+        // do an unlit unused texture!
+        return; 
+    }
+    
+
+    if (!_mat.IsInitialised()) {
         GLuint shaderId{ ShaderConstants::C_INVALIDSHADERID };
+            
         shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
-        LOG_INFO("Shader ID: " << shaderId);
         _mat.SetShaderProgram(shaderId);
+            
         _mat.SetTextureManager(&m_textureManager);
         _mat.Init();
-        _mat.ApplyUniforms();
     }
+    _mat.UseMaterial();
+    _mat.ApplyUniforms();
+    // - setup shadow maps ----------------------------
+    _mat.ApplyShadowMap(m_directionalShadowMaps.GetTextureID(), 0, 0);
+    
 
 }
 

@@ -5,7 +5,7 @@
 #include <arch/resources/res_shaderManager.h>
 #include <arch/core.h>
 
-void LambertMaterial::Init() {
+void LambertMaterial::InitInternal() {
     // - setting up uniforms -------------
     InitUniformLocations();
     SetupTextures();
@@ -23,7 +23,7 @@ const glm::vec4& LambertMaterial::Color() const {
 
 void LambertMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
-    m_color = _newColor;    
+    m_color = _newColor;
     m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
 }
 

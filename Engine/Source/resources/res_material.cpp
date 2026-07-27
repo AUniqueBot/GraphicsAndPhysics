@@ -6,8 +6,14 @@
 
 
 void Material::Init() {
-    
+	InitInternal();
+	m_initialized = true;
 }
+
+void Material::InitInternal() {
+
+}
+
 
 void Material::SetShaderProgram(GLuint shaderProg){
 	m_shader =shaderProg;
@@ -19,6 +25,10 @@ int Material::GetShaderProgram() const {
 
 Materials::ShadingModel Material::GetShadingModel() const {
 	return Materials::ShadingModel::NONE;
+}
+
+void Material::UseMaterial() {
+	glUseProgram(GetShaderProgram());
 }
 
 
@@ -143,10 +153,22 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
-	glUseProgram(GetShaderProgram());
-	GLint uniformLocation{};
+bool Material::IsInitialised() const {
+	return m_initialized;
+}
 
+void Material::SetInitialised(bool _setting) {
+	m_initialized = _setting;
+}
+
+
+void Material::ApplyShadowMap(
+	const unsigned int& _dirShadowId,
+	const unsigned int& _spotShadowId,
+	const unsigned int& _pointShadowId
+
+) const {
+	GLint uniformLocation{};
 	// lambda function
 	auto GetUniform = [this](const char* _uniformName) {
 		auto it = m_uniformLocations.find(_uniformName);
@@ -156,16 +178,29 @@ void Material::ApplyShadowMap(const ShadowMap& _shadowMap) const {
 		return it->second;
 
 		};
-
 	uniformLocation = GetUniform(U_DIRECTIONALSHADOWMAP);
-	if (-1 != uniformLocation) {
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, _shadowMap.GetTextureID());
+
+	if (-1 != uniformLocation && _dirShadowId) {
+		glActiveTexture(GL_TEXTURE31);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _dirShadowId);
+		glUniform1i(uniformLocation, 1);
+	}
+	uniformLocation = GetUniformLocation(U_POINTSHADOWMAP);
+	if (-1 != uniformLocation && _pointShadowId) {
+		glActiveTexture(GL_TEXTURE31 - 1);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _pointShadowId);
+		glUniform1i(uniformLocation, 1);
+	}
+	uniformLocation = GetUniformLocation(U_SPOTSHADOWMAP);
+	if (-1 != uniformLocation && _spotShadowId) {
+		glActiveTexture(GL_TEXTURE31 - 2);
+		glBindTexture(GL_TEXTURE_2D_ARRAY, _spotShadowId);
 		glUniform1i(uniformLocation, 1);
 	}
 }
 
 void Material::ApplyUniforms() const {}
+
 
 
 GLint Material::GetUniformLocation(const std::string& _uniformName) const {

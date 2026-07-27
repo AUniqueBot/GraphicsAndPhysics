@@ -74,6 +74,25 @@ namespace TextureProperties {
 	}
 
 
+	static GLenum OpenGL_ImageFormatToEnum(TextureFormat _format) {
+		switch (_format) {
+		case TextureFormat::R8: return GL_R8;
+		case TextureFormat::RG8: return GL_RG8;
+		case TextureFormat::RGB8: return GL_RGB8;
+		case TextureFormat::RGBA8: return GL_RGBA8;
+		case TextureFormat::R16F: return GL_R16F;
+		case TextureFormat::RG16F: return GL_RG16F;
+		case TextureFormat::RGB16F: return GL_RGB16F;
+		case TextureFormat::RGBA16F: return GL_RGBA16F;
+		case TextureFormat::SRGB8: return GL_SRGB8;
+		case TextureFormat::SRGBA8: return GL_SRGB8_ALPHA8;
+		case TextureFormat::DEPTH24: return GL_DEPTH_COMPONENT24;
+		case TextureFormat::DEPTH32F: return GL_DEPTH_COMPONENT32F;
+		default: return GL_INVALID_ENUM;
+		}
+	}
+
+
 	static inline int GetUploadDimension(TextureProperties::TextureType _type) {
 		using namespace TextureProperties;
 		switch (_type)
@@ -110,6 +129,7 @@ TextureGPU::TextureGPU(
 	m_textureType = _type;
 	m_dimensions = _dims;
 	m_textureProperties = _props;
+	
 }
 
 
@@ -366,7 +386,7 @@ void TextureGPU::Allocate() {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
-	GLenum internalFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
+	GLenum internalFormat = OpenGL_ImageFormatToEnum(m_textureProperties.m_internalImageFormat);
 	int mipCount = m_textureProperties.m_mipmapCount > 0 ? m_textureProperties.m_mipmapCount : 1;
 	switch (uploadDimensionCount) {
 	case 1:
@@ -402,8 +422,10 @@ void TextureGPU::Upload(TextureProperties::TextureUploadData _imageData) const {
 		}
 	}
 
-	GLenum pixelFormat = static_cast<GLenum>(m_textureProperties.m_pixelFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
+
+	TextureProperties::InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
+	GLenum pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
+	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
 
 
 

@@ -54,15 +54,22 @@ public:
 
 public:
 
-	virtual void Init();
+	void Init();
 
 	void SetShaderProgram(GLuint _shaderProg);
 	int GetShaderProgram() const;
 
 	// - shader programs --------------------------------------
 	virtual Materials::ShadingModel GetShadingModel() const;
+	void UseMaterial();
 
-	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
+
+
+	void ApplyShadowMap(
+		const unsigned int& _dirShadowId,
+		const unsigned int& _spotShadowId,
+		const unsigned int& _pointShadowId
+	) const;
 	virtual void ApplyUniforms() const;
 
 
@@ -87,6 +94,8 @@ public:
 	
 
 	// - config -----------------------------------------------
+	bool IsInitialised() const;
+	void SetInitialised(bool _setting);
 	TextureManager* GetTextureManager();
 	const TextureManager* GetTextureManager() const;
 	void SetTextureManager(TextureManager* _manager);
@@ -94,13 +103,15 @@ public:
 	
 
 protected:
+	virtual void InitInternal();
 	GLint GetUniformLocation(const std::string& _uniformName) const;
 
 	void InitUniformLocations();
 	void SetUniform(std::string _uniformName, UniformData _data) const;
 
-	GLuint m_shader;
 
+	GLuint m_shader;
+	bool m_initialized							{};
 
 	std::map<std::string, UniformData> m_uniformData;
 	std::map<std::string, GLint> m_uniformLocations;

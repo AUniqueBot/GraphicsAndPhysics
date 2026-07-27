@@ -15,7 +15,7 @@ class ShadowMap {
 
 
 public:
-	void Init(const TextureIDInfo& _ref);
+
 
 	void SetShadowMapType(ShadowMapType type);
 	const ShadowMapType& GetShadowMapType() const;
@@ -55,8 +55,8 @@ public:
 
 
 
-	void SetTextureIDInfo(TextureIDInfo _info);
-	const TextureIDInfo& GetTextureIDInfo() const;
+	void SetTexture(const Texture2DArray& _tex);
+	const Texture2DArray& GetTexture() const;
 private:
 
 private:
@@ -75,7 +75,6 @@ private:
 	std::vector<unsigned> m_freeLayers		{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.
-	TextureIDInfo m_textureIdInfo;	// TextureIDInfo handle is temporary; will be replaced with a proper texture 2D array handle.
 	Texture2DArray m_textureHandle			{ TextureIDInfo{} }; // needs a proper constructor.
 	bool m_initialized						{ false };
 

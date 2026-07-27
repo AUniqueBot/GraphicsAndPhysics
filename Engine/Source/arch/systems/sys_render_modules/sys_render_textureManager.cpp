@@ -294,12 +294,12 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 	return texHandle;
 }
 
-TextureIDInfo TextureManager::Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props) {
+TextureIDInfo TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
 	TextureID at = info.GetTextureID();
 	TextureGPU tex = { 
 		TextureProperties::TextureType::TEXTURE_3D,
-		{ width, height, depth },
+		{ _width, _height, _depth },
 		_props
 	};
 	tex.Create();
@@ -309,18 +309,21 @@ TextureIDInfo TextureManager::Create3DTexture(int width, int height, int depth, 
 	return info;
 }
 
-TextureIDInfo TextureManager::Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props) {
+Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {
 	TextureIDInfo info = GenerateTextureIDInfo();
-	m_storage.Add(
-		TextureGPU(
-			TextureProperties::TextureType::TEXTURE_2D_ARRAY,
-			{ width, height, layers },
-			_props
-		),
-		info.GetTextureID()
+	TextureID at = info.GetTextureID();
+	TextureGPU tex = TextureGPU(
+		TextureProperties::TextureType::TEXTURE_2D_ARRAY,
+		{ _width, _height, _layers },
+		_props
 	);
 
-	return info;
+	tex.Create();
+	tex.Allocate();
+	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << "layers.");
+	m_storage.Add(std::move(tex), info.GetTextureID());
+	Texture2DArray texHandle = { info };
+	return texHandle;
 }
 
 TextureIDInfo TextureManager::CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props) {

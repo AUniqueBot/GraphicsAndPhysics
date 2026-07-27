@@ -11,7 +11,6 @@ class PhongMaterial : public Material {
 
 public:
 
-	void Init() override;
 	Materials::ShadingModel GetShadingModel() const override;
 
 	// - getters -------------------------------------
@@ -54,6 +53,11 @@ public:
 	void ApplyUniforms() const override; 
 
 	// need a resource manager for textures
+protected:
+
+	void InitInternal() override; 
+
+
 private:
 	void SetupTextures();  
 private:
@@ -77,11 +81,13 @@ private:
 	GLuint m_reservedSpecularTexId{};
 	GLuint m_reservedSpecularImageTexId{};  
 
-	 
+	
 	Texture2D m_textureGloss			{ TextureIDInfo{} }; 
 	GLuint m_reservedGlossTexId{}; 
 	GLuint m_reservedGlossImageTexId{};  
-	 
+	
+
+
 	INSPECTABLE_DECLAREPROPS(PhongMaterial);
 
 };  

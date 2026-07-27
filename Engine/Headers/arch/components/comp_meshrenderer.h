@@ -41,9 +41,7 @@ public:
 
 	void AddMaterial(std::shared_ptr<Material> _material);
 	void RemoveMaterial(std::shared_ptr<Material> _material);
-	void ApplyShadowMap(const ShadowMap& _shadowMap) const;
 
-	void Render();
 
 
 

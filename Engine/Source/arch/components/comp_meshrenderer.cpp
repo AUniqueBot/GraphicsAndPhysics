@@ -44,41 +44,13 @@ void MeshRenderer::RemoveMaterial(std::shared_ptr<Material> _material) {
 	m_materials.pop_back();
 }
 
-void MeshRenderer::ApplyShadowMap(const ShadowMap& _shadowMap) const {
-	if (m_materials.size() == 0) {
- 		const Material& mat = GetDefaultMaterial();
-		mat.ApplyShadowMap(_shadowMap);
-		return;
-	}
 
-	for (const std::shared_ptr<Material>& matPtr : m_materials) {
-		matPtr->ApplyShadowMap(_shadowMap);
-	}
-}
-
-void MeshRenderer::Render() {
-	GLsizei meshFloatCount { static_cast<GLsizei>(m_mesh->GetIndexDataCount() * 3) };
-	// use the default material and render.
-	if (m_materials.size() == 0) {
-		const Material& mat = GetDefaultMaterial();
-		mat.ApplyUniforms();
-		glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
-		return;
-	}
-	// go through all materials
-	for (const std::shared_ptr<Material> matPtr: m_materials) {
-		matPtr->ApplyUniforms();
-		glDrawElements(GL_TRIANGLES, (m_mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
-	}
-}
 
 Material& MeshRenderer::GetDefaultMaterial() {
-
-	static PhongMaterial m_defaultMaterial{};
+	static LambertMaterial m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
 	if (!defaultMatInit) {
-		m_defaultMaterial.Init();
-
+		m_defaultMaterial.Color(0xbadbedff);
 		// - init is true -----------------------------------------
 		defaultMatInit = true;
 	}

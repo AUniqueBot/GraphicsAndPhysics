@@ -36,9 +36,9 @@ EntityView EntityFactory::CreateCube(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Cube>(Cube()));
 			mr->GetMesh()->Init();
 			mr->Init();
-			std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
-			mat->Color(0xffffffff);
-			mr->AddMaterial(mat);
+			//std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
+			//mat->Color(0xffffffff);
+			//mr->AddMaterial(mat);
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}
@@ -58,9 +58,9 @@ EntityView EntityFactory::CreateSphere(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Sphere>(Sphere()));
 			mr->GetMesh()->Init();
 			mr->Init();
-			std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
-			mat->Color(0xffffffff);
-			mr->AddMaterial(mat);
+			//std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
+			//mat->Color(0xffffffff);
+			//mr->AddMaterial(mat);
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}
@@ -80,9 +80,9 @@ EntityView EntityFactory::CreatePlane(const glm::vec3& pos) {
 			mr->SetMesh(std::make_shared<Plane>(Plane()));
 			mr->GetMesh()->Init();
 			mr->Init();
-			std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
-			mat->Color(0xffffffff);
-			mr->AddMaterial(mat);
+			//std::shared_ptr<LambertMaterial> mat{ std::make_shared<LambertMaterial>(LambertMaterial()) };
+			//mat->Color(0xffffffff);
+			//mr->AddMaterial(mat);
 		}
 		e.GetComponent<Transform>()->Position(pos);
 	}

@@ -16,7 +16,7 @@ public:
 
 	// you can ignore these for the time being.
 	TextureIDInfo Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props = {});
-	TextureIDInfo Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
+	Texture2DArray Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
 	TextureIDInfo CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	

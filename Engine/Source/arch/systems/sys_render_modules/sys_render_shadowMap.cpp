@@ -2,15 +2,6 @@
 
 
 
-void ShadowMap::Init(const TextureIDInfo& _ref) {
-	if (!_ref.IsValid()) {
-		LOG_WARN("Passed TextureIDInfo is invalid. ShadowMap is disabled.");
-		return;
-	}
-	m_initialized = true;
-	m_textureHandle = _ref;
-}
-
 void ShadowMap::SetShadowMapType(ShadowMapType type) {
 	m_shadowMapType = type;
 }
@@ -180,11 +171,11 @@ void ShadowMap::SetLODLevels(unsigned _levels) {
 	m_levels = _levels;
 }
 
-void ShadowMap::SetTextureIDInfo(TextureIDInfo _info) {
-	m_textureIdInfo = _info;
+void ShadowMap::SetTexture(const Texture2DArray& _info) {
+	m_textureHandle = _info;
 }
 
-const TextureIDInfo& ShadowMap::GetTextureIDInfo() const {
-	return m_textureIdInfo;
+const Texture2DArray& ShadowMap::GetTexture() const {
+	return m_textureHandle;
 }
 

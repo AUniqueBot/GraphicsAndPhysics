@@ -15,7 +15,7 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\res\res_resource.cpp">
+    <ClCompile Include="Source\resources\res_resource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\components\comp_camera.cpp">
@@ -72,28 +72,28 @@
     <ClCompile Include="Source\common\entityid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_material_presets\res_material_lambert.cpp">
+    <ClCompile Include="Source\resources\res_material_presets\res_material_lambert.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_material_uniform\res_material_ubo.cpp">
+    <ClCompile Include="Source\resources\res_material_uniform\res_material_ubo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_cube.cpp">
+    <ClCompile Include="Source\resources\res_mesh_presets\res_mesh_cube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_material.cpp">
+    <ClCompile Include="Source\resources\res_material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_mesh.cpp">
+    <ClCompile Include="Source\resources\res_mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_resourceManager.cpp">
+    <ClCompile Include="Source\resources\res_resourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_shader.cpp">
+    <ClCompile Include="Source\resources\res_shader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_texture\res_texture.cpp">
+    <ClCompile Include="Source\resources\res_texture\res_texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\util\util_convenient_conversions.cpp">
@@ -120,19 +120,19 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_compositor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_plane.cpp">
+    <ClCompile Include="Source\resources\res_mesh_presets\res_mesh_plane.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\ecs\ecs_entityFactory.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_mesh_presets\res_mesh_sphere.cpp">
+    <ClCompile Include="Source\resources\res_mesh_presets\res_mesh_sphere.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_shader_generation\res_shader_generator.cpp">
+    <ClCompile Include="Source\resources\res_shader_generation\res_shader_generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_mesh_vertexLayout.cpp">
+    <ClCompile Include="Source\resources\res_mesh_vertexLayout.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\systems\sys_physics.cpp">
@@ -141,10 +141,10 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_shadowMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_material_presets\res_material_phong.cpp">
+    <ClCompile Include="Source\resources\res_material_presets\res_material_phong.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_shaderManager.cpp">
+    <ClCompile Include="Source\resources\res_shaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Headers\arch\common\properties.h">
@@ -162,10 +162,10 @@
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_texture\res_texture2d.cpp">
+    <ClCompile Include="Source\resources\res_texture\res_texture2d.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\res\res_texture\res_texture2darray.cpp">
+    <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp">

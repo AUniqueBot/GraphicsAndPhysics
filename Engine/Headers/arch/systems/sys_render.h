@@ -177,11 +177,10 @@ private:
 	void PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix);
 	void BindShadowShader();
 	void UnbindShadowShader();
-	void ApplyShadowMap(MeshRenderer& mat);
 
 
 	void ResolveMeshRendererMaterials(MeshRenderer& _mr);
-	void ResolveDefaultMaterial(Material& _mr);
+	void ResolveMaterial(Material& _mr);
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
@@ -204,6 +203,7 @@ private:
 
 
 	// to be replaced with a proper texture setup instead.
+	
 	ShadowMap m_spotLightShadowMaps;
 	ShadowMap m_directionalShadowMaps;
 	ShadowMap m_pointLightShadowMaps;
