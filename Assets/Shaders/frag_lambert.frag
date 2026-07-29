@@ -152,8 +152,8 @@ float PCF_PoissonDisk(
         );
 
         vec2 sampledPosition = poissonDisk[i] * texelSize * filterRadius;
-        float closestDepth = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
-        accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+        float shadow = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
+        accShadowVal += shadow;
     }
 
     return accShadowVal / 16.0;

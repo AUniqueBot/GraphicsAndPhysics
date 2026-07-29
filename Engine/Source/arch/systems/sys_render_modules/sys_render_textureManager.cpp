@@ -320,7 +320,7 @@ Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int
 
 	tex.Create();
 	tex.Allocate();
-	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << "layers.");
+	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
 	m_storage.Add(std::move(tex), info.GetTextureID());
 	Texture2DArray texHandle = { info };
 	return texHandle;
@@ -357,6 +357,13 @@ void TextureManager::DeleteTexture(TextureIDInfo _id) {
 	// reclaim ID.
 	m_freeIds.push(_id.GetTextureID());
 	tex.Destroy(); // destroy if it wasn't already.
+}
+
+void TextureManager::UpdateTextures() {
+	for (TextureGPU& tex : m_storage.Data()) {
+		tex.UpdateAllocation();
+		tex.UpdateTextureProperties();
+	}
 }
 
 

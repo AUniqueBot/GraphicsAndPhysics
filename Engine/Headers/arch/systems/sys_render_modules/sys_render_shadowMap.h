@@ -5,21 +5,13 @@
 
 
 
-enum ShadowMapType {
-	TEXTURE = GL_TEXTURE_2D_ARRAY,
-	CUBEMAP = GL_TEXTURE_CUBE_MAP_ARRAY
-};
+
 
 class ShadowMap {
 
 
 
 public:
-
-
-	void SetShadowMapType(ShadowMapType type);
-	const ShadowMapType& GetShadowMapType() const;
-
 
 	void SetFramebufferSize(glm::ivec2 _res);
 	const glm::ivec2& GetFramebufferSize() const; 
@@ -29,6 +21,8 @@ public:
 
 	void SetLayers(unsigned _layers);
 	unsigned GetLayers() const;
+
+	void SetupTextureArray(GLuint _handle);
 
 
 	void BuildShadowMap();
@@ -57,17 +51,16 @@ public:
 
 	void SetTexture(const Texture2DArray& _tex);
 	const Texture2DArray& GetTexture() const;
+
+
+	const GLuint GetTextureHandle() const;
 private:
 
 private:
-
-	ShadowMapType m_shadowMapType			{ ShadowMapType::TEXTURE }; // to be converted to the new texture class.
-
 	glm::ivec2 m_framebufferSize			{ 4096, 4096 };
 	glm::ivec2 m_baseTileSize				{ 2048, 2048 };	// 2048, 1024, 512, 256
 	unsigned m_layers						{ 8 };
 	unsigned m_fbo							{ 0 }; 
-	unsigned m_shadowTextureId				{ 0 };
 	unsigned m_levels						{ 4 };
 	bool m_isBuilt							{};
 	mutable unsigned m_currentBoundLayer	{ 0 };

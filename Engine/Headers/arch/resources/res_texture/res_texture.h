@@ -248,7 +248,9 @@ private:
 
 
 protected:
-	void UpdateTextureProperties() const;
+	friend class TextureManager;
+	void UpdateTextureProperties();
+	void UpdateAllocation();
 protected:
 
 	// 

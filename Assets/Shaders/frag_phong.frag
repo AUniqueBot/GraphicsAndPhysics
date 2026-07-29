@@ -24,8 +24,8 @@ uniform sampler2D u_specular;
 uniform sampler2D u_gloss;
 
 uniform sampler2DArrayShadow u_directionalShadowMap;
-uniform sampler2DArray u_spotLightShadowMap;
-uniform samplerCubeArray u_pointLightShadowMap;
+uniform sampler2DArrayShadow u_spotLightShadowMap;
+uniform samplerCubeArrayShadow u_pointLightShadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 

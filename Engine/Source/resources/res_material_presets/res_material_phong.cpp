@@ -144,19 +144,16 @@ void PhongMaterial::SetupTextures() {
 
 void PhongMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GetColorTextureID());
-        glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
+        glBindTextureUnit(0, GetColorTextureID());
+        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
     }
     if (m_uniformLocations.contains(U_SPECULAR)) {
-        glActiveTexture(GL_TEXTURE0 + 1);
-        glBindTexture(GL_TEXTURE_2D, GetSpecularTextureID());
-        glUniform1i(m_uniformLocations.at(U_SPECULAR), 0);
+        glBindTextureUnit(1, GetColorTextureID());
+        glProgramUniform1i(m_shader, m_uniformLocations.at(U_SPECULAR), 1);
     }
     if (m_uniformLocations.contains(U_GLOSS)) {
-        glActiveTexture(GL_TEXTURE0 + 2);
-        glBindTexture(GL_TEXTURE_2D, GetGlossTextureID());
-        glUniform1i(m_uniformLocations.at(U_GLOSS), 0);
+        glBindTextureUnit(2, GetColorTextureID());
+        glProgramUniform1i(m_shader, m_uniformLocations.at(U_GLOSS), 2);
     }
 }
 

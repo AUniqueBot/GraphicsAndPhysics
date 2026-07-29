@@ -18,8 +18,6 @@ void Core::Init() {
 	CoreInit();
 
 
-
-
 	// test out this stuff.	
 
 

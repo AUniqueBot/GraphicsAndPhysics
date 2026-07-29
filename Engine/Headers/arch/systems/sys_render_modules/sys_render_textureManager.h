@@ -10,6 +10,9 @@
 
 class TextureManager {
 public:
+
+
+
 	friend class Texture;
 	Texture2D LoadTexture(const std::filesystem::path& _path);
 	Texture2D Create2DTexture(int width, int height, TextureProperties::TextureProps _props = {});
@@ -23,8 +26,12 @@ public:
 	SparseSetView<TextureGPU> GetTexture(TextureID _id);
 
 	void DeleteTexture(TextureIDInfo _id);
-private:
 	
+public:
+	void UpdateTextures();
+
+
+private:
 	TextureIDInfo GenerateTextureIDInfo();
 	void ReclaimTextureIDInfo(TextureIDInfo _id);
 	bool TextureExists(TextureID _id) const;	

@@ -63,9 +63,8 @@ void LambertMaterial::SetupTextures() {
 void LambertMaterial::ApplyUniforms() const {
     if (m_uniformLocations.contains(U_ALBEDO)) {
         // would be better if applied in the system instead of over here.
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, GetColorTextureID());
-        glUniform1i(m_uniformLocations.at(U_ALBEDO), 0);
+        glBindTextureUnit(0, GetColorTextureID());
+        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
     }
 }
 

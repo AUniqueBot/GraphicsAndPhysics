@@ -356,12 +356,20 @@ void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 
 }
 
-void TextureGPU::UpdateTextureProperties() const {
+void TextureGPU::UpdateTextureProperties() {
 	if (!m_samplingDirty) return;
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_S, static_cast<GLenum>(m_textureProperties.m_wrapU));
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_T, static_cast<GLenum>(m_textureProperties.m_wrapV));
+	m_samplingDirty = false;
+}
+
+void TextureGPU::UpdateAllocation() {
+	if (m_allocated && !m_reallocateDirty) return;
+	Destroy();
+	Create();
+	Allocate();
 }
 
 void TextureGPU::Create() {

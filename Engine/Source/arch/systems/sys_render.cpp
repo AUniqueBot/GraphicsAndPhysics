@@ -169,7 +169,7 @@ void RenderSystem::Init() {
 void RenderSystem::PreUpdate() {
     // clear the buffer.
 
-
+    //m_textureManager.UpdateTextures();
 
 }
 
@@ -492,6 +492,7 @@ void RenderSystem::ShadowRenderPass(
 
         currentShadowMap->Bind();
         for (const Light* light : lightBuckets[i]) {
+            glClear(GL_DEPTH_BUFFER_BIT);
             shadowPassFunction(_viewport, _er, *light, mrPool);
         }
     }
@@ -886,32 +887,39 @@ void RenderSystem::SetupShadowProgram() {
 
 void RenderSystem::SetupShadowBuffers() {
     const unsigned SHADOW_WH    { 4096 };
-    
-    m_directionalShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
-    m_directionalShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
-    m_directionalShadowMaps.BuildShadowMap(); 
-
-    m_spotLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
-    m_spotLightShadowMaps.SetShadowMapType(ShadowMapType::TEXTURE);
-    m_spotLightShadowMaps.BuildShadowMap();
-
-    m_pointLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
-    m_pointLightShadowMaps.SetShadowMapType(ShadowMapType::CUBEMAP);
-    m_pointLightShadowMaps.BuildShadowMap();
-
+     
 
     TextureProperties::TextureProps props;
     props.m_internalImageFormat = TextureProperties::TextureFormat::DEPTH32F;
-    glm::ivec2 framebufferSize = m_directionalShadowMaps.GetFramebufferSize();
-    glm::ivec3 dims = { framebufferSize.x, framebufferSize.y, m_directionalShadowMaps.GetLayers() };
-    m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    props.m_filterMag = TextureProperties::FilterBehaviour::LINEAR;
+    props.m_filterMin = TextureProperties::FilterBehaviour::LINEAR;
+    props.m_wrapU = TextureProperties::WrapBehaviour::TO_BORDER;
+    props.m_wrapV = TextureProperties::WrapBehaviour::TO_BORDER;
 
-    //TextureIDInfo texID = m_textureManager.Create2DTexture(SHADOW_WH, SHADOW_WH);
-    //m_directionalShadowMaps.SetTextureIDInfo(texID);
- //   SparseSetView<TextureGPU> tex = m_textureManager.GetTexture(texID.GetTextureID());
- //   if (tex) {
- //       LOG_INFO("Success at allocating texture");
-	//}
+    glm::ivec3 dims{};
+
+    dims = { SHADOW_WH, SHADOW_WH, m_directionalShadowMaps.GetLayers() };
+    Texture2DArray dir = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    m_directionalShadowMaps.SetTexture(dir);
+    m_directionalShadowMaps.BuildShadowMap(); 
+
+     
+
+    //dims = { SHADOW_WH, SHADOW_WH, m_spotLightShadowMaps.GetLayers() };
+    //Texture2DArray spot = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    //m_spotLightShadowMaps.SetTexture(spot);
+    //m_spotLightShadowMaps.BuildShadowMap();
+
+    //m_pointLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
+    //m_pointLightShadowMaps.BuildShadowMap();
+
+    //framebufferSize = m_pointLightShadowMaps.GetFramebufferSize();
+    //glm::ivec3 dims = { framebufferSize.x, framebufferSize.y, m_pointLightShadowMaps.GetLayers() };
+    //Texture2DArray point = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    //m_pointLightShadowMaps.SetTexture(point);
+
+
+
 }
 
 void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {
@@ -967,7 +975,7 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
     case ShadingModel::GGX:
         break;
     case ShadingModel::BURLEY:
-        break;
+        break; 
     case ShadingModel::PRINCIPLED:
         break;
     default:

@@ -42,7 +42,7 @@ void ShaderManager::Init() {
 	lambertFragShader.Build();
 	phongFragShader.Build();
 
-	
+	 
 	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
 	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
 	AddShader(ShaderConstants::C_ID_PHONGFRAGSHADER, phongFragShader);
