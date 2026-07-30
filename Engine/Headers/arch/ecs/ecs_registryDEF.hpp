@@ -50,12 +50,20 @@ bool EntityRegistry::AddComponent(EntityID _addTo) {
 
 	bool res = val->Add(_addTo);
 	if (res) {
-		// add the tag to the entity
-		Entity& entity = *GetEntity(_addTo);
-
 		const ComponentPackedData& cmpdata	{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata		{ cmpdata.m_componentMetadata };
-		entity.m_componentsAttached.insert(cmdata.GetComponentTypeID());
+
+		// add the tag to the entity
+		Entity& entity = *GetEntity(_addTo);
+		CompTypeID cmpId = cmdata.GetComponentTypeID();
+		if (entity.m_componentsAttached.contains(cmpId)) {
+			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");
+			return false;
+		}
+		// MUST CHECK IF ENTITY ALREADY HAS A COMPONENT.
+		
+
+		entity.m_componentsAttached.insert(cmpId);
 	}
 
 	return res;
@@ -74,9 +82,16 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 	ComponentPool<T>& compPool = val.value().get();
 	bool res = compPool.Remove(_removeFrom);
 	if (res) {
-		Entity& entity = *GetEntity(_removeFrom);
 		const ComponentPackedData& cmpdata{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata{ cmpdata.m_componentMetadata };
+		Entity& entity = *GetEntity(_removeFrom);
+		CompTypeID cmpId = cmdata.GetComponentTypeID();
+
+		if (!entity.m_componentsAttached.contains(cmpId)) {
+			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");
+			return false;
+		}
+
 		entity.m_componentsAttached.erase(cmdata.GetComponentTypeID());
 	}
 	return res;
