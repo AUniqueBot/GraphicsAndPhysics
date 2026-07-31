@@ -969,6 +969,7 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
         shaderProgramAlias = ShaderConstants::C_ID_PHONGSHADERPROG;
         break;
     case ShadingModel::BLINN_PHONG:
+        shaderProgramAlias = ShaderConstants::C_ID_BLINNPHONGSHADERPROG;
         break;
     case ShadingModel::COOK_TORRENCE:
         break;

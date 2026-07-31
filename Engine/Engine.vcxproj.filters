@@ -186,6 +186,12 @@
     <ClCompile Include="Source\arch\core\core_scenemanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Headers\arch\resources\res_material_presets\res_material_blinnphong.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\resources\res_material_presets\res_material_blinnphong.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">

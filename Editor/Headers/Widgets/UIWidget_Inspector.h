@@ -34,6 +34,9 @@ private:
     void DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key);
 
     void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
+
+    
+
 };
 
 

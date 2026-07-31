@@ -122,13 +122,19 @@ void ShaderProgram::Unload() {
 
 }
 
-void ShaderProgram::SetShader(Shader _shader, ShaderConstants::ShaderType _type) {
+void ShaderProgram::SetShader(const Shader& _shader) {
+	SetShader(_shader, _shader.GetShaderType());
+}
+
+void ShaderProgram::SetShader(const Shader& _shader, const ShaderConstants::ShaderType& _type) {
+
 	SparseSetView<Shader> element{ m_shaderList.At(_type) };
 	if (static_cast<bool>(element)) {
 		*element = _shader;
 	}
 	else {
-		m_shaderList.Add(std::move(_shader), _type);
+		
+		m_shaderList.Add(std::move(Shader{ _shader }), _type);
 	}
 }
 

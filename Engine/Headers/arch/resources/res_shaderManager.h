@@ -6,19 +6,22 @@
 namespace ShaderConstants {
 
 	// - shader paths ---------------------------------------------------------
-	inline constexpr const char* C_PATH_VERTEXSHADERPATH		{ "./Assets/Shaders/vtx_vertex.vert" };
-	inline constexpr const char* C_PATH_LAMBERTFRAGSHADERPATH	{ "./Assets/Shaders/frag_lambert.frag" };
-	inline constexpr const char* C_PATH_PHONGFRAGSHADERPATH		{ "./Assets/Shaders/frag_phong.frag" };
-	inline constexpr const char* C_PATH_ERRORFRAGSHADERPATH		{ "./Assets/Shaders/frag_error.frag" };
+	inline constexpr const char* C_PATH_VERTEXSHADERPATH			{ "./Assets/Shaders/vtx_vertex.vert" };
+	inline constexpr const char* C_PATH_LAMBERTFRAGSHADERPATH		{ "./Assets/Shaders/frag_lambert.frag" };
+	inline constexpr const char* C_PATH_PHONGFRAGSHADERPATH			{ "./Assets/Shaders/frag_phong.frag" };
+	inline constexpr const char* C_PATH_BLINNPHONGFRAGSHADERPATH	{ "./Assets/Shaders/frag_blinnphong.frag" };
+	inline constexpr const char* C_PATH_ERRORFRAGSHADERPATH			{ "./Assets/Shaders/frag_error.frag" };
 	// - shader identifiers ---------------------------------------------------
-	inline constexpr const char* C_ID_VERTEXSHADER				{ "C_VERTEX_SHADER" };
-	inline constexpr const char* C_ID_LAMBERTFRAGSHADER			{ "C_LAMBERTFRAG_SHADER" };
-	inline constexpr const char* C_ID_PHONGFRAGSHADER			{ "C_PHONGFRAG_SHADER" };
-	inline constexpr const char* C_ID_ERRORFRAGSHADER			{ "C_ERRORFRAG_SHADER" };
+	inline constexpr const char* C_ID_VERTEXSHADER					{ "C_VERTEX_SHADER" };
+	inline constexpr const char* C_ID_LAMBERTFRAGSHADER				{ "C_LAMBERTFRAG_SHADER" };
+	inline constexpr const char* C_ID_PHONGFRAGSHADER				{ "C_PHONGFRAG_SHADER" };
+	inline constexpr const char* C_ID_BLINNPHONGFRAGSHADER			{ "C_BLINNPHONGFRAG_SHADER" };
+	inline constexpr const char* C_ID_ERRORFRAGSHADER				{ "C_ERRORFRAG_SHADER" };
 	// - shader Program 0000---------------------------------------------------
-	inline constexpr const char* C_ID_LAMBERTSHADERPROG			{ "BRDF_LAMBERT" };
-	inline constexpr const char* C_ID_PHONGSHADERPROG			{ "BRDF_PHONG" };
-	inline constexpr const char* C_ID_ERRORSHADERPROG			{ "ERRORSHADER" };
+	inline constexpr const char* C_ID_LAMBERTSHADERPROG				{ "BRDF_LAMBERT" };
+	inline constexpr const char* C_ID_PHONGSHADERPROG				{ "BRDF_PHONG" };
+	inline constexpr const char* C_ID_BLINNPHONGSHADERPROG			{ "BRDF_BLINNPHONG" };
+	inline constexpr const char* C_ID_ERRORSHADERPROG				{ "ERRORSHADER" };
 }
 
 struct ShaderProgramDesc {

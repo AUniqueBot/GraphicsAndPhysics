@@ -2,71 +2,100 @@
 
 
 void ShaderManager::Init() {
-	GLuint vtxShaderId				{ CreateShader(ShaderConstants::C_ID_VERTEXSHADER) };
-	GLuint unlitErrorFragShaderId	{ CreateShader(ShaderConstants::C_ID_ERRORSHADERPROG) };
-	GLuint lambertFragShaderId		{ CreateShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER) };
-	GLuint phongFragShaderId		{ CreateShader(ShaderConstants::C_ID_PHONGSHADERPROG) };
 	
+	// - vertex shader ---------------------------------------------------------------------
+	GLuint vtxShaderId				{ CreateShader(ShaderConstants::C_ID_VERTEXSHADER) };
 	Shader& vertexShader			{ *GetShader(vtxShaderId) };
-	Shader& unlitErrorFragShader	{ *GetShader(unlitErrorFragShaderId) };
-	Shader& lambertFragShader		{ *GetShader(lambertFragShaderId) };
-	Shader& phongFragShader			{ *GetShader(phongFragShaderId) };
-
 	std::string vertexShaderSrc { 
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_VERTEXSHADERPATH) 
 	};
-	
+	vertexShader.SetShaderCode(vertexShaderSrc);
+	vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
+	vertexShader.Build();
+	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
+
+
+	// - error frag ------------------------------------------------------------------------
+	GLuint unlitErrorFragShaderId	{ CreateShader(ShaderConstants::C_ID_ERRORSHADERPROG) };
+	Shader& unlitErrorFragShader	{ *GetShader(unlitErrorFragShaderId) };
 	std::string unlitErrorFragSrc{
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_ERRORFRAGSHADERPATH)
 	};
+	unlitErrorFragShader.SetShaderCode(unlitErrorFragSrc);
+	unlitErrorFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+	unlitErrorFragShader.Build();
+	AddShader(ShaderConstants::C_ID_ERRORFRAGSHADER, unlitErrorFragShader);
+
+
+	
+	// - lambert frag ----------------------------------------------------------------------
+	GLuint lambertFragShaderId		{ CreateShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER) };
 	std::string lambertFragSrc { 
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_LAMBERTFRAGSHADERPATH) 
 	};
+	Shader& lambertFragShader		{ *GetShader(lambertFragShaderId) };
+	lambertFragShader.SetShaderCode(lambertFragSrc);
+	lambertFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+	lambertFragShader.Build();
+	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
+	
+	
+	// - phong frag -------------------------------------------------------------------------
+	GLuint phongFragShaderId		{ CreateShader(ShaderConstants::C_ID_PHONGSHADERPROG) };
+	Shader& phongFragShader			{ *GetShader(phongFragShaderId) };
 	std::string phongFragSrc{
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_PHONGFRAGSHADERPATH)
 	};
-
-	vertexShader.SetShaderCode(vertexShaderSrc);
-	vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-
-	unlitErrorFragShader.SetShaderCode(unlitErrorFragSrc);
-	unlitErrorFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-	lambertFragShader.SetShaderCode(lambertFragSrc);
-	lambertFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
 	phongFragShader.SetShaderCode(phongFragSrc);
 	phongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-
-
-	vertexShader.Build();
-	unlitErrorFragShader.Build();
-	lambertFragShader.Build();
 	phongFragShader.Build();
-
-	 
-	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
-	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
 	AddShader(ShaderConstants::C_ID_PHONGFRAGSHADER, phongFragShader);
-	AddShader(ShaderConstants::C_ID_ERRORFRAGSHADER, unlitErrorFragShader);
 
+
+	// - blinn frag -------------------------------------------------------------------------
+	GLuint blinnPhongFragShaderId	{ CreateShader(ShaderConstants::C_ID_BLINNPHONGSHADERPROG) };
+	Shader& blinnPhongFragShader	{ *GetShader(blinnPhongFragShaderId) };
+	std::string blinnPhongFragSrc{
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_BLINNPHONGFRAGSHADERPATH)
+	};
+	blinnPhongFragShader.SetShaderCode(blinnPhongFragSrc);
+	blinnPhongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+	blinnPhongFragShader.Build();
+	AddShader(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER, blinnPhongFragShader);
+
+
+
+
+	// - unlit error shader prg -------------------------------------------------------------
 	GLuint unlitErrorShaderId = CreateShaderProgram(ShaderConstants::C_ID_ERRORFRAGSHADER);
-	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
-	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
-
 	ShaderProgram& unlitErrorShader	{ *GetShaderProgram(unlitErrorShaderId) };
-	ShaderProgram& lambertShader	{ *GetShaderProgram(lambertShaderId) };
-	ShaderProgram& phongShader		{ *GetShaderProgram(phongShaderId) };
-
 	unlitErrorShader.SetShader(vertexShader, vertexShader.GetShaderType());
 	unlitErrorShader.SetShader(unlitErrorFragShader, unlitErrorFragShader.GetShaderType());
 	unlitErrorShader.Build();
+	
 
+	// - lambert prg ------------------------------------------------------------------------
+	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
+	ShaderProgram& lambertShader	{ *GetShaderProgram(lambertShaderId) };
 	lambertShader.SetShader(vertexShader, vertexShader.GetShaderType());
 	lambertShader.SetShader(lambertFragShader, lambertFragShader.GetShaderType());
 	lambertShader.Build();
-
+	 
+	
+	// - phong prg --------------------------------------------------------------------------
+	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
+	ShaderProgram& phongShader		{ *GetShaderProgram(phongShaderId) };
 	phongShader.SetShader(vertexShader, vertexShader.GetShaderType());
 	phongShader.SetShader(phongFragShader, phongFragShader.GetShaderType());
 	phongShader.Build();
+
+
+	// - blinn phong prg --------------------------------------------------------------------
+	GLuint blinnPhongShaderId = CreateShaderProgram(ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
+	ShaderProgram& blinnPhongShader	{ *GetShaderProgram(blinnPhongShaderId) };
+	blinnPhongShader.SetShader(vertexShader, vertexShader.GetShaderType());
+	blinnPhongShader.SetShader(blinnPhongFragShader, blinnPhongFragShader.GetShaderType());
+	blinnPhongShader.Build();
 
 	LOG_INFO("Initialised shader manager");
 }

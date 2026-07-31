@@ -52,10 +52,9 @@ bool EntityRegistry::AddComponent(EntityID _addTo) {
 	if (res) {
 		const ComponentPackedData& cmpdata	{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata		{ cmpdata.m_componentMetadata };
-
-		// add the tag to the entity
 		Entity& entity = *GetEntity(_addTo);
-		CompTypeID cmpId = cmdata.GetComponentTypeID();
+		ComponentMetadata::CompTypeID cmpId = cmdata.GetComponentTypeID();
+
 		if (entity.m_componentsAttached.contains(cmpId)) {
 			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");
 			return false;
@@ -85,7 +84,7 @@ bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
 		const ComponentPackedData& cmpdata{ m_componentData.at(typeid(T)) };
 		const ComponentMetadata& cmdata{ cmpdata.m_componentMetadata };
 		Entity& entity = *GetEntity(_removeFrom);
-		CompTypeID cmpId = cmdata.GetComponentTypeID();
+		ComponentMetadata::CompTypeID cmpId = cmdata.GetComponentTypeID();
 
 		if (!entity.m_componentsAttached.contains(cmpId)) {
 			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");

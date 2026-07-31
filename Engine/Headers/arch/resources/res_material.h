@@ -11,7 +11,7 @@
 
 namespace Materials {
 	enum class ShadingModel {
-		LAMBERT,			//
+		LAMBERT,			// 
 		PHONG,				//
 		BLINN_PHONG,		//
 		COOK_TORRENCE,

@@ -65,10 +65,12 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	static std::vector<PropertyMD::Property> props{
 		MakeListProperty<MeshRenderer, std::shared_ptr<Material>>(
 			"Materials",
-			static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList)
+			static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
+			PropertyType::Object 
 		),
 	};
 	
+	// list out the props for the materials.
 	return props;
 }
 

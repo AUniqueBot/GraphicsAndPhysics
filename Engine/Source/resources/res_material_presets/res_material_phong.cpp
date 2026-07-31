@@ -25,6 +25,7 @@ const glm::vec4& PhongMaterial::Color() const {
 void PhongMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
+    m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
 }
 
 void PhongMaterial::Color(unsigned _newColor) {
@@ -59,6 +60,7 @@ const glm::vec4& PhongMaterial::Specular() const {
 void PhongMaterial::Specular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
+    m_textureSpecular.SetPixelColor(m_specularCol, 0,0,0);
 
 }
 
@@ -89,6 +91,7 @@ const float& PhongMaterial::Gloss() const {
 
 void PhongMaterial::Gloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
+    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 }
 
 const GLuint& PhongMaterial::GetGlossImageTexture() const {
@@ -148,11 +151,11 @@ void PhongMaterial::ApplyUniforms() const {
         glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
     }
     if (m_uniformLocations.contains(U_SPECULAR)) {
-        glBindTextureUnit(1, GetColorTextureID());
+        glBindTextureUnit(1, GetSpecularTextureID());
         glProgramUniform1i(m_shader, m_uniformLocations.at(U_SPECULAR), 1);
     }
     if (m_uniformLocations.contains(U_GLOSS)) {
-        glBindTextureUnit(2, GetColorTextureID());
+        glBindTextureUnit(2, GetGlossTextureID());
         glProgramUniform1i(m_shader, m_uniformLocations.at(U_GLOSS), 2);
     }
 }
@@ -164,6 +167,17 @@ std::vector<PropertyMD::Property>& PhongMaterial::GetProps() {
             "Color", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
             static_cast<const glm::vec4 & (PhongMaterial::*)() const>(&PhongMaterial::Color),
             static_cast<void(PhongMaterial::*)(const glm::vec4&)>(&PhongMaterial::Color)
+        ),
+        PropertyMD::MakeProperty<PhongMaterial>(
+            "Specular", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
+            static_cast<const glm::vec4 & (PhongMaterial::*)() const>(&PhongMaterial::Specular),
+            static_cast<void(PhongMaterial::*)(const glm::vec4&)>(&PhongMaterial::Specular)
+        ),
+        PropertyMD::MakeProperty<PhongMaterial>(
+            "Gloss", PropertyType::Float, PropertyMD::Shape::Scalar, 1,
+            static_cast<const float& (PhongMaterial::*)() const>(&PhongMaterial::Gloss),
+            static_cast<void(PhongMaterial::*)(float)>(&PhongMaterial::Gloss),
+            true
         ),
     };
     return props;

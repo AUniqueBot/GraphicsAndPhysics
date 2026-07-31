@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <functional>
+#include <memory>
+
+
 namespace PropertyMD {
 	enum class PropertyType {
 		Int,
@@ -59,6 +62,10 @@ namespace PropertyMD {
 			std::function<void(void*, int)> m_remove = nullptr;
 			std::function<void* (void*)> m_getObject = nullptr;
 			bool m_valid = false;
+
+			//
+			PropertyType m_type;
+			size_t m_componentCount;
 		} m_list;
 
 		Property(
@@ -154,10 +161,37 @@ namespace PropertyMD {
 		return prop;
 	}
 
+
+	// wrappers for elements in pointers.
+	template<typename T>
+	struct ReflectElement {
+		using Type = T;
+		static T* Get(T& value) {
+			return &value;
+		}
+	};
+
+	template<typename T>
+	struct ReflectElement<std::shared_ptr<T>> {
+		using Type = T;
+		static T* Get(std::shared_ptr<T>& value) {
+			return value.get();
+		}
+	};
+
+	template<typename T>
+	struct ReflectElement<std::unique_ptr<T>> {
+		using Type = T;
+		static T* Get(std::unique_ptr<T>& value) {
+			return value.get();
+		}
+	};
+
 	template<typename T, typename Element>
 	Property MakeListProperty(
 		const char* name,
-		std::function<std::vector<Element>& (T*)> listAccessor
+		std::function<std::vector<Element>& (T*)> listAccessor,
+		PropertyType _elementType
 	)
 	{
 		Property prop(
@@ -169,6 +203,7 @@ namespace PropertyMD {
 			nullptr
 		);
 		Property::List& ls{prop.m_list};
+		ls.m_type = _elementType;
 
 		ls.m_valid = true;
 		ls.m_listAccessor = [listAccessor](void* obj) {
@@ -183,7 +218,8 @@ namespace PropertyMD {
 
 		ls.m_get = [listAccessor](void* obj, int index) -> void* {
 			T* t = static_cast<T*>(obj);
-			return &std::invoke(listAccessor, t)[index];
+			auto& list = std::invoke(listAccessor, t);
+			return ReflectElement<Element>::Get(list[index]);
 			};
 
 		ls.m_add = [listAccessor](void* obj) {

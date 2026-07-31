@@ -55,7 +55,7 @@ void Transform::RotationEuler(glm::vec3 _rotation) {
 const glm::vec3& Transform::RotationEuler() const {
 	return
 		m_rotOrder == RotationOrder_::XYZ ? QuatToXYZ() :
-		m_rotOrder == RotationOrder_::XZY ? QuatToXZY() :
+		m_rotOrder == RotationOrder_::XZY ? QuatToXZY() :	
 		m_rotOrder == RotationOrder_::YXZ ? QuatToYXZ() :
 		m_rotOrder == RotationOrder_::YZX ? QuatToYZX() :
 		m_rotOrder == RotationOrder_::ZXY ? QuatToZXY() :
@@ -167,7 +167,6 @@ std::vector<PropertyMD::Property>& Transform::GetProps() {
 				{ "YZX", static_cast<int>(RotationOrder_::YZX) },
 				{ "ZXY", static_cast<int>(RotationOrder_::ZXY) },
 				{ "ZYX", static_cast<int>(RotationOrder_::ZYX) }
-
 			}
 			),
 	};

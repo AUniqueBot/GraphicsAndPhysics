@@ -69,7 +69,8 @@ public:
 	void Load();
 	void Unload();
 
-	void SetShader(Shader _shader, ShaderConstants::ShaderType);
+	void SetShader(const Shader& _shader); // uses the shader's internal type. wrapper of explicit version.
+	void SetShader(const Shader& _shader, const ShaderConstants::ShaderType& );
 
 	void SetShaderProgramID(GLuint _id);
 	int GetShaderProgramID() const;

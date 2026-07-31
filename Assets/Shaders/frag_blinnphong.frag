@@ -264,9 +264,9 @@ float CalculateSpecularHighlight(
 ){
     vec3 N = normalize(_fragNormal);
     vec3 incidentLightDir = normalize(_lightDir); 
-    vec3 reflectDir = reflect(incidentLightDir, N);  
     vec3 viewDir = normalize(_viewPosition - _fragPosition); 
-    float specDot = max(dot(viewDir, reflectDir), 0.0);
+    vec3 halfwayDir = normalize(incidentLightDir + viewDir);
+    float specDot = max(dot(viewDir, halfwayDir), 0.0);
 
     // Compute the final generic Phong power formula
     return pow(specDot, float(_glossiness)) * _specularStrength;
