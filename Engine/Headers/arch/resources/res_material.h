@@ -84,15 +84,6 @@ public:
 	void SetUniformFloat(std::string _uniformName, GLfloat _value);
 	
 
-
-	// - material helpers -------------------------------------
-	static unsigned LoadImage(std::string path, bool _hasAlpha, IMAGE_CLAMP_BEHAVIOUR _horizontal, IMAGE_CLAMP_BEHAVIOUR _vertical, FILTER_TYPE _fType);
-
-	// - tex generator ----------------------------------------
-	static std::array<GLubyte, 4> ColorToBytes(const glm::vec4& col);
-
-	
-
 	// - config -----------------------------------------------
 	bool IsInitialised() const;
 	void SetInitialised(bool _setting);
@@ -110,7 +101,7 @@ protected:
 	void SetUniform(std::string _uniformName, UniformData _data) const;
 
 
-	GLuint m_shader;
+	GLuint m_shader								{};
 	bool m_initialized							{};
 
 	std::map<std::string, UniformData> m_uniformData;

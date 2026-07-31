@@ -88,7 +88,7 @@ void Mesh::Load() {
 	);
 	SetIndices(
 		faceIndexData.data(),
-		faceIndexData.size()
+		static_cast<unsigned>(faceIndexData.size())
 	);
 
 	// loading mats
@@ -124,7 +124,7 @@ void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
 
 
 
-unsigned Mesh::GetVertexCount() const {
+size_t Mesh::GetVertexCount() const {
 	return m_attributeData.at("position")->ElementCount() / 3; // pos = vec3 = 3x float
 }
 
@@ -189,18 +189,18 @@ void Mesh::ClearMeshInformation() {
 
 
 // the
-void Mesh::SetVertexPositions(const float* _pointer, unsigned _vertexCount) {
+void Mesh::SetVertexPositions(const float* _pointer, size_t _vertexCount) {
 	SetData<float>("position", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
 }
 
 
 
-void Mesh::SetVertexNormals(const float* _pointer, unsigned _vertexCount) {
+void Mesh::SetVertexNormals(const float* _pointer, size_t _vertexCount) {
 	SetData<float>("normal", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
 }
 
 
-void Mesh::SetIndices(const unsigned* _pointer, unsigned _indexCount) {
+void Mesh::SetIndices(const unsigned* _pointer, size_t _indexCount) {
 	// 1 face == 3 verts.
 	size_t faceGrpCount{ _indexCount / 3  };
 	m_indices.resize(faceGrpCount);
@@ -215,7 +215,7 @@ void Mesh::SetIndices(const unsigned* _pointer, unsigned _indexCount) {
 	m_indices;
 }
 
-void Mesh::SetIndices(const glm::uvec3* _pointer, unsigned _indexGroupCount) {
+void Mesh::SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount) {
 	m_indices.assign(_pointer, _pointer + _indexGroupCount);
 }
 

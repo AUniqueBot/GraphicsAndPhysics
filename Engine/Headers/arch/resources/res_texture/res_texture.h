@@ -5,7 +5,7 @@
 
 class Texture;
 using TextureID = uint16_t;
-const TextureID C_INVALID_TEXTURE_ID = 0;
+inline const TextureID C_INVALID_TEXTURE_ID = 0;
 
 class TextureManager;	// fwd declaration
 

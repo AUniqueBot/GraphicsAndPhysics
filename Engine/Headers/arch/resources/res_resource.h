@@ -116,12 +116,6 @@ public :
 	}
 };
 
-class ResourceContainer {
-public:
-	ResourceContainer();
-private:
-	std::unique_ptr<BaseResource> m_resPtr;
-};
 
 
 

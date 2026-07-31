@@ -82,6 +82,8 @@ private:
 	GLuint m_reservedSpecularImageTexId{};  
 
 	
+	// exponent + something
+
 	Texture2D m_textureGloss			{ TextureIDInfo{} }; 
 	GLuint m_reservedGlossTexId{}; 
 	GLuint m_reservedGlossImageTexId{};  

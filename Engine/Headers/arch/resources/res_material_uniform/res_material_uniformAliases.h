@@ -20,7 +20,7 @@ inline constexpr const char* U_GLOSS					{ "u_gloss" };
 inline constexpr const char* U_METALNESS				{ "u_metalness" };
 inline constexpr const char* U_ROUGHNESS				{ "u_roughness" };
 
-constexpr const char* U_EMISIVE							{ "u_emissive" };
+inline constexpr const char* U_EMISIVE							{ "u_emissive" };
 
 
 

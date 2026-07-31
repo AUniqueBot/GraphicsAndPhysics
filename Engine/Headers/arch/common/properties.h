@@ -64,8 +64,8 @@ namespace PropertyMD {
 			bool m_valid = false;
 
 			//
-			PropertyType m_type;
-			size_t m_componentCount;
+			PropertyType m_type		{};
+			int m_componentCount {};
 		} m_list;
 
 		Property(
@@ -191,7 +191,8 @@ namespace PropertyMD {
 	Property MakeListProperty(
 		const char* name,
 		std::function<std::vector<Element>& (T*)> listAccessor,
-		PropertyType _elementType
+		PropertyType _elementType,
+		int _componentCount = 1
 	)
 	{
 		Property prop(
@@ -204,6 +205,7 @@ namespace PropertyMD {
 		);
 		Property::List& ls{prop.m_list};
 		ls.m_type = _elementType;
+		ls.m_componentCount = _componentCount;
 
 		ls.m_valid = true;
 		ls.m_listAccessor = [listAccessor](void* obj) {

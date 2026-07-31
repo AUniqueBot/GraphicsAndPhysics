@@ -75,8 +75,8 @@ void Cube::UpdateVertexData() {
 			unsigned baseIndex	{ static_cast<unsigned>(vertexPositions.size()) };
 
 			// row priority
-			for (int v{}; v < segmentV; ++v) {
-				for (int u{}; u < segmentU; ++u) {
+			for (int v{}; v < static_cast<int>(segmentV); ++v) {
+				for (int u{}; u < static_cast<int>(segmentU); ++u) {
 					vertexPositions.push_back({ 
 						startOffset 
 						+ (vertexOffsetWidth * static_cast<float>(u)) 
@@ -87,7 +87,7 @@ void Cube::UpdateVertexData() {
 
 
 
-					if (v < segmentV - 1 && u < segmentU - 1) {
+					if (v < static_cast<int>(segmentV) - 1 && u < static_cast<int>(segmentU) - 1) {
 						/*
 						   0		  1
 							+--------+

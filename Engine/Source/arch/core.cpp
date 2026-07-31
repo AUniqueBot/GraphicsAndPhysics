@@ -5,6 +5,7 @@
 #include <arch/components/comp_headers.h>
 #include <arch/resources/res_material_presets/res_material_lambert.h>
 #include <arch/resources/res_material_presets/res_material_phong.h>
+#include <arch/resources/res_material_presets/res_material_blinnphong.h>
 
 
 Clock Core::m_clock {};
@@ -40,7 +41,7 @@ void Core::Init() {
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
-		std::shared_ptr<PhongMaterial> mat { std::make_shared<PhongMaterial>(PhongMaterial{}) };
+		std::shared_ptr<BlinnPhongMaterial> mat { std::make_shared<BlinnPhongMaterial>(BlinnPhongMaterial{}) };
 		component->AddMaterial(mat);
 		mat->Color(0xaaaaeeff);
 	}

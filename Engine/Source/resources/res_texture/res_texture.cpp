@@ -862,10 +862,10 @@ void Texture::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
 	if (!m_textureIdInfo.IsValid()) return;
 	TextureGPU& tex{ GetTextureGPU() };
 	glm::u8vec4 colData{};
-	colData.r = _col.r * 0xff;
-	colData.g = _col.g * 0xff;
-	colData.b = _col.b * 0xff;
-	colData.a = _col.a * 0xff;
+	colData.r = static_cast<unsigned char>(_col.r * 0xff);
+	colData.g = static_cast<unsigned char>(_col.g * 0xff);
+	colData.b = static_cast<unsigned char>(_col.b * 0xff);
+	colData.a = static_cast<unsigned char>(_col.a * 0xff);
 	tex.SetPixelColor(colData, glm::ivec3{_x, _y, _z});
 }
 

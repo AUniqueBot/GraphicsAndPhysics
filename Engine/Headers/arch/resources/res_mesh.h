@@ -21,7 +21,7 @@ public:
 
 
 	// - mesh data ----------------------------------
-	unsigned GetVertexCount() const;
+	size_t GetVertexCount() const;
 	
 
 
@@ -48,9 +48,9 @@ public:
 
 public:
 	template <typename T>
-	void SetData(const std::string& name, const T* _pointer, unsigned _elementCount) {
+	void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
 		std::vector<T> data(_elementCount);
-		for (unsigned i = 0; i < _elementCount; ++i) {
+		for (size_t i = 0; i < _elementCount; ++i) {
 			data[i] = _pointer[i];
 		}
 		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
@@ -73,14 +73,14 @@ public:
 
 
 protected:
-	void SetVertexPositions(const float* _pointer, unsigned _vertexCount);
-	void SetVertexNormals(const float* _pointer, unsigned _vertexCount);
-	void SetIndices(const unsigned* _pointer, unsigned _indexGroupCount);
-	void SetIndices(const glm::uvec3* _pointer, unsigned _indexGroupCount);
+	void SetVertexPositions(const float* _pointer, size_t _vertexCount);
+	void SetVertexNormals(const float* _pointer, size_t _vertexCount);
+	void SetIndices(const unsigned* _pointer, size_t _indexGroupCount);
+	void SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount);
 
 	// - wip
-	void SetVertexUVs(const float* _pointer, unsigned _vertexCount);
-	void SetVertexColors(const float _pointer, unsigned _vertexCount);
+	void SetVertexUVs(const float* _pointer, size_t _vertexCount);
+	void SetVertexColors(const float _pointer, size_t _vertexCount);
 
 
 
