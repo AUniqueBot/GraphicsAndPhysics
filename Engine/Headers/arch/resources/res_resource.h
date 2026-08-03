@@ -55,6 +55,7 @@ public:
 
 
 	virtual void LoadAsset();
+	virtual void LoadAsset(std::filesystem::path _path);
 	virtual void UnloadAsset();
 	bool IsAssetLoaded() const;
 

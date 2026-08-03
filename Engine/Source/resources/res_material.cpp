@@ -5,7 +5,7 @@
 //#include <stb_image.h>
 
 
-static MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type) {
+MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type) {
 	return
 		type == GL_BOOL ? MaterialValueData::ValueType::Bool :
 		type == GL_INT ? MaterialValueData::ValueType::Int :
@@ -31,7 +31,7 @@ static MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type) {
 		MaterialValueData::ValueType::INVALID;
 }
 
-static MaterialValue GetDefaultValue(MaterialValueData::ValueType type) {
+MaterialValue GetDefaultValue(MaterialValueData::ValueType type) {
 	MaterialValue val;
 	switch (type) {
 	case MaterialValueData::ValueType::Bool:

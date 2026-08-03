@@ -47,8 +47,7 @@ using MaterialValue = std::variant<
 
 template<typename T>
 concept MaterialValueType =
-	requires(MaterialValue v)
-{
+	requires(MaterialValue v) {
 	std::get<T>(v);
 };
 
@@ -113,6 +112,8 @@ struct MaterialValueData {
 	}
 };
 
+MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type);
+MaterialValue GetDefaultValue(MaterialValueData::ValueType type);
 
 
 class RenderSystem; // fwd decl. 

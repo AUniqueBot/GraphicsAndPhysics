@@ -1,7 +1,7 @@
 #include <arch/resources/res_material_presets/res_material_phong.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 
 
 

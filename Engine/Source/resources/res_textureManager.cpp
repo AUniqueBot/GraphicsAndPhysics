@@ -1,4 +1,4 @@
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif

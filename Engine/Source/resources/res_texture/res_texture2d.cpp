@@ -1,5 +1,5 @@
 #include <arch/resources/res_texture/res_texture2d.h>
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 
 
 Texture2D::Texture2D(const TextureIDInfo& _info) : Texture(_info) {

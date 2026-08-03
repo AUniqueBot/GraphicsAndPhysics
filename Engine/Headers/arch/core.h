@@ -119,6 +119,8 @@ private:
 	EntityFactory m_entityFactory			{ m_registry };
 	ResourceManager m_resourceManager;
 	ShaderManager m_shaderManager;
+
+	
 	
 	// - save management ---------------------------
 	GameStateManager m_gsm;

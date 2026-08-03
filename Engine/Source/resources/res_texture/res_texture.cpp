@@ -1,7 +1,7 @@
 #include <pch.h>
 #include <stb_image.h>
 #include <arch/resources/res_texture/res_texture.h>
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 
 #include <util/util_color.h>
 

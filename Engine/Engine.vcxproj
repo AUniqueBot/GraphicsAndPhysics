@@ -179,8 +179,10 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
     <ClCompile Include="Source\arch\core\core_gamestatemanager.cpp" />
+    <ClCompile Include="Source\resources\res_materialManager.cpp" />
     <ClCompile Include="Source\resources\res_material_presets\res_material_blinnphong.cpp" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_material_blinnphong.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_cubemap.h" />
@@ -188,7 +190,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
     <ClCompile Include="Source\arch\core\core_scenemanager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
-    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp" />
+    <ClCompile Include="Source\resources\res_textureManager.cpp" />
     <ClCompile Include="Source\resources\res_scene.cpp" />
     <ClCompile Include="Source\resources\res_shaderManager.cpp" />
     <ClCompile Include="Source\arch\core\core_inputRouter.cpp" />
@@ -275,6 +277,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
+    <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
     <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />
@@ -312,7 +315,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetAttachments.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_renderTargetManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_shadowMap.h" />
-    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_textureManager.h" />
+    <ClInclude Include="Headers\arch\resources\res_textureManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />

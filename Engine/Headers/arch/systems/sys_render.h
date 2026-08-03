@@ -3,7 +3,7 @@
 #include <arch/common/system.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 #include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>

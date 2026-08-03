@@ -11,6 +11,10 @@ void BaseResource::LoadAsset() {
 	m_isLoaded = true;
 }
 
+void BaseResource::LoadAsset(std::filesystem::path _path) {
+
+}
+
 void BaseResource::UnloadAsset() {
 	if (!m_isLoaded) return;
 	m_isLoaded = false;

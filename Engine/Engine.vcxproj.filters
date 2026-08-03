@@ -168,7 +168,7 @@
     <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_textureManager.cpp">
+    <ClCompile Include="Source\resources\res_textureManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\util\util_color.cpp">
@@ -196,6 +196,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\resources\res_materialManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Headers\arch\resources\res_materialManager.h">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -461,7 +467,7 @@
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_textureManager.h">
+    <ClInclude Include="Headers\arch\resources\res_textureManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\util\util_color.h">
@@ -489,6 +495,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\core\core_gamestatemanager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_assetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

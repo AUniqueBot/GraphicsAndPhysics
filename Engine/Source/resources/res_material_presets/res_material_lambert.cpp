@@ -1,5 +1,5 @@
 #include <arch/resources/res_material_presets/res_material_lambert.h>
-#include <arch/systems/sys_render_modules/sys_render_textureManager.h>
+#include <arch/resources/res_textureManager.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
 #include <arch/resources/res_shaderManager.h>
@@ -68,16 +68,6 @@ void LambertMaterial::SetupTextures() {
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 }
 
-
-
-
-//void LambertMaterial::ApplyUniforms() {
-//    if (m_uniformLocations.contains(U_ALBEDO)) {
-//        // would be better if applied in the system instead of over here.
-//        glBindTextureUnit(0, GetColorTextureID());
-//        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
-//    }
-//}
 
 
 
