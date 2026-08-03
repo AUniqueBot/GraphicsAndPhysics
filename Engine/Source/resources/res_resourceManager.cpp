@@ -8,6 +8,8 @@
 
 #include <arch/resources/res_mesh.h>
 #include <arch/resources/res_shader.h>
+#include <arch/resources/res_material.h>
+#include <arch/resources/res_scene.h>
 
 
 ResourceManager::ResourceManager() {
@@ -26,6 +28,8 @@ void ResourceManager::Init() {
 
 	RegisterResourceType<Mesh>();
 	RegisterResourceType<ShaderProgram>();
+	RegisterResourceType<Material>();
+	RegisterResourceType<Scene>();
 
 	
 	// registering the default file extensions
@@ -33,6 +37,8 @@ void ResourceManager::Init() {
 	RegisterFileExtension(".obj", Mesh::GetResourceTypeID());
 	RegisterFileExtension(".frag", ShaderProgram::GetResourceTypeID());
 	RegisterFileExtension(".vert", ShaderProgram::GetResourceTypeID());
+
+	RegisterFileExtension(".material", Material::GetResourceTypeID());
 	
 	LoadDefaultResources();
 
@@ -234,7 +240,13 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 	// for now just load immediately.
 	// TODO - figure out how to load on need.
 
+	if (resType == Material::GetResourceTypeID()) {
+		//
+		std::shared_ptr<Material> mat;
 
+		
+		// AddResource(mat, _filePath);
+	}
 
 
 	if (resType == Mesh::GetResourceTypeID()) {

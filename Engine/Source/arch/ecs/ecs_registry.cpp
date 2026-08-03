@@ -64,10 +64,6 @@ EntityView EntityRegistry::Instantiate() {
 	Entity newEntt{ this };
 	EntityID refID = newEntt.GetID();
 	m_entityList.Add(std::move(newEntt), refID);
-	// map version.
-	// m_entityList.Add(std::move(newEntt), newEntt.GetID());	
-	// m_entityList.emplace(std::make_pair(refID, std::move(newEntt)));
-	// return m_entityList.at(refID);
 
 	// note to add a transform component.
 	auto toRet = m_entityList.At(refID);
@@ -79,10 +75,6 @@ EntityView EntityRegistry::Instantiate() {
 EntityView EntityRegistry::Instantiate(EntityID _existingID) {
 	Entity newEntt	{ this, _existingID };
 	m_entityList.Add(std::move(newEntt), _existingID);
-	// map version.
-	// m_entityList.Add(std::move(newEntt), newEntt.GetID());	
-	// m_entityList.emplace(std::make_pair(refID, std::move(newEntt)));
-	// return m_entityList.at(refID);
 
 	// note to add a transform component.
 	auto toRet = m_entityList.At(_existingID);

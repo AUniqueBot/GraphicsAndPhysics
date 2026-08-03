@@ -158,12 +158,13 @@ void UIWidget_Inspector::Draw() {
 		ImGui::Separator();
 
 		const std::vector<PropertyMD::Property>& props{ comp->GetProperties() };
-		if (props.size()) {
-
-			if (ImGui::CollapsingHeader(compHandle.m_componentMetadata->GetComponentName().c_str())) {
-				for (const PropertyMD::Property& prop : props) {
-					DrawPropertyElement(comp, prop, prop.m_name);
-				}
+		if (!props.size()) {
+			continue;
+		}
+		if (ImGui::CollapsingHeader(compHandle.m_componentMetadata->GetComponentName().c_str())) {
+			for (const PropertyMD::Property& prop : props) {
+				ImGui::SeparatorText(prop.m_name.c_str());
+				DrawPropertyElement(comp, prop, prop.m_name);
 			}
 		}
 		
@@ -176,32 +177,8 @@ void UIWidget_Inspector::Draw() {
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
 		ResourceManager& resmgr = papc->GetResourceManager();
-		auto& matList{ mr.GetMaterialList() };
-		if (matList.size() == 0) {
-			//Material& mat = &mr.GetDefaultMaterial();
 
-			//if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
-			//	mat.Color(col);
-			//}
-		}
-
-		else {
-
-			// foreach loop, then typecast it.
-			// need self-reflection.
-
-
-			LambertMaterial& mat = *dynamic_cast<LambertMaterial*>(matList[0].get());
-
-			// creating a call function for the component is the incorrect method about going through this.
-
-
-			//glm::vec4 col{mat.Color()};
-			//if (ColorEdit4("Color##MeshRenderer", glm::value_ptr(col))) {
-				//mat.Color(col);
-			//}
-		}
-
+		// mesh handling.
 		const auto& selectedMesh = mr.GetMesh();
 		std::string selectedMeshName = selectedMesh->Name();
 

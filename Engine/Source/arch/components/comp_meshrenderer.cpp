@@ -68,6 +68,13 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 			static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
 			PropertyType::Object 
 		),
+		MakeProperty<MeshRenderer>(
+			"Cast Shadow",
+			PropertyType::Boolean,
+			Shape::Scalar, 1,
+			&MeshRenderer::GetCastShadow,
+			&MeshRenderer::SetCastShadow
+		)
 	};
 	
 	// list out the props for the materials.

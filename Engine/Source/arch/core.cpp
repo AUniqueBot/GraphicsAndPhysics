@@ -8,6 +8,8 @@
 #include <arch/resources/res_material_presets/res_material_blinnphong.h>
 
 
+
+
 Clock Core::m_clock {};
 
 void Core::Init() {
@@ -19,9 +21,10 @@ void Core::Init() {
 	CoreInit();
 
 
+	// create an entity via loading here...
+
+
 	// test out this stuff.	
-
-
 	Entity& obj1 = *(m_registry.Instantiate());
 	Entity& ambientLight = *(m_registry.Instantiate());
 	Entity& dirLight = *(m_registry.Instantiate());

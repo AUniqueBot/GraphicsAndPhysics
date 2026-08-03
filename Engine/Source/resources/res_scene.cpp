@@ -1,7 +1,7 @@
 #include <algorithm>
-#include <arch/common/scene.h>
+#include <arch/resources/res_scene.h>
 #include <arch/ecs/ecs_registry.h>
-#include <serialization/serialize_jsonfile.h>
+
 
 bool Scene::LoadScene(std::filesystem::path _path) {
 	if (!_path.has_filename()) {
@@ -10,7 +10,7 @@ bool Scene::LoadScene(std::filesystem::path _path) {
 	}
 
 	Serialization::JSONFile file(_path);
-	
+
 
 	// - scene loading ----------------------------------------------------
 
@@ -21,7 +21,7 @@ bool Scene::LoadScene(std::filesystem::path _path) {
 		return true;
 	}
 	rapidjson::Value& entityListObj = file.GetMember("entities");
-	
+
 	for (const auto& entityObj : entityListObj.GetObj()) {
 		unsigned long savedId = std::stoul(entityObj.name.GetString());
 		EntityID id(savedId);
@@ -44,9 +44,9 @@ bool Scene::RemoveEntity(EntityID _id) {
 
 
 	//m_entityRegistry->Destroy(_id); // should you even care about this?
-	
+
 	// rotate and pop.
-	std::rotate(itr, itr+1, m_entities.end());
+	std::rotate(itr, itr + 1, m_entities.end());
 	m_entities.pop_back();
 
 

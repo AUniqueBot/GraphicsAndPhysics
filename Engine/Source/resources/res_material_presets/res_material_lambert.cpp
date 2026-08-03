@@ -11,6 +11,16 @@ void LambertMaterial::InitInternal() {
     SetupTextures();
 }
 
+void LambertMaterial::ResolveTextureValues() {
+    if (!m_textureReferenceDirty) return;
+    m_textureReferenceDirty = false;
+
+    MaterialValueData matValue;
+    matValue.m_type = MaterialValueData::ValueType::Texture;
+    matValue.SetValue(GetColorTextureID());
+    *m_materialValues[U_ALBEDO] = matValue;
+}
+
 Materials::ShadingModel LambertMaterial::GetShadingModel() const {
     return Materials::ShadingModel::LAMBERT;
 }
@@ -34,6 +44,7 @@ void LambertMaterial::Color(unsigned _newColor) {
 void LambertMaterial::UsesColor(bool _usesColor) {
     if (_usesColor == m_usesColor) return;
     m_usesColor = _usesColor;
+    m_textureReferenceDirty = true;
 }
 
 bool LambertMaterial::UsesColor() const {
@@ -60,13 +71,13 @@ void LambertMaterial::SetupTextures() {
 
 
 
-void LambertMaterial::ApplyUniforms() const {
-    if (m_uniformLocations.contains(U_ALBEDO)) {
-        // would be better if applied in the system instead of over here.
-        glBindTextureUnit(0, GetColorTextureID());
-        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
-    }
-}
+//void LambertMaterial::ApplyUniforms() {
+//    if (m_uniformLocations.contains(U_ALBEDO)) {
+//        // would be better if applied in the system instead of over here.
+//        glBindTextureUnit(0, GetColorTextureID());
+//        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
+//    }
+//}
 
 
 

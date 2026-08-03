@@ -3,11 +3,28 @@
         
     },
     "entities":{
-        "entityIdHere" : {
-            "name": "EntityName",
+        "0451" : {
+            "name": "BaseEntity1",
             "components": {
                 "transform": {
-                    "position": [0, 0, 0],
+                    "position": [10, 10, -10],
+                    "rotation": [0, 0, 0],
+                    "scale": [1, 1, 1]
+                },
+                "meshRenderer": {
+                    "material" : [
+                        {
+                            "shader": "phong"
+                        }
+                    ]
+                }
+            }
+        },
+        "4096" : {
+            "name": "BaseEntity2",
+            "components": {
+                "transform": {
+                    "position": [3, 3, -2],
                     "rotation": [0, 0, 0],
                     "scale": [1, 1, 1]
                 },
@@ -16,18 +33,27 @@
                         {
                             "shader": "lambert"
                             
-                        },
-                        {
-                            "shader": "phong"
                         }
                     ]
-                    "mesh" : "path/to/mesh.obj"
-                },
-                "light":{
-
                 }
-
-
+            }
+        },
+        "2048" : {
+            "name": "plane",
+            "components": {
+                "transform": {
+                    "position": [0, 0, 0],
+                    "rotation": [0, 0, 0],
+                    "scale": [10, 10, 1]
+                },
+                "meshRenderer": {
+                    "material" : [
+                        {
+                            "shader": "lambert"
+                            
+                        }
+                    ]
+                }
             }
         }
     }

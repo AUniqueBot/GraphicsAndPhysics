@@ -46,17 +46,18 @@ public:
 	const GLuint& GetColorTextureID() const;
 	const GLuint& GetSpecularTextureID() const;
 	const GLuint& GetGlossTextureID() const; 
+
+	void SetUsesGlossValue(bool _usesGlossValue);
+	bool UsesGlossValue() const;
 	 
 
 
-	// need a better name!.
-	void ApplyUniforms() const override; 
 
 	// need a resource manager for textures
 protected:
 
 	void InitInternal() override; 
-
+	void ResolveTextureValues() override;
 
 private:
 	void SetupTextures();  

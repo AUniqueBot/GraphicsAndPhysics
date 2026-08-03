@@ -12,6 +12,16 @@ void PhongMaterial::InitInternal() {
     SetupTextures();
 }
 
+void PhongMaterial::ResolveTextureValues() {
+    if (!m_textureReferenceDirty) return;
+    m_textureReferenceDirty = false;
+
+
+    m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
+    m_materialValues[U_SPECULAR]->SetValue(GetSpecularTextureID());
+    m_materialValues[U_GLOSS]->SetValue(GetGlossTextureID());
+}
+
 
 Materials::ShadingModel PhongMaterial::GetShadingModel() const { 
     return Materials::ShadingModel::PHONG; 
@@ -43,6 +53,7 @@ void PhongMaterial::SetColorImageTexture(GLuint _textureId) {
 void PhongMaterial::SetUsesColorValue(bool _usesColor) {
     if (_usesColor == m_usesColorValue) return;
     m_usesColorValue = _usesColor;
+    m_textureReferenceDirty = true;
 }
 
 bool PhongMaterial::UsesColorValue() const {
@@ -73,7 +84,9 @@ const GLuint& PhongMaterial::GetSpecularImageTexture() const {
 }
 
 void PhongMaterial::SetUsesSpecularValue(bool _usesSpecularValue) {
+    if (_usesSpecularValue == m_usesSpecularValue) return;
     m_usesSpecularValue = _usesSpecularValue;
+    m_textureReferenceDirty = true;
 }
 
 bool PhongMaterial::UsesSpecularValue() const {
@@ -118,6 +131,16 @@ const GLuint& PhongMaterial::GetGlossTextureID() const {
     return m_usesGlossValue ? m_textureGloss.GetTextureHandle() : m_reservedGlossImageTexId;
 }
 
+void PhongMaterial::SetUsesGlossValue(bool _usesGlossValue) {
+    if (_usesGlossValue == m_usesGlossValue) return;
+    m_usesGlossValue = _usesGlossValue;
+    m_textureReferenceDirty = true;
+}
+
+bool PhongMaterial::UsesGlossValue() const {
+    return m_usesGlossValue;
+}
+
 void PhongMaterial::SetupTextures() {
     if (!m_texManagerReference) {
         LOG_WARN("Skipping Texture Setup");
@@ -141,24 +164,24 @@ void PhongMaterial::SetupTextures() {
     glossProps.m_internalImageFormat = TextureFormat::R8;
     m_textureGloss = texManager.Create2DTexture(1, 1, glossProps);
     m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0); 
+
+
+    MaterialValueData matValue;
+    matValue.m_type = MaterialValueData::ValueType::Texture;
+    matValue.SetValue(GetColorTextureID());
+    m_materialValues.Add((MaterialValueData{ matValue }), U_ALBEDO);
+
+    matValue.m_type = MaterialValueData::ValueType::Texture;
+    matValue.SetValue(GetSpecularTextureID());
+    m_materialValues.Add((MaterialValueData{ matValue }), U_SPECULAR);
+
+    matValue.m_type = MaterialValueData::ValueType::Texture;
+    matValue.SetValue(GetGlossTextureID());
+    m_materialValues.Add((MaterialValueData{ matValue }), U_GLOSS);
+
+
 }
  
-
-
-void PhongMaterial::ApplyUniforms() const {
-    if (m_uniformLocations.contains(U_ALBEDO)) {
-        glBindTextureUnit(0, GetColorTextureID());
-        glProgramUniform1i(m_shader, m_uniformLocations.at(U_ALBEDO), 0);
-    }
-    if (m_uniformLocations.contains(U_SPECULAR)) {
-        glBindTextureUnit(1, GetSpecularTextureID());
-        glProgramUniform1i(m_shader, m_uniformLocations.at(U_SPECULAR), 1);
-    }
-    if (m_uniformLocations.contains(U_GLOSS)) {
-        glBindTextureUnit(2, GetGlossTextureID());
-        glProgramUniform1i(m_shader, m_uniformLocations.at(U_GLOSS), 2);
-    }
-}
 
 std::vector<PropertyMD::Property>& PhongMaterial::GetProps() {
     using namespace PropertyMD;

@@ -1,14 +1,23 @@
-#include <arch/core/core_scenemanager.h>
 #include <arch/core.h>
+#include <arch/core/core_scenemanager.h>
 
-void SceneManager::LoadScene(const Scene& _scene) {
-	Clear();
+
+
+void SceneManager::LoadScene(std::shared_ptr<Scene> _scene) {
 	m_currentScene = _scene;
-	
+}
+
+void SceneManager::UnloadScene() {
+	m_nextState = LoadState::UNLOADING;
+
 }
 
 void SceneManager::SaveScene() {
 
+}
+
+SceneManager::LoadState SceneManager::GetCurrentLoadState() {
+	return m_currentState;
 }
 
 void SceneManager::Clear() {

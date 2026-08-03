@@ -75,7 +75,7 @@ public:
 	}
 
 	template <std::derived_from<BaseResource>>
-	void GetResourceTypeMetadata()const {
+	void GetResourceTypeMetadata() const {
 
 	}
 

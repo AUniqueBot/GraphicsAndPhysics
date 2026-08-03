@@ -1,0 +1,13 @@
+{
+    "name": "TestLambert",
+    "shader_id": "C_ID_LAMBERTSHADERPROG",
+    "properties" : [
+        {
+            "albedo": {
+                "type" : "color",
+                "value" : [0.5, 0.5, 0.5, 1.0] 
+            }
+        }
+    ]
+    
+}

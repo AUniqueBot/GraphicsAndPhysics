@@ -1,13 +1,13 @@
 #pragma once
-#include <arch/common/scene.h>
-#include <arch/datatypes/type_sparseSet.h>
 
+
+class Scene;
 
 
 class SceneManager {
 public:
-	enum class SceneLoadingState {
-		LOADING,	// in the process of loading
+	enum class LoadState {
+		LOADING,	// in the process of loading a scene
 		LOADED,		// a scene is loaded
 		UNLOADING,	// a scene is being unloaded
 		UNLOADED	// no scene is currently loaded
@@ -15,14 +15,18 @@ public:
 
 
 public:
-
-	void LoadScene(const Scene& _scene);
+	void LoadScene(std::shared_ptr<Scene> _scene);
+	void UnloadScene();
 	void SaveScene();
+
+	LoadState GetCurrentLoadState();
+	
 
 private:
 	void Clear();
 
 private:
-	Scene m_currentScene	{};
-	
+	std::shared_ptr<Scene> m_currentScene{};
+	LoadState m_currentState	{ LoadState::UNLOADED };
+	LoadState m_nextState		{ LoadState::UNLOADED };
 };

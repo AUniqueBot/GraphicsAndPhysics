@@ -17,14 +17,14 @@ public:
 	void UsesColor(bool _usesTexture);
 	bool UsesColor() const;
 
-	void ApplyUniforms() const override;
+	//void ApplyUniforms() override;
 
 	const GLuint& GetColorTextureID() const;
 	// need a resource manager for textures
 
 protected:
 	void InitInternal() override;
-
+	void ResolveTextureValues() override;
 private:
 	void SetupTextures();
 

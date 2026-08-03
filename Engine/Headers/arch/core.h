@@ -13,6 +13,8 @@
 #include <arch/resources/res_resourceManager.h>
 #include <arch/resources/res_shaderManager.h>
 
+#include <arch/core/core_gamestatemanager.h>
+#include <arch/core/core_scenemanager.h>
 
 
 class Core : public Singleton<Core> {
@@ -118,6 +120,9 @@ private:
 	ResourceManager m_resourceManager;
 	ShaderManager m_shaderManager;
 	
+	// - save management ---------------------------
+	GameStateManager m_gsm;
+	SceneManager m_sceneManager;
 
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;
