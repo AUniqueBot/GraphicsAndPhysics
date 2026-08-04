@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/system.h>
+#include <arch/common/component.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
 #include <arch/resources/res_textureManager.h>
@@ -196,7 +197,6 @@ private:
 
 	RenderTargetManager m_renderTargetManager;
 	ViewportManager m_viewportManager;
-	TextureManager m_textureManager;
 	Compositor m_compositor;
 	UBOManager m_uboManager;
 	VAOManager m_vaoManager;

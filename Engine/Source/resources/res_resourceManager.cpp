@@ -101,19 +101,41 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 
 
 
-ResourceIdentifier ResourceManager::AddResourceInternal(
+ResourceIdentifier ResourceManager::AddExternalResourceInternal(
 	std::shared_ptr<BaseResource> _resource, 
 	RESTYPE_ID _type,
 	std::filesystem::path _path) {
-	const RES_ID resId = GenerateID(_resource->ResourceType());
+	const RESTYPE_ID type = _resource->ResourceType();
+	const RES_ID resId = GenerateID(type);
 	const std::string name = _resource->m_pathToAsset.filename().string();
 	const ResourceIdentifier ret {
 		resId,
+		type,
 		name
 	};
 	_resource->ResourceID(resId);
 	_resource->Name(name);
 	m_resourcePoolIDLookup[resId] =_resource;
+	m_resourceNameToID[name] = resId;
+	m_resourceTypeManifest[_type].push_back(resId);
+	return ret;
+}
+
+ResourceIdentifier ResourceManager::AddInternalResourceInternal(
+	std::shared_ptr<BaseResource> _resource, 
+	RESTYPE_ID _type
+) {
+	const RESTYPE_ID type = _resource->ResourceType();
+	const RES_ID resId = GenerateID(type);
+	const std::string name = _resource->m_pathToAsset.filename().string();
+	const ResourceIdentifier ret{
+		resId,
+		type,
+		name
+	};
+	_resource->ResourceID(resId);
+	_resource->Name(name);
+	m_resourcePoolIDLookup[resId] = _resource;
 	m_resourceNameToID[name] = resId;
 	m_resourceTypeManifest[_type].push_back(resId);
 	return ret;
@@ -254,7 +276,7 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 		
 		mesh->LoadMeshFromPath(_filePath);
 		LOG_INFO("Loading mesh from "<< _filePath);
-		AddResource(mesh, _filePath);
+		AddExternalResource(mesh, _filePath);
 	}
 
 

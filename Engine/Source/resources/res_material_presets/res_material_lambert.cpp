@@ -12,13 +12,25 @@ void LambertMaterial::InitInternal() {
 }
 
 void LambertMaterial::ResolveTextureValues() {
-    if (!m_textureReferenceDirty) return;
-    m_textureReferenceDirty = false;
+    
+    if (m_valuesDirty) {
+        if (m_textureColor.IsValid()) {
+            Color(m_color);
+        }
+        else {
+            
+        }
+    }
+    
+    // - uniform values ------------------
+    if (m_textureReferenceDirty) {
+        m_textureReferenceDirty = false;
 
-    MaterialValueData matValue;
-    matValue.m_type = MaterialValueData::ValueType::Texture;
-    matValue.SetValue(GetColorTextureID());
-    *m_materialValues[U_ALBEDO] = matValue;
+        MaterialValueData matValue;
+        matValue.m_type = MaterialValueData::ValueType::Texture;
+        matValue.SetValue(GetColorTextureID());
+        *m_materialValues[U_ALBEDO] = matValue;
+    }
 }
 
 Materials::ShadingModel LambertMaterial::GetShadingModel() const {
@@ -51,16 +63,12 @@ bool LambertMaterial::UsesColor() const {
     return m_usesColor;
 }
 
-const GLuint& LambertMaterial::GetColorTextureID() const {
+GLuint LambertMaterial::GetColorTextureID() const {
     return m_usesColor ? m_textureColor.GetTextureHandle() : m_reservedImageTexId;
 }
 
 void LambertMaterial::SetupTextures() {
-    if (!m_texManagerReference) {
-        LOG_WARN("Skipping Texture Setup");
-        return;
-    }
-    TextureManager& texManager{ *m_texManagerReference };
+    TextureManager& texManager{ Core::GetInstance().GetAssetManager().GetTextureManager() };
     using namespace TextureProperties;
     TextureProps props;
     props.m_internalImageFormat = TextureFormat::RGBA8;

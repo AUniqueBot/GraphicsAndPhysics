@@ -2,7 +2,7 @@
 #include <arch/resources/res_textureManager.h>
 
 
-Texture2D::Texture2D(const TextureIDInfo& _info) : Texture(_info) {
+Texture2D::Texture2D(std::shared_ptr<TextureRes> _resHandle) : Texture(_resHandle) {
 	using namespace TextureProperties;
 	m_textureType = TextureType::TEXTURE_2D;
 }

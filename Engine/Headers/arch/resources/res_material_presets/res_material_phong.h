@@ -43,9 +43,9 @@ public:
 	void SetGlossImageTexture(const GLuint& _texture); 
 	 
 
-	const GLuint& GetColorTextureID() const;
-	const GLuint& GetSpecularTextureID() const;
-	const GLuint& GetGlossTextureID() const; 
+	GLuint GetColorTextureID() const;
+	GLuint GetSpecularTextureID() const;
+	GLuint GetGlossTextureID() const; 
 
 	void SetUsesGlossValue(bool _usesGlossValue);
 	bool UsesGlossValue() const;
@@ -74,18 +74,18 @@ private:
 	bool m_usesGlossValue				{ true };
 	 
 
-	Texture2D m_textureColor			{ TextureIDInfo{} }; 
+	Texture2D m_textureColor;
 	GLuint m_reservedColorTexId{}; 
 	GLuint m_reservedColorImageTexId{};
 
-	Texture2D m_textureSpecular			{ TextureIDInfo{} };
+	Texture2D m_textureSpecular;
 	GLuint m_reservedSpecularTexId{};
 	GLuint m_reservedSpecularImageTexId{};  
 
 	
 	// exponent + something
 
-	Texture2D m_textureGloss			{ TextureIDInfo{} }; 
+	Texture2D m_textureGloss;
 	GLuint m_reservedGlossTexId{}; 
 	GLuint m_reservedGlossImageTexId{};  
 	

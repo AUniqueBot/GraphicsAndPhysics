@@ -1,3 +1,4 @@
+#include <arch/core.h>
 #include <arch/resources/res_material_presets/res_material_phong.h>
 #include <util/util_serialisation.h>
 #include <util/util_convenient_conversions.h>
@@ -119,15 +120,15 @@ void PhongMaterial::SetSpecularImageTexture(const GLuint& _texture) {
     m_reservedSpecularImageTexId = _texture;
 }
 
-const GLuint& PhongMaterial::GetColorTextureID() const {
+GLuint PhongMaterial::GetColorTextureID() const {
     return m_usesColorValue ? m_textureColor.GetTextureHandle() : m_reservedColorImageTexId;
 }
 
-const GLuint& PhongMaterial::GetSpecularTextureID() const {
+GLuint PhongMaterial::GetSpecularTextureID() const {
     return m_usesSpecularValue ? m_textureSpecular.GetTextureHandle() : m_reservedSpecularImageTexId;
 }
 
-const GLuint& PhongMaterial::GetGlossTextureID() const {
+GLuint PhongMaterial::GetGlossTextureID() const {
     return m_usesGlossValue ? m_textureGloss.GetTextureHandle() : m_reservedGlossImageTexId;
 }
 
@@ -142,11 +143,8 @@ bool PhongMaterial::UsesGlossValue() const {
 }
 
 void PhongMaterial::SetupTextures() {
-    if (!m_texManagerReference) {
-        LOG_WARN("Skipping Texture Setup");
-        return;
-    }
-    TextureManager& texManager { *m_texManagerReference };
+
+    TextureManager& texManager { Core::GetInstance().GetAssetManager().GetTextureManager() };
     
     using namespace TextureProperties;
     TextureProps colProps;
@@ -163,7 +161,7 @@ void PhongMaterial::SetupTextures() {
     TextureProps glossProps;
     glossProps.m_internalImageFormat = TextureFormat::R8;
     m_textureGloss = texManager.Create2DTexture(1, 1, glossProps);
-    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0); 
+    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 
 
     MaterialValueData matValue;

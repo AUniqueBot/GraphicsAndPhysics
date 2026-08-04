@@ -3,6 +3,8 @@
 #include <arch/resources/res_material_presets/res_materiallist.h>
 
 
+
+
 class MaterialManager {
 
 public:
@@ -10,7 +12,7 @@ public:
 
 	//! @brief returns the shader id of the current material.
 	GLuint ResolveMaterial(std::string _materialID) const; // for use in the Rendering System.
-
+	
 
 
 	// - factory ---------------------------------------
@@ -22,8 +24,10 @@ public:
 	std::shared_ptr<BlinnPhongMaterial>	CreateBlinnMaterial();
 	std::shared_ptr<Material>			CreateGGXMaterial();
 
+
+
 private:
 	// storage of all materials
-	SparseSet<std::string, std::shared_ptr<Material>> m_materialStorage;
+	SparseSet<RES_ID, std::shared_ptr<Material>> m_materialStorage;
 
 };

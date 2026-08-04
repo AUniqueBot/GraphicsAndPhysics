@@ -1,9 +1,9 @@
 #include <arch/resources/res_textureManager.h>
+#include <arch/core.h>
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
 #include <stb_image.h>
-
 
 
 namespace {
@@ -149,22 +149,9 @@ namespace {
 }
 
 
-TextureIDInfo TextureManager::GenerateTextureIDInfo() {
-	TextureID nextId;
-	if (!m_freeIds.empty()) {
-		nextId = m_freeIds.front();
-		m_freeIds.pop();
-	}
-	else {
-		nextId = m_nextID++;
-	}
-	return TextureIDInfo(nextId, this);
-}
 
-void TextureManager::ReclaimTextureIDInfo(TextureIDInfo _id) {
-	m_storage.Remove(_id.GetTextureID());
-	m_freeIds.push(_id.GetTextureID());
-}
+
+
 
 bool TextureManager::TextureExists(TextureID _id) const {
 	return static_cast<bool>(m_storage.At(_id));
@@ -173,7 +160,7 @@ bool TextureManager::TextureExists(TextureID _id) const {
 void TextureManager::Resolve(TextureGPU& _texture) {
 	
 
-
+ 
 
 }
 
@@ -196,7 +183,6 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	
 
 	// init required objects 
-	TextureIDInfo info = GenerateTextureIDInfo();
 	using namespace TextureProperties;
 	TextureProperties::TextureProps props;
 	switch (channelCount) {
@@ -270,33 +256,34 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	tex.Upload({ {uploadData} });// upload data here.
 
 	// if successful add to storage
-	m_storage.Add(std::move(tex), info.GetTextureID());
-	Texture2D texHandle = { info };
-	return texHandle;
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes());
+	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
+	m_storage.Add(std::move(tex), texHandle->ResourceID());
+	Texture2D retVal{texHandle};
+	return retVal;
 }
 
 
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperties::TextureProps _props) {
-	TextureIDInfo info = GenerateTextureIDInfo();
-	TextureID at = info.GetTextureID();
 	TextureGPU tex{
 		TextureProperties::TextureType::TEXTURE_2D,
 		{ width, height, 1 },
 		_props
 	};
+
 	tex.Create();
 	tex.Allocate();
-	m_storage.Add(std::move(tex), at);
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
+	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
+	m_storage.Add(std::move(tex), texHandle->ResourceID());
 	LOG_INFO("Allocating 2D Texture of size: [" << width << ", " << height << "]");
-	Texture2D texHandle = { info };
 	return texHandle;
 }
 
-TextureIDInfo TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
-	TextureIDInfo info = GenerateTextureIDInfo();
-	TextureID at = info.GetTextureID();
+void TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
+
 	TextureGPU tex = { 
 		TextureProperties::TextureType::TEXTURE_3D,
 		{ _width, _height, _depth },
@@ -304,14 +291,12 @@ TextureIDInfo TextureManager::Create3DTexture(int _width, int _height, int _dept
 	};
 	tex.Create();
 	tex.Allocate();
-	m_storage.Add(std::move(tex), at);
-	///
-	return info;
+	m_storage.Add(std::move(tex), C_INVALID_TEXTURE_ID);
+
+	//return info;
 }
 
 Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {
-	TextureIDInfo info = GenerateTextureIDInfo();
-	TextureID at = info.GetTextureID();
 	TextureGPU tex = TextureGPU(
 		TextureProperties::TextureType::TEXTURE_2D_ARRAY,
 		{ _width, _height, _layers },
@@ -320,24 +305,16 @@ Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int
 
 	tex.Create();
 	tex.Allocate();
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
+	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
 	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
-	m_storage.Add(std::move(tex), info.GetTextureID());
-	Texture2DArray texHandle = { info };
+	m_storage.Add(std::move(tex), texHandle->ResourceID());
 	return texHandle;
 }
 
-TextureIDInfo TextureManager::CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props) {
-	TextureIDInfo info = GenerateTextureIDInfo();
-	m_storage.Add(
-		TextureGPU(
-			TextureProperties::TextureType::CUBEMAP,
-			{ width, height, 6 },
-			_props
-		),
-		info.GetTextureID()
-	);
+void TextureManager::CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props) {
+	
 
-	return info;
 }
 
 // ---------------------------------------------------------------------------------
@@ -347,17 +324,6 @@ SparseSetView<TextureGPU> TextureManager::GetTexture(TextureID _id) {
 	return m_storage.At(_id);
 }
 
-void TextureManager::DeleteTexture(TextureIDInfo _id) {
-	SparseSetView<TextureGPU> handle = GetTexture(_id.GetTextureID());
-	if (!handle) {
-		LOG_WARN("Attempted to delete non existent texture. Ignoring.");
-		return;
-	}
-	TextureGPU& tex = *handle;
-	// reclaim ID.
-	m_freeIds.push(_id.GetTextureID());
-	tex.Destroy(); // destroy if it wasn't already.
-}
 
 void TextureManager::UpdateTextures() {
 	for (TextureGPU& tex : m_storage.Data()) {

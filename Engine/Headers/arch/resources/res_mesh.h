@@ -15,6 +15,9 @@ public:
 	void Load();
 
 	virtual void Init();
+	std::string ResourceTypeName() override { return "Mesh"; }
+
+
 
 	void LoadAsset() override;
 	void LoadMeshFromPath(std::filesystem::path _pathToModel);
@@ -30,7 +33,7 @@ public:
 	virtual const float* GetVertexData() const;
 	virtual const size_t GetNormalDataSize() const;
 	virtual const float* GetNormalData() const;
-	virtual const unsigned GetUVCount() const;
+	virtual const size_t GetUVCount() const;
 	virtual const size_t GetUVDataSize(unsigned _index) const;
 	virtual const float* GetUVData(unsigned _index) const;
 	virtual const size_t GetIndexDataSize() const;

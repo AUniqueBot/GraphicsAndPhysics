@@ -8,8 +8,9 @@
 */
 
 struct ResourceIdentifier {
-	const RES_ID m_resourceID;
-	const std::string m_resourceName;
+	RES_ID m_resourceID;
+	RESTYPE_ID m_resourceId;
+	std::string m_resourceName;
 };
 
 
@@ -53,7 +54,11 @@ public:
 
 	// internal thing
 	template <std::derived_from<BaseResource> T>
-	ResourceIdentifier AddResource(std::shared_ptr<T> _resource, std::filesystem::path _path);
+	ResourceIdentifier AddExternalResource(std::shared_ptr<T> _resource, std::filesystem::path _path);
+
+
+	template <std::derived_from<BaseResource> T>
+	ResourceIdentifier AddInternalResource(std::shared_ptr<T> _resource);
 	
 
 	void RemoveResource(RES_ID _id); 
@@ -102,10 +107,15 @@ public:
 	void LoadResource(std::filesystem::path _filePath);
 private:
 	// optional path.
-	ResourceIdentifier AddResourceInternal(
+	ResourceIdentifier AddExternalResourceInternal(
 		std::shared_ptr<BaseResource> _resource, 
 		RESTYPE_ID _type, 
 		std::filesystem::path _path
+	);
+
+	ResourceIdentifier AddInternalResourceInternal(
+		std::shared_ptr<BaseResource> _resource,
+		RESTYPE_ID _type
 	);
 
 private:

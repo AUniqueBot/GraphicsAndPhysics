@@ -469,7 +469,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 			ImGui::Text("%i", size);
 			ImGui::TableSetColumnIndex(1);
 
-			void* currentElement = list.m_get(object, i);
+			void* currentElement = list.m_get(object, static_cast<int>(i));
 			std::string elementName = "##" + prop.m_name + std::to_string(i);
 			// draw your element here.
 			switch (list.m_type) {

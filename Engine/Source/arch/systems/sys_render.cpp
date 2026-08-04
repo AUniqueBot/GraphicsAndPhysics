@@ -163,7 +163,8 @@ void RenderSystem::Init() {
     SetupShadowBuffers();
 
     // testing loading of textures to GPU.
-    m_textureManager.LoadTexture("./Assets/Images/awesomeface.png");
+    TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
+    texManager.LoadTexture("./Assets/Images/awesomeface.png");
 }
  
 void RenderSystem::PreUpdate() {
@@ -657,7 +658,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             FillObjectUBO(*meshEntity, *trsMesh);
-            glDrawElements(GL_TRIANGLES, mesh->GetIndexDataCount() * 3, GL_UNSIGNED_INT, 0);
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
         }
     }
     
@@ -899,25 +900,12 @@ void RenderSystem::SetupShadowBuffers() {
     glm::ivec3 dims{};
 
     dims = { SHADOW_WH, SHADOW_WH, m_directionalShadowMaps.GetLayers() };
-    Texture2DArray dir = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
+    Texture2DArray dir = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props); // can be moved!
     m_directionalShadowMaps.SetTexture(dir);
     m_directionalShadowMaps.BuildShadowMap(); 
 
      
-
-    //dims = { SHADOW_WH, SHADOW_WH, m_spotLightShadowMaps.GetLayers() };
-    //Texture2DArray spot = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
-    //m_spotLightShadowMaps.SetTexture(spot);
-    //m_spotLightShadowMaps.BuildShadowMap();
-
-    //m_pointLightShadowMaps.SetFramebufferSize({ SHADOW_WH, SHADOW_WH });
-    //m_pointLightShadowMaps.BuildShadowMap();
-
-    //framebufferSize = m_pointLightShadowMaps.GetFramebufferSize();
-    //glm::ivec3 dims = { framebufferSize.x, framebufferSize.y, m_pointLightShadowMaps.GetLayers() };
-    //Texture2DArray point = m_textureManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
-    //m_pointLightShadowMaps.SetTexture(point);
-
 
 
 }
@@ -994,7 +982,6 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
             
         shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
         _mat.SetShaderProgram(shaderId);
-        _mat.SetTextureManager(&m_textureManager);
         _mat.Init();
     }
     _mat.UseMaterial();

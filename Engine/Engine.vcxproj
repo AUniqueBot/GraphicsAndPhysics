@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\common\properties.h" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
+    <ClCompile Include="Headers\arch\resources\res_texture\res_texturegpu.h" />
     <ClCompile Include="Source\arch\core\core_gamestatemanager.cpp" />
     <ClCompile Include="Source\resources\res_materialManager.cpp" />
     <ClCompile Include="Source\resources\res_material_presets\res_material_blinnphong.cpp" />
@@ -235,6 +236,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\resources\res_texture\res_texture.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2d.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp" />
+    <ClCompile Include="Source\resources\res_texture\res_texture_gpu.cpp" />
+    <ClCompile Include="Source\resources\res_texture\res_texture_properties.cpp" />
     <ClCompile Include="Source\serialization\serialize_jsonfile.cpp" />
     <ClCompile Include="Source\serialization\serialize_reader.cpp" />
     <ClCompile Include="Source\util\util_color.cpp" />
@@ -301,6 +304,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h" />

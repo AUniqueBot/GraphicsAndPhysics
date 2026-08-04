@@ -12,6 +12,7 @@
 
 #include <arch/resources/res_resourceManager.h>
 #include <arch/resources/res_shaderManager.h>
+#include <arch/resources/res_assetManager.h>
 
 #include <arch/core/core_gamestatemanager.h>
 #include <arch/core/core_scenemanager.h>
@@ -65,6 +66,8 @@ public:
 	void SetFixedDeltaTime(double _newDelta)		{ m_fixedDeltaTime = _newDelta; }
 
 
+
+	// - resources ----------------------------------
 	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
 	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
@@ -72,6 +75,8 @@ public:
 	const ShaderManager& GetShaderManager() const	{ return m_shaderManager; };
 
 
+	AssetManager& GetAssetManager()					{ return m_assetManager; }
+	const AssetManager& GetAssetManager() const		{ return m_assetManager; }
 
 
 public:
@@ -119,7 +124,7 @@ private:
 	EntityFactory m_entityFactory			{ m_registry };
 	ResourceManager m_resourceManager;
 	ShaderManager m_shaderManager;
-
+	AssetManager m_assetManager;
 	
 	
 	// - save management ---------------------------

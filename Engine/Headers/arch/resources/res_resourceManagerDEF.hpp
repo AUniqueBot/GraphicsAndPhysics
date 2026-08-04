@@ -4,9 +4,14 @@
 
 
 template<std::derived_from<BaseResource> T>
-inline ResourceIdentifier ResourceManager::AddResource(std::shared_ptr<T> _resource, std::filesystem::path _path) {
+inline ResourceIdentifier ResourceManager::AddExternalResource(std::shared_ptr<T> _resource, std::filesystem::path _path) {
 	ResourceTypeMetadata rtm	{ RegisterResourceType<T>() };
-	return AddResourceInternal(_resource, _resource->ResourceType(),_path);
+	return AddExternalResourceInternal(_resource, _resource->ResourceType(),_path);
+}
+
+template<std::derived_from<BaseResource> T>
+inline ResourceIdentifier ResourceManager::AddInternalResource(std::shared_ptr<T> _resource) {
+	return AddInternalResourceInternal(_resource, _resource->ResourceType());
 }
 
 template <std::derived_from<BaseResource> T>

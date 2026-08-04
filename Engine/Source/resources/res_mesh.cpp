@@ -145,7 +145,7 @@ const float* Mesh::GetNormalData() const {
 	return GetData<float>("normal");
 }
 
-const unsigned Mesh::GetUVCount() const {
+const size_t Mesh::GetUVCount() const {
 	return m_uvs.size();
 }
 

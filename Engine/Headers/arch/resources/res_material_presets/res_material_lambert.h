@@ -19,7 +19,7 @@ public:
 
 	//void ApplyUniforms() override;
 
-	const GLuint& GetColorTextureID() const;
+	GLuint GetColorTextureID() const;
 	// need a resource manager for textures
 
 protected:
@@ -36,7 +36,7 @@ private:
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
 	
-	Texture2D m_textureColor	{ TextureIDInfo{} }; // starts with a useless one for correctness
+	Texture2D m_textureColor; // starts with a useless one for correctness
 
 	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.
 

@@ -4,11 +4,10 @@
 
 
 void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
-	if (!m_textureHandle.IsValid()) return;
-	if (_res != m_textureHandle.GetDimensions()) {
+	if (_res != m_framebufferSize) {
 		m_framebufferSize = _res;
 
-		if (m_isBuilt) {
+		if (m_isBuilt && m_textureHandle.IsValid()) {
 			Destroy();
 			BuildShadowMap();
 		}
@@ -73,6 +72,7 @@ void ShadowMap::SetupTextureArray(GLuint _handle) {
 
 
 void ShadowMap::BuildShadowMap() {
+	
 	if (!m_textureHandle.IsValid()) return;
 	GLuint shadowTexture = m_textureHandle.GetTextureHandle();
 	SetupTextureArray(shadowTexture);
@@ -142,7 +142,7 @@ unsigned ShadowMap::FBO() const {
 }
 
 unsigned ShadowMap::GetTextureID() const {
-	return m_textureHandle.GetTextureHandle();
+	return m_textureHandle.IsValid() ? m_textureHandle.GetTextureHandle() : C_INVALID_TEXTURE_ID;
 }
 
 bool ShadowMap::ValidateID(unsigned _id) const {
@@ -181,9 +181,9 @@ void ShadowMap::SetTexture(const Texture2DArray& _info) {
 	m_textureHandle = _info;
 }
 
-const Texture2DArray& ShadowMap::GetTexture() const {
-	return m_textureHandle;
-}
+//const Texture2DArray& ShadowMap::GetTexture() const {
+//	return *m_textureHandle;
+//}
 
 
 

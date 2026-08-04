@@ -13,6 +13,13 @@
 using RES_ID = unsigned long;	//id of the resource (to be replaced with GUID one day)
 using RESTYPE_ID = uint32_t;	// id of the TYPE of resource
 
+inline RES_ID GenerateResourceID() {
+	static std::atomic<RES_ID> next{ 1 }; // 0 reserved = invalid
+	return next++;
+}
+
+
+
 struct ResourceTypeMetadata {
 public:
 	using RESTYPE_INFO = std::type_index;
@@ -44,11 +51,11 @@ class BaseResource: public Inspectable {
 private:
 public:
 
-	static const RES_ID RES_ID_INVALID { 0 };
+	static const RES_ID C_RES_ID_INVALID { 0 };
 public:
 	BaseResource(RESTYPE_ID _type);
 	RESTYPE_ID ResourceType() const	{ return m_resType; }
-
+	virtual std::string ResourceTypeName() { return "RESOURCE"; };
 
 	std::string Name() const;
 	void Name(std::string _name);
@@ -64,6 +71,7 @@ public:
 
 	std::filesystem::path ResourcePath() const;
 	void ResourcePath(std::filesystem::path _path);
+protected:
 
 private:
 	friend class ResourceManager;
@@ -73,7 +81,7 @@ private:
 	// Res ID structure (total 64 bits)
 	// 8 Bits - 3 Digits for asset type
 	// 24 bits - something idk 
-
+	
 
 
 protected:
@@ -81,7 +89,7 @@ protected:
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
 
 private:
-	RES_ID m_resourceId					{ RES_ID_INVALID };
+	RES_ID m_resourceId					{ C_RES_ID_INVALID };
 	RESTYPE_ID m_resType				{ 0 };	// 0 reserved as invalid.
 	unsigned m_referenceCount			{};
 	bool m_isLoaded						{ false };

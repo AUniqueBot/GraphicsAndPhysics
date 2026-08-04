@@ -138,6 +138,8 @@ public:
 
 
 public:
+	std::string ResourceTypeName() override { return "Material"; }
+public:
 
 	void Init();
 
@@ -186,9 +188,7 @@ public:
 	// - config -----------------------------------------------
 	bool IsInitialised() const;
 	void SetInitialised(bool _setting);
-	TextureManager* GetTextureManager();
-	const TextureManager* GetTextureManager() const;
-	void SetTextureManager(TextureManager* _manager);
+
 	
 	
 
@@ -208,6 +208,5 @@ protected:
 	SparseSet<std::string, MaterialValueData> m_materialValues;
 
 	bool m_textureReferenceDirty				{ true }; // starts as true to initialize the values first.
-
-	TextureManager* m_texManagerReference		{};
+	bool m_valuesDirty							{ true };
 };

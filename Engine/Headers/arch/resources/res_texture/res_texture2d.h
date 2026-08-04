@@ -5,7 +5,7 @@
 
 class Texture2D : public Texture {
 public:
-	Texture2D(const TextureIDInfo& _info); 
+	Texture2D(std::shared_ptr<TextureRes> _resHandle = nullptr); 
 	Texture2D(const Texture2D&) = default;
 	Texture2D& operator=(const Texture2D&) = default;
 

@@ -115,18 +115,6 @@ void Material::UseMaterial() {
 }
 
 
-void Material::SetTextureManager(TextureManager* _manager) {
-	m_texManagerReference = _manager;
-}
-
-TextureManager* Material::GetTextureManager() {
-	return m_texManagerReference;
-}
-const TextureManager* Material::GetTextureManager() const {
-	return m_texManagerReference;
-}
-
-
 void Material::InitUniformLocations() {
 	if (!m_shader) return;
 	GLuint programId { m_shader };
