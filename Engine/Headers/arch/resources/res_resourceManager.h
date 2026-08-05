@@ -8,8 +8,8 @@
 */
 
 struct ResourceIdentifier {
-	RES_ID m_resourceID;
-	RESTYPE_ID m_resourceId;
+	RES_ID m_resourceId;
+	RESTYPE_ID m_resourceTypeId;
 	std::string m_resourceName;
 };
 
@@ -67,6 +67,8 @@ public:
 
 	std::shared_ptr<BaseResource> GetResource(RES_ID _id);
 	std::shared_ptr<BaseResource> GetResource(std::string _name);
+	std::shared_ptr<BaseResource> GetResource(ResourceIdentifier _id);
+
 
 	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool();
 	const std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool() const;
@@ -137,7 +139,6 @@ private:
 
 	std::unordered_map<std::string, RES_ID>						m_resourceNameToID;
 	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>	m_resourcePoolIDLookup;
-
 
 
 	// secondary identifiers.

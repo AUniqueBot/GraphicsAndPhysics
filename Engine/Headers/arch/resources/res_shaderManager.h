@@ -2,6 +2,7 @@
 #include <pch.h>
 #include <arch/datatypes/type_sparseSet.h>
 #include <arch/resources/res_shader.h>
+#include <arch/resources/res_specializedResourceManager.h>
 
 namespace ShaderConstants {
 
@@ -37,10 +38,12 @@ struct ShaderProgramDesc {
 using ShaderHandler = SparseSetView<Shader>;
 using ShaderProgramHandler = SparseSetView<ShaderProgram>;
 
-class ShaderManager {
+class ShaderManager : public SpecializedResourceManager {
 public:
-	void Init();
-	void Cleanup();
+	ShaderManager(ResourceManager& _mgr) : SpecializedResourceManager(_mgr) {}
+public:
+	void Init() override;
+	void Cleanup() override;
 
 
 	// shader

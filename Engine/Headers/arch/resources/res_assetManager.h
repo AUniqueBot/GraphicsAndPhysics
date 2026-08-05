@@ -10,15 +10,25 @@ class AssetManager {
 
 public:
 	// manager access.
+	AssetManager(ResourceManager& _mgr) : 
+		m_materialManager	{ _mgr }, 
+		m_shaderManager		{ _mgr }, 
+		m_textureManager	{ _mgr } 
 	
-	inline ShaderManager& GetShaderManager() { return m_shaderManager; }
-	inline const ShaderManager& GetShaderManager() const { return m_shaderManager; }
-	
-	inline MaterialManager& GetMaterialManager() { return m_materialManager; }
-	inline const MaterialManager& GetMaterialManager() const { return m_materialManager; }
+	{}
 
-	inline TextureManager& GetTextureManager() { return m_textureManager; }
-	inline const TextureManager& GetTextureManager() const { return m_textureManager; }
+public:
+	void Init();
+	void Cleanup();
+
+	ShaderManager& GetShaderManager();
+	const ShaderManager& GetShaderManager() const;
+	
+	MaterialManager& GetMaterialManager();
+	const MaterialManager& GetMaterialManager() const;
+
+	TextureManager& GetTextureManager();
+	const TextureManager& GetTextureManager() const;
 
 private:
 	ShaderManager m_shaderManager;

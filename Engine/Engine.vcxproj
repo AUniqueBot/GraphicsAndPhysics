@@ -183,6 +183,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texturegpu.h" />
     <ClCompile Include="Source\arch\core\core_gamestatemanager.cpp" />
+    <ClCompile Include="Source\resources\res_assetManager.cpp" />
     <ClCompile Include="Source\resources\res_materialManager.cpp" />
     <ClCompile Include="Source\resources\res_material_presets\res_material_blinnphong.cpp" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_material_blinnphong.h" />

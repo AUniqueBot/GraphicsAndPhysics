@@ -1,4 +1,3 @@
-#include <arch/core.h>
 #include <arch/resources/res_materialManager.h>
 
 void MaterialManager::Init() {
@@ -23,25 +22,25 @@ std::shared_ptr<Material> MaterialManager::CreateUnlitMaterial() {
 
 std::shared_ptr<LambertMaterial> MaterialManager::CreateLambertMaterial() {
 	std::shared_ptr<LambertMaterial> mat { std::make_shared<LambertMaterial>(LambertMaterial()) };
-	ResourceIdentifier resMd = Core::GetInstance().GetResourceManager().AddInternalResource(mat);
+	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
 	std::shared_ptr<LambertMaterial> copy = mat;
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceID);
+	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
 	return copy;
 }
 
 std::shared_ptr<PhongMaterial> MaterialManager::CreatePhongMaterial() {
 	std::shared_ptr<PhongMaterial> mat{ std::make_shared<PhongMaterial>(PhongMaterial()) };
-	ResourceIdentifier resMd = Core::GetInstance().GetResourceManager().AddInternalResource(mat);
+	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
 	std::shared_ptr<PhongMaterial> copy = mat;
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceID);
+	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
 	return copy;
 }
 
 std::shared_ptr<BlinnPhongMaterial> MaterialManager::CreateBlinnMaterial() {
 	std::shared_ptr<BlinnPhongMaterial> mat{ std::make_shared<BlinnPhongMaterial>(BlinnPhongMaterial()) };
-	ResourceIdentifier resMd = Core::GetInstance().GetResourceManager().AddInternalResource(mat);
+	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
 	std::shared_ptr<BlinnPhongMaterial> copy = mat;
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceID);
+	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
 	return copy;
 }
 

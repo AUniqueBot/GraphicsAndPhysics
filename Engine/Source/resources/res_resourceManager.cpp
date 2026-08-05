@@ -179,6 +179,10 @@ std::shared_ptr<BaseResource> ResourceManager::GetResource(std::string _resName)
 	return GetResource(m_resourceNameToID[_resName]);
 }
 
+std::shared_ptr<BaseResource> ResourceManager::GetResource(ResourceIdentifier _id) {
+	return GetResource(_id.m_resourceId);
+}
+
 std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
 	return m_resourcePoolIDLookup;
 }

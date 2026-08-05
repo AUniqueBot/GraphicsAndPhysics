@@ -71,8 +71,6 @@ public:
 	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
 	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
-	ShaderManager& GetShaderManager()				{ return m_shaderManager; };
-	const ShaderManager& GetShaderManager() const	{ return m_shaderManager; };
 
 
 	AssetManager& GetAssetManager()					{ return m_assetManager; }
@@ -122,9 +120,8 @@ private:
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	EntityFactory m_entityFactory			{ m_registry };
-	//ResourceManager m_resourceManager; // detaching 
-	ShaderManager m_shaderManager;
-	AssetManager m_assetManager;
+	ResourceManager m_resourceManager; // detaching 
+	AssetManager m_assetManager				{ m_resourceManager };
 	
 	
 	// - save management ---------------------------

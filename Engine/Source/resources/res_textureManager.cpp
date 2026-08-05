@@ -1,5 +1,4 @@
 #include <arch/resources/res_textureManager.h>
-#include <arch/core.h>
 #ifndef STB_IMAGE_IMPLEMENTATION
 #define STB_IMAGE_IMPLEMENTATION
 #endif
@@ -153,14 +152,12 @@ namespace {
 
 
 
-bool TextureManager::TextureExists(TextureID _id) const {
-	return static_cast<bool>(m_storage.At(_id));
+bool TextureManager::TextureExists(RES_ID _id) const {
+	return m_resourceIdPool.contains(_id);
 }
 
 void TextureManager::Resolve(TextureGPU& _texture) {
 	
-
- 
 
 }
 
@@ -257,8 +254,9 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 
 	// if successful add to storage
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes());
-	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
-	m_storage.Add(std::move(tex), texHandle->ResourceID());
+	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
+	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_resourceIdPool.insert(id.m_resourceId);
 	Texture2D retVal{texHandle};
 	return retVal;
 }
@@ -276,8 +274,9 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 	tex.Create();
 	tex.Allocate();
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
-	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
-	m_storage.Add(std::move(tex), texHandle->ResourceID());
+	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
+	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_resourceIdPool.insert(id.m_resourceId);
 	LOG_INFO("Allocating 2D Texture of size: [" << width << ", " << height << "]");
 	return texHandle;
 }
@@ -291,7 +290,7 @@ void TextureManager::Create3DTexture(int _width, int _height, int _depth, Textur
 	};
 	tex.Create();
 	tex.Allocate();
-	m_storage.Add(std::move(tex), C_INVALID_TEXTURE_ID);
+	m_textureGPUStorage.Add(std::move(tex), C_INVALID_TEXTURE_ID);
 
 	//return info;
 }
@@ -306,9 +305,10 @@ Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int
 	tex.Create();
 	tex.Allocate();
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
-	Core::GetInstance().GetResourceManager().AddInternalResource(texHandle);
+	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
-	m_storage.Add(std::move(tex), texHandle->ResourceID());
+	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_resourceIdPool.insert(id.m_resourceId);
 	return texHandle;
 }
 
@@ -320,13 +320,13 @@ void TextureManager::CreateCubemapTexture(int width, int height, TextureProperti
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
-SparseSetView<TextureGPU> TextureManager::GetTexture(TextureID _id) {
-	return m_storage.At(_id);
+SparseSetView<TextureGPU> TextureManager::GetTexture(RES_ID _id) {
+	return m_textureGPUStorage.At(_id);
 }
 
 
 void TextureManager::UpdateTextures() {
-	for (TextureGPU& tex : m_storage.Data()) {
+	for (TextureGPU& tex : m_textureGPUStorage.Data()) {
 		tex.UpdateAllocation();
 		tex.UpdateTextureProperties();
 	}

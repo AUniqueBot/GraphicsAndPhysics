@@ -896,7 +896,7 @@ void RenderSystem::SetupShadowBuffers() {
 
     dims = { SHADOW_WH, SHADOW_WH, m_directionalShadowMaps.GetLayers() };
     TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-    Texture2DArray dir = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props); // can be moved!
+    Texture2DArray dir = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
     m_directionalShadowMaps.SetTexture(dir);
     m_directionalShadowMaps.BuildShadowMap(); 
 
@@ -938,7 +938,7 @@ void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
 }
 
 void RenderSystem::ResolveMaterial(Material& _mat) {
-    ShaderManager& sr{ Core::GetInstance().GetShaderManager() };
+    ShaderManager& sr{ Core::GetInstance().GetAssetManager().GetShaderManager() };
     using namespace Materials;
     ShadingModel type{ _mat.GetShadingModel() };
 

@@ -139,7 +139,7 @@ void Core::Cleanup() {
 	for (auto s : m_systemInstances) {
 		s->Cleanup();
 	}
-	m_shaderManager.Cleanup();
+	m_assetManager.GetShaderManager().Cleanup();
 }
 
 void Core::SetWindow(GLFWwindow* _window) {
@@ -165,7 +165,7 @@ void Core::CoreInit() {
 	glfwSetWindowUserPointer(m_window, this);
 	m_inputSystem.Init(m_window);
 	m_resourceManager.Init(); 
-	m_shaderManager.Init();
+	m_assetManager.GetShaderManager().Init();
 
 
 }

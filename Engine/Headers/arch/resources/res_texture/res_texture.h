@@ -6,8 +6,7 @@
 
 
 class Texture;
-using TextureID = RES_ID;
-inline const TextureID C_INVALID_TEXTURE_ID = BaseResource::C_RES_ID_INVALID;
+inline const RES_ID C_INVALID_TEXTURE_ID = BaseResource::C_RES_ID_INVALID;
 
 
 

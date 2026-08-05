@@ -7,11 +7,15 @@
 #include <arch/resources/res_texture/res_texture2d.h>
 #include <arch/resources/res_texture/res_texture2darray.h>
 
+#include <arch/resources/res_specializedResourceManager.h>
 
-class TextureManager {
+class TextureManager : public SpecializedResourceManager {
+
 public:
+	TextureManager(ResourceManager& _mgr) : SpecializedResourceManager(_mgr) {};
 
-
+public:
+	
 
 	friend class Texture;
 	Texture2D LoadTexture(const std::filesystem::path& _path);
@@ -23,7 +27,7 @@ public:
 	void CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	
-	SparseSetView<TextureGPU> GetTexture(TextureID _id);
+	SparseSetView<TextureGPU> GetTexture(RES_ID _id);
 
 
 	
@@ -32,19 +36,14 @@ public:
 
 
 private:
-	bool TextureExists(TextureID _id) const;	
-	void Resolve(TextureGPU& _texture);
-
-
-
-	// u8 variant
-	
+	bool TextureExists(RES_ID _id) const;
+	void Resolve(TextureGPU& _texture);	
 
 private:
 
 	// store textures.
 	// for textures 
-	SparseSet<TextureID, TextureGPU> m_storage; 
+	SparseSet<RES_ID, TextureGPU> m_textureGPUStorage;
 
 };
 
