@@ -44,7 +44,7 @@ class ResourceManager {
 private:
 
 public:
-	ResourceManager();
+
 public:
 	
 	void Init();

@@ -12,10 +12,6 @@
 #include <arch/resources/res_scene.h>
 
 
-ResourceManager::ResourceManager() {
-	
-}
-
 
 
 

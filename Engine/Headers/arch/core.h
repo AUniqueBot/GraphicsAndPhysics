@@ -122,7 +122,7 @@ private:
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	EntityFactory m_entityFactory			{ m_registry };
-	ResourceManager m_resourceManager;
+	//ResourceManager m_resourceManager; // detaching 
 	ShaderManager m_shaderManager;
 	AssetManager m_assetManager;
 	
