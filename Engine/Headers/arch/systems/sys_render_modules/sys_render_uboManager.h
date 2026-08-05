@@ -13,10 +13,8 @@ public:
 	size_t BufferSize() const;
 	void BufferSize(size_t _size);
 
-	GLuint GetID() const { return m_bufferId; };
+	GLuint GetID() const { return m_ubo; };
 
-	void BindBuffer() const;
-	static void UnbindBuffer();
 	void SetBindingIndex(GLuint _bindingIdx);
 	const GLuint& GetBindingIndex() const;
 
@@ -24,7 +22,7 @@ public:
 
 private:
 	
-	GLuint m_bufferId							{ 0 };
+	GLuint m_ubo							{ 0 };
 	size_t m_bufferSize							{ 0 };
 	GLuint m_bindingIndex						{ 0 };
 

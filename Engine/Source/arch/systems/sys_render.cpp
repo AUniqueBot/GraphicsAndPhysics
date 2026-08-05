@@ -239,8 +239,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
 
     if (_viewport.GetRenderTarget()) _viewport.GetRenderTarget()->Bind();
     LightingRenderPass(_viewport, registry);
-    UBO::UnbindBuffer(); 
-    
+
 
     EndViewportPass(_viewport);
 
@@ -355,7 +354,7 @@ void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLight
     }
 
     UBO& lightBuffer = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_LIGHTS);
-    lightBuffer.BindBuffer();
+    //lightBuffer.BindBuffer();
     lightBuffer.FillBufferData(&m_ldData);
 }
 
@@ -377,7 +376,7 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
         );
     // - point light data -----------------------------------------------------------
     UBO& shadowUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW);
-    shadowUBO.BindBuffer();
+    //shadowUBO.BindBuffer();
     shadowUBO.FillBufferData(&m_smData);
 }
 
@@ -394,7 +393,7 @@ void RenderSystem::FillCommonUBO(
     m_commonUboData.m_cameraPosition = _cameraPosition;
     m_commonUboData.m_cameraForward = _cameraForward;
     m_commonUboData.m_deltaTime = _deltaTime;
-    commonUBO.BindBuffer();
+    //commonUBO.BindBuffer();
     commonUBO.FillBufferData(&m_commonUboData);
 }
 
@@ -403,7 +402,7 @@ void RenderSystem::FillObjectUBO(const Entity& entity, const Transform& _trs) {
     m_objectUboData.m_objectMatrix = _trs.WorldTransformMtx();
     m_objectUboData.m_position = _trs.Position();
     m_objectUboData.m_objectId = static_cast<GLuint>(entity.GetID().GetID());
-    objectUBO.BindBuffer();
+    //objectUBO.BindBuffer();
     objectUBO.FillBufferData(&m_objectUboData);
 }
 
@@ -911,6 +910,8 @@ void RenderSystem::SetupShadowBuffers() {
 }
 
 void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightMatrix) {
+    // glProgramUniformMatrix4fv(m_shadowPrg, m_shadowMeshLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
+    // glProgramUniformMatrix4fv(m_shadowPrg, m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_lightMatrix));
     glUniformMatrix4fv(m_shadowMeshLoc, 1, GL_FALSE, glm::value_ptr(_meshMatrix));
     glUniformMatrix4fv(m_shadowLightLoc, 1, GL_FALSE, glm::value_ptr(_lightMatrix));
 }

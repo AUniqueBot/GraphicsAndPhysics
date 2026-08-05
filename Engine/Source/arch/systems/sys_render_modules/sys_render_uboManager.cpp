@@ -11,19 +11,16 @@ void UBO::Init() {
 	using namespace GraphicsDebug;
 
 	//LOG_INFO("INIT START");
-	glGenBuffers(1, &m_bufferId);
+	glCreateBuffers(1, &m_ubo);
 	GetError();
-	if (!m_bufferId) {
+	if (!m_ubo) {
 		LOG_ERROR("BAD INDEX GENERATED");
 	}
 	else {
 
 	}
-	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);
-	glBufferData(GL_UNIFORM_BUFFER, m_bufferSize, NULL, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_bufferId);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferData(m_ubo, m_bufferSize, NULL, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_ubo);
 	LOG_INFO("INIT END");
 }
 
@@ -38,19 +35,13 @@ void UBO::BufferSize(size_t _size) {
 
 
 
-void UBO::BindBuffer() const {
-	if (m_currentBoundId == m_bufferId) return;
-	m_currentBoundId = m_bufferId;
 
-	glBindBuffer(GL_UNIFORM_BUFFER, m_bufferId);	
-	GraphicsDebug::GetError();
-}
 
 void UBO::SetBindingIndex(GLuint _bindingIndex) {
 	if (_bindingIndex == m_bindingIndex) return;
 	m_bindingIndex = _bindingIndex;
-	if (m_bufferId) {
-		glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_bufferId);
+	if (m_ubo) {
+		glBindBufferBase(GL_UNIFORM_BUFFER, m_bindingIndex, m_ubo);
 	}
 }
 
@@ -63,25 +54,9 @@ void UBO::FillBufferData(const void* _data) const {
 		LOG_ERROR("nullptr provided, no data filled");
 		return;
 	}
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, m_bufferSize , _data);
+	glNamedBufferSubData(m_ubo, 0, m_bufferSize, _data);
 	GraphicsDebug::GetError();
 }
-
-
-void UBO::UnbindBuffer() {
-	if (m_currentBoundId == 0) return;
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	m_currentBoundId = 0;
-}
-
-
-
-
-
-
-
-
-
 
 
 

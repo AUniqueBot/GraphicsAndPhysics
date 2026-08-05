@@ -24,7 +24,7 @@ const TextureGPU& TextureRes::GetTextureGPU() const {
 // -----------------------------------------------------------------
 
 
-
+	
 Texture::Texture(std::shared_ptr<TextureRes> _resHandle) : m_textureResHandle(_resHandle) {
 }
 
