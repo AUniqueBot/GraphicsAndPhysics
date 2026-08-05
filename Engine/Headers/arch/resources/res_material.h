@@ -116,6 +116,20 @@ MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type);
 MaterialValue GetDefaultValue(MaterialValueData::ValueType type);
 
 
+
+
+
+struct MaterialProps {
+	std::string m_shaderId {""};
+	// I want the shader ID provided by the thing
+	
+	std::map<std::string, MaterialValueData> m_props;
+};
+
+
+
+
+
 class RenderSystem; // fwd decl. 
 // - class -----------------------------
 class Material : public Resource<Material> {

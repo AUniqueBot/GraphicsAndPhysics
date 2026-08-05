@@ -49,7 +49,6 @@ public:
 	void Build(bool _showDebugMessages = true);
 	void Destroy();
 private:
-	std::string m_shaderName	{};
 	GLuint m_shaderId			{ ShaderConstants::C_INVALIDSHADERID };
 	std::string m_shaderCode	{};
 	ShaderConstants::ShaderType m_shaderType		{};

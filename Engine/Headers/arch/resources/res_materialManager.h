@@ -1,3 +1,4 @@
+#pragma once
 #include <pch.h>
 #include <arch/resources/res_material.h>
 #include <arch/resources/res_material_presets/res_materiallist.h>
@@ -12,6 +13,7 @@ public:
 
 	//! @brief returns the shader id of the current material.
 	GLuint ResolveMaterial(std::string _materialID) const; // for use in the Rendering System.
+	// this would be incorrect; and should be in the shader manager instead.
 	
 
 

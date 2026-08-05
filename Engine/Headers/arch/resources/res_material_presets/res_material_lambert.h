@@ -3,6 +3,12 @@
 #include <arch/resources/res_material.h>
 #include <arch/resources/res_texture/res_texture2d.h>
 
+
+struct LambertMaterialProps : public MaterialProps {
+	LambertMaterialProps() : MaterialProps() {};
+};
+
+
 class LambertMaterial : public Material {
 
 public:

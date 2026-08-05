@@ -23,7 +23,7 @@ void Core::Init() {
 
 	// create an entity via loading here...
 
-
+	MaterialManager& matMgr = Core::GetInstance().GetAssetManager().GetMaterialManager();
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
 	Entity& ambientLight = *(m_registry.Instantiate());
@@ -44,7 +44,7 @@ void Core::Init() {
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
-		std::shared_ptr<BlinnPhongMaterial> mat { std::make_shared<BlinnPhongMaterial>(BlinnPhongMaterial{}) };
+		std::shared_ptr<BlinnPhongMaterial> mat = matMgr.CreateBlinnMaterial();
 		component->AddMaterial(mat);
 		mat->Color(0xaaaaeeff);
 	}

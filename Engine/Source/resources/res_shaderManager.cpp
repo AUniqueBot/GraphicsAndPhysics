@@ -109,7 +109,7 @@ void ShaderManager::Cleanup() {
 
 
 
-GLuint ShaderManager::AddShader(
+GLuint ShaderManager::AddShader	(
 	std::string _identifier, 
 	Shader _program
 ) {

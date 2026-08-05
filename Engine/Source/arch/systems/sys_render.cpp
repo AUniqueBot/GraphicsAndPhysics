@@ -161,10 +161,6 @@ void RenderSystem::Init() {
     // TODO -> use the texture manager to create shadow maps.
     SetupShadowProgram();
     SetupShadowBuffers();
-
-    // testing loading of textures to GPU.
-    TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-    texManager.LoadTexture("./Assets/Images/awesomeface.png");
 }
  
 void RenderSystem::PreUpdate() {
