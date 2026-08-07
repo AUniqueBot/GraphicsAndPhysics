@@ -35,7 +35,9 @@ public:
 public:
 	
 	void Init();
-	
+	void Cleanup();
+
+
 	void ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive = true);
 	
 
@@ -109,6 +111,9 @@ private:
 		RESTYPE_ID _type
 	);
 
+
+	bool SetResourceAlias(RES_ID, std::string);
+
 private:
 	static RES_ID GenerateID(RESTYPE_ID _rsc);
 	
@@ -124,7 +129,7 @@ private:
 	// primary storage.
 	
 
-
+	// sparse set replacement.
 
 	std::unordered_map<std::string, RES_ID>						m_resourceNameToID;
 	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>	m_resourcePoolIDLookup;

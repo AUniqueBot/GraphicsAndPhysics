@@ -22,8 +22,9 @@ void Core::Init() {
 
 
 	// create an entity via loading here...
-
-	MaterialManager& matMgr = Core::GetInstance().GetAssetManager().GetMaterialManager();
+	AssetManager& asMgr = Core::GetInstance().GetAssetManager();
+	asMgr.Init();
+	MaterialManager& matMgr = asMgr.GetMaterialManager();
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
 	Entity& ambientLight = *(m_registry.Instantiate());
@@ -139,6 +140,7 @@ void Core::Cleanup() {
 	for (auto s : m_systemInstances) {
 		s->Cleanup();
 	}
+	m_resourceManager.Cleanup();
 	m_assetManager.GetShaderManager().Cleanup();
 }
 

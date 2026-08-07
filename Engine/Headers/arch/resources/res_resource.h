@@ -71,6 +71,10 @@ public:
 
 	std::filesystem::path ResourcePath() const;
 	void ResourcePath(std::filesystem::path _path);
+
+
+	inline virtual void Destroy() {};
+
 protected:
 
 private:

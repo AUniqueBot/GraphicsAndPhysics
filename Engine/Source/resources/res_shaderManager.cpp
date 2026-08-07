@@ -4,233 +4,52 @@
 void ShaderManager::Init() {
 	
 	// - vertex shader ---------------------------------------------------------------------
-	GLuint vtxShaderId				{ CreateShader(ShaderConstants::C_ID_VERTEXSHADER) };
-	Shader& vertexShader			{ *GetShader(vtxShaderId) };
-	std::string vertexShaderSrc { 
-		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_VERTEXSHADERPATH) 
-	};
-	vertexShader.SetShaderCode(vertexShaderSrc);
-	vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-	vertexShader.Build();
-	AddShader(ShaderConstants::C_ID_VERTEXSHADER, vertexShader);
 
+	std::string shaderSrc;
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_VERTEXSHADERPATH);
+	ShaderHandle vtxShader = CreateShader(ShaderConstants::ShaderType::VERTEX, shaderSrc);
+	SetResourceAlias(vtxShader.GetResourceID(), ShaderConstants::C_ID_VERTEXSHADER);
 
 	// - error frag ------------------------------------------------------------------------
-	GLuint unlitErrorFragShaderId	{ CreateShader(ShaderConstants::C_ID_ERRORSHADERPROG) };
-	Shader& unlitErrorFragShader	{ *GetShader(unlitErrorFragShaderId) };
-	std::string unlitErrorFragSrc{
-		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_ERRORFRAGSHADERPATH)
-	};
-	unlitErrorFragShader.SetShaderCode(unlitErrorFragSrc);
-	unlitErrorFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-	unlitErrorFragShader.Build();
-	AddShader(ShaderConstants::C_ID_ERRORFRAGSHADER, unlitErrorFragShader);
+
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_ERRORFRAGSHADERPATH);
+	ShaderHandle errFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(errFragShader.GetResourceID(), ShaderConstants::C_ID_ERRORFRAGSHADER);
 
 
 	
 	// - lambert frag ----------------------------------------------------------------------
-	GLuint lambertFragShaderId		{ CreateShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER) };
-	std::string lambertFragSrc { 
-		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_LAMBERTFRAGSHADERPATH) 
-	};
-	Shader& lambertFragShader		{ *GetShader(lambertFragShaderId) };
-	lambertFragShader.SetShaderCode(lambertFragSrc);
-	lambertFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-	lambertFragShader.Build();
-	AddShader(ShaderConstants::C_ID_LAMBERTFRAGSHADER, lambertFragShader);
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_LAMBERTFRAGSHADERPATH);
+	ShaderHandle lambertFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(lambertFragShader.GetResourceID(), ShaderConstants::C_ID_LAMBERTFRAGSHADER);
 	
 	
 	// - phong frag -------------------------------------------------------------------------
-	GLuint phongFragShaderId		{ CreateShader(ShaderConstants::C_ID_PHONGSHADERPROG) };
-	Shader& phongFragShader			{ *GetShader(phongFragShaderId) };
-	std::string phongFragSrc{
-		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_PHONGFRAGSHADERPATH)
-	};
-	phongFragShader.SetShaderCode(phongFragSrc);
-	phongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-	phongFragShader.Build();
-	AddShader(ShaderConstants::C_ID_PHONGFRAGSHADER, phongFragShader);
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_PHONGFRAGSHADERPATH);
+	ShaderHandle phongFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(phongFragShader.GetResourceID(), ShaderConstants::C_ID_PHONGFRAGSHADER);
 
 
 	// - blinn frag -------------------------------------------------------------------------
-	GLuint blinnPhongFragShaderId	{ CreateShader(ShaderConstants::C_ID_BLINNPHONGSHADERPROG) };
-	Shader& blinnPhongFragShader	{ *GetShader(blinnPhongFragShaderId) };
-	std::string blinnPhongFragSrc{
-		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_BLINNPHONGFRAGSHADERPATH)
-	};
-	blinnPhongFragShader.SetShaderCode(blinnPhongFragSrc);
-	blinnPhongFragShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
-	blinnPhongFragShader.Build();
-	AddShader(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER, blinnPhongFragShader);
-
-
-
-
-	// - unlit error shader prg -------------------------------------------------------------
-	GLuint unlitErrorShaderId = CreateShaderProgram(ShaderConstants::C_ID_ERRORFRAGSHADER);
-	ShaderProgram& unlitErrorShader	{ *GetShaderProgram(unlitErrorShaderId) };
-	unlitErrorShader.SetShader(vertexShader, vertexShader.GetShaderType());
-	unlitErrorShader.SetShader(unlitErrorFragShader, unlitErrorFragShader.GetShaderType());
-	unlitErrorShader.Build();
-	
-
-	// - lambert prg ------------------------------------------------------------------------
-	GLuint lambertShaderId = CreateShaderProgram(ShaderConstants::C_ID_LAMBERTSHADERPROG);
-	ShaderProgram& lambertShader	{ *GetShaderProgram(lambertShaderId) };
-	lambertShader.SetShader(vertexShader, vertexShader.GetShaderType());
-	lambertShader.SetShader(lambertFragShader, lambertFragShader.GetShaderType());
-	lambertShader.Build();
-	 
-	
-	// - phong prg --------------------------------------------------------------------------
-	GLuint phongShaderId = CreateShaderProgram(ShaderConstants::C_ID_PHONGSHADERPROG);
-	ShaderProgram& phongShader		{ *GetShaderProgram(phongShaderId) };
-	phongShader.SetShader(vertexShader, vertexShader.GetShaderType());
-	phongShader.SetShader(phongFragShader, phongFragShader.GetShaderType());
-	phongShader.Build();
-
-
-	// - blinn phong prg --------------------------------------------------------------------
-	GLuint blinnPhongShaderId = CreateShaderProgram(ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
-	ShaderProgram& blinnPhongShader	{ *GetShaderProgram(blinnPhongShaderId) };
-	blinnPhongShader.SetShader(vertexShader, vertexShader.GetShaderType());
-	blinnPhongShader.SetShader(blinnPhongFragShader, blinnPhongFragShader.GetShaderType());
-	blinnPhongShader.Build();
-
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_BLINNPHONGFRAGSHADERPATH);
+	ShaderHandle blinnFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(blinnFragShader.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
 	LOG_INFO("Initialised shader manager");
 }
 
 void ShaderManager::Cleanup() {
-	for (Shader& shader : m_shaderDatabase) {
-		shader.Destroy();
+	for (RES_ID resId : m_resourceIdPool) {
+		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(resId));
+		shader->Destroy();
 	}
+
 	LOG_INFO("Shader database cleared.");
 }
-
-
-
-GLuint ShaderManager::AddShader	(
-	std::string _identifier, 
-	Shader _program
-) {
-	GLuint handle = GetNewShaderID();
-	m_shaderDatabase.Add(std::move(_program), handle);
-	m_shaderAliasLookup[_identifier] = handle;
-	return handle;
-}
-
-void ShaderManager::RemoveShader(std::string _identifier) {
-	RemoveShader(m_shaderAliasLookup.at(_identifier));
-	m_shaderAliasLookup.erase(_identifier);
-}
-
-void ShaderManager::RemoveShader(GLuint _handle) {
-	m_shaderDatabase.Remove(_handle);
-	m_shaderCounterFree.push(_handle);
-}
-
-GLuint ShaderManager::CreateShader(std::string _identifier) {
-	GLuint shaderId	{ GetNewShaderID() };
-	m_shaderDatabase.Add(std::move(Shader{}), shaderId);
-	m_shaderAliasLookup[_identifier] = shaderId;
-	return shaderId;
-}
-
-
-SparseSetView<Shader> ShaderManager::GetShader(GLuint _identifier) {
-	return m_shaderDatabase[_identifier];
-}
-SparseSetView<const Shader> ShaderManager::GetShader(GLuint _identifier) const {
-	return  m_shaderDatabase.At(_identifier);
-}
-SparseSetView<Shader> ShaderManager::GetShader(std::string _identifier) {
-	return GetShader(m_shaderAliasLookup[_identifier]);
-}
-SparseSetView<const Shader> ShaderManager::GetShader(std::string _identifier) const {
-	return GetShader(m_shaderAliasLookup.at(_identifier));
-}
-
-
-
-GLuint ShaderManager::AddShaderProgram(std::string _identifier, ShaderProgram _program) {
-	GLuint handle = GetNewShaderProgramID();
-	m_shaderProgramDatabase.Add(std::move(_program), handle);
-	m_shaderProgramAliasLookup[_identifier] = handle;
-	return handle;
-}
-
-void ShaderManager::RemoveShaderProgram(std::string _identifier) {
-	RemoveShaderProgram(m_shaderProgramAliasLookup.at(_identifier));
-	m_shaderProgramAliasLookup.erase(_identifier);
-}
-
-void ShaderManager::RemoveShaderProgram(GLuint _handle) {
-	m_shaderProgramDatabase.Remove(_handle);
-}
-
-GLuint ShaderManager::CreateShaderProgram(std::string _identifier) {
-	GLuint handle = GetNewShaderProgramID();
-	m_shaderProgramDatabase.Add(std::move(ShaderProgram{}), handle);
-	m_shaderProgramAliasLookup[_identifier] = handle;
-	return handle;
-}
-
-
-
-SparseSetView<ShaderProgram> ShaderManager::GetShaderProgram(std::string _identifier) {
-	return m_shaderProgramDatabase[m_shaderProgramAliasLookup.at(_identifier)];
-}
-
-SparseSetView<const ShaderProgram> ShaderManager::GetShaderProgram(std::string _identifier) const {
-	return m_shaderProgramDatabase.At(m_shaderProgramAliasLookup.at(_identifier));
-}
-
-SparseSetView<ShaderProgram> ShaderManager::GetShaderProgram(GLuint _handle) {
-	return m_shaderProgramDatabase[_handle];
-}
-
-SparseSetView<const ShaderProgram> ShaderManager::GetShaderProgram(GLuint _handle) const {
-	return m_shaderProgramDatabase.At(_handle);
-}
-
-SparseSet<GLuint, ShaderProgram>& ShaderManager::GetShaderProgramDatabase() {
-	return m_shaderProgramDatabase;
-}
-
-const SparseSet<GLuint, ShaderProgram>& ShaderManager::GetShaderProgramDatabase() const {
-	return m_shaderProgramDatabase;
-}
-
-SparseSet<GLuint, Shader>& ShaderManager::GetShaderDatabase() {
-	return m_shaderDatabase;
-}
-
-const SparseSet<GLuint, Shader>& ShaderManager::GetShaderDatabase() const {
-	return m_shaderDatabase;
-}
-
-GLuint ShaderManager::GetNewShaderID() {
-	if (m_shaderCounterFree.empty()) return ++m_shaderCounter;
-	GLuint retVal{m_shaderCounterFree.front()};
-	m_shaderCounterFree.pop();
-	return retVal;
-}
-
-GLuint ShaderManager::GetNewShaderProgramID() {
-	if (m_shaderProgramCounterFree.empty()) return static_cast<GLuint>(++m_shaderProgramCounter);
-	GLuint retVal{ m_shaderProgramCounterFree.front() };
-	m_shaderProgramCounterFree.pop();
-	return retVal;
-}
-
-void ShaderManager::ReclaimShaderID(GLuint _id) {
-	m_shaderCounterFree.push(_id);
-}
-
-void ShaderManager::ReclaimShaderProgramID(GLuint _id) {
-	m_shaderProgramCounterFree.push(_id);
-}
-
 
 
 
@@ -238,12 +57,105 @@ ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std:
 	std::shared_ptr<Shader> res = std::make_shared<Shader>();
 	res->SetShaderType(_type);
 	res->SetShaderCode(_code);
+	res->Build();
 	ShaderHandle handle = ShaderHandle(m_resourceManager.AddInternalResource(res));
+	Add(handle.GetResourceID());
+	if (m_shaderIds.find(_type) == m_shaderIds.end()) m_shaderIds[_type] = {} ;
+	m_shaderIds[_type].push_back(handle.GetResourceID());
+
 	return handle;
 }
 
-ShaderProgramHandle ShaderManager::CreateShaderProgram() {
-	std::shared_ptr<ShaderProgram> prg = std::make_shared<ShaderProgram>();
-	ShaderProgramHandle handle = ShaderProgramHandle(m_resourceManager.AddInternalResource(prg));
+void ShaderManager::RemoveShader(ShaderHandle _toDelete) {
+	std::optional<ResourceIdentifier> idr =_toDelete.GetResourceIdentifier();
+	if (!idr) return;
+	RemoveShader(idr->m_resourceId);
+}
+
+void ShaderManager::RemoveShader(RES_ID _toDelete) {
+	RemoveAliasForRes(_toDelete);
+	Remove(_toDelete);
+	// remove
+}
+
+const std::vector<RES_ID>& ShaderManager::GetShadersOfType(ShaderConstants::ShaderType _type) const {
+	return m_shaderIds.at(_type);
+}
+
+// ----------------------------------------------------------------------------------------
+
+
+void ShaderProgramManager::Init() {
+
+	// get shader resource ids.
+	RES_ID vtxShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_VERTEXSHADER);
+	RES_ID lambertFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_LAMBERTFRAGSHADER);
+	RES_ID phongFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_PHONGFRAGSHADER);
+	RES_ID blinnFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
+	RES_ID errorFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
+
+	// generate programs
+	ShaderProgramHandle lambert = CreateRenderShaderProgram({ vtxShaderRID, lambertFragShaderRID });
+	ShaderProgramHandle phong = CreateRenderShaderProgram({ vtxShaderRID, phongFragShaderRID });
+	ShaderProgramHandle blinn = CreateRenderShaderProgram({ vtxShaderRID, blinnFragShaderRID });
+	ShaderProgramHandle error = CreateRenderShaderProgram({ vtxShaderRID, errorFragShaderRID });
+
+
+	// setup aliases.
+	SetResourceAlias(lambert.GetResourceID(), ShaderConstants::C_ID_LAMBERTSHADERPROG);
+	SetResourceAlias(phong.GetResourceID(), ShaderConstants::C_ID_PHONGSHADERPROG);
+	SetResourceAlias(blinn.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
+	SetResourceAlias(error.GetResourceID(), ShaderConstants::C_ID_ERRORSHADERPROG);
+}
+
+void ShaderProgramManager::Cleanup() {
+
+}
+
+ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShaderProgProps _props) {
+	std::shared_ptr<ShaderProgram> shaderPrg = std::make_shared<ShaderProgram>();
+	auto vtxShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.vertexShader));
+	auto fragShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.fragShader));
+	
+	shaderPrg->SetShader(*vtxShader);
+	shaderPrg->SetShader(*fragShader);
+
+	if (_props.geometryShader != 0) {
+		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.geometryShader));
+		shaderPrg->SetShader(*shader);
+	}
+	if (_props.tesselationControlShader!= 0) {
+		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.tesselationControlShader));
+		shaderPrg->SetShader(*shader);
+	}
+	if (_props.tesselationEvaluationShader != 0) {
+		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.tesselationEvaluationShader));
+		shaderPrg->SetShader(*shader);
+	}
+	shaderPrg->Build();
+	
+	ResourceIdentifier idr = m_resourceManager.AddInternalResource(shaderPrg);
+	ShaderProgramHandle handle(idr);
+	Add(idr.m_resourceId);
 	return handle;
+}
+
+void ShaderProgramManager::RemoveShaderProgram(ShaderProgramHandle _toDelete) {
+	std::optional<ResourceIdentifier> idr = _toDelete.GetResourceIdentifier();
+	if (!idr) return;
+	RemoveShaderProgram(idr->m_resourceId);
+	
+}
+
+void ShaderProgramManager::RemoveShaderProgram(RES_ID _toDelete) {
+	RemoveAliasForRes(_toDelete);
+	Remove(_toDelete);
+}
+
+std::shared_ptr<ShaderProgram> ShaderProgramManager::GetShaderProgram(std::string _alias) {
+	return GetShaderProgram(GetResIDFromAlias(_alias));
+}
+
+std::shared_ptr<ShaderProgram> ShaderProgramManager::GetShaderProgram(RES_ID _id) {
+	return std::static_pointer_cast<ShaderProgram>(m_resourceManager.GetResource(_id));
 }

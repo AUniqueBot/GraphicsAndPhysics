@@ -47,7 +47,7 @@ public:
 
 
 	void Build(bool _showDebugMessages = true);
-	void Destroy();
+	void Destroy() override;
 private:
 	GLuint m_shaderId			{ ShaderConstants::C_INVALIDSHADERID };
 	std::string m_shaderCode	{};
@@ -71,17 +71,25 @@ public:
 	void SetShader(const Shader& _shader); // uses the shader's internal type. wrapper of explicit version.
 	void SetShader(const Shader& _shader, const ShaderConstants::ShaderType& );
 
+
+	bool IsValid() const;
+	bool IsValidComputeShader() const;
+	bool IsValidRenderShader() const;
+
 	void SetShaderProgramID(GLuint _id);
 	int GetShaderProgramID() const;
 
 	void Build();
+	void BuildProgram();
 	void Destroy();
 
 private:
 	std::vector<GLuint> GetShaderVectorList() const;
+	std::deque<GLuint> GetShaderIDList() const;
 private:
-	GLuint m_programId												{ 0 };
-	SparseSet<ShaderConstants::ShaderType, Shader> m_shaderList;
+	GLuint m_shaderProgramId								{ 0 };
+	SparseSet<ShaderConstants::ShaderType, Shader> m_shaderList; 
+	SparseSet<ShaderConstants::ShaderType, GLuint> m_shaderIds;
 };
 
 

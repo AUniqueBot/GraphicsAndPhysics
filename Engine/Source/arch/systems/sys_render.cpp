@@ -938,7 +938,7 @@ void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
 }
 
 void RenderSystem::ResolveMaterial(Material& _mat) {
-    ShaderManager& sr{ Core::GetInstance().GetAssetManager().GetShaderManager() };
+    ShaderProgramManager& spr { Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
     using namespace Materials;
     ShadingModel type{ _mat.GetShadingModel() };
 
@@ -976,8 +976,7 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
 
     if (!_mat.IsInitialised()) {
         GLuint shaderId{ ShaderConstants::C_INVALIDSHADERID };
-            
-        shaderId = sr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
+        shaderId = spr.GetShaderProgram(shaderProgramAlias)->GetShaderProgramID();
         _mat.SetShaderProgram(shaderId);
         _mat.Init();
     }

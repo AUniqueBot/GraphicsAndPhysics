@@ -46,6 +46,11 @@ void ResourceManager::Init() {
 }
 
 
+void ResourceManager::Cleanup() {
+	for (auto& [_, res] : m_resourcePoolIDLookup) {
+		res->Destroy();// final cleanup
+	}
+}
 
 void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive) {
 	// scans the path provided.
@@ -139,6 +144,13 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 	return ret;
 }
 
+bool ResourceManager::SetResourceAlias(RES_ID _id, std::string _alias) {
+	if (_id == BaseResource::C_RES_ID_INVALID) return false;
+
+
+	return false;
+}
+
 
 
 void ResourceManager::RemoveResource(std::string _name) {
@@ -155,9 +167,10 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 	const std::shared_ptr<BaseResource>& res = m_resourcePoolIDLookup.at(_id);
 	const std::string name = res->m_pathToAsset.filename().string();
 	
-	
 	// caches to clear
 	RESTYPE_ID typeId = res->ResourceType();
+	res->Destroy();
+
 
 	// erasing from primary containers
 	m_resourcePoolIDLookup.erase(_id);
