@@ -253,11 +253,11 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	tex.Upload({ {uploadData} });// upload data here.
 
 	// if successful add to storage
-	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes());
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
-	Texture2D retVal{texHandle};
+	Texture2D retVal{ id };
 	return retVal;
 }
 
@@ -273,12 +273,13 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 
 	tex.Create();
 	tex.Allocate();
-	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
 	LOG_INFO("Allocating 2D Texture of size: [" << width << ", " << height << "]");
-	return texHandle;
+	Texture2D retVal{ id };
+	return retVal;
 }
 
 void TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
@@ -304,12 +305,13 @@ Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int
 
 	tex.Create();
 	tex.Allocate();
-	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>(TextureRes{});
+	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
 	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
-	return texHandle;
+	Texture2DArray retVal{id};
+	return retVal;
 }
 
 void TextureManager::CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props) {

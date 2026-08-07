@@ -7,7 +7,7 @@ void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 	if (_res != m_framebufferSize) {
 		m_framebufferSize = _res;
 
-		if (m_isBuilt && m_textureHandle.IsValid()) {
+		if (m_isBuilt && m_textureHandle.HandleIsValid()) {
 			Destroy();
 			BuildShadowMap();
 		}
@@ -16,7 +16,7 @@ void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 }
 
 const glm::ivec2& ShadowMap::GetFramebufferSize() const {
-	return m_textureHandle.IsValid() ? m_textureHandle.GetDimensions() : m_framebufferSize;
+	return m_textureHandle.HandleIsValid() ? m_textureHandle.GetDimensions() : m_framebufferSize;
 }
 
 void ShadowMap::SetBaseTileSize(glm::ivec2 _res) {
@@ -73,7 +73,7 @@ void ShadowMap::SetupTextureArray(GLuint _handle) {
 
 void ShadowMap::BuildShadowMap() {
 	
-	if (!m_textureHandle.IsValid()) return;
+	if (!m_textureHandle.HandleIsValid()) return;
 	GLuint shadowTexture = m_textureHandle.GetTextureHandle();
 	SetupTextureArray(shadowTexture);
 	glCreateFramebuffers(1, &m_fbo);
@@ -112,7 +112,7 @@ void ShadowMap::Destroy() {
 
 
 void ShadowMap::Bind() const {
-	if (!m_textureHandle.IsValid()) return;
+	if (!m_textureHandle.HandleIsValid()) return;
 	glm::ivec2 framebufferSize = m_textureHandle.GetDimensions();
 
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
@@ -142,7 +142,7 @@ unsigned ShadowMap::FBO() const {
 }
 
 unsigned ShadowMap::GetTextureID() const {
-	return m_textureHandle.IsValid() ? m_textureHandle.GetTextureHandle() : C_INVALID_TEXTURE_ID;
+	return m_textureHandle.HandleIsValid() ? m_textureHandle.GetTextureHandle() : C_INVALID_TEXTURE_ID;
 }
 
 bool ShadowMap::ValidateID(unsigned _id) const {

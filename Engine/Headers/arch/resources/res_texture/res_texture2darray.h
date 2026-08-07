@@ -4,7 +4,7 @@
 
 class Texture2DArray  : public Texture {
 public: 
-	Texture2DArray(std::shared_ptr<TextureRes> _resHandle);
+	Texture2DArray(ResourceIdentifierArg _resHandle = std::nullopt);
 	Texture2DArray(const Texture2DArray&) = default;
 	Texture2DArray& operator=(const Texture2DArray&) = default;
 

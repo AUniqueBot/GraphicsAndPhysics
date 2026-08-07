@@ -2,7 +2,7 @@
 
 
 
-Texture2DArray::Texture2DArray(std::shared_ptr<TextureRes> _resHandle) : Texture(_resHandle) {
+Texture2DArray::Texture2DArray(ResourceIdentifierArg _resHandle) : Texture(_resHandle) {
 	using namespace TextureProperties;
 	m_textureType = TextureType::TEXTURE_2D_ARRAY;
 }

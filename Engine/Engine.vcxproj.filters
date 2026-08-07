@@ -515,5 +515,8 @@
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_specializedResourceManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

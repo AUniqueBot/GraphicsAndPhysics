@@ -136,6 +136,7 @@ GLuint ShaderManager::CreateShader(std::string _identifier) {
 	return shaderId;
 }
 
+
 SparseSetView<Shader> ShaderManager::GetShader(GLuint _identifier) {
 	return m_shaderDatabase[_identifier];
 }
@@ -173,6 +174,8 @@ GLuint ShaderManager::CreateShaderProgram(std::string _identifier) {
 	m_shaderProgramAliasLookup[_identifier] = handle;
 	return handle;
 }
+
+
 
 SparseSetView<ShaderProgram> ShaderManager::GetShaderProgram(std::string _identifier) {
 	return m_shaderProgramDatabase[m_shaderProgramAliasLookup.at(_identifier)];
@@ -226,4 +229,21 @@ void ShaderManager::ReclaimShaderID(GLuint _id) {
 
 void ShaderManager::ReclaimShaderProgramID(GLuint _id) {
 	m_shaderProgramCounterFree.push(_id);
+}
+
+
+
+
+ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std::string _code) {
+	std::shared_ptr<Shader> res = std::make_shared<Shader>();
+	res->SetShaderType(_type);
+	res->SetShaderCode(_code);
+	ShaderHandle handle = ShaderHandle(m_resourceManager.AddInternalResource(res));
+	return handle;
+}
+
+ShaderProgramHandle ShaderManager::CreateShaderProgram() {
+	std::shared_ptr<ShaderProgram> prg = std::make_shared<ShaderProgram>();
+	ShaderProgramHandle handle = ShaderProgramHandle(m_resourceManager.AddInternalResource(prg));
+	return handle;
 }

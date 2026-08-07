@@ -107,7 +107,8 @@ ResourceIdentifier ResourceManager::AddExternalResourceInternal(
 	const ResourceIdentifier ret {
 		resId,
 		type,
-		name
+		name,
+		this
 	};
 	_resource->ResourceID(resId);
 	_resource->Name(name);
@@ -127,7 +128,8 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 	const ResourceIdentifier ret{
 		resId,
 		type,
-		name
+		name,
+		this
 	};
 	_resource->ResourceID(resId);
 	_resource->Name(name);
@@ -141,6 +143,11 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 
 void ResourceManager::RemoveResource(std::string _name) {
 	RemoveResource(m_resourceNameToID[_name]);
+}
+
+bool ResourceManager::RegisterResourceKey(RES_ID _resId, std::string _name) {
+	//
+	return false;
 }
 
 void ResourceManager::RemoveResource(RES_ID _id) {

@@ -7,11 +7,9 @@
 	@brief a class designed to manage resources used in the application 
 */
 
-struct ResourceIdentifier {
-	RES_ID m_resourceId;
-	RESTYPE_ID m_resourceTypeId;
-	std::string m_resourceName;
-};
+
+
+
 
 
 template <std::derived_from<BaseResource> T>
@@ -26,18 +24,7 @@ struct ResourceSlot {
 };
 
 
-template <std::derived_from<BaseResource> T>
-struct ResourceHandler {
-	ResourceHandler() {
-
-	}
-	~ResourceHandler() {
-
-	}
-
-	
-};
-
+struct ResourceIdentifier;
 
 class ResourceManager {
 
@@ -59,6 +46,8 @@ public:
 
 	template <std::derived_from<BaseResource> T>
 	ResourceIdentifier AddInternalResource(std::shared_ptr<T> _resource);
+
+	bool RegisterResourceKey(RES_ID _resId, std::string _name);
 	
 
 	void RemoveResource(RES_ID _id); 
@@ -148,10 +137,69 @@ private:
 	
 };
 
+struct ResourceIdentifier {
+	RES_ID m_resourceId;
+	RESTYPE_ID m_resourceTypeId;
+	std::string m_resourceName;
+	ResourceManager* m_resourceManager;
 
+	template <std::derived_from<BaseResource> T>
+	inline std::shared_ptr<T> GetResource() {
+		return std::static_pointer_cast<T>(m_resourceManager->GetResource(m_resourceId));
+	}
 
+	template <std::derived_from<BaseResource> T>
+	inline std::shared_ptr<const T> GetResource() const {
+		return std::static_pointer_cast<const T>(m_resourceManager->GetResource(m_resourceId));
+	}
+};
 
+using ResourceIdentifierArg = std::optional<ResourceIdentifier>;
 
+struct ResourceHandle {
+	
+	inline std::optional<ResourceIdentifier> GetResourceIdentifier() {
+		return m_resourceIdentifier;
+	}
+	inline ResourceHandle(ResourceIdentifierArg _id = std::nullopt) : 
+		m_resourceIdentifier { _id } {
+	};
+	inline bool HandleIsValid() const { return m_resourceIdentifier.has_value() && m_resourceIdentifier->m_resourceManager != nullptr; };
+	inline std::shared_ptr<BaseResource> operator->() {
+		if (!m_resourceIdentifier.has_value()) return nullptr;
+		ResourceIdentifier& resIdr = *m_resourceIdentifier;
+		ResourceManager& resMgr = *resIdr.m_resourceManager;
+		return resMgr.GetResource(resIdr.m_resourceId);
+	}
+
+	inline ResourceIdentifier& operator*() {
+		assert(m_resourceIdentifier.has_value() && "Identifier does not have member .");
+		return *m_resourceIdentifier;
+	}
+
+	inline RES_ID GetResourceID() const {
+		return HandleIsValid() ? m_resourceIdentifier->m_resourceId : BaseResource::C_RES_ID_INVALID;
+	}
+
+	inline const ResourceIdentifier& GetResourceIdentifier() const {
+		return *m_resourceIdentifier;
+	}
+
+protected:
+	template <std::derived_from<BaseResource> T>
+	inline std::shared_ptr<T> GetResource() {
+		return std::static_pointer_cast<T>(m_resourceIdentifier->GetResource<T>());
+	}
+
+	template <std::derived_from<BaseResource> T>
+	inline std::shared_ptr<const T> GetResource() const {
+		return std::static_pointer_cast<const T>(m_resourceIdentifier->GetResource<T>());
+	}
+
+private:
+	std::optional<ResourceIdentifier> m_resourceIdentifier;
+	
+};
 
 #include <arch/resources/res_resourceManagerDEF.hpp>
 

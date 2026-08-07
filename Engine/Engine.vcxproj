@@ -303,6 +303,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
+    <ClInclude Include="Headers\arch\resources\res_specializedResourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h" />

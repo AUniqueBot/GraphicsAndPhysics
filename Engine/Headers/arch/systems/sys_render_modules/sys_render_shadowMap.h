@@ -68,7 +68,7 @@ private:
 	std::vector<unsigned> m_freeLayers		{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.
-	Texture2DArray m_textureHandle			{ nullptr }; // needs a proper constructor.
+	Texture2DArray m_textureHandle			{ std::nullopt }; // needs a proper constructor.
 	bool m_initialized						{ false };
 
 

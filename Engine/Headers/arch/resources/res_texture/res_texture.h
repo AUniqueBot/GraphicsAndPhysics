@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_resource.h>
+#include <arch/resources/res_resourceManager.h>
 #include <arch/resources/res_texture/res_texturegpu.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 
@@ -22,11 +23,22 @@ private:
 };
 
 
+struct TextureHandle : public ResourceHandle {
+	inline TextureHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
+	inline std::shared_ptr<TextureRes> Get() {
+		return GetResource<TextureRes>();
+	}
+	inline std::shared_ptr<const TextureRes> Get() const {
+		return GetResource<TextureRes>();
+	}
+};
+
+
 // handles
 // texture manager can only construct directly. otherwise, you can only construct from a copy.
-class Texture {
+class Texture : public TextureHandle {
 public:
-	Texture(std::shared_ptr<TextureRes> _resHandle = nullptr);
+	Texture(ResourceIdentifierArg _resIdArg); // get ResourceIdentifier instead.
 	Texture(const Texture& _other) = default;
 	Texture& operator=(const Texture& _other) = default;
 public:
@@ -50,13 +62,12 @@ public:
 
 	GLuint GetTextureHandle() const;
 
-	bool IsValid() const;
+	bool TextureIsValid() const;
 
 protected:
 	// be careful when using this as this assumes it is valid.
 	TextureGPU& GetTextureGPU();
 	const TextureGPU& GetTextureGPU() const;
-	std::shared_ptr<TextureRes> m_textureResHandle;
 
 protected:
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.

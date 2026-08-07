@@ -14,7 +14,7 @@ void LambertMaterial::InitInternal() {
 void LambertMaterial::ResolveTextureValues() {
     
     if (m_valuesDirty) {
-        if (m_textureColor.IsValid()) {
+        if (m_textureColor.HandleIsValid()) {
             Color(m_color);
         }
         else {

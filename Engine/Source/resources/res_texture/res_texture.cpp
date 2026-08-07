@@ -25,12 +25,16 @@ const TextureGPU& TextureRes::GetTextureGPU() const {
 
 
 	
-Texture::Texture(std::shared_ptr<TextureRes> _resHandle) : m_textureResHandle(_resHandle) {
+Texture::Texture(ResourceIdentifierArg _resIdArg) : TextureHandle(_resIdArg) {
+
 }
+
 
 void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	ResourceManager& resManager = Core::GetInstance().GetResourceManager();
+	
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	if (!texHandle) return;
 	TextureGPU& tex = *texHandle;
 	tex.SetFilterBehaviourMin(_filterBehaviour);
@@ -38,7 +42,7 @@ void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBeha
 
 void Texture::SetMagFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	if (!texHandle) return;
 	TextureGPU& tex = *texHandle;
 	tex.SetFilterBehaviourMag(_filterBehaviour);
@@ -46,13 +50,13 @@ void Texture::SetMagFilter(const TextureProperties::FilterBehaviour& _filterBeha
 
 TextureProperties::FilterBehaviour Texture::GetMinFilter() const {
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	return texHandle->GetFilterBehaviourMin(); 
 }
 
 TextureProperties::FilterBehaviour Texture::GetMagFilter() const { 
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	return texHandle->GetFilterBehaviourMag();
 }
 
@@ -77,7 +81,7 @@ void Texture::SetPixelColor(unsigned _col, int _x, int _y, int _z) {
 }
 
 void Texture::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
-	if (!IsValid()) return;
+	if (!HandleIsValid()) return;
 	TextureGPU& tex{ GetTextureGPU() };
 	glm::u8vec4 colData{};
 	colData.r = static_cast<unsigned char>(_col.r * 0xff);
@@ -89,32 +93,32 @@ void Texture::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
 
  
 TextureGPU& Texture::GetTextureGPU() {
-	assert(m_textureResHandle && "No handle.");
+	assert(HandleIsValid() && "No handle.");
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
 }
 
 const TextureGPU& Texture::GetTextureGPU() const {
-	assert(m_textureResHandle && "No handle.");
+	assert(HandleIsValid() && "No handle.");
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
 }
 
 GLuint Texture::GetTextureHandle() const {
 	TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(m_textureResHandle->ResourceID());
+	SparseSetView<TextureGPU> texHandle = texManager.GetTexture(GetResourceID());
 
 	if (!texHandle) return 0;
 	const TextureGPU& tex { *texHandle };
 	return tex.GetTextureHandle();
 }
 
-bool Texture::IsValid() const {
-	if (!m_textureResHandle) return false;
+bool Texture::TextureIsValid() const {
+	if (!HandleIsValid()) return false;
 	const TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-	return texManager.TextureExists(m_textureResHandle->ResourceID());
+	return texManager.TextureExists(GetResourceID());
 }
