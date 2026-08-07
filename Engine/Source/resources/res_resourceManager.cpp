@@ -23,6 +23,7 @@ void ResourceManager::Init() {
 
 
 	RegisterResourceType<Mesh>();
+	RegisterResourceType<Shader>();
 	RegisterResourceType<ShaderProgram>();
 	RegisterResourceType<Material>();
 	RegisterResourceType<Scene>();
@@ -47,7 +48,8 @@ void ResourceManager::Init() {
 
 
 void ResourceManager::Cleanup() {
-	for (auto& [_, res] : m_resourcePoolIDLookup) {
+	
+	for (std::shared_ptr<BaseResource>& res : m_resourcePool.Data()) {
 		res->Destroy();// final cleanup
 	}
 }
@@ -107,7 +109,7 @@ ResourceIdentifier ResourceManager::AddExternalResourceInternal(
 	RESTYPE_ID _type,
 	std::filesystem::path _path) {
 	const RESTYPE_ID type = _resource->ResourceType();
-	const RES_ID resId = GenerateID(type);
+	const RES_ID resId = GenerateID();
 	const std::string name = _resource->m_pathToAsset.filename().string();
 	const ResourceIdentifier ret {
 		resId,
@@ -117,8 +119,7 @@ ResourceIdentifier ResourceManager::AddExternalResourceInternal(
 	};
 	_resource->ResourceID(resId);
 	_resource->Name(name);
-	m_resourcePoolIDLookup[resId] =_resource;
-	m_resourceNameToID[name] = resId;
+	m_resourcePool.Add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
 	return ret;
 }
@@ -128,7 +129,7 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 	RESTYPE_ID _type
 ) {
 	const RESTYPE_ID type = _resource->ResourceType();
-	const RES_ID resId = GenerateID(type);
+	const RES_ID resId = GenerateID();
 	const std::string name = _resource->m_pathToAsset.filename().string();
 	const ResourceIdentifier ret{
 		resId,
@@ -138,23 +139,18 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 	};
 	_resource->ResourceID(resId);
 	_resource->Name(name);
-	m_resourcePoolIDLookup[resId] = _resource;
-	m_resourceNameToID[name] = resId;
+	m_resourcePool.Add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
 	return ret;
 }
 
-bool ResourceManager::SetResourceAlias(RES_ID _id, std::string _alias) {
-	if (_id == BaseResource::C_RES_ID_INVALID) return false;
-
-
-	return false;
-}
 
 
 
 void ResourceManager::RemoveResource(std::string _name) {
-	RemoveResource(m_resourceNameToID[_name]);
+	std::shared_ptr<BaseResource> res = GetResource(_name);
+	if (!res) return;
+	RemoveResource(res->ResourceID());
 }
 
 bool ResourceManager::RegisterResourceKey(RES_ID _resId, std::string _name) {
@@ -164,7 +160,7 @@ bool ResourceManager::RegisterResourceKey(RES_ID _resId, std::string _name) {
 
 void ResourceManager::RemoveResource(RES_ID _id) {
 	// get the resource
-	const std::shared_ptr<BaseResource>& res = m_resourcePoolIDLookup.at(_id);
+	const std::shared_ptr<BaseResource>& res = *m_resourcePool.At(_id);
 	const std::string name = res->m_pathToAsset.filename().string();
 	
 	// caches to clear
@@ -173,8 +169,7 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 
 
 	// erasing from primary containers
-	m_resourcePoolIDLookup.erase(_id);
-	m_resourceNameToID.erase(name);
+	m_resourcePool.Remove(_id);
 
 	// erasing from secondary containers
 	auto& resIdVector{ m_resourceTypeManifest[typeId] };
@@ -192,23 +187,27 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 
 
 std::shared_ptr<BaseResource> ResourceManager::GetResource(RES_ID _id) {
-	if (m_resourcePoolIDLookup.find(_id) == m_resourcePoolIDLookup.end()) return nullptr;
-	return m_resourcePoolIDLookup.at(_id);
+	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.At(_id);
+	if (!itr) return nullptr;
+	return *itr;
 }
 std::shared_ptr<BaseResource> ResourceManager::GetResource(std::string _resName) {
-	return GetResource(m_resourceNameToID[_resName]);
+	for (std::shared_ptr<BaseResource>& res : m_resourcePool.Data()) {
+		if (res->m_name == _resName) return res;
+	}
+	return nullptr;
 }
 
 std::shared_ptr<BaseResource> ResourceManager::GetResource(ResourceIdentifier _id) {
 	return GetResource(_id.m_resourceId);
 }
 
-std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
-	return m_resourcePoolIDLookup;
+std::deque<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
+	return m_resourcePool.Data();
 }
 
-const std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
-	return m_resourcePoolIDLookup;
+const std::deque<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
+	return m_resourcePool.Data();
 }
 
 
@@ -302,8 +301,12 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 
 }
 
-RES_ID ResourceManager::GenerateID(RESTYPE_ID _rsc) {
-	unsigned idx = ++m_nextID[_rsc];
+RES_ID ResourceManager::GenerateID() {
+	return ++m_nextID;
+}
+
+RES_ID ResourceManager::GenerateTypedID(RESTYPE_ID _rsc) {
+	unsigned idx = ++m_nextIDTyped[_rsc];
 	RESTYPE_ID rst = _rsc;
 	
 	// [8-bit rst][24-bit index]

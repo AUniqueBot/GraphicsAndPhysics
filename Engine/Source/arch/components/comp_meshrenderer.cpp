@@ -52,6 +52,7 @@ Material& MeshRenderer::GetDefaultMaterial() {
 	if (!defaultMatInit) {
 		m_defaultMaterial.Color(0xaaaaaaff);
 		// - init is true -----------------------------------------
+
 		defaultMatInit = true;
 	}
 	return m_defaultMaterial;

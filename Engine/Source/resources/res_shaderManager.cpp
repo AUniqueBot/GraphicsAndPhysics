@@ -114,8 +114,8 @@ void ShaderProgramManager::Cleanup() {
 
 ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShaderProgProps _props) {
 	std::shared_ptr<ShaderProgram> shaderPrg = std::make_shared<ShaderProgram>();
-	auto vtxShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.vertexShader));
-	auto fragShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.fragShader));
+	std::shared_ptr<Shader> vtxShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.vertexShader));
+	std::shared_ptr<Shader> fragShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.fragShader));
 	
 	shaderPrg->SetShader(*vtxShader);
 	shaderPrg->SetShader(*fragShader);
@@ -133,10 +133,9 @@ ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShader
 		shaderPrg->SetShader(*shader);
 	}
 	shaderPrg->Build();
-	
-	ResourceIdentifier idr = m_resourceManager.AddInternalResource(shaderPrg);
-	ShaderProgramHandle handle(idr);
-	Add(idr.m_resourceId);
+
+	ShaderProgramHandle handle(m_resourceManager.AddInternalResource(shaderPrg));
+	Add(handle.GetResourceID());
 	return handle;
 }
 

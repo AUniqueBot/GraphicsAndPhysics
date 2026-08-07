@@ -1,5 +1,6 @@
 #pragma once
 #include <pch.h>
+#include <arch/datatypes/type_sparseSet.h>
 #include <arch/resources/res_resource.h>
 
 
@@ -61,8 +62,8 @@ public:
 	std::shared_ptr<BaseResource> GetResource(ResourceIdentifier _id);
 
 
-	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool();
-	const std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>& GetResourcePool() const;
+	std::deque<std::shared_ptr<BaseResource>>& GetResourcePool();
+	const std::deque<std::shared_ptr<BaseResource>>& GetResourcePool() const;
 
 	const std::vector<RES_ID>& GetResourcePoolManifest(RESTYPE_ID _typeId) const;
 	
@@ -112,30 +113,24 @@ private:
 	);
 
 
-	bool SetResourceAlias(RES_ID, std::string);
 
 private:
-	static RES_ID GenerateID(RESTYPE_ID _rsc);
+	static RES_ID GenerateID();
+	static RES_ID GenerateTypedID(RESTYPE_ID _rsc);
 	
 	
 	std::vector<std::filesystem::path>							m_assetPaths;
 	std::unordered_map<std::string, RESTYPE_ID>					m_fileExtensions;
-	inline static std::unordered_map<RESTYPE_ID, unsigned>		m_nextID {};
-
-
+	inline static std::unordered_map<RESTYPE_ID, RES_ID>		m_nextIDTyped {};
+	inline static RES_ID										m_nextID {};
 
 	// resource pool identifiers
 	
 	// primary storage.
-	
-
-	// sparse set replacement.
-
-	std::unordered_map<std::string, RES_ID>						m_resourceNameToID;
-	std::unordered_map<RES_ID, std::shared_ptr<BaseResource>>	m_resourcePoolIDLookup;
+	SparseSet<RES_ID, std::shared_ptr<BaseResource>>			m_resourcePool;
 
 
-	// secondary identifiers.
+	// secondary identifiers. (typed data)
 	std::unordered_map<RESTYPE_ID, ResourceTypeMetadata>		m_resourceTypeMetadata;
 	std::unordered_map<RESTYPE_ID, std::vector<RES_ID>>			m_resourceTypeManifest;
 

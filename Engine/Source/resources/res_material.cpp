@@ -90,6 +90,7 @@ MaterialValue GetDefaultValue(MaterialValueData::ValueType type) {
 
 void Material::Init() {
 	InitInternal();
+	InitUniformLocations();
 	m_initialized = true;
 }
 

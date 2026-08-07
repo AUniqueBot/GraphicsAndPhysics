@@ -23,7 +23,6 @@ void Core::Init() {
 
 	// create an entity via loading here...
 	AssetManager& asMgr = Core::GetInstance().GetAssetManager();
-	asMgr.Init();
 	MaterialManager& matMgr = asMgr.GetMaterialManager();
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
@@ -167,9 +166,7 @@ void Core::CoreInit() {
 	glfwSetWindowUserPointer(m_window, this);
 	m_inputSystem.Init(m_window);
 	m_resourceManager.Init(); 
-	m_assetManager.GetShaderManager().Init();
-
-
+	m_assetManager.Init();
 }
 
 

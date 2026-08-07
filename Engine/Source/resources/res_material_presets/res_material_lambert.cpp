@@ -25,11 +25,7 @@ void LambertMaterial::ResolveTextureValues() {
     // - uniform values ------------------
     if (m_textureReferenceDirty) {
         m_textureReferenceDirty = false;
-
-        MaterialValueData matValue;
-        matValue.m_type = MaterialValueData::ValueType::Texture;
-        matValue.SetValue(GetColorTextureID());
-        *m_materialValues[U_ALBEDO] = matValue;
+        m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
     }
 }
 

@@ -127,21 +127,16 @@ void ShaderProgram::SetShader(const Shader& _shader) {
 }
 
 void ShaderProgram::SetShader(const Shader& _shader, const ShaderConstants::ShaderType& _type) {
+	SetShader(_shader.GetShaderID(), _type);
+}
 
-	SparseSetView<Shader> element{ m_shaderList.At(_type) };
-	if (static_cast<bool>(element)) {
-		*element = _shader;
-	}
-	else {
-		m_shaderList.Add(std::move(Shader{ _shader }), _type);
-	}
-
+void ShaderProgram::SetShader(const GLuint& _shaderId, const ShaderConstants::ShaderType& _type) {
 	SparseSetView<GLuint> shaderId{ m_shaderIds.At(_type) };
 	if (shaderId) {
-		*shaderId = _shader.GetShaderID();
+		*shaderId = _shaderId;
 	}
 	else {
-		m_shaderIds.Add(GLuint{ _shader.GetShaderID() }, _type);
+		m_shaderIds.Add(GLuint{ _shaderId }, _type);
 	}
 }
 
@@ -168,7 +163,7 @@ bool ShaderProgram::IsValidRenderShader() const {
 		LOG_ERROR("Missing shader types: [" << missingShaders << "]");
 		return false;
 	}
-	return false;
+	return true;
 }
 
 void ShaderProgram::SetShaderProgramID(GLuint _id) {
@@ -180,46 +175,13 @@ int ShaderProgram::GetShaderProgramID() const {
 };
 
 void ShaderProgram::Build() {
-	std::vector<GLuint> shaderList{ GetShaderVectorList() };
-	
-	if (shaderList.empty()) {
-		LOG_ERROR("Not enough shaders provided or missing vertex/fragment shader.");
-		return;
-	}
-
-	GLuint prg{ glCreateProgram() };
-	for (const GLuint& shader : shaderList) {
-		glAttachShader(prg, shader);
-	}
-
-	glLinkProgram(prg);
-	GLint status{};
-	glGetProgramiv(prg, GL_LINK_STATUS, &status);
-
-	if (status == GL_FALSE) {
-		GLint logLen{};
-		glGetProgramiv(prg, GL_INFO_LOG_LENGTH, &logLen);
-		std::string logMessage(logLen, '\0');
-		glGetProgramInfoLog(prg, logLen, &logLen, logMessage.data());
-		LOG_ERROR("Link Error: " << logMessage);
-		glDeleteProgram(prg);
-		return;
-	}
-	LOG_INFO("Program Generation Complete.");
-
-	if (m_shaderProgramId && prg != 0) {
-		Destroy();
-	}
-	m_shaderProgramId = prg;
-}
-void ShaderProgram::BuildProgram() {
 	if (!IsValid()) {
 		LOG_ERROR("Invalid Shader Program Setup. Aborting...");
 		return;
 	}
 
 	std::deque<GLuint> shaderList{ GetShaderIDList() };
-	GLuint prg { glCreateProgram() };
+	GLuint prg{ glCreateProgram() };
 	for (const GLuint& shader : shaderList) {
 		glAttachShader(prg, shader);
 	}
@@ -243,39 +205,12 @@ void ShaderProgram::BuildProgram() {
 	}
 	m_shaderProgramId = prg;
 }
+
+
+
 void ShaderProgram::Destroy(){
 	glDeleteProgram(m_shaderProgramId);
 	m_shaderProgramId = 0;
-}
-
-
-std::vector<GLuint> ShaderProgram::GetShaderVectorList() const {
-	std::vector<GLuint> shaderList(m_shaderList.size());
-	bool hasVertexShader{};
-	bool hasFragShader{};
-
-	for (const auto& shader : m_shaderList) {
-		GLuint shaderId{ shader.GetShaderID() };
-		
-		if (shaderId == 0) {
-			LOG_INFO("Ignoring invalid shader ID provided for " << shader.GetShaderType() << " shader");
-			continue;
-		}
-
-		if (shader.GetShaderType() == ShaderConstants::ShaderType::VERTEX) hasVertexShader = true;
-		if (shader.GetShaderType() == ShaderConstants::ShaderType::FRAG) hasFragShader = true;
-		shaderList.push_back(shader.GetShaderID());
-	}
-
-	if (!hasVertexShader || !hasFragShader) {
-		std::string missingShaders{};
-		if (!hasVertexShader) missingShaders += "VERTEX";
-		if (!hasFragShader) missingShaders += std::string(missingShaders.size() > 0 ? ", " : "") + "FRAGMENT";
-		LOG_ERROR("Missing shader types: [" << missingShaders << "]");
-		return {};
-	}
-	
-	return shaderList;
 }
 
 std::deque<GLuint> ShaderProgram::GetShaderIDList() const {

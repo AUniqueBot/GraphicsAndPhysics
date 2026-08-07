@@ -24,8 +24,9 @@ public:
 			return;
 		}
 
-		if (m_aliasToResId.find(_alias) != m_aliasToResId.end()) {
-			LOG_INFO("Overwriting an existing alias.");
+		auto itr = m_aliasToResId.find(_alias);
+		if (itr != m_aliasToResId.end() && !m_aliasToResId.empty()) {
+			LOG_INFO("Overwriting an existing alias, \"" << _alias << "\". ID [" << itr->second << "] -> [" << _id << "]");
 			RemoveAliasForRes(_id);
 		}
 
