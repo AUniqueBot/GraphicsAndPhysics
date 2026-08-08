@@ -1,8 +1,8 @@
 #include <arch/resources/res_mesh_presets/res_mesh_plane.h>
 
 
-Plane::Plane(glm::vec2 _dimensions, glm::ivec2 _subdivisions) :
-	m_dimensions{ _dimensions }, m_subdivisions{_subdivisions} {
+Plane::Plane(PlaneCreationProps _props) :
+	m_dimensions { _props.dimensions }, m_subdivisions { _props.subdivisions } {
 	m_name = "Plane";
 	Init();
 }
@@ -11,6 +11,55 @@ void Plane::Init() {
 	UpdateVertexData();
 }
 
+
+void Plane::SetXDimensions(float _dims) {
+	if (m_dimensions.x == _dims) return;
+	m_dimensions.x = _dims;
+
+}
+void Plane::SetYDimensions(float _dims) {
+	if (m_dimensions.y == _dims) return;
+	m_dimensions.y = _dims;
+}
+void Plane::SetDimensions(glm::vec2 _dims) {
+	if (m_dimensions == _dims) return;
+	m_dimensions = _dims;
+}
+
+const float& Plane::GetXDimensions() const { 
+	return m_dimensions.x;
+}
+const float& Plane::GetYDimensions() const {
+	return m_dimensions.y;
+}
+const glm::vec2& Plane::GetDimensions() const {
+	return m_dimensions;
+}
+
+void Plane::SetXSubdivisions(int _dims) {
+	if (m_subdivisions.x == _dims) return;
+	m_subdivisions.x = _dims;
+
+}
+void Plane::SetYSubdivisions(int _dims) {
+	if (m_subdivisions.y == _dims) return;
+	m_subdivisions.y = _dims;
+
+}
+void Plane::SetSubdivisions(glm::ivec2 _dims) {
+	if (m_subdivisions == _dims) return;
+	m_subdivisions = _dims;
+}
+
+const int& Plane::GetXSubdivisions() const {
+	return m_subdivisions.x;
+}
+const int& Plane::GetYSubdivisions() const {
+	return m_subdivisions.y;
+}
+const glm::ivec2& Plane::GetSubdivisions() const {
+	return m_subdivisions;
+}
 
 
 void Plane::UpdateVertexData() {

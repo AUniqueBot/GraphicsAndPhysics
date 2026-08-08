@@ -1,7 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_resource.h>
-#include <arch/resources/res_resourceManager.h>
+#include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_texture/res_texturegpu.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 

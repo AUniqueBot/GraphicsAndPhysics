@@ -48,8 +48,8 @@ public:
 	static Material& GetDefaultMaterial();
 
 	// - shadows ----------------------------------------------------------------------------------
-	const bool& GetCastShadow() const	{ return m_castShadow; };
-	void SetCastShadow(bool _cast)		{ m_castShadow = _cast; };
+	inline const bool& GetCastShadow() const	{ return m_castShadow; };
+	inline void SetCastShadow(bool _cast)		{ m_castShadow = _cast; };
 
 public:
 
@@ -58,8 +58,10 @@ private:
 	// Needs Mesh.
 	// model resource
 	
+	
 	std::shared_ptr<Mesh> m_mesh		{};
-	std::vector<std::shared_ptr<Material>> m_materials;
+	std::vector<std::shared_ptr<Material>> m_materials; // change to material handle.
+	
 
 	bool m_castShadow					{ true };
 	bool m_staticShadow					{};

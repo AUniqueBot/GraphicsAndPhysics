@@ -1,0 +1,50 @@
+#include <arch/resources/res_meshManager.h>
+#include <arch/resources/res_mesh_presets/res_mesh_types.h>
+
+void MeshManager::Init() {
+	CubeHandle cube = CreateCubeMesh();
+	PlaneHandle plane = CreatePlaneMesh();
+	SphereHandle sphere = CreateSphereMesh();
+	//MeshHandle icosphere = CreateCubeMesh();
+	SetResourceAlias(cube.GetResourceID(), MeshConstants::C_DEFAULT_MESH_CUBE);
+	SetResourceAlias(plane.GetResourceID(), MeshConstants::C_DEFAULT_MESH_PLANE);
+	SetResourceAlias(sphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_SPHERE);
+	//SetResourceAlias(icosphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_ICOSPHERE);
+}
+
+MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
+	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	mesh->LoadMeshFromPath(_path);
+	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
+	MeshHandle handle(idr);
+	Add(handle.GetResourceID());
+	return handle;
+}
+
+CubeHandle MeshManager::CreateCubeMesh(CubeCreationProps _props) {
+	std::shared_ptr<Cube> mesh = std::make_shared<Cube>(_props.dimensions, _props.subdivisions);	
+	CubeHandle handle(RegisterResource(mesh));
+	return handle;
+}
+
+SphereHandle MeshManager::CreateSphereMesh(SphereCreationProps _props) {
+	std::shared_ptr<Sphere> mesh = std::make_shared<Sphere>(_props.radius, _props.subdivisions);
+	SphereHandle handle(RegisterResource(mesh));
+	return handle;
+}
+
+MeshHandle MeshManager::CreateIcosphereMesh() {
+	std::shared_ptr<Sphere> mesh = std::make_shared<Sphere>();
+	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
+	MeshHandle handle(idr);
+	Add(handle.GetResourceID());
+	return handle;
+}
+
+PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
+	std::shared_ptr<Plane> mesh = std::make_shared<Plane>(_props.dimensions, _props.subdivisions);
+	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
+	PlaneHandle handle(idr);
+	Add(handle.GetResourceID());
+	return handle;
+}

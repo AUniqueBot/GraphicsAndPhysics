@@ -8,54 +8,23 @@ class SpecializedResourceManager {
 public:
 	SpecializedResourceManager(ResourceManager& _manager) : m_resourceManager{_manager} {}
 	
+public:
 	virtual void Init() {}
 	virtual void Cleanup() {};
-	inline bool Has(RES_ID _id) const { return m_resourceIdPool.contains(_id); };
-	inline void Add(RES_ID _id) { m_resourceIdPool.insert(_id); };
-	inline void Remove(RES_ID _id) { m_resourceIdPool.erase(_id); };
 
-	inline void SetResourceAlias(RES_ID _id, std::string _alias) {
-		if (_alias.empty()) {
-			LOG_INFO("Provide an alias");
-			return;
-		}
-		if (!m_resourceIdPool.contains(_id)) {
-			LOG_INFO("ID is not for this resource type.");
-			return;
-		}
+	// basic access
+	bool Has(RES_ID _id) const;
+	void Add(RES_ID _id);
+	void Remove(RES_ID _id);
 
-		auto itr = m_aliasToResId.find(_alias);
-		if (itr != m_aliasToResId.end() && !m_aliasToResId.empty()) {
-			LOG_INFO("Overwriting an existing alias, \"" << _alias << "\". ID [" << itr->second << "] -> [" << _id << "]");
-			RemoveAliasForRes(_id);
-		}
+	// alias
+	void SetResourceAlias(RES_ID _id, std::string _alias);
+	void RemoveAliasForRes(RES_ID _id);
+	RES_ID GetResIDFromAlias(std::string _alias) const;
 
-
-		m_aliasToResId[_alias] = _id;
-		m_resIdToAlias[_id] = _alias;
-	}
-
-	
-	inline void RemoveAliasForRes(RES_ID _id) {
-		std::string alias = GetAliasForRes(_id);
-		if (alias.empty()) {
-			LOG_INFO("No alias found for RES_ID: [" << _id << "]. Exiting.");
-			return;
-		}
-		m_aliasToResId.erase(alias);
-		m_resIdToAlias.erase(_id);
-	}
-
-	inline RES_ID GetResIDFromAlias(std::string _alias) {
-		auto itr = m_aliasToResId.find(_alias);
-		return itr == m_aliasToResId.end() ? BaseResource::C_RES_ID_INVALID : itr->second;
-	}
-
-private:
-	inline std::string GetAliasForRes(RES_ID _id) {
-		auto itr = m_resIdToAlias.find(_id);
-		return itr == m_resIdToAlias.end() ? "" : itr->second;
-	}
+protected:
+	ResourceIdentifier RegisterResource(std::shared_ptr<BaseResource> _res);
+	std::string GetAliasForRes(RES_ID _id) const;
 
 protected:
 	// current set contained.

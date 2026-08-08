@@ -1,21 +1,104 @@
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 
-
-
-Cube::Cube(glm::vec3 _dimensions, glm::ivec3 _subdivisions) : 
-	m_dimensions{ _dimensions }, m_subdivisions{ _subdivisions }
+Cube::Cube(CubeCreationProps _props) : 
+	m_dimensions{ _props.dimensions }, m_subdivisions{ _props.subdivisions }
 {
 	m_name = "Cube";
 	Init();
 }
 
 void Cube::Init() {
+	UpdateVertexData();
+}
 
+void Cube::SetXDimensions(float _dims) {
+	if (m_dimensions.x == _dims) return;
+	m_dimensions.x = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetYDimensions(float _dims) {
+	if (m_dimensions.y == _dims) return;
+	m_dimensions.y = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetZDimensions(float _dims) {
+	if (m_dimensions.z == _dims) return;
+	m_dimensions.z = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetDimensions(glm::vec3 _dims) {
+	if (m_dimensions == _dims) return;
+	m_dimensions = _dims;
 	UpdateVertexData();
 }
 
 
+const float& Cube::GetXDimensions() const {
+	return m_dimensions.x;
+}
 
+const float& Cube::GetYDimensions() const {
+	return m_dimensions.y;
+}
+
+const float& Cube::GetZDimensions() const {
+	return m_dimensions.z;
+}
+
+const glm::vec3& Cube::GetDimensions() const {
+	return m_dimensions;
+}
+
+
+// -----------------------------------------------------------
+void Cube::SetXSubdivisions(int _dims) {
+	if (m_subdivisions.x == _dims) return;
+	m_subdivisions.x = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetYSubdivisions(int _dims) {
+	if (m_subdivisions.y == _dims) return;
+	m_subdivisions.y = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetZSubdivisions(int _dims) {
+	if (m_subdivisions.z == _dims) return;
+	m_subdivisions.z = _dims;
+	UpdateVertexData();
+}
+
+void Cube::SetSubdivisions(glm::ivec3 _dims) {
+	if (m_subdivisions == _dims) return;
+	m_subdivisions = _dims;
+	UpdateVertexData();
+}
+
+const int& Cube::GetXSubdivisions() const {
+	return m_subdivisions.x;
+}
+
+const int& Cube::GetYSubdivisions() const {
+	return m_subdivisions.y;
+}
+
+const int& Cube::GetZSubdivisions() const{
+	return m_subdivisions.z;
+}
+
+const glm::ivec3& Cube::GetSubdivisions() const {
+	return m_subdivisions;
+}
+
+
+
+
+
+// -----------------------------------------------------------
 void Cube::UpdateVertexData() {
 	ClearMeshInformation();
 

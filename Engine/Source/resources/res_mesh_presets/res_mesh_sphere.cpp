@@ -1,17 +1,49 @@
 #include <arch/resources/res_mesh_presets/res_mesh_sphere.h>
 
-Sphere::Sphere(float _radius, glm::ivec2 _subdivisions) 
-    : m_radius{ _radius }, m_subdivisions{_subdivisions} {
+Sphere::Sphere(SphereCreationProps _props)
+    : m_radius{ _props.radius }, m_subdivisions{ _props.subdivisions } {
     m_name = "Sphere";
     Init();
 }
 
 void Sphere::Init() {
-
-
 	UpdateVertexData();
 }
 
+
+const float& Sphere::GetRadius() const {
+    return m_radius;
+}
+void Sphere::SetRadius(float _radius) {
+    if (m_radius == _radius) return;
+    m_radius = _radius;
+}
+
+const int& Sphere::GetSubdivisionsX() const {
+    return m_subdivisions.x;
+}
+const int& Sphere::GetSubdivisionsY() const {
+    return m_subdivisions.y;
+}
+const glm::ivec2& Sphere::GetSubdivisions() const {
+    return m_subdivisions;
+}
+
+void Sphere::SetSubdivisionsX(int _divs) {
+    if (m_subdivisions.x == _divs) return;
+    m_subdivisions.x = _divs;
+    UpdateVertexData();
+}
+void Sphere::SetSubdivisionsY(int _divs) {
+    if (m_subdivisions.y == _divs) return;
+    m_subdivisions.y = _divs;
+    UpdateVertexData();
+}
+void Sphere::SetSubdivisions(glm::ivec2 _divs) {
+    if (m_subdivisions == _divs) return;
+    m_subdivisions = _divs;
+    UpdateVertexData();
+}
 
 
 void Sphere::UpdateVertexData() {

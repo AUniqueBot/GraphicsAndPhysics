@@ -4,6 +4,7 @@
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_materialManager.h>
 #include <arch/resources/res_textureManager.h>
+#include <arch/resources/res_meshManager.h>
 
 class AssetManager {
 
@@ -14,7 +15,8 @@ public:
 		m_materialManager	{ _mgr }, 
 		m_shaderManager		{ _mgr }, 
 		m_textureManager	{ _mgr } ,
-		m_shaderPrgManager	{ _mgr, m_shaderManager }
+		m_shaderPrgManager	{ _mgr, m_shaderManager },
+		m_meshManager		{ _mgr }
 	{}
 
 public:
@@ -39,5 +41,6 @@ private:
 	ShaderProgramManager m_shaderPrgManager;
 	MaterialManager m_materialManager;
 	TextureManager m_textureManager;
+	MeshManager m_meshManager;
 
 };

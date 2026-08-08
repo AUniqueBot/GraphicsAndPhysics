@@ -1,5 +1,6 @@
 #pragma once
 #include <pch.h>
+#include <rapidjson/document.h>
 #include <arch/resources/res_material.h>
 #include <arch/resources/res_material_presets/res_materiallist.h>
 #include <arch/resources/res_specializedResourceManager.h>
@@ -19,8 +20,8 @@ public:
 	
 
 
+
 	// - factory ---------------------------------------
-	
 	std::shared_ptr<Material>			CreateGenericMaterial();
 	std::shared_ptr<Material>			CreateUnlitMaterial();
 	std::shared_ptr<LambertMaterial>	CreateLambertMaterial();
@@ -28,6 +29,12 @@ public:
 	std::shared_ptr<BlinnPhongMaterial>	CreateBlinnMaterial();
 	std::shared_ptr<Material>			CreateGGXMaterial();
 
+	// - loading from serialization --------------------
+	std::shared_ptr<Material> LoadMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<LambertMaterial> LoadLambertMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<PhongMaterial> LoadPhongMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<BlinnPhongMaterial> LoadBlinnMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<Material> LoadGGXMaterial(const rapidjson::Value& _materialData);
 
 
 private:

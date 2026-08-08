@@ -18,41 +18,20 @@ namespace ShaderConstants {
 	inline constexpr const char* C_ID_PHONGFRAGSHADER				{ "C_PHONGFRAG_SHADER" };
 	inline constexpr const char* C_ID_BLINNPHONGFRAGSHADER			{ "C_BLINNPHONGFRAG_SHADER" };
 	inline constexpr const char* C_ID_ERRORFRAGSHADER				{ "C_ERRORFRAG_SHADER" };
-	// - shader Program 0000---------------------------------------------------
+	// - shader Program -------------------------------------------------------
+	inline constexpr const char* C_ID_LAMBERTSHADERPROG				{ "BRDF_LAMBERT" };
+	inline constexpr const char* C_ID_PHONGSHADERPROG				{ "BRDF_PHONG" };
+	inline constexpr const char* C_ID_BLINNPHONGSHADERPROG			{ "BRDF_BLINNPHONG" };
+	inline constexpr const char* C_ID_ERRORSHADERPROG				{ "ERRORSHADER" };
+
+}
+
+namespace MaterialConstants {
 	inline constexpr const char* C_ID_LAMBERTSHADERPROG				{ "BRDF_LAMBERT" };
 	inline constexpr const char* C_ID_PHONGSHADERPROG				{ "BRDF_PHONG" };
 	inline constexpr const char* C_ID_BLINNPHONGSHADERPROG			{ "BRDF_BLINNPHONG" };
 	inline constexpr const char* C_ID_ERRORSHADERPROG				{ "ERRORSHADER" };
 }
-
-
-
-
-struct ShaderHandle : public ResourceHandle  {
-	inline ShaderHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {};
-	inline std::shared_ptr<Shader> GetShaderResource() {
-		return GetResource<Shader>();
-	}
-	inline std::shared_ptr<const Shader> GetShaderResource() const {
-		return GetResource<Shader>();
-	}
-
-
-	inline ShaderConstants::ShaderType GetShaderType() {
-		return GetShaderResource()->GetShaderType();
-	}
-
-	inline void BuildShader() {
-		GetShaderResource()->Build();
-	}
-	inline void SetShaderCode(std::string _src) {
-		Shader& res = *GetShaderResource();
-		res.SetShaderCode(_src);
-	}
-	
-};
-
-
 
 
 class ShaderManager : public SpecializedResourceManager {
@@ -76,17 +55,6 @@ private:
 
 // ----------------------------------------------------------------------------------------------
 
-struct ShaderProgramHandle : public ResourceHandle {
-	inline ShaderProgramHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {};
-	inline std::shared_ptr<ShaderProgram> GetShaderResource() {
-		return GetResource<ShaderProgram>();
-	}
-	inline std::shared_ptr<const ShaderProgram> GetShaderResource() const {
-		return GetResource<ShaderProgram>();
-	}
-
-
-};
 
 struct RenderShaderProgProps {
 	RES_ID vertexShader;

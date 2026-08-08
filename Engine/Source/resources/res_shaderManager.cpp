@@ -1,5 +1,5 @@
 #include <arch/resources/res_shaderManager.h>
-
+#include <arch/resources/res_resourceIdentifier.h>
 
 void ShaderManager::Init() {
 	
@@ -58,8 +58,8 @@ ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std:
 	res->SetShaderType(_type);
 	res->SetShaderCode(_code);
 	res->Build();
-	ShaderHandle handle = ShaderHandle(m_resourceManager.AddInternalResource(res));
-	Add(handle.GetResourceID());
+
+	ShaderHandle handle = ShaderHandle(RegisterResource(res));
 	if (m_shaderIds.find(_type) == m_shaderIds.end()) m_shaderIds[_type] = {} ;
 	m_shaderIds[_type].push_back(handle.GetResourceID());
 

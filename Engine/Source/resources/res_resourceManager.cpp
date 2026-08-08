@@ -224,6 +224,10 @@ void ResourceManager::PackResources() {
 	LOG_INFO("Stub Function.");
 }
 
+void ResourceManager::ReadResourceMetafile(std::filesystem::path _path) {
+	
+}
+
 const std::vector<RES_ID>& ResourceManager::GetResourcePoolManifest(RESTYPE_ID _typeId) const {
 	return m_resourceTypeManifest.at(_typeId);
 }
@@ -282,16 +286,15 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 	// TODO - figure out how to load on need.
 
 	if (resType == Material::GetResourceTypeID()) {
+		
 		//
 		std::shared_ptr<Material> mat;
-
-		
 		// AddResource(mat, _filePath);
 	}
 
 
 	if (resType == Mesh::GetResourceTypeID()) {
-		std::shared_ptr<Mesh> mesh	{ std::make_shared<Mesh>(Mesh()) };
+		std::shared_ptr<Mesh> mesh	{ std::make_shared<Mesh>() };
 		
 		mesh->LoadMeshFromPath(_filePath);
 		LOG_INFO("Loading mesh from "<< _filePath);

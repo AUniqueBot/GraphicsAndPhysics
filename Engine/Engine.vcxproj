@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\common\properties.h" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
+    <ClCompile Include="Headers\arch\resources\res_resourceHandle.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texturegpu.h" />
     <ClCompile Include="Source\arch\core\core_gamestatemanager.cpp" />
     <ClCompile Include="Source\resources\res_assetManager.cpp" />
@@ -192,6 +193,10 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
     <ClCompile Include="Source\arch\core\core_scenemanager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
+    <ClCompile Include="Source\resources\res_meshManager.cpp" />
+    <ClCompile Include="Source\resources\res_resourceHandle.cpp" />
+    <ClCompile Include="Source\resources\res_resourceIdentifier.cpp" />
+    <ClCompile Include="Source\resources\res_specializedResourceManager.cpp" />
     <ClCompile Include="Source\resources\res_textureManager.cpp" />
     <ClCompile Include="Source\resources\res_scene.cpp" />
     <ClCompile Include="Source\resources\res_shaderManager.cpp" />
@@ -290,6 +295,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh.h" />
+    <ClInclude Include="Headers\arch\resources\res_meshManager.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />
@@ -297,6 +303,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_mesh_vertexLayout.h" />
     <ClInclude Include="Headers\arch\resources\res_prefab.h" />
     <ClInclude Include="Headers\arch\resources\res_resource.h" />
+    <ClInclude Include="Headers\arch\resources\res_resourceIdentifier.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_scene.h" />

@@ -1,8 +1,15 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_resource.h>
+#include <arch/resources/res_resourceHandle.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
+
+
+struct MeshHandle : public ResourceHandle {
+	inline MeshHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
+};
+
 
 class Mesh : public Resource<Mesh> {
 
