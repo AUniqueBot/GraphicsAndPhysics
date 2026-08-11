@@ -4,10 +4,13 @@
 Plane::Plane(PlaneCreationProps _props) :
 	m_dimensions { _props.dimensions }, m_subdivisions { _props.subdivisions } {
 	m_name = "Plane";
+	
 	Init();
 }
 
 void Plane::Init() {
+	SetSubmeshCount(1);
+	AddSubmesh(Submesh());
 	UpdateVertexData();
 }
 
@@ -63,6 +66,7 @@ const glm::ivec2& Plane::GetSubdivisions() const {
 
 
 void Plane::UpdateVertexData() {
+
 	ClearMeshInformation();
 	std::vector<glm::vec3> vertexPositions;
 	std::vector<glm::vec3> vertexNormals;
@@ -95,10 +99,17 @@ void Plane::UpdateVertexData() {
 				m_indices.push_back({ i0, i1, i2 });
 				m_indices.push_back({ i1, i3, i2 });
 			}
-
 		}
 	}
 
-	SetData<float>("position", reinterpret_cast<float*>(vertexPositions.data()), vertexPositions.size() * 3);
-	SetData<float>("normal", reinterpret_cast<float*>(vertexNormals.data()), vertexPositions.size() * 3);
+	// move to submesh.
+	SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
+	SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
+
+	// - new system ----
+	Submesh& submesh = m_submeshList[0];
+	submesh.ClearSubmeshInformation();
+	submesh.SetVertexCount(vertexPositions.size());
+	submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
+	submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
 }

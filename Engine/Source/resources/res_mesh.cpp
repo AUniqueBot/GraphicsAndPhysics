@@ -36,6 +36,12 @@ namespace {
 
 // - submesh methods ----------------------------------
 
+void Submesh::ClearSubmeshInformation() {
+	m_attributeData.clear();
+	m_indices.clear();
+	m_vertexCount = 0;
+}
+
 // -- vertex ---------------
 void Submesh::SetVertexCount(size_t _vtxCount) {
 	m_vertexCount = _vtxCount;
@@ -97,6 +103,20 @@ const glm::uvec3* Submesh::GetVertexIndexData() const {
 	return m_indices.data();
 }
 
+
+VertexAttributeDatabase* Submesh::GetDatabase(const std::string& _name) {
+	auto it = m_attributeData.find(_name);
+	return it == m_attributeData.end() ? nullptr : it->second.get();
+}
+const VertexAttributeDatabase* Submesh::GetDatabase(const std::string& _name) const {
+	auto it = m_attributeData.find(_name);
+	return it == m_attributeData.end() ? nullptr : it->second.get();
+}
+
+
+
+
+
 Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
 	// for now 
 	Submesh submesh;
@@ -122,11 +142,29 @@ Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
 
 	if (uvCount) {
 		// assume we only have 1 UV set.
-		for (unsigned i{}; i < uvCount; ++i) {
-			_mesh.mTextureCoords;
-			AI_MAX_NUMBER_OF_TEXTURECOORDS;
-			//submesh.SetVertexUVs(i, );
-			
+		int id{};
+		int uvCompSize = *_mesh.mNumUVComponents;
+		int validUvCount = 0;
+		// flagged for potential improvement.
+		for (unsigned uvCh{}; uvCh < AI_MAX_NUMBER_OF_TEXTURECOORDS; ++uvCh) {
+			if (_mesh.HasTextureCoords(uvCh)) {
+				++validUvCount;
+				std::string attrName = MeshConstants::C_VTXATTR_UV + id;
+				const glm::vec3* currentUvData = reinterpret_cast<const glm::vec3*>(_mesh.mTextureCoords[uvCh]);
+				if (uvCompSize == 2) {
+					std::vector<glm::vec2> uvData(vertexCount);
+					for (size_t i{}; i < vertexCount; ++i) {
+						uvData[i].x = currentUvData[i].x;
+						uvData[i].y = currentUvData[i].y;
+					}
+					submesh.SetData(attrName, uvData.data(), submesh.GetVertexCount());
+				}
+				else {
+					submesh.SetData(attrName, currentUvData, submesh.GetVertexCount());
+				}
+			}
+			// if reached uvCount you can stop.
+			if (validUvCount == uvCount) break;
 		}
 	}
 	return submesh;
@@ -135,42 +173,45 @@ Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
 // - mesh methods -------------------------------------
 
 void Mesh::Load() {
+
+
 	// general flow
-	Assimp::Importer importer;
-	const aiScene* scene = importer.ReadFile(
-		m_pathToAsset.string(),
+	Assimp::Importer importer; // immediate triangulation.
+	unsigned importerFlags =
 		aiProcess_CalcTangentSpace |
 		aiProcess_Triangulate |
 		aiProcess_JoinIdenticalVertices |
 		aiProcess_SortByPType
-	);
-
-
+		;
+	
+	const aiScene* scene = importer.ReadFile(ResourcePath().string(), importerFlags);
 	if (!scene || !scene->HasMeshes()) {
 		LOG_INFO("Model failed to load");
 		return;
 	}
 	LOG_INFO("Loading Model.");
-	
-	unsigned meshCount	= scene->mNumMeshes;
-	aiMesh** meshList	= scene->mMeshes;
-	LOG_INFO(meshCount);
-	
 
-	
+	unsigned meshCount = scene->mNumMeshes;
+	aiMesh** meshList = scene->mMeshes;
+	LOG_INFO(meshCount);
+
+
 	// loading models
 	// treat multiple models as single object.
 
-	std::vector<float> vertexPosData	{};
-	std::vector<float> vertexNmlData	{};
-	std::vector<unsigned> faceIndexData	{};
-	unsigned vtxCount	{};
+	std::vector<float> vertexPosData{};
+	std::vector<float> vertexNmlData{};
+	std::vector<unsigned> faceIndexData{};
+	unsigned vtxCount{};
 
+
+	SetSubmeshCount(meshCount);
 	for (unsigned meshIndex{}; meshIndex < meshCount; ++meshIndex) {
+
 		const aiMesh* currentMesh = meshList[meshIndex];
 		const unsigned _vtxCount = currentMesh->mNumVertices;
 		const unsigned _idxCount = currentMesh->mNumFaces;
-		
+
 
 		unsigned currentMeshIndexOffset = vtxCount;
 		for (unsigned int i = 0; i < currentMesh->mNumFaces; ++i) {
@@ -191,7 +232,6 @@ void Mesh::Load() {
 			posPtr,
 			posPtr + (_vtxCount * 3)
 		);
-
 		const float* nmlPtr =
 			reinterpret_cast<const float*>(currentMesh->mNormals);
 		vertexNmlData.insert(
@@ -199,6 +239,13 @@ void Mesh::Load() {
 			nmlPtr,
 			nmlPtr + (_vtxCount * 3)
 		);
+
+
+		// add submeshes into the thing.
+		AddSubmesh(
+			Submesh::CreateSubmesh(*currentMesh, aiProcess_Triangulate & importerFlags)
+		);
+
 	}
 
 
@@ -216,7 +263,7 @@ void Mesh::Load() {
 	);
 
 	// loading mats
-	unsigned matCount	= scene->mNumMaterials;
+	unsigned matCount = scene->mNumMaterials;
 	aiMaterial** matList = scene->mMaterials;
 
 
@@ -268,35 +315,11 @@ void Mesh::AddSubmesh(Submesh&& _smesh) {
 	m_submeshList.emplace_back(std::move(_smesh));
 }
 
-
-const glm::vec3* Mesh::GetVertexData() const {
-	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_POSITION);
+Submesh& Mesh::GetSubmesh(int _idx) {
+	return m_submeshList[_idx];
 }
-
-
-const size_t Mesh::GetVertexDataSize() const {
-	return m_attributeData.at(MeshConstants::C_VTXATTR_POSITION)->DataSize();
-}
-
-const size_t Mesh::GetNormalDataSize() const {
-	return m_attributeData.at(MeshConstants::C_VTXATTR_NORMAL)->ElementCount();
-}
-const glm::vec3* Mesh::GetNormalData() const {
-	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_NORMAL);
-}
-
-const size_t Mesh::GetUVCount() const {
-	return m_uvs.size();
-}
-
-const size_t Mesh::GetUVDataSize(unsigned _index) const {
-	if (_index >= m_uvs.size()) return 0;
-	return m_uvs[_index].size() * sizeof(glm::vec2);
-}
-
-const float* Mesh::GetUVData(unsigned _index) const {
-	if (_index >= m_uvs.size()) return nullptr;
-	return reinterpret_cast<const float*>(m_uvs[_index].data());
+const Submesh& Mesh::GetSubmesh(int _idx) const {
+	return m_submeshList[_idx];
 }
 
 const size_t Mesh::GetIndexDataSize() const {
@@ -349,7 +372,6 @@ void Mesh::SetIndices(const unsigned* _pointer, size_t _indexCount) {
 			_pointer[offset + 2]
 		};
 	}
-	m_indices;
 }
 
 void Mesh::SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount) {

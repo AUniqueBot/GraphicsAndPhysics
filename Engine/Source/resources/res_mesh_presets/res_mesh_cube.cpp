@@ -8,6 +8,8 @@ Cube::Cube(CubeCreationProps _props) :
 }
 
 void Cube::Init() {
+	SetSubmeshCount(1);
+	AddSubmesh(Submesh());
 	UpdateVertexData();
 }
 
@@ -205,4 +207,11 @@ void Cube::UpdateVertexData() {
  
 	SetData("position", reinterpret_cast<float*>(vertexPositions.data()), vertexPositions.size() * 3);
 	SetData("normal", reinterpret_cast<float*>(vertexNormals.data()), vertexPositions.size() * 3);
+
+	// - new system ----
+	Submesh& submesh = m_submeshList[0];
+	submesh.ClearSubmeshInformation();
+	submesh.SetVertexCount(vertexPositions.size());
+	submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
+	submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
 }

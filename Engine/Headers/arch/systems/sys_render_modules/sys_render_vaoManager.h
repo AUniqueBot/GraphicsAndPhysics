@@ -3,11 +3,7 @@
 #include <arch/resources/res_mesh_vertexLayout.h>
 // strict enforce SOA.
 
-namespace VAOConstants {
-	inline constexpr const char* C_VAO_STATIC_MESH = "C_VAO_STATIC_MESH";
-	inline constexpr const char* C_VAO_SKINNED_MESH = "C_VAO_SKINNED_MESH";
 
-}
 
 
 class Mesh;

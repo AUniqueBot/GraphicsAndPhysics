@@ -46,22 +46,22 @@ unsigned VAOHandler::GetVAO() const {
 }
 
 void VAOHandler::UseMesh(const Mesh& _mesh) {
-	if (!_mesh.GetVertexDataSize()) return;
+	if (_mesh.GetVertexCount() == 0) return;
 
 	if (&_mesh != m_currentBoundMesh) {
 		m_currentBoundMesh = &_mesh;
 		for (const auto& [attributeName, attributeProps] : m_attributeBuffers) {
-			SetAttributeEnabled(attributeName, _mesh.GetData<float>(attributeName) != nullptr);
 			const VertexAttributeDatabase* db = _mesh.GetDatabase(attributeName);
+			SetAttributeEnabled(attributeName, db != nullptr);
 			if (!db) continue;
 			SetData(attributeName, db->Data(), db->ElementCount(), db->DatatypeSize());
 		}
 
-		for (unsigned i{}; i < 1; ++i) {
-			std::string uv{"uv"};
-			uv += std::to_string(i);
-			SetData(uv, _mesh.GetUVData(i), _mesh.GetVertexCount(), sizeof(glm::vec2));
-		}
+		//for (unsigned i{}; i < 1; ++i) {
+		//	std::string uv{"uv"};
+		//	uv += std::to_string(i);
+		//	SetData(uv, _mesh.GetUVData(i), _mesh.GetVertexCount(), sizeof(glm::vec2));
+		//}
 		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
 	}
 }

@@ -3,8 +3,8 @@
 #include <arch/resources/res_resource.h>
 
 #include <arch/resources/res_resourceHandle.h>
-#include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
+
 
 // not including the whole of assimp here.
 struct aiMesh;
@@ -32,34 +32,38 @@ public:
 	Submesh(Submesh&&) noexcept = default;
 	Submesh& operator=(Submesh&&) noexcept = default;
 
+
+	
+
 public:
+	static Submesh CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated);
+
+	VertexAttributeDatabase* GetDatabase(const std::string& _name);
+	const VertexAttributeDatabase* GetDatabase(const std::string& _name) const;
+	void ClearSubmeshInformation();
+
+	// - attributes ----------------------------------------------------------------
+	void SetVertexCount(size_t _vtxCount);
+	size_t GetVertexCount() const;
+	
+public:
+	// -- generic get/set --------------
 	template <typename T>
 	inline void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
 		std::vector<T> data(_elementCount);
-		for (size_t i = 0; i < _elementCount; ++i) {
-			data[i] = _pointer[i];
-		}
+		data.assign(_pointer, _pointer + _elementCount);
 		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
-		m_attributeData[name];
 	}
 
 	template <typename T>
 	inline const T* GetData(std::string _name) const {
 		auto it = m_attributeData.find(_name);
 		if (it == m_attributeData.end()) return nullptr;
-
 		VertexAttributeData<T>* typedAttr = dynamic_cast<VertexAttributeData<T>*>(it->second.get());
-		if (!typedAttr) return nullptr; // type mismatch
-
-		return typedAttr->m_data.data(); // pointer to underlying vector
+		return typedAttr ? typedAttr->m_data.data() : nullptr; // pointer to underlying vector
 	}
 
-	
-
 public:
-	void SetVertexCount(size_t _vtxCount);
-	size_t GetVertexCount() const;
-	
 	void SetVertexPositions(const glm::vec3* _pointer);
 	const glm::vec3* GetVertexPositions() const;
 	const size_t GetVertexDataSize() const;
@@ -76,10 +80,10 @@ public:
 	void SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount);
 	const glm::uvec3* GetVertexIndexData() const;
 
-	static Submesh CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated);
-
 private:
-	size_t m_vertexCount;
+
+	// is unique_ptr actually worth it here?
+	size_t m_vertexCount				{ 0 };
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 	std::vector<glm::uvec3> m_indices;
 
@@ -113,17 +117,16 @@ public:
 	void SetSubmeshCount(size_t _count);
 	size_t GetSubmeshCount() const;
 	void AddSubmesh(Submesh&& _submesh);
-	
+
+	Submesh& GetSubmesh(int _idx);
+	const Submesh& GetSubmesh(int _idx) const;
 
 
 
-	virtual const size_t GetVertexDataSize() const;
-	virtual const glm::vec3* GetVertexData() const;
-	virtual const size_t GetNormalDataSize() const;
-	virtual const glm::vec3* GetNormalData() const;
-	virtual const size_t GetUVCount() const;
-	virtual const size_t GetUVDataSize(unsigned _index) const;
-	virtual const float* GetUVData(unsigned _index) const;
+	const size_t GetVertexDataSize() const;
+
+
+
 	virtual const size_t GetIndexDataSize() const;
 	virtual const glm::uvec3* GetIndexData() const;
 	virtual const size_t GetIndexDataCount() const;
@@ -179,11 +182,8 @@ protected:
 
 
 protected:
-	std::string m_vaoName							{ "StaticMesh" }; // vao identifier
+	std::string m_vaoName							{ VAOConstants::C_VAO_STATIC_MESH }; // vao identifier
 	std::vector<Submesh> m_submeshList;
-	
-
-	std::vector<int> m_submesh;
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 
 	std::vector<std::vector<glm::vec2>> m_uvs;

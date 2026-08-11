@@ -1,7 +1,10 @@
 #pragma once
 #include <pch.h>
 
-
+namespace VAOConstants {
+    inline constexpr const char* C_VAO_STATIC_MESH = "C_VAO_STATIC_MESH";
+    inline constexpr const char* C_VAO_SKINNED_MESH = "C_VAO_SKINNED_MESH";
+}
 
 struct VertexAttributeDesc {
     std::string m_name;
@@ -43,7 +46,7 @@ struct VertexAttributeData : VertexAttributeDatabase {
 
 namespace VertexLayouts {
     inline const VertexLayout C_STATIC_MESH = {
-        "StaticMesh",
+        VAOConstants::C_VAO_STATIC_MESH,
         {
             { "position", GL_FLOAT, 3, false },
             { "normal",   GL_FLOAT, 3, false },
@@ -51,7 +54,7 @@ namespace VertexLayouts {
         }
     };
     inline const VertexLayout C_SKINNED_MESH = {
-        "SkinnedMesh",
+        VAOConstants::C_VAO_SKINNED_MESH,
         {
             { "position",     GL_FLOAT, 3, false },
             { "normal",       GL_FLOAT, 3, false },
