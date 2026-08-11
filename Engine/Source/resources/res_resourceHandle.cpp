@@ -1,7 +1,11 @@
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_resourceManager.h>
 
-ResourceHandle::ResourceHandle(ResourceIdentifierArg _id) : m_resourceIdentifier{ _id } {};
+ResourceHandle::ResourceHandle(ResourceIdentifierArg _id) : m_resourceIdentifier{ _id } {}
+bool ResourceHandle::operator==(const ResourceHandle& _resHandle) const {
+	
+	return m_resourceIdentifier == _resHandle.m_resourceIdentifier;
+};
 
 std::optional<ResourceIdentifier> ResourceHandle::GetResourceIdentifier() {
 	return m_resourceIdentifier;

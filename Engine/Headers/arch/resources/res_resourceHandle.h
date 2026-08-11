@@ -6,6 +6,7 @@
 using ResourceIdentifierArg = std::optional<ResourceIdentifier>;
 struct ResourceHandle {
 	ResourceHandle(ResourceIdentifierArg _id = std::nullopt);
+	bool operator==(const ResourceHandle& _resHandle) const;
 
 	bool HandleIsValid() const;
 

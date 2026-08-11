@@ -177,11 +177,13 @@ void UIWidget_Inspector::Draw() {
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
 		ResourceManager& resmgr = papc->GetResourceManager();
-
+		MeshManager& meshmgr = papc->GetAssetManager().GetMeshManager();
 		// mesh handling.
-		const auto& selectedMesh = mr.GetMesh();
-		std::string selectedMeshName = selectedMesh->Name();
+		RES_ID meshId = mr.GetMesh();
+		std::shared_ptr<Mesh> selectedMesh = static_pointer_cast<Mesh>(resmgr.GetResource(meshId));
 
+
+		std::string selectedMeshName = selectedMesh->Name();
 		RES_ID selectedMeshID = selectedMesh->ResourceID();
 		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
 			const auto& resPool = resmgr.GetResourcePool();
@@ -215,7 +217,7 @@ void UIWidget_Inspector::Draw() {
 				
 				isSelected = selectedMeshName == primitiveType;
 				if (Selectable(primitiveType.c_str())) {
-					 mr.SetMesh(mesh);
+					 mr.SetMesh(mesh->ResourceID());
 				}
 			}
 			
@@ -231,7 +233,7 @@ void UIWidget_Inspector::Draw() {
 				isSelected = selectedMeshID == id;
 				if (Selectable(name.c_str(), isSelected)) {
 					mesh->Init();
-					mr.SetMesh(mesh);
+					mr.SetMesh(mesh->ResourceID());
 				}
 				PopID();
 			}

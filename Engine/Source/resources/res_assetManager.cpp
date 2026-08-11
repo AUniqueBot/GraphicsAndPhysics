@@ -36,3 +36,11 @@ TextureManager& AssetManager::GetTextureManager() {
 const TextureManager& AssetManager::GetTextureManager() const { 
 	return m_textureManager; 
 }
+
+MeshManager& AssetManager::GetMeshManager() {
+	return m_meshManager;
+}
+
+const MeshManager& AssetManager::GetMeshManager() const {
+	return m_meshManager;
+}

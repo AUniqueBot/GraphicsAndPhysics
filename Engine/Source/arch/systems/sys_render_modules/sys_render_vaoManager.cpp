@@ -52,7 +52,9 @@ void VAOHandler::UseMesh(const Mesh& _mesh) {
 		m_currentBoundMesh = &_mesh;
 		for (const auto& [attributeName, attributeProps] : m_attributeBuffers) {
 			SetAttributeEnabled(attributeName, _mesh.GetData<float>(attributeName) != nullptr);
-			SetData(attributeName, _mesh.GetData<float>(attributeName), _mesh.GetVertexCount(), sizeof(glm::vec3));
+			const VertexAttributeDatabase* db = _mesh.GetDatabase(attributeName);
+			if (!db) continue;
+			SetData(attributeName, db->Data(), db->ElementCount(), db->DatatypeSize());
 		}
 
 		for (unsigned i{}; i < 1; ++i) {

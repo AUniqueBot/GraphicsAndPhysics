@@ -5,10 +5,134 @@
 #include <assimp/postprocess.h>     // Post processing flags
 
 
+namespace {
+	std::vector<glm::uvec3> GetFaceIndices(const aiMesh& _mesh, bool _triangulated) {
+		std::vector<glm::uvec3> indices;
+		unsigned faceCount = _mesh.mNumFaces;
+		const aiFace* faceArr = _mesh.mFaces;
+		if (_triangulated) {
+			indices.reserve(faceCount);
+			for (unsigned i{}; i < faceCount; ++i) {
+				indices.push_back(glm::uvec3(
+					faceArr[i].mIndices[0],
+					faceArr[i].mIndices[1],
+					faceArr[i].mIndices[2]
+				));
+			}
+		}
+		else {
+
+			for (unsigned i{}; i < faceCount; ++i) {
+				unsigned trisCount = faceArr[i].mNumIndices - 2;
+				for (unsigned tris{}; tris < trisCount; ++tris) {
+					// index picking algorithm
+				}
+			}
+		}
+		return indices;
+	}
+
+}
+
+// - submesh methods ----------------------------------
+
+// -- vertex ---------------
+void Submesh::SetVertexCount(size_t _vtxCount) {
+	m_vertexCount = _vtxCount;
+}
+
+
+size_t Submesh::GetVertexCount() const {
+	return m_vertexCount;
+}
+
+const glm::vec3* Submesh::GetVertexPositions() const {
+	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_POSITION);
+}
+
+void Submesh::SetVertexPositions(const glm::vec3* _pointer) {
+	// mesh assumes the vertex count provided is correct.
+	SetData<glm::vec3>(MeshConstants::C_VTXATTR_POSITION, _pointer, m_vertexCount);
+}
+
+const size_t Submesh::GetVertexDataSize() const {
+	return m_attributeData.at(MeshConstants::C_VTXATTR_POSITION)->ElementCount() * sizeof(glm::vec3);
+}
 
 
 
-// - class methods -------------------------------------
+// -- normal ---------------
+void Submesh::SetVertexNormals(const glm::vec3* _pointer) {
+	SetData<glm::vec3>(MeshConstants::C_VTXATTR_NORMAL, _pointer, m_vertexCount);
+}
+const size_t Submesh::GetNormalDataSize() const {
+	return m_attributeData.at(MeshConstants::C_VTXATTR_NORMAL)->ElementCount() * sizeof(glm::vec3);
+}
+const glm::vec3* Submesh::GetNormalData() const {
+	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_NORMAL);
+}
+
+
+// 
+void Submesh::SetVertexUVs(unsigned _index, const glm::uvec2* _pointer) {
+	std::string uvId = MeshConstants::C_VTXATTR_UV + _index;
+	SetData<glm::uvec2>(uvId, _pointer, m_vertexCount);
+}
+
+const size_t Submesh::GetUVDataSize(unsigned _index) const {
+	std::string uvId = MeshConstants::C_VTXATTR_UV + _index;
+	return m_attributeData.at(uvId)->ElementCount() * sizeof(glm::uvec2);
+
+}
+const glm::uvec2* Submesh::GetUVData(unsigned _index) const {
+	std::string uvId = MeshConstants::C_VTXATTR_UV + _index;
+	return GetData<glm::uvec2>(uvId);
+}
+
+void Submesh::SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount) {
+	m_indices.assign(_pointer, _pointer + _faceCount);
+}
+
+const glm::uvec3* Submesh::GetVertexIndexData() const {
+	return m_indices.data();
+}
+
+Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
+	// for now 
+	Submesh submesh;
+	if (!_isTriangulated) {
+		return submesh;
+	}
+
+	size_t vertexCount = _mesh.mNumVertices;
+	unsigned uvCount = _mesh.GetNumUVChannels();
+	submesh.SetVertexCount(vertexCount);
+	submesh.SetVertexPositions(reinterpret_cast<const glm::vec3*>(_mesh.mVertices));
+
+	if (_mesh.HasNormals()) {
+		submesh.SetVertexNormals(reinterpret_cast<const glm::vec3*>(_mesh.mNormals));
+	}
+
+	if (_mesh.HasFaces()) {
+		std::vector<glm::uvec3> faceIndices = GetFaceIndices(_mesh, _isTriangulated);
+		submesh.SetVertexIndices(faceIndices.data(), faceIndices.size());
+	}
+
+	// - uvs ---------------------------------------
+
+	if (uvCount) {
+		// assume we only have 1 UV set.
+		for (unsigned i{}; i < uvCount; ++i) {
+			_mesh.mTextureCoords;
+			AI_MAX_NUMBER_OF_TEXTURECOORDS;
+			//submesh.SetVertexUVs(i, );
+			
+		}
+	}
+	return submesh;
+}
+
+// - mesh methods -------------------------------------
 
 void Mesh::Load() {
 	// general flow
@@ -79,11 +203,11 @@ void Mesh::Load() {
 
 
 	SetVertexPositions(
-		reinterpret_cast<const float*>(vertexPosData.data()),
+		reinterpret_cast<const glm::vec3*>(vertexPosData.data()),
 		vtxCount
 	);
 	SetVertexNormals(
-		reinterpret_cast<const float*>(vertexNmlData.data()),
+		reinterpret_cast<const glm::vec3*>(vertexNmlData.data()),
 		vtxCount
 	);
 	SetIndices(
@@ -125,24 +249,40 @@ void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
 
 
 size_t Mesh::GetVertexCount() const {
-	return m_attributeData.at("position")->ElementCount() / 3; // pos = vec3 = 3x float
+	return m_attributeData.at(MeshConstants::C_VTXATTR_POSITION)->ElementCount() / 3; // pos = vec3 = 3x float
+}
+
+void Mesh::SetSubmeshCount(size_t _count) {
+	m_submeshList.reserve(_count);
+}
+
+size_t Mesh::GetSubmeshCount() const {
+	return m_submeshList.capacity();
+}
+
+void Mesh::AddSubmesh(Submesh&& _smesh) {
+	size_t currentCapacity = GetSubmeshCount();
+	if (currentCapacity == m_submeshList.size()) {
+		SetSubmeshCount(currentCapacity);
+	}
+	m_submeshList.emplace_back(std::move(_smesh));
 }
 
 
-const float* Mesh::GetVertexData() const {
-	return GetData<float>("position");
+const glm::vec3* Mesh::GetVertexData() const {
+	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_POSITION);
 }
 
 
 const size_t Mesh::GetVertexDataSize() const {
-	return m_attributeData.at("position")->ElementCount() * sizeof(float);
+	return m_attributeData.at(MeshConstants::C_VTXATTR_POSITION)->DataSize();
 }
 
 const size_t Mesh::GetNormalDataSize() const {
-	return m_attributeData.at("normal")->ElementCount() * sizeof(glm::vec3);
+	return m_attributeData.at(MeshConstants::C_VTXATTR_NORMAL)->ElementCount();
 }
-const float* Mesh::GetNormalData() const {
-	return GetData<float>("normal");
+const glm::vec3* Mesh::GetNormalData() const {
+	return GetData<glm::vec3>(MeshConstants::C_VTXATTR_NORMAL);
 }
 
 const size_t Mesh::GetUVCount() const {
@@ -187,16 +327,13 @@ void Mesh::ClearMeshInformation() {
 	m_uvs.clear();
 }
 
-
 // the
-void Mesh::SetVertexPositions(const float* _pointer, size_t _vertexCount) {
-	SetData<float>("position", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
+void Mesh::SetVertexPositions(const glm::vec3* _pointer, size_t _vertexCount) {
+	SetData<glm::vec3>(MeshConstants::C_VTXATTR_POSITION, _pointer, _vertexCount);
 }
 
-
-
-void Mesh::SetVertexNormals(const float* _pointer, size_t _vertexCount) {
-	SetData<float>("normal", _pointer, _vertexCount * sizeof(glm::vec3) / sizeof(float));
+void Mesh::SetVertexNormals(const glm::vec3* _pointer, size_t _vertexCount) {
+	SetData<glm::vec3>(MeshConstants::C_VTXATTR_NORMAL, _pointer, _vertexCount);
 }
 
 
@@ -217,6 +354,16 @@ void Mesh::SetIndices(const unsigned* _pointer, size_t _indexCount) {
 
 void Mesh::SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount) {
 	m_indices.assign(_pointer, _pointer + _indexGroupCount);
+}
+
+VertexAttributeDatabase* Mesh::GetDatabase(const std::string& _name) {
+	auto it = m_attributeData.find(_name);
+	return it == m_attributeData.end() ? nullptr : it->second.get();
+}
+
+const VertexAttributeDatabase* Mesh::GetDatabase(const std::string& _name) const {
+	auto it = m_attributeData.find(_name);
+	return it == m_attributeData.end() ? nullptr : it->second.get();
 }
 
 

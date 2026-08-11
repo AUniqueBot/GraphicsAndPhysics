@@ -5,10 +5,10 @@
 
 
 namespace MeshConstants {
-	constexpr const char* C_DEFAULT_MESH_CUBE { "C_DEFAULT_MESH_CUBE" };
-	constexpr const char* C_DEFAULT_MESH_PLANE { "C_DEFAULT_MESH_PLANE" };
-	constexpr const char* C_DEFAULT_MESH_SPHERE { "C_DEFAULT_MESH_SPHERE" };
-	constexpr const char* C_DEFAULT_MESH_ICOSPHERE { "C_DEFAULT_MESH_ICOSPHERE" };
+	inline constexpr const char* C_DEFAULT_MESH_CUBE { "C_DEFAULT_MESH_CUBE" };
+	inline constexpr const char* C_DEFAULT_MESH_PLANE { "C_DEFAULT_MESH_PLANE" };
+	inline constexpr const char* C_DEFAULT_MESH_SPHERE { "C_DEFAULT_MESH_SPHERE" };
+	inline constexpr const char* C_DEFAULT_MESH_ICOSPHERE { "C_DEFAULT_MESH_ICOSPHERE" };
 }
 
 
@@ -16,8 +16,8 @@ namespace MeshConstants {
 class MeshManager : public SpecializedResourceManager {
 public:
 	MeshManager(ResourceManager& _rsm) : SpecializedResourceManager(_rsm) {}
-private:
 
+public:
 	void Init() override;
 
 	MeshHandle LoadMesh(std::filesystem::path _path);

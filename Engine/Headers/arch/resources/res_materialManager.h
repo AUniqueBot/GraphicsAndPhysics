@@ -22,12 +22,12 @@ public:
 
 
 	// - factory ---------------------------------------
-	std::shared_ptr<Material>			CreateGenericMaterial();
-	std::shared_ptr<Material>			CreateUnlitMaterial();
-	std::shared_ptr<LambertMaterial>	CreateLambertMaterial();
-	std::shared_ptr<PhongMaterial>		CreatePhongMaterial();
-	std::shared_ptr<BlinnPhongMaterial>	CreateBlinnMaterial();
-	std::shared_ptr<Material>			CreateGGXMaterial();
+	MaterialHandle						CreateGenericMaterial();
+	MaterialHandle						CreateUnlitMaterial();
+	LambertMaterialHandle				CreateLambertMaterial();
+	PhongMaterialHandle					CreatePhongMaterial();
+	BlinnPhongMaterialHandle			CreateBlinnMaterial();
+	MaterialHandle						CreateGGXMaterial();
 
 	// - loading from serialization --------------------
 	std::shared_ptr<Material> LoadMaterial(const rapidjson::Value& _materialData);
@@ -38,7 +38,6 @@ public:
 
 
 private:
-	// storage of all materials
-	SparseSet<RES_ID, std::shared_ptr<Material>> m_materialStorage;
+
 
 };

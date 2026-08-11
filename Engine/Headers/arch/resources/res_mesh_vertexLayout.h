@@ -17,9 +17,13 @@ struct VertexLayout {
 
 
 struct VertexAttributeDatabase {
+    VertexAttributeDatabase() = default;
     virtual ~VertexAttributeDatabase() = default;
     virtual size_t ElementCount() const = 0;
-    virtual size_t FeatureCount() const = 0; // vec3 = 3, vec2 = 2
+    virtual size_t FeatureCount() const = 0; 
+    virtual size_t DatatypeSize() const = 0;
+    virtual size_t DataSize() const = 0;
+    virtual const void* Data() const = 0;
 };
 
 template<typename T>
@@ -29,8 +33,11 @@ struct VertexAttributeData : VertexAttributeDatabase {
     VertexAttributeData() = default;
     VertexAttributeData(std::vector<T>&& data) : m_data(std::move(data)) {}
 
-    size_t ElementCount() const override { return m_data.size(); }
-    size_t FeatureCount() const override { return sizeof(T) / sizeof(float); } // assumes packed floats
+    inline size_t ElementCount() const override { return m_data.size(); }
+    inline size_t FeatureCount() const override { return sizeof(T) / sizeof(float); } // assumes packed floats
+    inline size_t DatatypeSize() const override { return sizeof(T); }
+    inline size_t DataSize() const override     { return m_data.size() * sizeof(T); }
+    inline const void* Data() const override    { return m_data.data(); }
 };
 
 

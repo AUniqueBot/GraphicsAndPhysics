@@ -183,6 +183,12 @@ private:
 	void ResolveMeshRendererMaterials(MeshRenderer& _mr);
 	void ResolveMaterial(Material& _mr);
 
+	
+	std::shared_ptr<Material> GetMaterial(RES_ID _matId);
+	std::shared_ptr<const Material> GetMaterial(RES_ID _matId) const;
+	std::shared_ptr<Mesh> GetMesh(RES_ID _meshId);
+	std::shared_ptr<const Mesh> GetMesh(RES_ID _meshId) const;
+
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
 	

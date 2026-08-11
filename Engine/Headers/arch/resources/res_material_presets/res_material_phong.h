@@ -94,3 +94,45 @@ private:
 	INSPECTABLE_DECLAREPROPS(PhongMaterial);
 
 };  
+
+
+struct PhongMaterialHandle : public MaterialHandle {
+	
+	PhongMaterialHandle(ResourceIdentifierArg _arg) : MaterialHandle(_arg) {}
+	
+
+	inline void Color(unsigned _color) {
+		auto res = GetResource<PhongMaterial>();
+		if (res) res->Color(_color);
+	}
+	inline void Color(glm::vec4 _color) {
+		auto res = GetResource<PhongMaterial>();
+		if (res) res->Color(_color);
+	}
+	inline void Specular(unsigned _spec) {
+		auto res = GetResource<PhongMaterial>();
+		if (res) res->Specular(_spec);
+	}
+	inline void Specular(glm::vec4 _spec) {
+		auto res = GetResource<PhongMaterial>();
+		if (res) res->Specular(_spec);
+	}
+	inline void Gloss(float _gloss) {
+		auto res = GetResource<PhongMaterial>();
+		if (res) res->Gloss(_gloss);
+	}
+
+	inline glm::vec4 Color() const {
+		auto res = GetResource<PhongMaterial>();
+		return res ? res->Color() : glm::vec4(0.f);
+	}
+	inline glm::vec4 Specular() const {
+		auto res = GetResource<PhongMaterial>();
+		return res ? res->Specular() : glm::vec4(0.f);
+	}
+	inline float Gloss() const {
+		auto res = GetResource<PhongMaterial>();
+		return res ? res->Gloss() : 0.f;
+	}
+
+};

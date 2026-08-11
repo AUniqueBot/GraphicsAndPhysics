@@ -21,23 +21,20 @@ void MeshRenderer::End() {
 	
 }
 
-void MeshRenderer::SetMesh(std::shared_ptr<Mesh> _mesh) {
+void MeshRenderer::SetMesh(RES_ID _mesh) {
 	m_mesh = _mesh;
 }
 
-std::shared_ptr<const Mesh> MeshRenderer::GetMesh() const { 
-	return m_mesh; 
-}
-std::shared_ptr<Mesh> MeshRenderer::GetMesh() { 
+RES_ID MeshRenderer::GetMesh() const { 
 	return m_mesh; 
 }
 
 
-void MeshRenderer::AddMaterial(std::shared_ptr<Material> _material) {
+void MeshRenderer::AddMaterial(MaterialHandle _material) {
 	m_materials.push_back(_material);
 }
 
-void MeshRenderer::RemoveMaterial(std::shared_ptr<Material> _material) {
+void MeshRenderer::RemoveMaterial(MaterialHandle _material) {
 	const auto& itr{ std::find(m_materials.begin(), m_materials.end(), _material) };
 	if (itr == m_materials.end()) return;
 	std::rotate(itr, itr + 1, m_materials.end());
@@ -64,11 +61,11 @@ Material& MeshRenderer::GetDefaultMaterial() {
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
 	static std::vector<PropertyMD::Property> props{
-		MakeListProperty<MeshRenderer, std::shared_ptr<Material>>(
-			"Materials",
-			static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-			PropertyType::Object 
-		),
+		//MakeListProperty<MeshRenderer, std::shared_ptr<Material>>(
+		//	"Materials",
+		//	static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
+		//	PropertyType::Object 
+		//),
 		MakeProperty<MeshRenderer>(
 			"Cast Shadow",
 			PropertyType::Boolean,

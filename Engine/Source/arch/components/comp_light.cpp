@@ -103,13 +103,13 @@ LightData& Light::GetLightData() {
     return m_lightData;
 }
 
-void Light::RenderShadow(const MeshRenderer& _mr, const glm::mat4& _objectMatrix) const {
+void Light::RenderShadow(const Mesh& _mr, const glm::mat4& _objectMatrix) const {
     
     const LightData lightData{ GetLightData() };
      
     const unsigned UNIFORMLOC{};
     glUniformMatrix4fv(UNIFORMLOC, 1, GL_FALSE, glm::value_ptr(_objectMatrix));
-    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_mr.GetMesh()->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(_mr.GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
     
 
 }

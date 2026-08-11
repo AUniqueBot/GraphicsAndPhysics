@@ -119,9 +119,9 @@ private:
 	InputSystem m_inputSystem;
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
-	EntityFactory m_entityFactory			{ m_registry };
-	ResourceManager m_resourceManager; // detaching 
+	ResourceManager m_resourceManager;
 	AssetManager m_assetManager				{ m_resourceManager };
+	EntityFactory m_entityFactory			{ m_registry, m_assetManager };
 	
 	
 	// - save management ---------------------------

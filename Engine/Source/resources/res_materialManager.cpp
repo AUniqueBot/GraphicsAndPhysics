@@ -11,43 +11,36 @@ GLuint MaterialManager::ResolveMaterial(std::string _materialID) const {
 	
 }
 
-std::shared_ptr<Material> MaterialManager::CreateGenericMaterial() {
+MaterialHandle MaterialManager::CreateGenericMaterial() {
 	std::shared_ptr<Material> matPtr { std::make_shared<Material>() };
-	Material& mat{ *matPtr };
-	return matPtr;
+	MaterialHandle mat(RegisterResource(matPtr));
+	return mat;
 }
 
-std::shared_ptr<Material> MaterialManager::CreateUnlitMaterial() {
-	return std::shared_ptr<Material>();
+MaterialHandle MaterialManager::CreateUnlitMaterial() {
+	return MaterialHandle(std::nullopt);
 }
 
-std::shared_ptr<LambertMaterial> MaterialManager::CreateLambertMaterial() {
+LambertMaterialHandle MaterialManager::CreateLambertMaterial() {
 	std::shared_ptr<LambertMaterial> mat { std::make_shared<LambertMaterial>() };
-	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
-	std::shared_ptr<LambertMaterial> copy = mat;
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
-	return copy;
+	LambertMaterialHandle res (RegisterResource(mat));
+	return res;
 }
 
-std::shared_ptr<PhongMaterial> MaterialManager::CreatePhongMaterial() {
+PhongMaterialHandle MaterialManager::CreatePhongMaterial() {
 	std::shared_ptr<PhongMaterial> mat{ std::make_shared<PhongMaterial>() };
-	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
-	std::shared_ptr<PhongMaterial> copy = mat;
-	
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
-	return copy;
+	PhongMaterialHandle res(RegisterResource(mat));
+	return res;
 }
 
-std::shared_ptr<BlinnPhongMaterial> MaterialManager::CreateBlinnMaterial() {
+BlinnPhongMaterialHandle MaterialManager::CreateBlinnMaterial() {
 	std::shared_ptr<BlinnPhongMaterial> mat{ std::make_shared<BlinnPhongMaterial>() };
-	ResourceIdentifier resMd = m_resourceManager.AddInternalResource(mat);
-	std::shared_ptr<BlinnPhongMaterial> copy = mat;
-	m_materialStorage.Add(std::move(mat), resMd.m_resourceId);
-	return copy;
+	BlinnPhongMaterialHandle handle(m_resourceManager.AddInternalResource(mat));
+	return handle;
 }
 
-std::shared_ptr<Material> MaterialManager::CreateGGXMaterial() {
-	return std::shared_ptr<Material>();
+MaterialHandle MaterialManager::CreateGGXMaterial() {
+	return MaterialHandle(std::nullopt);
 }
 
 std::shared_ptr<Material> MaterialManager::LoadMaterial(const rapidjson::Value& _materialData) {

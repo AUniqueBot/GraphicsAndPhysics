@@ -36,6 +36,9 @@ public:
 	TextureManager& GetTextureManager();
 	const TextureManager& GetTextureManager() const;
 
+	MeshManager& GetMeshManager();
+	const MeshManager& GetMeshManager() const;
+
 private:
 	ShaderManager m_shaderManager;
 	ShaderProgramManager m_shaderPrgManager;

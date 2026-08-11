@@ -24,6 +24,7 @@ void Core::Init() {
 	// create an entity via loading here...
 	AssetManager& asMgr = Core::GetInstance().GetAssetManager();
 	MaterialManager& matMgr = asMgr.GetMaterialManager();
+	MeshManager& meshMgr = m_assetManager.GetMeshManager();
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
 	Entity& ambientLight = *(m_registry.Instantiate());
@@ -38,15 +39,12 @@ void Core::Init() {
 	obj1.AddComponent<MeshRenderer>();	// object
 	const auto& component = obj1.GetComponent<MeshRenderer>();
 	if (component) {
-
-		Mesh mesh = Mesh{};
-		mesh.LoadMeshFromPath("./Assets/Models/sampleModel.obj");
-
+		MeshHandle mesh = meshMgr.LoadMesh("./Assets/Models/sampleModel.obj");
+		BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
-		component->SetMesh(std::make_shared<Mesh>(std::move(mesh)));
-		std::shared_ptr<BlinnPhongMaterial> mat = matMgr.CreateBlinnMaterial();
-		component->AddMaterial(mat);
-		mat->Color(0xaaaaeeff);
+		component->SetMesh(mesh.GetResourceID());
+		component->AddMaterial(mat); // purposeful downcast.
+		mat.Color(0xaaaaeeff);
 	}
 
 

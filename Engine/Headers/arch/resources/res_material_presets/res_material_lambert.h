@@ -4,9 +4,6 @@
 #include <arch/resources/res_texture/res_texture2d.h>
 
 
-struct LambertMaterialProps : public MaterialProps {
-	LambertMaterialProps() : MaterialProps() {};
-};
 
 
 class LambertMaterial : public Material {
@@ -51,3 +48,22 @@ private:
 	INSPECTABLE_DECLAREPROPS(LambertMaterial);
 };
 
+struct LambertMaterialProps : public MaterialProps {
+	LambertMaterialProps() : MaterialProps() {};
+};
+
+
+struct LambertMaterialHandle : public MaterialHandle {
+	LambertMaterialHandle(ResourceIdentifierArg _arg) : MaterialHandle(_arg) {}
+
+	inline glm::vec4 Color() const {
+		auto res = GetResource<LambertMaterial>();
+		return res ? res->Color() : glm::vec4(0.f);
+	}
+
+	inline void Color(glm::vec4 _col) {
+		auto res = GetResource<LambertMaterial>();
+		if (res) res->Color(_col);
+	}
+
+};

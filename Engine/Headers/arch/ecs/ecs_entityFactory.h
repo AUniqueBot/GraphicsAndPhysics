@@ -1,10 +1,11 @@
 #pragma once
 #include <arch/ecs/ecs_registry.h>
+#include <arch/resources/res_assetManager.h>
 
 class EntityFactory {
 public:
-    explicit EntityFactory(EntityRegistry& registry)
-        : m_registry(registry) {
+    explicit EntityFactory(EntityRegistry& registry, AssetManager& _assetManager)
+        : m_registry(registry), m_assetManager(_assetManager) {
     }
 
     EntityView CreateGameObject(const glm::vec3& pos = glm::vec3());
@@ -36,5 +37,6 @@ public:
 
 private:
     EntityRegistry& m_registry;
+    AssetManager& m_assetManager;
 
 };

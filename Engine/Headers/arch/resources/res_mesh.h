@@ -1,15 +1,92 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_resource.h>
+
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
 
+// not including the whole of assimp here.
+struct aiMesh;
 
-struct MeshHandle : public ResourceHandle {
-	inline MeshHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
+namespace MeshConstants {
+	inline constexpr const char* C_VTXATTR_POSITION = "position";
+	inline constexpr const char* C_VTXATTR_NORMAL = "normal";
+	inline constexpr const char* C_VTXATTR_TANGENT = "tangent";
+	inline constexpr const char* C_VTXATTR_COLOR = "color";
+	inline constexpr const char* C_VTXATTR_UV = "uv";
+	inline constexpr const char* C_VTXATTR_BONEWEIGHTS = "boneweights";
+	inline constexpr const char* C_VTXATTR_BONEINDICES = "boneindices";
+}
+
+
+class Submesh {
+	// this is an internal data storage for a mesh.
+	// a mesh can contain multiple submeshes assuming a mesh takes more than 1 material.
+
+public:
+	Submesh() = default;
+	Submesh(const Submesh&) = delete;
+	Submesh& operator=(const Submesh&) = delete;
+
+	Submesh(Submesh&&) noexcept = default;
+	Submesh& operator=(Submesh&&) noexcept = default;
+
+public:
+	template <typename T>
+	inline void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
+		std::vector<T> data(_elementCount);
+		for (size_t i = 0; i < _elementCount; ++i) {
+			data[i] = _pointer[i];
+		}
+		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
+		m_attributeData[name];
+	}
+
+	template <typename T>
+	inline const T* GetData(std::string _name) const {
+		auto it = m_attributeData.find(_name);
+		if (it == m_attributeData.end()) return nullptr;
+
+		VertexAttributeData<T>* typedAttr = dynamic_cast<VertexAttributeData<T>*>(it->second.get());
+		if (!typedAttr) return nullptr; // type mismatch
+
+		return typedAttr->m_data.data(); // pointer to underlying vector
+	}
+
+	
+
+public:
+	void SetVertexCount(size_t _vtxCount);
+	size_t GetVertexCount() const;
+	
+	void SetVertexPositions(const glm::vec3* _pointer);
+	const glm::vec3* GetVertexPositions() const;
+	const size_t GetVertexDataSize() const;
+
+	void SetVertexNormals(const glm::vec3* _pointer);
+	const size_t GetNormalDataSize() const;
+	const glm::vec3* GetNormalData() const;
+
+	void SetVertexUVs(unsigned _index, const glm::uvec2* _pointer);
+	const size_t GetUVDataSize(unsigned _index) const;
+	const glm::uvec2* GetUVData(unsigned _index) const;
+
+
+	void SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount);
+	const glm::uvec3* GetVertexIndexData() const;
+
+	static Submesh CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated);
+
+private:
+	size_t m_vertexCount;
+	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
+	std::vector<glm::uvec3> m_indices;
+
+
+	// - animation -----------------------
+
 };
-
 
 class Mesh : public Resource<Mesh> {
 
@@ -32,14 +109,18 @@ public:
 
 	// - mesh data ----------------------------------
 	size_t GetVertexCount() const;
+
+	void SetSubmeshCount(size_t _count);
+	size_t GetSubmeshCount() const;
+	void AddSubmesh(Submesh&& _submesh);
 	
 
 
 
 	virtual const size_t GetVertexDataSize() const;
-	virtual const float* GetVertexData() const;
+	virtual const glm::vec3* GetVertexData() const;
 	virtual const size_t GetNormalDataSize() const;
-	virtual const float* GetNormalData() const;
+	virtual const glm::vec3* GetNormalData() const;
 	virtual const size_t GetUVCount() const;
 	virtual const size_t GetUVDataSize(unsigned _index) const;
 	virtual const float* GetUVData(unsigned _index) const;
@@ -56,21 +137,28 @@ public:
 
 	void ClearMeshInformation();
 
+	void SetVertexPositions(const glm::vec3* _pointer, size_t _vertexCount);
+	void SetVertexNormals(const glm::vec3* _pointer, size_t _vertexCount);
+	void SetIndices(const unsigned* _pointer, size_t _indexGroupCount);
+	void SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount);
+
+	
+	VertexAttributeDatabase* GetDatabase(const std::string& _name);
+	const VertexAttributeDatabase* GetDatabase(const std::string& _name) const;
+
+
 public:
 	template <typename T>
-	void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
+	inline void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
 		std::vector<T> data(_elementCount);
-		for (size_t i = 0; i < _elementCount; ++i) {
-			data[i] = _pointer[i];
-		}
+		data.assign(_pointer, _pointer + _elementCount);
 		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
-		m_attributeData[name];
 	}
 
 
 
 	template <typename T>
-	const T* GetData(std::string _name) const {
+	inline const T* GetData(std::string _name) const {
 		auto it = m_attributeData.find(_name);
 		if (it == m_attributeData.end()) return nullptr;
 
@@ -82,12 +170,8 @@ public:
 
 
 
-protected:
-	void SetVertexPositions(const float* _pointer, size_t _vertexCount);
-	void SetVertexNormals(const float* _pointer, size_t _vertexCount);
-	void SetIndices(const unsigned* _pointer, size_t _indexGroupCount);
-	void SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount);
 
+protected:
 	// - wip
 	void SetVertexUVs(const float* _pointer, size_t _vertexCount);
 	void SetVertexColors(const float _pointer, size_t _vertexCount);
@@ -96,8 +180,10 @@ protected:
 
 protected:
 	std::string m_vaoName							{ "StaticMesh" }; // vao identifier
+	std::vector<Submesh> m_submeshList;
+	
 
-	std::vector<int> m_meshes;
+	std::vector<int> m_submesh;
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 
 	std::vector<std::vector<glm::vec2>> m_uvs;
@@ -109,9 +195,17 @@ protected:
 	// - animation -----------------------
 	std::vector<glm::vec4> m_boneWeights;
 	std::vector<glm::ivec4> m_boneIndices;
+};
 
 
-	std::unordered_map<std::string, GLuint> m_bufferIDs;
+struct MeshHandle : public ResourceHandle {
+	inline MeshHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
+	inline std::shared_ptr<Mesh> GetMeshResource() {
+		return GetResource<Mesh>();
+	}
+	inline std::shared_ptr<const Mesh> GetMeshResource() const {
+		return GetResource<Mesh>();
+	}
 };
 
 

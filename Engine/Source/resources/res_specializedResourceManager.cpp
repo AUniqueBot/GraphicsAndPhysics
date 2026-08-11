@@ -48,6 +48,7 @@ RES_ID SpecializedResourceManager::GetResIDFromAlias(std::string _alias) const {
 
 
 
+
 ResourceIdentifier SpecializedResourceManager::RegisterResource(std::shared_ptr<BaseResource> _res) {
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(_res);
 	Add(idr.m_resourceId);

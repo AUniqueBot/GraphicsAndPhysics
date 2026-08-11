@@ -3,7 +3,6 @@
 #include <unordered_set>
 #include <arch/resources/res_resourceManager.h>
 
-
 class SpecializedResourceManager {
 public:
 	SpecializedResourceManager(ResourceManager& _manager) : m_resourceManager{_manager} {}
@@ -21,6 +20,8 @@ public:
 	void SetResourceAlias(RES_ID _id, std::string _alias);
 	void RemoveAliasForRes(RES_ID _id);
 	RES_ID GetResIDFromAlias(std::string _alias) const;
+
+
 
 protected:
 	ResourceIdentifier RegisterResource(std::shared_ptr<BaseResource> _res);

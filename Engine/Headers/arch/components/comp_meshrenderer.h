@@ -27,29 +27,28 @@ public:
 
 
 
-	void SetMesh(std::shared_ptr<Mesh> _mesh);
-	std::shared_ptr<const Mesh> GetMesh() const;
-	std::shared_ptr<Mesh> GetMesh();
+	void SetMesh(RES_ID _mesh);
+	RES_ID GetMesh() const;
 	
 
 	/*
 		@brief
 			gets material list
 	*/
-	std::vector<std::shared_ptr<Material>>& GetMaterialList()				{ return m_materials; }
-	const std::vector<std::shared_ptr<Material>>& GetMaterialList() const	{ return m_materials; }
+	std::vector<MaterialHandle>& GetMaterialList()				{ return m_materials; }
+	const std::vector<MaterialHandle>& GetMaterialList() const	{ return m_materials; }
 
-	void AddMaterial(std::shared_ptr<Material> _material);
-	void RemoveMaterial(std::shared_ptr<Material> _material);
-
+	void AddMaterial(MaterialHandle _material);
+	void RemoveMaterial(MaterialHandle _material);
+	
 
 
 
 	static Material& GetDefaultMaterial();
 
 	// - shadows ----------------------------------------------------------------------------------
-	inline const bool& GetCastShadow() const	{ return m_castShadow; };
-	inline void SetCastShadow(bool _cast)		{ m_castShadow = _cast; };
+	inline const bool& GetCastShadow() const			{ return m_castShadow; };
+	inline void SetCastShadow(bool _cast)				{ m_castShadow = _cast; };
 
 public:
 
@@ -59,12 +58,12 @@ private:
 	// model resource
 	
 	
-	std::shared_ptr<Mesh> m_mesh		{};
-	std::vector<std::shared_ptr<Material>> m_materials; // change to material handle.
+	RES_ID m_mesh										{ BaseResource::C_RES_ID_INVALID };
+	std::vector<MaterialHandle> m_materials; // change to material handle.
 	
 
-	bool m_castShadow					{ true };
-	bool m_staticShadow					{};
+	bool m_castShadow									{ true };
+	bool m_staticShadow									{}; // bake!
 
 
 public:

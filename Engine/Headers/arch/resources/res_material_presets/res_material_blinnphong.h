@@ -14,3 +14,11 @@ public:
 	INSPECTABLE_DECLAREPROPS(BlinnPhongMaterial);
 
 };
+
+
+struct BlinnPhongMaterialHandle : public PhongMaterialHandle {
+	BlinnPhongMaterialHandle(ResourceIdentifierArg _arg) : PhongMaterialHandle(_arg) {};
+
+	// props are the same.
+
+};

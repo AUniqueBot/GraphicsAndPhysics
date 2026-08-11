@@ -224,3 +224,15 @@ protected:
 	bool m_textureReferenceDirty				{ true }; // starts as true to initialize the values first.
 	bool m_valuesDirty							{ true };
 };
+
+struct MaterialHandle : public ResourceHandle {
+	MaterialHandle(ResourceIdentifierArg _arg) : ResourceHandle(_arg) {}
+
+	inline std::shared_ptr<Material> GetMaterialResource() {
+		return GetResource<Material>();
+	}
+	inline std::shared_ptr<const Material> GetMaterialResource() const {
+		return GetResource<Material>();
+	}
+
+};

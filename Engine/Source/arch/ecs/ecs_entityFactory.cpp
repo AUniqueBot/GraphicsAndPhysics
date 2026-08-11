@@ -32,9 +32,10 @@ EntityView EntityFactory::CreateCube(const glm::vec3& pos) {
 		e.Name("Cube");
 		e.AddComponent<MeshRenderer>();
 		ComponentView<MeshRenderer> mr	{ e.GetComponent<MeshRenderer>() };
+
 		if (mr) {
-			mr->SetMesh(std::make_shared<Cube>(Cube()));
-			mr->GetMesh()->Init();
+			CubeHandle mesh = m_assetManager.GetMeshManager().CreateCubeMesh();
+			mr->SetMesh(mesh.GetResourceID());
 			mr->Init();
 		}
 		e.GetComponent<Transform>()->Position(pos);
@@ -52,8 +53,8 @@ EntityView EntityFactory::CreateSphere(const glm::vec3& pos) {
 		e.AddComponent<MeshRenderer>();
 		ComponentView<MeshRenderer> mr{ e.GetComponent<MeshRenderer>() };
 		if (mr) {
-			mr->SetMesh(std::make_shared<Sphere>(Sphere()));
-			mr->GetMesh()->Init();
+			SphereHandle mesh = m_assetManager.GetMeshManager().CreateSphereMesh();
+			mr->SetMesh(mesh.GetResourceID());
 			mr->Init();
 		}
 		e.GetComponent<Transform>()->Position(pos);
@@ -71,8 +72,8 @@ EntityView EntityFactory::CreatePlane(const glm::vec3& pos) {
 		e.AddComponent<MeshRenderer>();
 		ComponentView<MeshRenderer> mr{ e.GetComponent<MeshRenderer>() };
 		if (mr) {
-			mr->SetMesh(std::make_shared<Plane>(Plane()));
-			mr->GetMesh()->Init();
+			PlaneHandle mesh = m_assetManager.GetMeshManager().CreatePlaneMesh();
+			mr->SetMesh(mesh.GetResourceID());
 			mr->Init();
 		}
 		e.GetComponent<Transform>()->Position(pos);
