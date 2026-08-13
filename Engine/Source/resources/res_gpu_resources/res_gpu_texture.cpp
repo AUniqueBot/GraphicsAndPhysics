@@ -1,7 +1,7 @@
-#include <arch/resources/res_texture/res_texturegpu.h>
+#include <arch/resources/res_gpu_resources/res_gpu_texture.h>
 
 
-TextureGPU::TextureGPU(
+GPU_Texture::GPU_Texture(
 	TextureProperties::TextureType _type,
 	glm::ivec3 _dims,
 	TextureProperties::TextureProps _props
@@ -15,13 +15,13 @@ TextureGPU::TextureGPU(
 
 
 
-TextureGPU::~TextureGPU() {
+GPU_Texture::~GPU_Texture() {
 	if (!m_glTextureHandle) return;
 	LOG_INFO("Destroying Texture with handle [" << m_glTextureHandle << "]");
 	glDeleteTextures(1, &m_glTextureHandle);
 }
 
-TextureGPU::TextureGPU(TextureGPU&& _old) noexcept {
+GPU_Texture::GPU_Texture(GPU_Texture&& _old) noexcept {
 	m_textureType = _old.m_textureType;
 	m_glTextureHandle = _old.m_glTextureHandle;
 	m_dimensions = _old.m_dimensions;
@@ -38,7 +38,7 @@ TextureGPU::TextureGPU(TextureGPU&& _old) noexcept {
 	_old.m_glTextureHandle = 0;
 }
 
-TextureGPU& TextureGPU::operator=(TextureGPU&& _old) noexcept {
+GPU_Texture& GPU_Texture::operator=(GPU_Texture&& _old) noexcept {
 	m_textureType = _old.m_textureType;
 	m_dimensions = _old.m_dimensions;
 	m_textureProperties = _old.m_textureProperties;
@@ -57,131 +57,131 @@ TextureGPU& TextureGPU::operator=(TextureGPU&& _old) noexcept {
 	return *this;
 }
 
-const GLuint& TextureGPU::GetTextureHandle() const {
+const GLuint& GPU_Texture::GetTextureHandle() const {
 	return m_glTextureHandle;
 }
 
-const TextureProperties::TextureType& TextureGPU::GetTextureType() const {
+const TextureProperties::TextureType& GPU_Texture::GetTextureType() const {
 	return m_textureType;
 }
 
-const TextureProperties::TextureFormat& TextureGPU::GetInternalImageFormat() const {
+const TextureProperties::TextureFormat& GPU_Texture::GetInternalImageFormat() const {
 	return m_textureProperties.m_internalImageFormat;
 }
 
-void TextureGPU::SetInternalImageFormat(const TextureProperties::TextureFormat& _format) {
+void GPU_Texture::SetInternalImageFormat(const TextureProperties::TextureFormat& _format) {
 	if (_format == m_textureProperties.m_internalImageFormat) return;
 	m_textureProperties.m_internalImageFormat = _format;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::ImageDataType& TextureGPU::GetDataType() const {
+const TextureProperties::ImageDataType& GPU_Texture::GetDataType() const {
 	return m_textureProperties.m_pixelDataType;
 }
 
 
 
-void TextureGPU::SetDataType(const TextureProperties::ImageDataType& _pixelDataType) {
+void GPU_Texture::SetDataType(const TextureProperties::ImageDataType& _pixelDataType) {
 	if (_pixelDataType == m_textureProperties.m_pixelDataType) return;
 	m_textureProperties.m_pixelDataType = _pixelDataType;
 	m_reallocateDirty = true;
 }
 
-const TextureProperties::ImageChannels& TextureGPU::GetChannels() const {
+const TextureProperties::ImageChannels& GPU_Texture::GetChannels() const {
 	return m_textureProperties.m_pixelFormat;
 }
 
-void TextureGPU::SetChannels(const TextureProperties::ImageChannels& _pixelFormat) {
+void GPU_Texture::SetChannels(const TextureProperties::ImageChannels& _pixelFormat) {
 	if (_pixelFormat == m_textureProperties.m_pixelFormat) return;
 	m_textureProperties.m_pixelFormat = _pixelFormat;
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetWrapBehaviourU(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+void GPU_Texture::SetWrapBehaviourU(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
 	if (m_textureProperties.m_wrapU == _wrapBehaviour) return;
 	m_textureProperties.m_wrapU = _wrapBehaviour;
 	m_samplingDirty = true;
 }
 
-const TextureProperties::WrapBehaviour& TextureGPU::GetWrapBehaviourU() const {
+const TextureProperties::WrapBehaviour& GPU_Texture::GetWrapBehaviourU() const {
 	return m_textureProperties.m_wrapU;
 }
 
-void TextureGPU::SetWrapBehaviourV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
+void GPU_Texture::SetWrapBehaviourV(const TextureProperties::WrapBehaviour& _wrapBehaviour) {
 	if (m_textureProperties.m_wrapV == _wrapBehaviour) return;
 	m_textureProperties.m_wrapV = _wrapBehaviour;
 	m_samplingDirty = true;
 }
 
-const TextureProperties::WrapBehaviour& TextureGPU::GetWrapBehaviourV() const {
+const TextureProperties::WrapBehaviour& GPU_Texture::GetWrapBehaviourV() const {
 	return m_textureProperties.m_wrapV;
 }
 
-void TextureGPU::SetFilterBehaviourMin(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+void GPU_Texture::SetFilterBehaviourMin(const TextureProperties::FilterBehaviour& _filterBehaviour) {
 	if (m_textureProperties.m_filterMin == _filterBehaviour) return;
 	m_textureProperties.m_filterMin = _filterBehaviour;
 	m_samplingDirty = true;
 }
 
-const TextureProperties::FilterBehaviour& TextureGPU::GetFilterBehaviourMin() const {
+const TextureProperties::FilterBehaviour& GPU_Texture::GetFilterBehaviourMin() const {
 	return m_textureProperties.m_filterMin;
 }
 
-void TextureGPU::SetFilterBehaviourMag(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+void GPU_Texture::SetFilterBehaviourMag(const TextureProperties::FilterBehaviour& _filterBehaviour) {
 	if (m_textureProperties.m_filterMag == _filterBehaviour) return;
 	m_textureProperties.m_filterMag = _filterBehaviour;
 	m_samplingDirty = true;
 }
 
-const TextureProperties::FilterBehaviour& TextureGPU::GetFilterBehaviourMag() const {
+const TextureProperties::FilterBehaviour& GPU_Texture::GetFilterBehaviourMag() const {
 	return m_textureProperties.m_filterMag;
 }
 
-void TextureGPU::SetDimensions(glm::ivec3 _dims) {
+void GPU_Texture::SetDimensions(glm::ivec3 _dims) {
 	assert(_dims.x > 0 && _dims.y > 0 && _dims.z > 0 && "attempting to set invalid dimensions");
 	if (m_dimensions == _dims) return;
 	m_dimensions = _dims;
 	m_reallocateDirty = true;
 }
 
-const glm::ivec3& TextureGPU::GetDimensions() const {
+const glm::ivec3& GPU_Texture::GetDimensions() const {
 	return m_dimensions;
 }
 
-const int& TextureGPU::GetX() const {
+const int& GPU_Texture::GetX() const {
 	return m_dimensions.x;
 }
 
-const int& TextureGPU::GetY() const {
+const int& GPU_Texture::GetY() const {
 	return m_dimensions.y;
 }
 
-const int& TextureGPU::GetZ() const {
+const int& GPU_Texture::GetZ() const {
 	return m_dimensions.z;
 }
 
-void TextureGPU::SetX(const int& _val) {
+void GPU_Texture::SetX(const int& _val) {
 	assert(_val > 0 && "attempting to set to invalid size");
 	if (_val == m_dimensions.x) return;
 	m_dimensions.x = _val;
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetY(const int& _val) {
+void GPU_Texture::SetY(const int& _val) {
 	assert(_val > 0 && "attempting to set to invalid size");
 	if (_val == m_dimensions.y) return;
 	m_dimensions.y = _val;
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetZ(const int& _val) {
+void GPU_Texture::SetZ(const int& _val) {
 	assert(_val > 0 && "attempting to set to invalid size");
 	if (_val == m_dimensions.z) return;
 	m_dimensions.z = _val;
 	m_reallocateDirty = true;
 }
 
-void TextureGPU::SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos) {
+void GPU_Texture::SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos) {
 	if (!m_allocated) return;
 	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
 	using namespace TextureProperties;
@@ -191,7 +191,7 @@ void TextureGPU::SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos) {
 	int uploadDimCount = GetUploadDimension(m_textureType);
 }
 
-void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
+void GPU_Texture::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 	if (!m_allocated) return;
 	int x = _pixelPos.x, y = _pixelPos.y, z = _pixelPos.z;
 	using namespace TextureProperties;
@@ -237,7 +237,7 @@ void TextureGPU::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 
 }
 
-void TextureGPU::UpdateTextureProperties() {
+void GPU_Texture::UpdateTextureProperties() {
 	if (!m_samplingDirty) return;
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
 	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
@@ -246,20 +246,20 @@ void TextureGPU::UpdateTextureProperties() {
 	m_samplingDirty = false;
 }
 
-void TextureGPU::UpdateAllocation() {
+void GPU_Texture::UpdateAllocation() {
 	if (m_allocated && !m_reallocateDirty) return;
 	Destroy();
 	Create();
 	Allocate();
 }
 
-void TextureGPU::Create() {
+void GPU_Texture::Create() {
 	if (m_glTextureHandle != 0) return;
 	glCreateTextures(static_cast<GLenum>(m_textureType), 1, &m_glTextureHandle);
 	assert(m_glTextureHandle != 0 && "Failed to create texture.");
 }
 
-void TextureGPU::Destroy() {
+void GPU_Texture::Destroy() {
 	if (m_glTextureHandle == 0) return;
 	glDeleteTextures(1, &m_glTextureHandle);
 	m_glTextureHandle = 0;
@@ -267,7 +267,7 @@ void TextureGPU::Destroy() {
 	m_uploaded = false;
 }
 
-void TextureGPU::Allocate() {
+void GPU_Texture::Allocate() {
 	using namespace TextureProperties;
 	LOG_DEBUG("Allocating for texture handle [" << m_glTextureHandle << "] as " << m_textureType);
 	int uploadDimensionCount = GetUploadDimension(m_textureType);
@@ -292,7 +292,7 @@ void TextureGPU::Allocate() {
 }
 
 
-void TextureGPU::Upload(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
@@ -380,15 +380,15 @@ void TextureGPU::Upload(TextureProperties::TextureUploadData _imageData) const {
 
 	}
 }
-bool TextureGPU::NeedUpdate() const {
+bool GPU_Texture::NeedUpdate() const {
 	return m_uploadNeedUpdate;
 }
-bool TextureGPU::NeedAllocate() const {
+bool GPU_Texture::NeedAllocate() const {
 	return !m_allocated || m_reallocateDirty;
 }
 
 
-void TextureGPU::UploadTexture2DData(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageData) const {
 
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
@@ -461,7 +461,7 @@ void TextureGPU::UploadTexture2DData(TextureProperties::TextureUploadData _image
 	}
 }
 
-void TextureGPU::UploadCubemapData(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int mipCount = m_textureProperties.m_mipmapCount;
@@ -553,7 +553,7 @@ void TextureGPU::UploadCubemapData(TextureProperties::TextureUploadData _imageDa
 	}
 }
 
-void TextureGPU::Upload3DTextureData(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
@@ -599,10 +599,10 @@ void TextureGPU::Upload3DTextureData(TextureProperties::TextureUploadData _image
 	}
 }
 
-void TextureGPU::UploadCubemapArrayData(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::UploadCubemapArrayData(TextureProperties::TextureUploadData _imageData) const {
 }
 
-void TextureGPU::UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData) const {
+void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData) const {
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int layerCount = m_dimensions.z;

@@ -1,5 +1,5 @@
 #pragma once
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 
 struct SphereCreationProps {
 	float radius				{ 0.5f };

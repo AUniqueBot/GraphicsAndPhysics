@@ -179,12 +179,16 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Headers\arch\resources\res_gpu_resourceManager.cpp" />
+    <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
     <ClCompile Include="Headers\arch\resources\res_resourceHandle.h" />
-    <ClCompile Include="Headers\arch\resources\res_texture\res_texturegpu.h" />
+    <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_texture.h" />
     <ClCompile Include="Source\arch\core\core_gamestatemanager.cpp" />
     <ClCompile Include="Source\resources\res_assetManager.cpp" />
+    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_buffer.cpp" />
+    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_vao.cpp" />
     <ClCompile Include="Source\resources\res_materialManager.cpp" />
     <ClCompile Include="Source\resources\res_material_presets\res_material_blinnphong.cpp" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_material_blinnphong.h" />
@@ -194,6 +198,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\core\core_scenemanager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\resources\res_meshManager.cpp" />
+    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_mesh.cpp" />
     <ClCompile Include="Source\resources\res_resourceHandle.cpp" />
     <ClCompile Include="Source\resources\res_resourceIdentifier.cpp" />
     <ClCompile Include="Source\resources\res_specializedResourceManager.cpp" />
@@ -234,7 +239,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\resources\res_material.cpp" />
     <ClCompile Include="Source\resources\res_material_presets\res_material_lambert.cpp" />
     <ClCompile Include="Source\resources\res_material_uniform\res_material_ubo.cpp" />
-    <ClCompile Include="Source\resources\res_mesh.cpp" />
+    <ClCompile Include="Source\resources\res_mesh\res_mesh.cpp" />
     <ClCompile Include="Source\resources\res_mesh_presets\res_mesh_cube.cpp" />
     <ClCompile Include="Source\resources\res_resourceManager.cpp" />
     <ClCompile Include="Source\resources\res_shader.cpp" />
@@ -242,7 +247,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\resources\res_texture\res_texture.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2d.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp" />
-    <ClCompile Include="Source\resources\res_texture\res_texture_gpu.cpp" />
+    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_texture.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture_properties.cpp" />
     <ClCompile Include="Source\serialization\serialize_jsonfile.cpp" />
     <ClCompile Include="Source\serialization\serialize_reader.cpp" />
@@ -288,14 +293,22 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_gpuhandle.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_mesh.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_buffer.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource_list.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_vao.h" />
     <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_lambert.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_phong.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniform.h" />
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
-    <ClInclude Include="Headers\arch\resources\res_mesh.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_meshManager.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_gpu.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />

@@ -1,5 +1,5 @@
 #pragma once
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 #include <arch/resources/res_mesh_presets/res_mesh_types.h>
 #include <arch/resources/res_specializedResourceManager.h>
 

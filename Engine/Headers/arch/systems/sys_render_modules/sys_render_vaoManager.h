@@ -7,6 +7,7 @@
 
 
 class Mesh;
+class Submesh;
 // attribute thing - only worried about how to read data.
 struct AttributeProps : public VertexAttributeDesc {
 	unsigned		m_bufferID;
@@ -32,6 +33,7 @@ public:
 	unsigned GetVAO() const;
 
 	void UseMesh(const Mesh& _mesh);
+	void UseSubmesh(const Submesh& _mesh);
 
 	static void UnbindVAO();
 	static std::vector<GLuint> GenerateBuffers(unsigned _bufferCount);
@@ -92,6 +94,7 @@ public:
 private:
 
 	const Mesh* m_currentBoundMesh	{};
+	const Submesh* m_boundSubmesh	{};
 private:
 
 	unsigned m_vaoId{};

@@ -7,7 +7,7 @@
 #pragma once
 #include <pch.h>
 #include <arch/common/component.h>
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 #include <arch/resources/res_material.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 

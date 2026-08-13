@@ -1,23 +1,24 @@
 #pragma once
 #include <pch.h>
+#include <arch/resources/res_gpu_resources/res_gpu_resource.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 
 
 // Internal GPU class for texture
 // handles raw allocation and upload logic
-class TextureGPU {
+class GPU_Texture : public GPU_Resource {
 public:
-	TextureGPU(
+	GPU_Texture(
 		TextureProperties::TextureType _type,
 		glm::ivec3 _dims = glm::ivec3(1, 1, 1),
 		TextureProperties::TextureProps _props = TextureProperties::TextureProps{}
 	);
-	~TextureGPU();
-	TextureGPU(TextureGPU&& _old) noexcept;
-	TextureGPU& operator=(TextureGPU&& _old) noexcept;
+	~GPU_Texture();
+	GPU_Texture(GPU_Texture&& _old) noexcept;
+	GPU_Texture& operator=(GPU_Texture&& _old) noexcept;
 
-	TextureGPU(TextureGPU& _old) = delete;
-	TextureGPU& operator=(TextureGPU& _old) = delete;
+	GPU_Texture(GPU_Texture& _old) = delete;
+	GPU_Texture& operator=(GPU_Texture& _old) = delete;
 public:
 	const GLuint& GetTextureHandle() const;
 
@@ -66,8 +67,8 @@ public:
 
 
 public:
-	void Create();
-	void Destroy();
+	void Create() override;
+	void Destroy() override;
 	void Allocate();
 	void Upload(TextureProperties::TextureUploadData _imageData = std::nullopt) const;
 	bool NeedUpdate() const;
@@ -99,6 +100,7 @@ protected:
 	// 
 	TextureProperties::TextureType m_textureType;
 	GLuint m_glTextureHandle{};
+
 	glm::ivec3 m_dimensions;
 	TextureProperties::TextureProps m_textureProperties;
 };

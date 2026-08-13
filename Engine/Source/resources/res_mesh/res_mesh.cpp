@@ -1,5 +1,5 @@
 #include <pch.h>
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -102,6 +102,17 @@ void Submesh::SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount) {
 const glm::uvec3* Submesh::GetVertexIndexData() const {
 	return m_indices.data();
 }
+size_t Submesh::GetVertexIndexCount() const {
+	return m_indices.size();
+}
+
+const RES_ID& Submesh::GetMaterialID() const {
+	return m_materialId;
+}
+
+void Submesh::SetMaterialID(const RES_ID& _id){
+	m_materialId = _id;
+}
 
 
 VertexAttributeDatabase* Submesh::GetDatabase(const std::string& _name) {
@@ -167,6 +178,9 @@ Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
 			if (validUvCount == uvCount) break;
 		}
 	}
+
+
+
 	return submesh;
 }
 
@@ -320,6 +334,14 @@ Submesh& Mesh::GetSubmesh(int _idx) {
 }
 const Submesh& Mesh::GetSubmesh(int _idx) const {
 	return m_submeshList[_idx];
+}
+
+std::vector<Submesh>& Mesh::GetSubmeshList() {
+	return m_submeshList;
+}
+
+const std::vector<Submesh>& Mesh::GetSubmeshList() const {
+	return m_submeshList;
 }
 
 const size_t Mesh::GetIndexDataSize() const {

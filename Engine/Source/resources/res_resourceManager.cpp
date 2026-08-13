@@ -6,7 +6,7 @@
 #include <cctype>
 
 
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 #include <arch/resources/res_shader.h>
 #include <arch/resources/res_material.h>
 #include <arch/resources/res_scene.h>

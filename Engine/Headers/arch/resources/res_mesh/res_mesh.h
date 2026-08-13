@@ -23,7 +23,6 @@ namespace MeshConstants {
 class Submesh {
 	// this is an internal data storage for a mesh.
 	// a mesh can contain multiple submeshes assuming a mesh takes more than 1 material.
-
 public:
 	Submesh() = default;
 	Submesh(const Submesh&) = delete;
@@ -79,6 +78,10 @@ public:
 
 	void SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount);
 	const glm::uvec3* GetVertexIndexData() const;
+	size_t GetVertexIndexCount() const;
+public:
+	const RES_ID& GetMaterialID() const;
+	void SetMaterialID(const RES_ID& _id);
 
 private:
 
@@ -87,9 +90,7 @@ private:
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 	std::vector<glm::uvec3> m_indices;
 
-
-	// - animation -----------------------
-
+	RES_ID m_materialId					{ BaseResource::C_RES_ID_INVALID };
 };
 
 class Mesh : public Resource<Mesh> {
@@ -120,6 +121,8 @@ public:
 
 	Submesh& GetSubmesh(int _idx);
 	const Submesh& GetSubmesh(int _idx) const;
+	std::vector<Submesh>& GetSubmeshList();
+	const std::vector<Submesh>& GetSubmeshList() const;
 
 
 
@@ -183,6 +186,8 @@ protected:
 
 protected:
 	std::string m_vaoName							{ VAOConstants::C_VAO_STATIC_MESH }; // vao identifier
+
+	std::vector<RES_ID> m_submeshMaterialIdentifier;
 	std::vector<Submesh> m_submeshList;
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 

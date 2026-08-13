@@ -140,7 +140,7 @@ public:
 	);
 
 
-	void Render(const MeshRenderer& _mr) const;
+	void Render(const MeshRenderer& _mr, VAOHandler& _handle);
 
 	void DebugRenderPass(const unsigned& );
 

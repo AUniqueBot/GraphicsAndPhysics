@@ -1,7 +1,7 @@
 #include <pch.h>
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 #include <UI_Core.h>
 #include <arch/core/core_inputRouter.h>
 

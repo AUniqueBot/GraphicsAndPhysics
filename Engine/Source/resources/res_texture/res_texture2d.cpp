@@ -8,33 +8,33 @@ Texture2D::Texture2D(ResourceIdentifierArg _resHandle) : Texture(_resHandle) {
 }
 
 glm::ivec2 Texture2D::GetDimensions() const {
-	const TextureGPU& tex = GetTextureGPU();
+	const GPU_Texture& tex = GetGPU_Texture();
 	const glm::vec3 dims = tex.GetDimensions();
 	return { dims.x, dims.y };
 }
 
 void Texture2D::SetDimensions(glm::ivec2 _dims) {
-	TextureGPU& tex = GetTextureGPU();
+	GPU_Texture& tex = GetGPU_Texture();
 	tex.SetDimensions({_dims.x, _dims.y, 1});
 }
 
 
 int Texture2D::GetWidth() const {
-	const TextureGPU& tex = GetTextureGPU();
+	const GPU_Texture& tex = GetGPU_Texture();
 	return tex.GetX();
 }
 int Texture2D::GetHeight() const {
-	const TextureGPU& tex = GetTextureGPU();
+	const GPU_Texture& tex = GetGPU_Texture();
 	return tex.GetY();
 }
 
 void Texture2D::SetWidth(int _width) {
-	TextureGPU& tex = GetTextureGPU();
+	GPU_Texture& tex = GetGPU_Texture();
 	tex.SetX(_width);
 }
 
 void Texture2D::SetHeight(int _height) {
-	TextureGPU& tex = GetTextureGPU();
+	GPU_Texture& tex = GetGPU_Texture();
 	tex.SetY(_height);
 }
 

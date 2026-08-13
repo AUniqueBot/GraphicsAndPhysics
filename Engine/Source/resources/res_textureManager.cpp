@@ -156,7 +156,7 @@ bool TextureManager::TextureExists(RES_ID _id) const {
 	return m_resourceIdPool.contains(_id);
 }
 
-void TextureManager::Resolve(TextureGPU& _texture) {
+void TextureManager::Resolve(GPU_Texture& _texture) {
 	
 
 }
@@ -202,7 +202,7 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 		break;
 	}
 
-	TextureGPU tex = { 
+	GPU_Texture tex = { 
 		TextureProperties::TextureType::TEXTURE_2D,
 		{img.m_dimensions.x, img.m_dimensions.y, 1},
 		props
@@ -255,7 +255,7 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	// if successful add to storage
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
-	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_gpuTextureStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
 	Texture2D retVal{ id };
 	return retVal;
@@ -265,7 +265,7 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperties::TextureProps _props) {
-	TextureGPU tex{
+	GPU_Texture tex{
 		TextureProperties::TextureType::TEXTURE_2D,
 		{ width, height, 1 },
 		_props
@@ -275,7 +275,7 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 	tex.Allocate();
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
-	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_gpuTextureStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
 	LOG_INFO("Allocating 2D Texture of size: [" << width << ", " << height << "]");
 	Texture2D retVal{ id };
@@ -284,20 +284,20 @@ Texture2D TextureManager::Create2DTexture(int width, int height, TextureProperti
 
 void TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
 
-	TextureGPU tex = { 
+	GPU_Texture tex = { 
 		TextureProperties::TextureType::TEXTURE_3D,
 		{ _width, _height, _depth },
 		_props
 	};
 	tex.Create();
 	tex.Allocate();
-	m_textureGPUStorage.Add(std::move(tex), C_INVALID_TEXTURE_ID);
+	m_gpuTextureStorage.Add(std::move(tex), C_INVALID_TEXTURE_ID);
 
 	//return info;
 }
 
 Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {
-	TextureGPU tex = TextureGPU(
+	GPU_Texture tex = GPU_Texture(
 		TextureProperties::TextureType::TEXTURE_2D_ARRAY,
 		{ _width, _height, _layers },
 		_props
@@ -308,7 +308,7 @@ Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
-	m_textureGPUStorage.Add(std::move(tex), id.m_resourceId);
+	m_gpuTextureStorage.Add(std::move(tex), id.m_resourceId);
 	m_resourceIdPool.insert(id.m_resourceId);
 	Texture2DArray retVal{id};
 	return retVal;
@@ -322,13 +322,13 @@ void TextureManager::CreateCubemapTexture(int width, int height, TextureProperti
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
 
-SparseSetView<TextureGPU> TextureManager::GetTexture(RES_ID _id) {
-	return m_textureGPUStorage.At(_id);
+SparseSetView<GPU_Texture> TextureManager::GetTexture(RES_ID _id) {
+	return m_gpuTextureStorage.At(_id);
 }
 
 
 void TextureManager::UpdateTextures() {
-	for (TextureGPU& tex : m_textureGPUStorage.Data()) {
+	for (GPU_Texture& tex : m_gpuTextureStorage.Data()) {
 		tex.UpdateAllocation();
 		tex.UpdateTextureProperties();
 	}

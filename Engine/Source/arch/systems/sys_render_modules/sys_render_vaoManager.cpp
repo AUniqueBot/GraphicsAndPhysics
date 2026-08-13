@@ -1,5 +1,5 @@
 #include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 
 
 
@@ -64,6 +64,18 @@ void VAOHandler::UseMesh(const Mesh& _mesh) {
 		//}
 		SetVertexIndices(_mesh.GetIndexData(), _mesh.GetIndexDataSize());
 	}
+}
+
+void VAOHandler::UseSubmesh(const Submesh& _mesh) {
+	if (_mesh.GetVertexCount() == 0) return;
+	if (&_mesh == m_boundSubmesh) return;
+	for (const auto& [attributeName, attribuiteProps] : m_attributeBuffers) {
+		const VertexAttributeDatabase* db = _mesh.GetDatabase(attributeName);
+		SetAttributeEnabled(attributeName, db != nullptr);
+		if (!db) continue;
+		SetData(attributeName, db->Data(), db->ElementCount(), db->DatatypeSize());
+	}
+	SetVertexIndices(_mesh.GetVertexIndexData(), _mesh.GetVertexIndexCount());
 }
 
 

@@ -2,8 +2,8 @@
 #include <pch.h>
 #include <arch/resources/res_resource.h>
 #include <arch/resources/res_resourceHandle.h>
-#include <arch/resources/res_texture/res_texturegpu.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
+#include <arch/resources/res_gpu_resources/res_gpu_texture.h>
 
 
 class Texture;
@@ -15,8 +15,8 @@ class TextureRes : public Resource<TextureRes> {
 	// a simple handle to the thing.
 public:		
 	std::string ResourceTypeName() override { return "Texture"; };
-	TextureGPU& GetTextureGPU();
-	const TextureGPU& GetTextureGPU() const;
+	GPU_Texture& GetGPU_Texture();
+	const GPU_Texture& GetGPU_Texture() const;
 private:
 
 
@@ -66,8 +66,8 @@ public:
 
 protected:
 	// be careful when using this as this assumes it is valid.
-	TextureGPU& GetTextureGPU();
-	const TextureGPU& GetTextureGPU() const;
+	GPU_Texture& GetGPU_Texture();
+	const GPU_Texture& GetGPU_Texture() const;
 
 protected:
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.

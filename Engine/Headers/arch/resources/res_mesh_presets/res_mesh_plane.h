@@ -1,5 +1,5 @@
 #pragma once
-#include <arch/resources/res_mesh.h>
+#include <arch/resources/res_mesh/res_mesh.h>
 
 struct PlaneCreationProps {
 	glm::vec2 dimensions		{ 1.f, 1.f };

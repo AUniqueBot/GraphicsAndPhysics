@@ -1,6 +1,7 @@
 #pragma once
 #include <pch.h>
 #include <queue>
+
 #include <arch/resources/res_texture/res_texture.h>
 #include <arch/datatypes/type_sparseSet.h>
 
@@ -27,7 +28,7 @@ public:
 	void CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	
-	SparseSetView<TextureGPU> GetTexture(RES_ID _id);
+	SparseSetView<GPU_Texture> GetTexture(RES_ID _id);
 
 
 	
@@ -37,13 +38,13 @@ public:
 
 private:
 	bool TextureExists(RES_ID _id) const;
-	void Resolve(TextureGPU& _texture);	
+	void Resolve(GPU_Texture& _texture);	
 
 private:
 
 	// store textures.
 	// for textures 
-	SparseSet<RES_ID, TextureGPU> m_textureGPUStorage;
+	SparseSet<RES_ID, GPU_Texture> m_gpuTextureStorage; // to move to another thing.
 
 };
 

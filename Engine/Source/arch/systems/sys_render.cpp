@@ -304,6 +304,8 @@ void RenderSystem::RenderRangedLightShadows(
             currentVAO.UseMesh(*mesh);
 
             // do something.
+
+
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
 
@@ -534,20 +536,12 @@ void RenderSystem::LightingRenderPass(
         VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
 
         if (!vaoHandler) continue;
-
         bool isSelected{ _er.EntityIsSelected(e.GetID()) };
-
-        VAOHandler& currentVAO = *vaoHandler;
-        currentVAO.BindVAO();
-        //currentVAO.LogDebug();
-        currentVAO.UseMesh(*mesh);
-        // check if there is data here...
         FillObjectUBO(e, *trs);
         ResolveMeshRendererMaterials(*mr);
-        Render(*mr);
+        Render(*mr, *vaoHandler);
 
         m_vaoManager.UnbindVAO();
-        
     }
 
     glBindVertexArray(0); 
@@ -687,11 +681,20 @@ void RenderSystem::SpotLightShadowRenderPass(
 
 }
 
-void RenderSystem::Render(const MeshRenderer& _mr) const {
+void RenderSystem::Render(const MeshRenderer& _mr, VAOHandler& _handle) {
     std::shared_ptr<const Mesh> mesh    { GetMesh(_mr.GetMesh()) };
     if (!mesh) return;
+    _handle.BindVAO();
+    _handle.UseMesh(*mesh);
     GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * glm::vec3::length()) };
     glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
+
+    //for (const Submesh& submesh : mesh->GetSubmeshList()) {
+    //    // testing submest test.
+    //    _handle.UseSubmesh(submesh);
+    //    GLsizei meshFloatCount{ static_cast<GLsizei>(submesh.GetVertexIndexCount() * glm::vec3::length()) };
+    //    glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
+    //}
 }
 
 void RenderSystem::DebugRenderPass(const unsigned& textureId) {
