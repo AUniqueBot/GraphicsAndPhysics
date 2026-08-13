@@ -36,7 +36,8 @@ namespace MaterialConstants {
 
 class ShaderManager : public SpecializedResourceManager {
 public:
-	ShaderManager(ResourceManager& _mgr) : SpecializedResourceManager(_mgr) {}
+	ShaderManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr) : 
+		SpecializedResourceManager(_mgr, _gpuMgr) {}
 public:
 	void Init() override;
 	void Cleanup() override;
@@ -67,8 +68,8 @@ struct RenderShaderProgProps {
 
 class ShaderProgramManager : public SpecializedResourceManager {
 public: 
-	ShaderProgramManager(ResourceManager& _mgr, ShaderManager& _shaderMgr) : 
-		SpecializedResourceManager(_mgr), m_shaderMgr(_shaderMgr) {}
+	ShaderProgramManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr, ShaderManager& _shaderMgr) : 
+		SpecializedResourceManager(_mgr, _gpuMgr), m_shaderMgr(_shaderMgr) {}
 
 
 	void Init() override;

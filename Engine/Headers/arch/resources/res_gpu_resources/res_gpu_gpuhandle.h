@@ -3,7 +3,7 @@
 
 
 namespace GPUConstants {
-    constexpr GLuint C_INVALID_HANDLE = 0;
+    inline constexpr GLuint C_INVALID_HANDLE = 0;
 }
 
 class GPUHandle {

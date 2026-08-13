@@ -15,7 +15,7 @@ namespace MeshConstants {
 
 class MeshManager : public SpecializedResourceManager {
 public:
-	MeshManager(ResourceManager& _rsm) : SpecializedResourceManager(_rsm) {}
+	MeshManager(ResourceManager& _rsm, GPUResourceManager& _gpuMgr) : SpecializedResourceManager(_rsm, _gpuMgr) {}
 
 public:
 	void Init() override;

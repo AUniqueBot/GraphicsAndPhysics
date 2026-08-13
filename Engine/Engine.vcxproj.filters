@@ -243,7 +243,7 @@
     <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_vao.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Headers\arch\resources\res_gpu_resourceManager.cpp">
+    <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -576,6 +576,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_trackedStorage.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_gpu_resourceHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

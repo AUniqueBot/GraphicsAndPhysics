@@ -179,7 +179,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
-    <ClCompile Include="Headers\arch\resources\res_gpu_resourceManager.cpp" />
+    <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp" />
     <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
@@ -287,12 +287,14 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\datatypes\type_bidirectionalMap.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSetDEF.hpp" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet.h" />
+    <ClInclude Include="Headers\arch\datatypes\type_trackedStorage.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_entityFactory.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resourceHandle.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_gpuhandle.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_mesh.h" />
@@ -324,7 +326,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_specializedResourceManager.h" />
-    <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h">
+      <DeploymentContent>true</DeploymentContent>
+    </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />

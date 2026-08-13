@@ -4,7 +4,7 @@
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 #include <arch/resources/res_gpu_resources/res_gpu_texture.h>
-
+#include <arch/resources/res_gpu_resourceHandle.h>
 
 class Texture;
 inline const RES_ID C_INVALID_TEXTURE_ID = BaseResource::C_RES_ID_INVALID;
@@ -15,8 +15,6 @@ class TextureRes : public Resource<TextureRes> {
 	// a simple handle to the thing.
 public:		
 	std::string ResourceTypeName() override { return "Texture"; };
-	GPU_Texture& GetGPU_Texture();
-	const GPU_Texture& GetGPU_Texture() const;
 private:
 
 
@@ -38,7 +36,7 @@ struct TextureHandle : public ResourceHandle {
 // texture manager can only construct directly. otherwise, you can only construct from a copy.
 class Texture : public TextureHandle {
 public:
-	Texture(ResourceIdentifierArg _resIdArg); // get ResourceIdentifier instead.
+	Texture(ResourceIdentifierArg _resIdArg, GPUResourceHandle _handle); // get ResourceIdentifier instead.
 	Texture(const Texture& _other) = default;
 	Texture& operator=(const Texture& _other) = default;
 public:
@@ -66,9 +64,10 @@ public:
 
 protected:
 	// be careful when using this as this assumes it is valid.
-	GPU_Texture& GetGPU_Texture();
-	const GPU_Texture& GetGPU_Texture() const;
+	GPU_Texture& GetGPUTexture();
+	const GPU_Texture& GetGPUTexture() const;
 
 protected:
+	GPUResourceHandle m_gpuResHandle;
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.
 };

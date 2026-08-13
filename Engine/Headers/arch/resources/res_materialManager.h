@@ -10,7 +10,7 @@
 class MaterialManager : public SpecializedResourceManager {
 
 public:
-	MaterialManager(ResourceManager& _mgr) : SpecializedResourceManager(_mgr) {}
+	MaterialManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr) : SpecializedResourceManager(_mgr, _gpuMgr) {}
 	void Init() override;
 	
 

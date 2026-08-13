@@ -6,9 +6,9 @@
 #include <arch/resources/res_mesh_vertexLayout.h>
 
 namespace BindingConstants {
-	constexpr const GLuint C_BINDING_POSITION = 0;
-	constexpr const GLuint C_BINDING_NORMAL = 1;
-	constexpr const GLuint C_BINDING_UV = 2;
+	inline constexpr const GLuint C_BINDING_POSITION = 0;
+	inline constexpr const GLuint C_BINDING_NORMAL = 1;
+	inline constexpr const GLuint C_BINDING_UV = 2;
 
 }
 

@@ -11,6 +11,7 @@
 #include <arch/core/core_inputRouter.h>
 
 #include <arch/resources/res_resourceManager.h>
+#include <arch/resources/res_gpu_resourceManager.h>
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_assetManager.h>
 
@@ -71,7 +72,8 @@ public:
 	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
 	const ResourceManager& GetResourceManager() const { return m_resourceManager; };
 
-
+	GPUResourceManager& GetGPUResourceManager()		{ return m_gpuResourceManager; }
+	const GPUResourceManager& GetGPUResourceManager() const { return m_gpuResourceManager; }
 
 	AssetManager& GetAssetManager()					{ return m_assetManager; }
 	const AssetManager& GetAssetManager() const		{ return m_assetManager; }
@@ -120,7 +122,8 @@ private:
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	ResourceManager m_resourceManager;
-	AssetManager m_assetManager				{ m_resourceManager };
+	GPUResourceManager m_gpuResourceManager;
+	AssetManager m_assetManager				{ m_resourceManager, m_gpuResourceManager };
 	EntityFactory m_entityFactory			{ m_registry, m_assetManager };
 	
 	

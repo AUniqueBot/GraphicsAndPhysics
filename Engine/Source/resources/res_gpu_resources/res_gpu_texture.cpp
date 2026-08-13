@@ -16,14 +16,14 @@ GPU_Texture::GPU_Texture(
 
 
 GPU_Texture::~GPU_Texture() {
-	if (!m_glTextureHandle) return;
-	LOG_INFO("Destroying Texture with handle [" << m_glTextureHandle << "]");
-	glDeleteTextures(1, &m_glTextureHandle);
+	if (!m_handle.IsValid()) return;
+	LOG_INFO("Destroying Texture with handle [" << m_handle << "]");
+	glDeleteTextures(1, &m_handle.Get());
 }
 
 GPU_Texture::GPU_Texture(GPU_Texture&& _old) noexcept {
 	m_textureType = _old.m_textureType;
-	m_glTextureHandle = _old.m_glTextureHandle;
+	m_handle = _old.m_handle;
 	m_dimensions = _old.m_dimensions;
 	m_textureProperties = _old.m_textureProperties;
 
@@ -35,14 +35,14 @@ GPU_Texture::GPU_Texture(GPU_Texture&& _old) noexcept {
 
 
 
-	_old.m_glTextureHandle = 0;
+	_old.m_handle.Get() = 0;
 }
 
 GPU_Texture& GPU_Texture::operator=(GPU_Texture&& _old) noexcept {
 	m_textureType = _old.m_textureType;
 	m_dimensions = _old.m_dimensions;
 	m_textureProperties = _old.m_textureProperties;
-	m_glTextureHandle = _old.m_glTextureHandle;
+	m_handle = _old.m_handle;
 
 
 	m_allocated = _old.m_allocated;
@@ -53,12 +53,12 @@ GPU_Texture& GPU_Texture::operator=(GPU_Texture&& _old) noexcept {
 
 
 	// ensure this one doesn't get it.
-	_old.m_glTextureHandle = 0;
+	_old.m_handle.Get() = 0;
 	return *this;
 }
 
 const GLuint& GPU_Texture::GetTextureHandle() const {
-	return m_glTextureHandle;
+	return m_handle.Get();
 }
 
 const TextureProperties::TextureType& GPU_Texture::GetTextureType() const {
@@ -202,12 +202,12 @@ void GPU_Texture::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 
 	glm::u8vec4 u8vec4col = {};
 	glm::vec4 vec4col = {};
-
+	GLuint handle = m_handle.Get();
 	switch (uploadDimCount) {
 	case 1:
 		assert(x < m_dimensions.x && x >= 0);
 		glTextureSubImage1D(
-			m_glTextureHandle, 0, x, 1,
+			handle, 0, x, 1,
 			pixelFormat,
 			pixelType,
 			glm::value_ptr(_col)
@@ -218,7 +218,7 @@ void GPU_Texture::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 		assert(x < m_dimensions.x && x >= 0);
 		assert(y < m_dimensions.y && y >= 0);
 		glTextureSubImage2D(
-			m_glTextureHandle, 0, x, y, 1, 1,
+			handle, 0, x, y, 1, 1,
 			pixelFormat,
 			pixelType,
 			glm::value_ptr(_col)
@@ -239,10 +239,12 @@ void GPU_Texture::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 
 void GPU_Texture::UpdateTextureProperties() {
 	if (!m_samplingDirty) return;
-	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
-	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
-	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_S, static_cast<GLenum>(m_textureProperties.m_wrapU));
-	glTextureParameteri(m_glTextureHandle, GL_TEXTURE_WRAP_T, static_cast<GLenum>(m_textureProperties.m_wrapV));
+
+	GLuint handle = m_handle.Get();
+	glTextureParameteri(handle, GL_TEXTURE_MAG_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMag));
+	glTextureParameteri(handle, GL_TEXTURE_MIN_FILTER, static_cast<GLenum>(m_textureProperties.m_filterMin));
+	glTextureParameteri(handle, GL_TEXTURE_WRAP_S, static_cast<GLenum>(m_textureProperties.m_wrapU));
+	glTextureParameteri(handle, GL_TEXTURE_WRAP_T, static_cast<GLenum>(m_textureProperties.m_wrapV));
 	m_samplingDirty = false;
 }
 
@@ -254,22 +256,22 @@ void GPU_Texture::UpdateAllocation() {
 }
 
 void GPU_Texture::Create() {
-	if (m_glTextureHandle != 0) return;
-	glCreateTextures(static_cast<GLenum>(m_textureType), 1, &m_glTextureHandle);
-	assert(m_glTextureHandle != 0 && "Failed to create texture.");
+	if (m_handle.IsValid()) return;
+	glCreateTextures(static_cast<GLenum>(m_textureType), 1, &m_handle.Get());
+	assert(m_handle.IsValid() && "Failed to create texture.");
 }
 
 void GPU_Texture::Destroy() {
-	if (m_glTextureHandle == 0) return;
-	glDeleteTextures(1, &m_glTextureHandle);
-	m_glTextureHandle = 0;
+	if (!m_handle.IsValid()) return;
+	glDeleteTextures(1, &m_handle.Get());
+	m_handle.Get() = 0;
 	m_allocated = false;
 	m_uploaded = false;
 }
 
 void GPU_Texture::Allocate() {
 	using namespace TextureProperties;
-	LOG_DEBUG("Allocating for texture handle [" << m_glTextureHandle << "] as " << m_textureType);
+	LOG_DEBUG("Allocating for texture handle [" << m_handle.Get() << "] as " << m_textureType);
 	int uploadDimensionCount = GetUploadDimension(m_textureType);
 
 	int width = m_dimensions.x;
@@ -277,15 +279,16 @@ void GPU_Texture::Allocate() {
 	int depth = m_dimensions.z;
 	GLenum internalFormat = OpenGL_ImageFormatToEnum(m_textureProperties.m_internalImageFormat);
 	int mipCount = m_textureProperties.m_mipmapCount > 0 ? m_textureProperties.m_mipmapCount : 1;
+	GLuint id = m_handle.Get();
 	switch (uploadDimensionCount) {
 	case 1:
-		glTextureStorage1D(m_glTextureHandle, mipCount, internalFormat, width);
+		glTextureStorage1D(id, mipCount, internalFormat, width);
 		break;
 	case 2:
-		glTextureStorage2D(m_glTextureHandle, mipCount, internalFormat, width, height);
+		glTextureStorage2D(id, mipCount, internalFormat, width, height);
 		break;
 	case 3:
-		glTextureStorage3D(m_glTextureHandle, mipCount, internalFormat, width, height, depth);
+		glTextureStorage3D(id, mipCount, internalFormat, width, height, depth);
 		break;
 	}
 	m_allocated = true;
@@ -317,7 +320,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
 
 
-
+	GLuint handle = m_handle.Get();
 
 	if (mipCount > 1) {
 		void* imageData = nullptr;
@@ -337,7 +340,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 				imageData = data.m_textureData;
 			}
 			glTextureSubImage2D(
-				m_glTextureHandle,
+				handle,
 				mipLevel, 0, 0,
 				mipWidth, mipHeight,
 				pixelFormat,
@@ -367,7 +370,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 		);
 
 		glTextureSubImage2D(
-			m_glTextureHandle,
+			handle,
 			0, 0, 0,
 			width, height,
 			pixelFormat,
@@ -375,7 +378,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 			imageData
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_glTextureHandle);
+			glGenerateTextureMipmap(handle);
 		}
 
 	}
@@ -390,6 +393,7 @@ bool GPU_Texture::NeedAllocate() const {
 
 void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imageData) const {
 
+	GLuint handle = m_handle.Get();
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int mipCount = m_textureProperties.m_mipmapCount;
@@ -406,8 +410,9 @@ void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imag
 			throw std::runtime_error("mismatch mip count and image data");
 		}
 	}
-	if (mipCount > 1) {
 
+
+	if (mipCount > 1) {
 		for (int mipLevel = 0; mipLevel < mipCount; ++mipLevel) {
 			int mipWidth = width >> mipLevel;
 			int mipHeight = height >> mipLevel;
@@ -425,7 +430,7 @@ void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imag
 				imageData = data.m_textureData;
 			}
 			glTextureSubImage2D(
-				m_glTextureHandle,
+				handle,
 				mipLevel, 0, 0,
 				mipWidth, mipHeight,
 				pixelFormat,
@@ -448,7 +453,7 @@ void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imag
 			imageData = data.m_textureData;
 		}
 		glTextureSubImage2D(
-			m_glTextureHandle, 0,
+			handle, 0,
 			0, 0,
 			width, height,
 			pixelFormat,
@@ -456,12 +461,14 @@ void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imag
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_glTextureHandle);
+			glGenerateTextureMipmap(handle);
 		}
 	}
 }
 
 void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageData) const {
+
+	GLuint handle = m_handle.Get();
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int mipCount = m_textureProperties.m_mipmapCount;
@@ -510,7 +517,7 @@ void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageD
 
 				}
 				glTextureSubImage3D(
-					m_glTextureHandle, mipLevel,
+					handle, mipLevel,
 					0, 0, i,
 					mipWidth, mipHeight, 1,
 					imageFormat,
@@ -539,7 +546,7 @@ void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageD
 				}
 			}
 			glTextureSubImage3D(
-				m_glTextureHandle, 0,
+				handle, 0,
 				0, 0, i,
 				width, height, 1,
 				imageFormat,
@@ -548,12 +555,14 @@ void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageD
 			);
 		}
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_glTextureHandle);
+			glGenerateTextureMipmap(handle);
 		}
 	}
 }
 
 void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imageData) const {
+
+	GLuint handle = m_handle.Get();
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int depth = m_dimensions.z;
@@ -575,7 +584,7 @@ void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imag
 			int mipHeight = height >> mipLevel;
 			int mipDepth = depth >> mipLevel;
 			glTextureSubImage3D(
-				m_glTextureHandle, mipLevel,
+				handle, mipLevel,
 				0, 0, 0,
 				mipWidth, mipHeight, mipDepth,
 				imageFormat,
@@ -586,7 +595,7 @@ void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imag
 	}
 	else {
 		glTextureSubImage3D(
-			m_glTextureHandle, 0,
+			handle, 0,
 			0, 0, 0,
 			width, height, depth,
 			imageFormat,
@@ -594,7 +603,7 @@ void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imag
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_glTextureHandle);
+			glGenerateTextureMipmap(handle);
 		}
 	}
 }
@@ -603,6 +612,9 @@ void GPU_Texture::UploadCubemapArrayData(TextureProperties::TextureUploadData _i
 }
 
 void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData _imageData) const {
+
+	GLuint handle = m_handle.Get();
+
 	int width = m_dimensions.x;
 	int height = m_dimensions.y;
 	int layerCount = m_dimensions.z;
@@ -629,7 +641,7 @@ void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData 
 			int mipWidth = width >> mipLevel;
 			int mipHeight = height >> mipLevel;
 			glTextureSubImage3D(
-				m_glTextureHandle, mipLevel,
+				handle, mipLevel,
 				0, 0, 0,
 				mipWidth, mipHeight, layerCount,
 				imageFormat,
@@ -641,7 +653,7 @@ void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData 
 
 	else {
 		glTextureSubImage3D(
-			m_glTextureHandle, 0,
+			handle, 0,
 			0, 0, 0,
 			width, height, layerDepth,
 			imageFormat,
@@ -649,7 +661,7 @@ void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData 
 			nullptr
 		);
 		if (autogenMips) {
-			glGenerateTextureMipmap(m_glTextureHandle);
+			glGenerateTextureMipmap(handle);
 		}
 	}
 }

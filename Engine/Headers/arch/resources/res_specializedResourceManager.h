@@ -2,10 +2,15 @@
 #include <pch.h>
 #include <unordered_set>
 #include <arch/resources/res_resourceManager.h>
+#include <arch/resources/res_gpu_resourceManager.h>
 
 class SpecializedResourceManager {
 public:
-	SpecializedResourceManager(ResourceManager& _manager) : m_resourceManager{_manager} {}
+	SpecializedResourceManager(
+		ResourceManager& _manager, 
+		GPUResourceManager& _gpuManager
+	) : m_resourceManager		{ _manager }, 
+		m_gpuResourceManager	{ _gpuManager } {}
 	
 public:
 	virtual void Init() {}
@@ -35,4 +40,5 @@ protected:
 	std::unordered_map<RES_ID, std::string> m_resIdToAlias;
 
 	ResourceManager& m_resourceManager;
+	GPUResourceManager& m_gpuResourceManager;
 };

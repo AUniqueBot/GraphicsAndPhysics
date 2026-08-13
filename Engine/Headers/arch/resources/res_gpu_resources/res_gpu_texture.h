@@ -99,7 +99,6 @@ protected:
 
 	// 
 	TextureProperties::TextureType m_textureType;
-	GLuint m_glTextureHandle{};
 
 	glm::ivec3 m_dimensions;
 	TextureProperties::TextureProps m_textureProperties;

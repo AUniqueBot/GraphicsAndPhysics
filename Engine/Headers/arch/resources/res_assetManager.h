@@ -11,12 +11,12 @@ class AssetManager {
 
 public:
 	// manager access.
-	AssetManager(ResourceManager& _mgr) : 
-		m_materialManager	{ _mgr }, 
-		m_shaderManager		{ _mgr }, 
-		m_textureManager	{ _mgr } ,
-		m_shaderPrgManager	{ _mgr, m_shaderManager },
-		m_meshManager		{ _mgr }
+	AssetManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr) : 
+		m_materialManager	{ _mgr, _gpuMgr }, 
+		m_shaderManager		{ _mgr, _gpuMgr }, 
+		m_textureManager	{ _mgr, _gpuMgr } ,
+		m_shaderPrgManager	{ _mgr, _gpuMgr, m_shaderManager },
+		m_meshManager		{ _mgr, _gpuMgr }
 	{}
 
 public:
