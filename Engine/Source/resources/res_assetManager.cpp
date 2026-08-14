@@ -8,6 +8,13 @@ void AssetManager::Init() {
 	m_textureManager.Init();
 }
 
+void AssetManager::Cleanup() {
+	m_shaderManager.Cleanup();
+	m_shaderPrgManager.Cleanup();
+	m_materialManager.Cleanup();
+	m_textureManager.Cleanup();
+}
+
 ShaderManager& AssetManager::GetShaderManager() { 
 	return m_shaderManager; 
 }

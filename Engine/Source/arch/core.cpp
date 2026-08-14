@@ -138,7 +138,8 @@ void Core::Cleanup() {
 		s->Cleanup();
 	}
 	m_resourceManager.Cleanup();
-	m_assetManager.GetShaderManager().Cleanup();
+	m_gpuResourceManager.Cleanup();
+	m_assetManager.Cleanup();
 }
 
 void Core::SetWindow(GLFWwindow* _window) {

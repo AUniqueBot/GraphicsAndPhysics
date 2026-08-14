@@ -7,10 +7,11 @@
 
 
 
-// unlike most GPU resources, VAO is
+// attach a submesh
 class GPU_Mesh : public GPU_VertexArrayObject {
 public:
-	void Init(Mesh& _mesh);
+	void Init(Submesh& _mesh);
+
 private:
 	
 };

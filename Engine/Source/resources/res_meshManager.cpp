@@ -11,9 +11,9 @@ void MeshManager::Init() {
 	PlaneHandle plane = CreatePlaneMesh();
 	SphereHandle sphere = CreateSphereMesh();
 	//MeshHandle icosphere = CreateCubeMesh();
-	SetResourceAlias(cube.GetResourceID(), MeshConstants::C_DEFAULT_MESH_CUBE);
-	SetResourceAlias(plane.GetResourceID(), MeshConstants::C_DEFAULT_MESH_PLANE);
-	SetResourceAlias(sphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_SPHERE);
+	SetResourceAlias(cube.GetResourceID(), VertexAttributeConstants::C_DEFAULT_MESH_CUBE);
+	SetResourceAlias(plane.GetResourceID(), VertexAttributeConstants::C_DEFAULT_MESH_PLANE);
+	SetResourceAlias(sphere.GetResourceID(), VertexAttributeConstants::C_DEFAULT_MESH_SPHERE);
 	//SetResourceAlias(icosphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_ICOSPHERE);
 }
 

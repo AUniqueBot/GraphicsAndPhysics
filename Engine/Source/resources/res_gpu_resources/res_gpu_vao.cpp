@@ -13,6 +13,16 @@ void GPU_VertexArrayObject::Destroy() {
 	}
 }
 
+void GPU_VertexArrayObject::SetupAttributes(const VertexLayout& _layout) {
+	Clear();
+	for (const VertexAttributeDesc& attr : _layout.attributes) {
+		SetAttribute(attr.m_attributeSlot, attr.m_type, attr.m_featureCount, attr.m_normalized, attr.m_offset);
+		SetBinding(attr.m_attributeSlot, attr.m_bindingSlot);
+		m_attributeBindings[attr.m_name] = attr.m_bindingSlot;
+	}
+}
+
+
 void GPU_VertexArrayObject::SetBinding(GLuint _attributeIndex, GLuint _bindingIndex) {
 	if (!m_usedAttributes.contains(_attributeIndex)) {
 		LOG_WARN("Set Attribute first");
@@ -21,14 +31,15 @@ void GPU_VertexArrayObject::SetBinding(GLuint _attributeIndex, GLuint _bindingIn
 	glVertexArrayAttribBinding((GLuint)m_handle, _attributeIndex, _bindingIndex);
 }
 
-void GPU_VertexArrayObject::SetAttribute(GLuint _arrayIndex, Datatype _type, int _componentCount, bool _normalized, int _offset) {
-	GLenum type =
-		_type == Datatype::INT ? GL_INT :
-		_type == Datatype::FLOAT ? GL_FLOAT :
-		GL_INVALID_ENUM;
+void GPU_VertexArrayObject::SetAttribute(
+	GLuint _arrayIndex, 
+	GLenum  _type, 
+	int _componentCount, 
+	bool _normalized, 
+	int _offset
+) {
 
-
-	if (type == GL_INVALID_ENUM) {
+	if (_type == GL_INVALID_ENUM) {
 		LOG_ERROR("Invalid datatype provided. exiting.");
 		return;
 	}
@@ -47,6 +58,13 @@ void GPU_VertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& 
 	m_usedBindings.insert(_bindingSlot);
 	// SOA, We assume data is tightly packed.
 }
+
+int GPU_VertexArrayObject::AliasToBinding(std::string _alias) const {
+	auto itr = m_attributeBindings.find(_alias);
+	return itr != m_attributeBindings.end() ? 
+		static_cast<int>(itr->second) : -1;
+}
+
 
 void GPU_VertexArrayObject::Clear() {
 	GLuint vao = (GLuint)m_handle;

@@ -46,6 +46,10 @@ bool GPUResourceManager::DeleteResource(GPUResourceHandle _handle) {
     return false;
 }
 
+void GPUResourceManager::Cleanup() {
+    ClearAll();
+}
+
 void GPUResourceManager::ClearAll() {
     ClearGPUResourceStorage(m_bufferStorage);
     ClearGPUResourceStorage(m_textureStorage);

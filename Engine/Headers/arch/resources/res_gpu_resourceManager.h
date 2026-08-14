@@ -22,6 +22,7 @@ public:
 
 
 	bool DeleteResource(GPUResourceHandle _handle);
+	void Cleanup();
 	void ClearAll();
 	void ClearGPUBuffers();
 	void ClearTextures();

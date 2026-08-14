@@ -9,15 +9,6 @@
 // not including the whole of assimp here.
 struct aiMesh;
 using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
-namespace MeshConstants {
-	inline constexpr const char* C_VTXATTR_POSITION = "position";
-	inline constexpr const char* C_VTXATTR_NORMAL = "normal";
-	inline constexpr const char* C_VTXATTR_TANGENT = "tangent";
-	inline constexpr const char* C_VTXATTR_COLOR = "color";
-	inline constexpr const char* C_VTXATTR_UV = "uv";
-	inline constexpr const char* C_VTXATTR_BONEWEIGHTS = "boneweights";
-	inline constexpr const char* C_VTXATTR_BONEINDICES = "boneindices";
-}
 
 
 class Submesh {

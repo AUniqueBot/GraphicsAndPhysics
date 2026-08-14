@@ -4,7 +4,7 @@
 #include <arch/resources/res_specializedResourceManager.h>
 
 
-namespace MeshConstants {
+namespace VertexAttributeConstants {
 	inline constexpr const char* C_DEFAULT_MESH_CUBE { "C_DEFAULT_MESH_CUBE" };
 	inline constexpr const char* C_DEFAULT_MESH_PLANE { "C_DEFAULT_MESH_PLANE" };
 	inline constexpr const char* C_DEFAULT_MESH_SPHERE { "C_DEFAULT_MESH_SPHERE" };

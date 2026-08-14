@@ -29,10 +29,11 @@ public:
 	
 
 	// - config -------------------------
-
+	void SetupAttributes(const VertexLayout& _layout);
 	void SetBinding(GLuint _attributeIndex, GLuint _bindingSlot);
-	void SetAttribute(GLuint _attributeIndex, Datatype _type, int _componentCount, bool _normalized = false, int _offset = 0);
+	void SetAttribute(GLuint _attributeIndex, GLenum _type, int _componentCount, bool _normalized = false, int _offset = 0);
 	void AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride);
+	int AliasToBinding(std::string _alias) const;
 	void Clear();
 	
 
@@ -41,8 +42,8 @@ public:
 
 	void UseVAO();
 
-
 private:
 	std::unordered_set<GLuint> m_usedBindings;
 	std::unordered_set<GLuint> m_usedAttributes;
+	std::unordered_map<std::string, GLuint> m_attributeBindings;
 };
