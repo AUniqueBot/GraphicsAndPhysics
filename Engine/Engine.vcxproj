@@ -199,6 +199,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\resources\res_meshManager.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_mesh.cpp" />
+    <ClCompile Include="Source\resources\res_mesh\res_submesh.cpp" />
     <ClCompile Include="Source\resources\res_resourceHandle.cpp" />
     <ClCompile Include="Source\resources\res_resourceIdentifier.cpp" />
     <ClCompile Include="Source\resources\res_specializedResourceManager.cpp" />
@@ -311,6 +312,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_meshManager.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_vertexAttributeTraits.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_submesh.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />

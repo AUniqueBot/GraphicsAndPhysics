@@ -296,6 +296,7 @@ void RenderSystem::RenderRangedLightShadows(
 
             RES_ID meshId = mr.GetMesh();
             if (meshId == BaseResource::C_RES_ID_INVALID) continue;
+
             std::shared_ptr<Mesh> mesh = GetMesh(meshId);
             VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
             if (!vaoHandler) continue;

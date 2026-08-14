@@ -246,6 +246,9 @@
     <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\resources\res_mesh\res_submesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -582,6 +585,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_vertexAttributeTraits.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_submesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

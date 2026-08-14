@@ -29,6 +29,8 @@ CubeHandle MeshManager::CreateCubeMesh(CubeCreationProps _props) {
 	std::shared_ptr<Cube> mesh = std::make_shared<Cube>(_props);	
 	mesh->Init();
 	CubeHandle handle(RegisterResource(mesh));
+
+
 	return handle;
 }
 
