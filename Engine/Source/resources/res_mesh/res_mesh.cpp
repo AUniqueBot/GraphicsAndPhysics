@@ -80,9 +80,9 @@ const glm::vec3* Submesh::GetNormalData() const {
 
 
 // 
-void Submesh::SetVertexUVs(unsigned _index, const glm::uvec2* _pointer) {
+void Submesh::SetVertexUVs(unsigned _index, const glm::vec2* _pointer) {
 	std::string uvId = MeshConstants::C_VTXATTR_UV + _index;
-	SetData<glm::uvec2>(uvId, _pointer, m_vertexCount);
+	SetData<glm::vec2>(uvId, _pointer, m_vertexCount);
 }
 
 const size_t Submesh::GetUVDataSize(unsigned _index) const {
@@ -125,7 +125,12 @@ const VertexAttributeDatabase* Submesh::GetDatabase(const std::string& _name) co
 }
 
 
-
+AttributeData& Submesh::GetVertexInformation() {
+	return m_attributeData;
+}
+const AttributeData& Submesh::GetVertexInformation() const {
+	return m_attributeData;
+}
 
 
 Submesh Submesh::CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated) {
@@ -410,6 +415,13 @@ const VertexAttributeDatabase* Mesh::GetDatabase(const std::string& _name) const
 	return it == m_attributeData.end() ? nullptr : it->second.get();
 }
 
+AttributeData& Mesh::GetVertexInformation() {
+	return m_attributeData;
+}
+
+const AttributeData& Mesh::GetVertexInformation() const {
+	return m_attributeData;
+}
 
 
 

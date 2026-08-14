@@ -1,6 +1,6 @@
 #pragma once
 #include <pch.h>
-
+#include <arch/resources/res_mesh/res_mesh_vertexAttributeTraits.h>
 namespace VAOConstants {
     inline constexpr const char* C_VAO_STATIC_MESH = "C_VAO_STATIC_MESH";
     inline constexpr const char* C_VAO_SKINNED_MESH = "C_VAO_SKINNED_MESH";
@@ -37,10 +37,12 @@ struct VertexAttributeData : VertexAttributeDatabase {
     VertexAttributeData(std::vector<T>&& data) : m_data(std::move(data)) {}
 
     inline size_t ElementCount() const override { return m_data.size(); }
-    inline size_t FeatureCount() const override { return sizeof(T) / sizeof(float); } // assumes packed floats
-    inline size_t DatatypeSize() const override { return sizeof(T); }
-    inline size_t DataSize() const override     { return m_data.size() * sizeof(T); }
+    inline size_t FeatureCount() const override { return VertexAttributeTraits<T>::FeatureCount; } // assumes packed floats
+    inline size_t DatatypeSize() const override { return VertexAttributeTraits<T>::DatatypeSize; }
+    inline size_t DataSize() const override     { return m_data.size() * VertexAttributeTraits<T>::DatatypeSize; }
     inline const void* Data() const override    { return m_data.data(); }
+
+private:
 };
 
 

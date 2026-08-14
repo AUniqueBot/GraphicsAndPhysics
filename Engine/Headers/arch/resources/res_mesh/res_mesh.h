@@ -1,14 +1,14 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_resource.h>
-
+#include <arch/datatypes/type_sparseSet.h>
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
 
 
 // not including the whole of assimp here.
 struct aiMesh;
-
+using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
 namespace MeshConstants {
 	inline constexpr const char* C_VTXATTR_POSITION = "position";
 	inline constexpr const char* C_VTXATTR_NORMAL = "normal";
@@ -39,6 +39,9 @@ public:
 
 	VertexAttributeDatabase* GetDatabase(const std::string& _name);
 	const VertexAttributeDatabase* GetDatabase(const std::string& _name) const;
+	AttributeData& GetVertexInformation();
+	const AttributeData& GetVertexInformation() const;
+	
 	void ClearSubmeshInformation();
 
 	// - attributes ----------------------------------------------------------------
@@ -71,7 +74,7 @@ public:
 	const size_t GetNormalDataSize() const;
 	const glm::vec3* GetNormalData() const;
 
-	void SetVertexUVs(unsigned _index, const glm::uvec2* _pointer);
+	void SetVertexUVs(unsigned _index, const glm::vec2* _pointer);
 	const size_t GetUVDataSize(unsigned _index) const;
 	const glm::uvec2* GetUVData(unsigned _index) const;
 
@@ -151,6 +154,10 @@ public:
 	
 	VertexAttributeDatabase* GetDatabase(const std::string& _name);
 	const VertexAttributeDatabase* GetDatabase(const std::string& _name) const;
+
+	AttributeData& GetVertexInformation();
+	const AttributeData& GetVertexInformation() const;
+
 
 
 public:

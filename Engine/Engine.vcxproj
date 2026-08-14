@@ -294,7 +294,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
-    <ClInclude Include="Headers\arch\resources\res_gpu_resourceHandle.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resourceHandle.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_gpuhandle.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_mesh.h" />
@@ -310,7 +310,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_material_uniform\res_material_uniformAliases.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh.h" />
     <ClInclude Include="Headers\arch\resources\res_meshManager.h" />
-    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_gpu.h" />
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_vertexAttributeTraits.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_cube.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_plane.h" />
     <ClInclude Include="Headers\arch\resources\res_mesh_presets\res_mesh_sphere.h" />

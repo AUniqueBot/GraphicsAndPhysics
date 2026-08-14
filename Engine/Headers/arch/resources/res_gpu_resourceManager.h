@@ -1,7 +1,7 @@
 #pragma once
+#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
 #include <arch/resources/res_gpu_resources/res_gpu_resource_list.h>
 #include <arch/datatypes/type_trackedStorage.h>
-#include <arch/resources/res_gpu_resourceHandle.h>
 
 
 

@@ -4,7 +4,7 @@
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 #include <arch/resources/res_gpu_resources/res_gpu_texture.h>
-#include <arch/resources/res_gpu_resourceHandle.h>
+#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
 
 class Texture;
 inline const RES_ID C_INVALID_TEXTURE_ID = BaseResource::C_RES_ID_INVALID;

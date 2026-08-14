@@ -4,6 +4,7 @@
 #endif
 #include <stb_image.h>
 
+#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
 
 namespace {
 	// loading helpers
@@ -276,15 +277,13 @@ Texture2D TextureManager::Create2DTexture(int _width, int _height, TextureProper
 
 void TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
 
-	GPU_Texture tex = { 
+	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateTexture(
 		TextureProperties::TextureType::TEXTURE_3D,
 		{ _width, _height, _depth },
 		_props
-	};
-	tex.Create();
-	tex.Allocate();
+	);
+	// create the handle here.
 
-	//return info;
 }
 
 Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {

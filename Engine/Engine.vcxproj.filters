@@ -554,9 +554,6 @@
     <ClInclude Include="Headers\arch\resources\res_resourceIdentifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_gpu.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -581,7 +578,10 @@
     <ClInclude Include="Headers\arch\datatypes\type_trackedStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resourceHandle.h">
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resourceHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_vertexAttributeTraits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
