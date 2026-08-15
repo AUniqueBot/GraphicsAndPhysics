@@ -67,6 +67,10 @@ public:
 	void SetVertexIndices(const glm::uvec3* _pointer, size_t _faceCount);
 	const glm::uvec3* GetVertexIndexData() const;
 	size_t GetVertexIndexCount() const;
+	size_t GetVertexIndexSize() const;
+
+
+
 public:
 	const RES_ID& GetMaterialID() const;
 	void SetMaterialID(const RES_ID& _id);

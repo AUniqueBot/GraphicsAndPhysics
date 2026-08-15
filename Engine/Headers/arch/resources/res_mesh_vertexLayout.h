@@ -1,9 +1,9 @@
 #pragma once
 #include <pch.h>
+
 #include <arch/resources/res_mesh/res_mesh_vertexAttributeTraits.h>
 namespace VAOConstants {
-    inline constexpr const char* C_VAO_STATIC_MESH = "C_VAO_STATIC_MESH";
-    inline constexpr const char* C_VAO_SKINNED_MESH = "C_VAO_SKINNED_MESH";
+    inline constexpr const char* C_VAO_DEFAULT_MESH = "C_VAO_DEFAULT_MESH";
 }
 
 namespace VertexAttributeConstants {
@@ -23,6 +23,8 @@ namespace VertexAttributeConstants {
     
     inline constexpr const char* C_VTXATTR_BONEWEIGHTS = "boneweights";
     inline constexpr const char* C_VTXATTR_BONEINDICES = "boneindices";
+
+    inline constexpr size_t C_VTXATTR_MAX_VERTEX_BINDINGS = 100;
 }
 
 
@@ -76,25 +78,27 @@ private:
 };
 
 
+
+
+
 namespace VertexLayouts {
     using namespace VertexAttributeConstants;
-    inline const VertexLayout C_STATIC_MESH = {
-        VAOConstants::C_VAO_STATIC_MESH,
-        {
-            { C_VTXATTR_POSITION,    0, 0, GL_FLOAT, 3, false },
-            { C_VTXATTR_NORMAL,      1, 1, GL_FLOAT, 3, false },
-            { C_VTXATTR_UV0,         2, 2, GL_FLOAT, 2, false},
-        }
-    };
-    inline const VertexLayout C_SKINNED_MESH = {
-        VAOConstants::C_VAO_SKINNED_MESH,
+
+
+    inline const VertexLayout C_DEFAULT_MESH = {
+        VAOConstants::C_VAO_DEFAULT_MESH,
         {
             { C_VTXATTR_POSITION,    0, 0, GL_FLOAT, 3, false },
             { C_VTXATTR_NORMAL,      1, 1, GL_FLOAT, 3, false },
             { C_VTXATTR_UV0,         2, 2, GL_FLOAT, 2, false },
+
             { C_VTXATTR_BONEINDICES, 3, 3, GL_UNSIGNED_INT, 4, false },
             { C_VTXATTR_BONEWEIGHTS, 4, 4, GL_FLOAT, 4, false },
         }
     };
 
 }
+
+
+class aiMesh;
+VertexLayout GenerateVertexLayout(const aiMesh& _mesh);

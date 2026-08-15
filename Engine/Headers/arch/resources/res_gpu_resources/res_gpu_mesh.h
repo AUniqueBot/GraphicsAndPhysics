@@ -1,17 +1,13 @@
 #pragma once
 #include <arch/resources/res_mesh/res_mesh.h>
-#include <arch/resources/res_gpu_resources/res_gpu_vao.h>
-#include <arch/resources/res_gpu_resources/res_gpu_buffer.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
+#include <arch/resources/res_gpu_resources/res_gpu_submesh.h>
 
 
-
-
-// attach a submesh
-class GPU_Mesh : public GPU_VertexArrayObject {
+class GPU_Mesh {
 public:
-	void Init(Submesh& _mesh);
-
+	void Load(Mesh& _mesh);
+	void Destroy();
 private:
-	
+	std::vector<GPU_Submesh> m_submeshList;
+	// handle is useless
 };

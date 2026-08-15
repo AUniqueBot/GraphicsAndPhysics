@@ -35,35 +35,23 @@ namespace {
 
 
 	constexpr const char* GetUVVertexAttributeConstant(int _index) {
-		switch (_index) {
-		case 0:
-			return VertexAttributeConstants::C_VTXATTR_UV0;
-		case 1:
-			return VertexAttributeConstants::C_VTXATTR_UV1;
-		case 2:
-			return VertexAttributeConstants::C_VTXATTR_UV2;
-		case 3:
-			return VertexAttributeConstants::C_VTXATTR_UV3;
-		case 4:
-			return VertexAttributeConstants::C_VTXATTR_UV4;
-		case 5:
-			return VertexAttributeConstants::C_VTXATTR_UV5;
-		case 6:
-			return VertexAttributeConstants::C_VTXATTR_UV6;
-		case 7:
-			return VertexAttributeConstants::C_VTXATTR_UV7;
-		default: 
-			return VertexAttributeConstants::C_VTXATTR_UV0;
-		}
+		return
+			_index == 0 ? VertexAttributeConstants::C_VTXATTR_UV0 :
+			_index == 1 ? VertexAttributeConstants::C_VTXATTR_UV1 :
+			_index == 2 ? VertexAttributeConstants::C_VTXATTR_UV2 :
+			_index == 3 ? VertexAttributeConstants::C_VTXATTR_UV3 :
+			_index == 4 ? VertexAttributeConstants::C_VTXATTR_UV4 :
+			_index == 5 ? VertexAttributeConstants::C_VTXATTR_UV5 :
+			_index == 6 ? VertexAttributeConstants::C_VTXATTR_UV6 :
+			_index == 7 ? VertexAttributeConstants::C_VTXATTR_UV7 :
+			VertexAttributeConstants::C_VTXATTR_UV0;
 	}
 
 }
 
 // - mesh methods -------------------------------------
 
-//Mesh::Mesh(ResourceIdentifierArg _resId, GPUResourceHandle _handle) : m_meshHandle{_handle} {
-//
-//}
+
 
 void Mesh::Load() {
 

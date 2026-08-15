@@ -686,16 +686,16 @@ void RenderSystem::Render(const MeshRenderer& _mr, VAOHandler& _handle) {
     std::shared_ptr<const Mesh> mesh    { GetMesh(_mr.GetMesh()) };
     if (!mesh) return;
     _handle.BindVAO();
-    _handle.UseMesh(*mesh);
-    GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * glm::vec3::length()) };
-    glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
+    //_handle.UseMesh(*mesh);
+    //GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * glm::vec3::length()) };
+    //glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
 
-    //for (const Submesh& submesh : mesh->GetSubmeshList()) {
-    //    // testing submest test.
-    //    _handle.UseSubmesh(submesh);
-    //    GLsizei meshFloatCount{ static_cast<GLsizei>(submesh.GetVertexIndexCount() * glm::vec3::length()) };
-    //    glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
-    //}
+    for (const Submesh& submesh : mesh->GetSubmeshList()) {
+        // testing submest test.
+        _handle.UseSubmesh(submesh);
+        GLsizei idxCount { static_cast<GLsizei>(submesh.GetVertexIndexCount() * glm::ivec3::length()) };
+        glDrawElements(GL_TRIANGLES, idxCount, GL_UNSIGNED_INT, 0);
+    }
 }
 
 void RenderSystem::DebugRenderPass(const unsigned& textureId) {

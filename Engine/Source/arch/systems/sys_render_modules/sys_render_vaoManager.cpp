@@ -68,14 +68,13 @@ void VAOHandler::UseMesh(const Mesh& _mesh) {
 
 void VAOHandler::UseSubmesh(const Submesh& _mesh) {
 	if (_mesh.GetVertexCount() == 0) return;
-	if (&_mesh == m_boundSubmesh) return;
 	for (const auto& [attributeName, attribuiteProps] : m_attributeBuffers) {
 		const VertexAttributeDatabase* db = _mesh.GetDatabase(attributeName);
 		SetAttributeEnabled(attributeName, db != nullptr);
 		if (!db) continue;
 		SetData(attributeName, db->Data(), db->ElementCount(), db->DatatypeSize());
 	}
-	SetVertexIndices(_mesh.GetVertexIndexData(), _mesh.GetVertexIndexCount());
+	SetVertexIndices(_mesh.GetVertexIndexData(), _mesh.GetVertexIndexCount() * sizeof(glm::uvec3));
 }
 
 
@@ -267,7 +266,7 @@ void VAOManager::Init() {
 
 	VAOHandler staticMeshVAO;
 	std::string identifier{};
-	identifier = staticMeshVAO.SetupAttributes(VertexLayouts::C_STATIC_MESH);
+	identifier = staticMeshVAO.SetupAttributes(VertexLayouts::C_DEFAULT_MESH);
 	AddVAO(identifier, staticMeshVAO);
 	UnbindVAO();
 

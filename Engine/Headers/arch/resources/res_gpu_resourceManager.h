@@ -18,7 +18,7 @@ public:
 		TextureProperties::TextureProps _props
 	);
 	GPUResourceHandle CreateVAO();
-	
+	GPUResourceHandle CreateMesh(Mesh& _mesh);
 
 
 	bool DeleteResource(GPUResourceHandle _handle);
@@ -27,6 +27,7 @@ public:
 	void ClearGPUBuffers();
 	void ClearTextures();
 	void ClearVAOs();
+	void ClearMeshes();
 
 
 	
@@ -43,6 +44,9 @@ public:
 		else if constexpr (std::is_same_v<T, GPU_VertexArrayObject>) {
 			return GetResourceInternal(m_vaoStorage, _id);
 		}
+		else if constexpr (std::is_same_v<T, GPU_Mesh>) {
+			return GetResourceInternal(m_meshStorage, _id);
+		}
 	}
 
 	template<typename T>
@@ -56,13 +60,16 @@ public:
 		else if constexpr (std::is_same_v<T, GPU_VertexArrayObject>) {
 			return GetResourceInternal(m_vaoStorage, _id);
 		}
+		else if constexpr (std::is_same_v<T, GPU_Mesh>) {
+			return GetResourceInternal(m_meshStorage, _id);
+		}
 	}
 
 
 
 private:
 	// helper template functions.
-	template <std::derived_from<GPU_Resource> T>
+	template <typename T>
 	SparseSetView<T> GetResourceInternal(
 		TrackedStorage<T>& _storage, 
 		const GPUResourceHandle& _handle
@@ -70,7 +77,7 @@ private:
 		return _storage.GetResource(_handle.m_id);
 	}
 
-	template <std::derived_from<GPU_Resource> T>
+	template <typename T>
 	SparseSetView<const T> GetResourceInternal(
 		const TrackedStorage<T>& _storage, 
 		const GPUResourceHandle& _handle
@@ -78,12 +85,12 @@ private:
 		return _storage.GetResource(_handle.m_id);
 	}
 
-	template <std::derived_from<GPU_Resource> T>
+	template <typename T>
 	static void ClearGPUResourceStorage(TrackedStorage<T>& _storage) {
 		_storage.Clear();
 	}
 
-	template <std::derived_from<GPU_Resource> T>
+	template <typename T>
 	bool DeleteResourceInternal(TrackedStorage<T>& _storage, GPUResourceHandle _handle) {
 		return _storage.RemoveResource(_handle.m_id);
 	}
@@ -94,6 +101,7 @@ private:
 
 private:
 	// private functions
+	TrackedStorage<GPU_Mesh> m_meshStorage;
 	TrackedStorage<GPU_Buffer> m_bufferStorage;
 	TrackedStorage<GPU_Texture> m_textureStorage;
 	TrackedStorage<GPU_VertexArrayObject> m_vaoStorage;

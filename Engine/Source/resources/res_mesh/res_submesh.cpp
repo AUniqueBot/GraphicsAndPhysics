@@ -131,6 +131,10 @@ size_t Submesh::GetVertexIndexCount() const {
 	return m_indices.size();
 }
 
+size_t Submesh::GetVertexIndexSize() const {
+	return m_indices.size() * sizeof(glm::uvec3);
+}
+
 const RES_ID& Submesh::GetMaterialID() const {
 	return m_materialId;
 }

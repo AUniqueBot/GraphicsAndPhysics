@@ -2,6 +2,7 @@
 #include <arch/resources/res_mesh_presets/res_mesh_types.h>
 
 
+
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
@@ -17,11 +18,14 @@ void MeshManager::Init() {
 	//SetResourceAlias(icosphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_ICOSPHERE);
 }
 
+
+
 MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
 	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
 	// -------------------------------------------------------------------------------------------
 	mesh->LoadMeshFromPath(_path);
 	MeshHandle handle(RegisterResource(mesh));
+	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateMesh(*mesh);
 	return handle;
 }
 

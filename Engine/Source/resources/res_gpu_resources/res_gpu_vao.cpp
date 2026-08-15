@@ -2,12 +2,13 @@
 
 
 void GPU_VertexArrayObject::Create() {
-	glCreateVertexArrays(1, &m_handle.Get());
-
-	// if an error has occured..
+	if (!m_handle.IsValid()) {
+		glCreateVertexArrays(1, &m_handle.Get());
+	}
 }
 
 void GPU_VertexArrayObject::Destroy() {
+	Clear();
 	if ((GLuint)m_handle) {
 		glDeleteVertexArrays(1, &m_handle.Get());
 	}
@@ -49,6 +50,16 @@ void GPU_VertexArrayObject::SetAttribute(
 	m_usedAttributes.insert(_arrayIndex);
 }
 
+void GPU_VertexArrayObject::EnableAttribute(GLuint _attributeIndex) {
+	GLuint vao = (GLuint)m_handle;
+	glEnableVertexArrayAttrib(vao, _attributeIndex);
+}
+void GPU_VertexArrayObject::DisableAttribute(GLuint _attributeIndex) {
+	GLuint vao = (GLuint)m_handle;
+	glEnableVertexArrayAttrib(vao, _attributeIndex);
+}
+
+
 void GPU_VertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride) {
 	if (m_usedBindings.contains(_bindingSlot)) {
 		LOG_WARN("Rebinding bind slot.");
@@ -80,13 +91,6 @@ void GPU_VertexArrayObject::Clear() {
 	m_usedBindings.clear();
 }
 
-void GPU_VertexArrayObject::EnableAttribute(GLuint _attributeIndex) {
-	glEnableVertexArrayAttrib(m_handle, _attributeIndex);
-}
-
-void GPU_VertexArrayObject::DisableAttribute(GLuint _attributeIndex) {
-	glDisableVertexArrayAttrib(m_handle, _attributeIndex);
-}
 
 void GPU_VertexArrayObject::UseVAO() {
 	glBindVertexArray((GLuint)m_handle);

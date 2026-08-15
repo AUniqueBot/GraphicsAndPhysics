@@ -32,13 +32,14 @@ public:
 	void SetupAttributes(const VertexLayout& _layout);
 	void SetBinding(GLuint _attributeIndex, GLuint _bindingSlot);
 	void SetAttribute(GLuint _attributeIndex, GLenum _type, int _componentCount, bool _normalized = false, int _offset = 0);
+	void EnableAttribute(GLuint _attributeIndex);
+	void DisableAttribute(GLuint _attributeIndex);
+
 	void AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride);
 	int AliasToBinding(std::string _alias) const;
 	void Clear();
 	
 
-	void EnableAttribute(GLuint _attributeIndex);
-	void DisableAttribute(GLuint _attributeIndex);
 
 	void UseVAO();
 

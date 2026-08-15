@@ -28,6 +28,13 @@ GPUResourceHandle GPUResourceManager::CreateVAO() {
     return { id, GPUDatatype::VAO };
 }
 
+GPUResourceHandle GPUResourceManager::CreateMesh(Mesh& _mesh) {
+    GPU_Mesh mesh;
+    mesh.Load(_mesh);
+    GPURES_ID id = m_meshStorage.AddResource(std::move(mesh));
+    return { id, GPUDatatype::Mesh };
+}
+
 bool GPUResourceManager::DeleteResource(GPUResourceHandle _handle) {
     GPURES_ID id = _handle.m_id;
     GPUDatatype type = _handle.m_type;
@@ -38,6 +45,8 @@ bool GPUResourceManager::DeleteResource(GPUResourceHandle _handle) {
         return DeleteResourceInternal(m_bufferStorage, _handle);
     case GPUDatatype::VAO:
         return DeleteResourceInternal(m_vaoStorage, _handle);
+    case GPUDatatype::Mesh:
+        return DeleteResourceInternal(m_meshStorage, _handle);
     case GPUDatatype::IndexBuffer:
         break;
     case GPUDatatype::FrameBuffer:
@@ -54,6 +63,7 @@ void GPUResourceManager::ClearAll() {
     ClearGPUResourceStorage(m_bufferStorage);
     ClearGPUResourceStorage(m_textureStorage);
     ClearGPUResourceStorage(m_vaoStorage);
+    ClearGPUResourceStorage(m_meshStorage);
 }
 
 void GPUResourceManager::ClearGPUBuffers() {
@@ -68,3 +78,6 @@ void GPUResourceManager::ClearVAOs() {
     ClearGPUResourceStorage(m_vaoStorage);
 }
 
+void GPUResourceManager::ClearMeshes() {
+    ClearGPUResourceStorage(m_meshStorage);
+}

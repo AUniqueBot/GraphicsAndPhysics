@@ -5,6 +5,7 @@
 //#include <stb_image.h>
 
 
+
 MaterialValueData::ValueType OpenGL_ShaderTypeToValueType(GLenum type) {
 	return
 		type == GL_BOOL ? MaterialValueData::ValueType::Bool :

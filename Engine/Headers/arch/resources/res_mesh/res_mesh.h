@@ -4,14 +4,13 @@
 #include <arch/datatypes/type_sparseSet.h>
 #include <arch/resources/res_resourceHandle.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
 #include <arch/resources/res_mesh/res_submesh.h>
 
 
-// not including the whole of assimp here.
-struct aiMesh;
-using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
 
+// not including the whole of assimp here.
+class Mesh;
+using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
 
 
 class Mesh : public Resource<Mesh> {
@@ -19,7 +18,9 @@ class Mesh : public Resource<Mesh> {
 private:
 
 public:
-	//Mesh(ResourceIdentifierArg _resId, GPUResourceHandle _gpuArg);
+
+	Mesh() = default;
+
 
 	/// @brief loads the mesh into gpu memory.
 	void Load();
@@ -108,9 +109,11 @@ protected:
 	void SetVertexColors(const float _pointer, size_t _vertexCount);
 
 	GPUResourceHandle m_meshHandle;
+protected:
+	
 
 protected:
-	std::string m_vaoName							{ VAOConstants::C_VAO_STATIC_MESH }; // vao identifier
+	std::string m_vaoName							{ VAOConstants::C_VAO_DEFAULT_MESH }; // vao identifier
 
 	std::vector<RES_ID> m_submeshMaterialIdentifier;
 	std::vector<Submesh> m_submeshList;
@@ -137,6 +140,5 @@ struct MeshHandle : public ResourceHandle {
 		return GetResource<Mesh>();
 	}
 };
-
 
 
