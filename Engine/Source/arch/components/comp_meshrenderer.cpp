@@ -61,11 +61,11 @@ Material& MeshRenderer::GetDefaultMaterial() {
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
 	static std::vector<PropertyMD::Property> props{
-		//MakeListProperty<MeshRenderer, std::shared_ptr<Material>>(
-		//	"Materials",
-		//	static_cast<std::vector<std::shared_ptr<Material>>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-		//	PropertyType::Object 
-		//),
+		MakeListProperty<MeshRenderer, MaterialHandle>(
+			"Materials",
+			static_cast<std::vector<MaterialHandle>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
+			PropertyType::ResourceHandle 
+		),
 		MakeProperty<MeshRenderer>(
 			"Cast Shadow",
 			PropertyType::Boolean,

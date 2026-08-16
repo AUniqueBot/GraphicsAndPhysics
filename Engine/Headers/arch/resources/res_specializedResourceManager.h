@@ -4,6 +4,7 @@
 #include <arch/resources/res_resourceManager.h>
 #include <arch/resources/res_gpu_resourceManager.h>
 
+
 class SpecializedResourceManager {
 public:
 	SpecializedResourceManager(
@@ -42,3 +43,4 @@ protected:
 	ResourceManager& m_resourceManager;
 	GPUResourceManager& m_gpuResourceManager;
 };
+

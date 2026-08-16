@@ -22,6 +22,7 @@ private:
 
 
 struct TextureHandle : public ResourceHandle {
+	using ResourceType = TextureRes;
 	inline TextureHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
 	inline std::shared_ptr<TextureRes> Get() {
 		return GetResource<TextureRes>();

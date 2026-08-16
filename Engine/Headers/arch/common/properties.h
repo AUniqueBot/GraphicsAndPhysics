@@ -14,7 +14,9 @@ namespace PropertyMD {
 		Color,
 		// not sure how to handle these just yet.
 		Object,
-		Pointer
+		Pointer,
+		Resource,
+		ResourceHandle
 	};
 
 	enum class Shape {

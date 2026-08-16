@@ -22,6 +22,9 @@ struct ResourceHandle {
 	void SetName(const std::string& _name);
 	inline std::string GetName() const;
 
+	std::shared_ptr<BaseResource> GetBaseResource();
+	std::shared_ptr<const BaseResource> GetBaseResource() const;
+
 protected:
 	template <std::derived_from<BaseResource> T>
 	inline std::shared_ptr<T> GetResource() {
@@ -33,11 +36,9 @@ protected:
 		return std::static_pointer_cast<const T>(GetBaseResource());
 	}
 
-private:
-	std::shared_ptr<BaseResource> GetBaseResource();
-	std::shared_ptr<const BaseResource> GetBaseResource() const;
 
 private:
 	std::optional<ResourceIdentifier> m_resourceIdentifier;
 
 };
+

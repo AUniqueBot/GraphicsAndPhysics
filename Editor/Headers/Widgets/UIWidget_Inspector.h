@@ -20,7 +20,6 @@ private:
 
     void DrawPropertyElement(void* object, const PropertyMD::Property& prop, const std::string& key);
 
-
     void DrawPropertyInt(void* object, const PropertyMD::Property& prop, const std::string& key);
     void DrawPropertyFloat(void* object, const PropertyMD::Property& prop, const std::string& key);
     void DrawPropertyDouble(void* object, const PropertyMD::Property& prop, const std::string& key);
@@ -33,9 +32,10 @@ private:
 
     void DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key);
 
-    void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
-
+    void DrawPropertyResourceHandle(void* object, const PropertyMD::Property& prop, const std::string& key);
     
+    
+    void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
 
 };
 

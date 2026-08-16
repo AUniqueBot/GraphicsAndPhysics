@@ -130,5 +130,6 @@ public :
 };
 
 
-
+template<typename T>
+concept ResourceType = std::derived_from<T, Resource<T>>;
 

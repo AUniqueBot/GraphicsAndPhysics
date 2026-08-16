@@ -178,6 +178,7 @@ void UIWidget_Inspector::Draw() {
 		MeshRenderer& mr = *meshV;
 		ResourceManager& resmgr = papc->GetResourceManager();
 		MeshManager& meshmgr = papc->GetAssetManager().GetMeshManager();
+		MaterialManager& matMgr = papc->GetAssetManager().GetMaterialManager();
 		// mesh handling.
 		RES_ID meshId = mr.GetMesh();
 		std::shared_ptr<MeshRes> selectedMesh = static_pointer_cast<MeshRes>(resmgr.GetResource(meshId));
@@ -288,6 +289,9 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 		return;
 	case PropertyType::Object:
 		DrawPropertyObject(object, prop, name);
+		break;
+	case PropertyType::ResourceHandle:
+		DrawPropertyResourceHandle(object, prop, name);
 		break;
 	default:
 		break;
@@ -446,6 +450,18 @@ void UIWidget_Inspector::DrawPropertyObject(void* object, const PropertyMD::Prop
 	}
 }
 
+void UIWidget_Inspector::DrawPropertyResourceHandle(
+	void* object, 
+	const PropertyMD::Property& prop, 
+	const std::string& key) {
+	ResourceHandle* handle = reinterpret_cast<ResourceHandle*>(object);
+	std::shared_ptr<BaseResource> res = handle->GetBaseResource();
+	for (auto& prop : res->GetProperties()) {
+		DrawPropertyElement((void*)res.get(), prop, prop.m_name);
+	}
+
+}
+
 void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key) {
 	// explain how it works.
 	if (!prop.m_list.m_valid) return;
@@ -494,6 +510,10 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 				DrawPropertyObject(currentElement, prop, prop.m_name);
 				break;	
 			}
+			case PropertyMD::PropertyType::ResourceHandle:
+				DrawPropertyResourceHandle(currentElement, prop, prop.m_name);
+				break;
+
 			default:
 				break;
 			}
@@ -503,3 +523,5 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 	}
 
 }
+
+

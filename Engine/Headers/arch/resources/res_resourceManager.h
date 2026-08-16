@@ -64,6 +64,7 @@ public:
 
 	std::deque<std::shared_ptr<BaseResource>>& GetResourcePool();
 	const std::deque<std::shared_ptr<BaseResource>>& GetResourcePool() const;
+	
 
 	const std::vector<RES_ID>& GetResourcePoolManifest(RESTYPE_ID _typeId) const;
 	
@@ -132,7 +133,7 @@ private:
 	
 	// primary storage.
 	SparseSet<RES_ID, std::shared_ptr<BaseResource>>			m_resourcePool;
-
+	//std::unordered_map<RESTYPE_ID, SparseSet<RES_ID, std::shared_ptr<BaseResource>>> m_resourceStorage;
 
 	// secondary identifiers. (typed data)
 	std::unordered_map<RESTYPE_ID, ResourceTypeMetadata>		m_resourceTypeMetadata;
