@@ -231,7 +231,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTarget.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderTargetManager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp" />
-    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_vaoManager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewport.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewportManager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_transform.cpp" />
@@ -351,7 +350,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_shadowMap.h" />
     <ClInclude Include="Headers\arch\resources\res_textureManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h" />
-    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h" />
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewportManager.h" />
     <ClInclude Include="Headers\arch\systems\sys_transform.h" />

@@ -45,9 +45,6 @@
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_uboManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_vaoManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_viewport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -372,9 +369,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_uboManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_vaoManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\systems\sys_render_modules\sys_render_viewport.h">

@@ -154,7 +154,6 @@ void RenderSystem::Init() {
     m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_OBJECT, 1, sizeof(ObjectUBOData));
     m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_LIGHTS, 2, sizeof(LightUBOData));
     m_uboManager.CreateUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW, 3, sizeof(ShadowMapUBOData));
-    m_vaoManager.Init();
     m_compositor.Init();
 
     // - shadows -------------------------------
@@ -282,72 +281,7 @@ void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
 
 }
 
-void RenderSystem::RenderRangedLightShadows(
-    const Light& light,
-    const Transform& lightTransform,
-    const EntityRegistry& entityRegistry,
-    const ComponentPool<MeshRenderer>& meshPool
-) {
-    for (unsigned level{}; level < m_directionalShadowMaps.GetLODLevels(); ++level) {
-        for (const MeshRenderer& mr : meshPool.Data()) {
-            if (!mr.GetCastShadow()) continue;
-            const auto meshEntity{ entityRegistry.GetEntity(mr.GetEntityID()) };
-            if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
 
-            RES_ID meshId = mr.GetMesh();
-            if (meshId == BaseResource::C_RES_ID_INVALID) continue;
-
-            std::shared_ptr<Mesh> mesh = GetMesh(meshId);
-            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
-            if (!vaoHandler) continue;
-            VAOHandler& currentVAO = *vaoHandler;
-            currentVAO.BindVAO();
-            currentVAO.UseMesh(*mesh);
-
-            // do something.
-
-
-            auto trsMesh = meshEntity->GetComponent<Transform>();
-            const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-
-
-            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
-            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
-        }
-    }
-}
-
-void RenderSystem::RenderPointLightShadows(
-    const Light& light,
-    const Transform& lightTransform,
-    const EntityRegistry& entityRegistry,
-    const ComponentPool<MeshRenderer>& meshPool
-) {
-    for (unsigned sides{}; sides < m_directionalShadowMaps.GetLODLevels(); ++sides) {
-        // change perspective 
-        for (const MeshRenderer& mr : meshPool.Data()) {
-            const auto meshEntity{ entityRegistry.GetEntity(mr.GetEntityID()) };
-            if (!meshEntity->Active() || !meshEntity->IsVisible()) continue;
-
-            RES_ID meshId = mr.GetMesh();
-            if (meshId == BaseResource::C_RES_ID_INVALID) continue;
-            std::shared_ptr<Mesh> mesh = GetMesh(meshId);
-
-            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
-            if (!vaoHandler) continue;
-            VAOHandler& currentVAO = *vaoHandler;
-            currentVAO.BindVAO();
-            currentVAO.UseMesh(*mesh);
-
-            // do something.
-            auto trsMesh = meshEntity->GetComponent<Transform>();
-            const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
-            //PassLightingMatrices(objectTransformMatrix, light.GetLightData().m_matrix);
-            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
-        }
-    }
-
-}
 
 void RenderSystem::FillLightBufferUBO(const std::vector<LightData>& _culledLightList) {
     m_ldData.m_count = std::min(C_MAX_LIGHTS, static_cast<unsigned>(_culledLightList.size()));
@@ -534,15 +468,10 @@ void RenderSystem::LightingRenderPass(
         if (meshId == BaseResource::C_RES_ID_INVALID) continue;
         std::shared_ptr<Mesh> mesh = GetMesh(meshId);
 
-        VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
-
-        if (!vaoHandler) continue;
         bool isSelected{ _er.EntityIsSelected(e.GetID()) };
         FillObjectUBO(e, *trs);
         ResolveMeshRendererMaterials(*mr);
-        Render(*mr, *vaoHandler);
-
-        m_vaoManager.UnbindVAO();
+        Render(*mr);
     }
 
     glBindVertexArray(0); 
@@ -643,20 +572,12 @@ void RenderSystem::DirectionalLightShadowRenderPass(
             if (meshId == BaseResource::C_RES_ID_INVALID) continue;
             std::shared_ptr<Mesh> mesh = GetMesh(meshId);
 
-            VAOHandler* vaoHandler{ m_vaoManager.GetVAO(mesh->VAOIdentifier()) };
-            if (!vaoHandler) continue;
-            VAOHandler& currentVAO = *vaoHandler;
-            currentVAO.BindVAO();
-            currentVAO.UseMesh(*mesh);
-
-
-
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             FillObjectUBO(*meshEntity, *trsMesh);
-            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mesh->GetIndexDataCount() * 3), GL_UNSIGNED_INT, 0);
+            Render(mr);
         }
     }
     
@@ -682,18 +603,16 @@ void RenderSystem::SpotLightShadowRenderPass(
 
 }
 
-void RenderSystem::Render(const MeshRenderer& _mr, VAOHandler& _handle) {
+void RenderSystem::Render(const MeshRenderer& _mr) {
+    Core& c = Core::GetInstance();
     std::shared_ptr<const Mesh> mesh    { GetMesh(_mr.GetMesh()) };
     if (!mesh) return;
-    _handle.BindVAO();
-    //_handle.UseMesh(*mesh);
-    //GLsizei meshFloatCount{ static_cast<GLsizei>(mesh->GetIndexDataCount() * glm::vec3::length()) };
-    //glDrawElements(GL_TRIANGLES, meshFloatCount, GL_UNSIGNED_INT, 0);
-
-    for (const Submesh& submesh : mesh->GetSubmeshList()) {
-        // testing submest test.
-        _handle.UseSubmesh(submesh);
-        GLsizei idxCount { static_cast<GLsizei>(submesh.GetVertexIndexCount() * glm::ivec3::length()) };
+    GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
+    SparseSetView<GPU_Mesh> gpuMesh = gpuResMgr.GetResource<GPU_Mesh>(mesh->GetGPUResourceHandle());
+    if (!gpuMesh) return;
+    for (const GPU_Submesh& submesh : gpuMesh->GetGPUSubmeshList()) {
+        submesh.Bind();
+        GLsizei idxCount { static_cast<GLsizei>(submesh.GetIndexBufferElementCount() * glm::uvec3::length()) };
         glDrawElements(GL_TRIANGLES, idxCount, GL_UNSIGNED_INT, 0);
     }
 }

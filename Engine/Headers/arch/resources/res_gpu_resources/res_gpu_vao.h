@@ -24,6 +24,9 @@ public:
 		FLOAT
 	};
 public:
+
+	void Bind() const;
+
 	void Create() override; 
 	void Destroy() override;
 	
@@ -37,6 +40,7 @@ public:
 
 	void AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride);
 	int AliasToBinding(std::string _alias) const;
+	int AliasToAttribute(std::string _alias) const;
 	void Clear();
 	
 
@@ -46,5 +50,6 @@ public:
 private:
 	std::unordered_set<GLuint> m_usedBindings;
 	std::unordered_set<GLuint> m_usedAttributes;
-	std::unordered_map<std::string, GLuint> m_attributeBindings;
+	std::unordered_map<std::string, GLuint> m_aliasToBindings;
+	std::unordered_map<std::string, GLuint> m_aliasToAttributes;
 };

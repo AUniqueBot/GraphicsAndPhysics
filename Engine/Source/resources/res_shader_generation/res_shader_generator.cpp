@@ -15,27 +15,6 @@ std::string ShaderGenerator::GenerateVersionHeader() const {
 	return ss.str();
 }
 
-std::string ShaderGenerator::GenerateWorldObjectAttributes(const VAOHandler& _vaoHandler) const {
-
-	std::stringstream ss;
-
-	// attributes here.
-	const char* attrLayoutString = 
-		"layout (location = 0) in vec3 a_position;\n\n"
-		"layout (location = 1) in vec3 a_normal;\n"
-		"layout (location = 2) in vec3 a_uv;\n\n"
-		;
-	
-
-	// outputs here
-	const char* outputString =
-		"out vec3 frag_position;\n\n"
-		"out vec3 frag_normal;\n"
-		"out vec3 frag_uv;\n\n"
-		;
-
-	return ss.str();
-}
 
 std::string ShaderGenerator::GenerateScreenSpaceAttributes() const {
 

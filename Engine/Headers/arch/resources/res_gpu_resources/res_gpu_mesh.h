@@ -7,6 +7,9 @@ class GPU_Mesh {
 public:
 	void Load(Mesh& _mesh);
 	void Destroy();
+
+	std::vector<GPU_Submesh>& GetGPUSubmeshList();
+	const std::vector<GPU_Submesh>& GetGPUSubmeshList() const;
 private:
 	std::vector<GPU_Submesh> m_submeshList;
 	// handle is useless

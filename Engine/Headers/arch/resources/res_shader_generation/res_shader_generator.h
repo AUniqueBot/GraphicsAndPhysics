@@ -1,6 +1,5 @@
 #pragma once
 #include <arch/resources/res_shader.h>
-#include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 
 
 class ShaderGenerator {
@@ -15,7 +14,6 @@ protected:
 	std::string GenerateVersionHeader() const;
 	
 	// - vertex shader -------------------------------------------------------
-	std::string GenerateWorldObjectAttributes(const VAOHandler& _vaoHandler) const;
 	std::string GenerateScreenSpaceAttributes() const;
 
 

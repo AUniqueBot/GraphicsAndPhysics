@@ -20,12 +20,20 @@ public:
 public:
 	void Init() override;
 
+
+	// creation
 	MeshHandle LoadMesh(std::filesystem::path _path);
 	
-	// creates new instances of meshes.
+	// presets
 	CubeHandle CreateCubeMesh(CubeCreationProps _props = CubeCreationProps()); 
 	SphereHandle CreateSphereMesh(SphereCreationProps _props = SphereCreationProps());
 	MeshHandle CreateIcosphereMesh(); 
 	PlaneHandle CreatePlaneMesh(PlaneCreationProps _props = PlaneCreationProps());
 	
+
+
+
+public:
+	// upload
+	void UploadMeshToGPU(Mesh& _mesh);
 };

@@ -52,8 +52,7 @@ public:
 	void SetWrapV(const TextureProperties::WrapBehaviour& _wrapBehaviour);
 
 	void SetInternalFormat(const TextureProperties::TextureFormat& _format); 
-	//void SetPixelDataType(const TextureProperties::ImageDataType& _pixelType);
-	//void SetPixelFormat(const TextureProperties::ImageChannels& _pixelFormat);
+
 
 	void SetPixelColor(unsigned _col, int _x, int _y, int _z); // hexadecimal color
 	void SetPixelColor(glm::vec4 _col, int _x, int _y, int _z);
@@ -62,12 +61,21 @@ public:
 
 	bool TextureIsValid() const;
 
+
+
 protected:
 	// be careful when using this as this assumes it is valid.
 	GPU_Texture& GetGPUTexture();
 	const GPU_Texture& GetGPUTexture() const;
 
+
+
+
+
 protected:
+
+	glm::ivec3 m_dimensions;
+	std::vector<std::byte> m_imageData;
 	GPUResourceHandle m_gpuResHandle;
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.
 };

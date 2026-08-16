@@ -15,3 +15,11 @@ void GPU_Mesh::Destroy() {
 		submesh.Destroy();
 	}
 }
+
+std::vector<GPU_Submesh>& GPU_Mesh::GetGPUSubmeshList() {
+	return m_submeshList;
+}
+
+const std::vector<GPU_Submesh>& GPU_Mesh::GetGPUSubmeshList() const{
+	return m_submeshList;
+}

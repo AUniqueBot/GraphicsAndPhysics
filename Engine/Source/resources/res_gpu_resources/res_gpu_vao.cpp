@@ -1,6 +1,10 @@
 #include <arch/resources/res_gpu_resources/res_gpu_vao.h>
 
 
+void GPU_VertexArrayObject::Bind() const {
+	glBindVertexArray(m_handle.Get());
+}
+
 void GPU_VertexArrayObject::Create() {
 	if (!m_handle.IsValid()) {
 		glCreateVertexArrays(1, &m_handle.Get());
@@ -19,7 +23,9 @@ void GPU_VertexArrayObject::SetupAttributes(const VertexLayout& _layout) {
 	for (const VertexAttributeDesc& attr : _layout.attributes) {
 		SetAttribute(attr.m_attributeSlot, attr.m_type, attr.m_featureCount, attr.m_normalized, attr.m_offset);
 		SetBinding(attr.m_attributeSlot, attr.m_bindingSlot);
-		m_attributeBindings[attr.m_name] = attr.m_bindingSlot;
+		m_aliasToBindings[attr.m_name] = attr.m_bindingSlot;
+		m_aliasToAttributes[attr.m_name] = attr.m_attributeSlot;
+		DisableAttribute(attr.m_attributeSlot);
 	}
 }
 
@@ -71,11 +77,15 @@ void GPU_VertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& 
 }
 
 int GPU_VertexArrayObject::AliasToBinding(std::string _alias) const {
-	auto itr = m_attributeBindings.find(_alias);
-	return itr != m_attributeBindings.end() ? 
+	auto itr = m_aliasToBindings.find(_alias);
+	return itr != m_aliasToBindings.end() ? 
 		static_cast<int>(itr->second) : -1;
 }
-
+int GPU_VertexArrayObject::AliasToAttribute(std::string _alias) const {
+	auto itr = m_aliasToAttributes.find(_alias);
+	return itr != m_aliasToAttributes.end() ?
+		static_cast<int>(itr->second) : -1;
+}
 
 void GPU_VertexArrayObject::Clear() {
 	GLuint vao = (GLuint)m_handle;

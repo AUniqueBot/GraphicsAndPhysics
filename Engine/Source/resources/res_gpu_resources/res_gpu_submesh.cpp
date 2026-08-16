@@ -8,28 +8,31 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 
 	Clear();
 	SetupAttributes(VertexLayouts::C_DEFAULT_MESH);
-	const AttributeData& attrs = _submesh.GetVertexInformation();
+
 	
+	const AttributeData& attrs = _submesh.GetVertexInformation();
 	for (const auto& [attrName, attr] : attrs) {
 
 		// - create buffers ----
 		GPU_Buffer buffer;
 		buffer.Create();
-		buffer.Allocate(attr->DataSize(), GL_STATIC_DRAW);
+		buffer.Allocate(attr->DataSize(), GL_DYNAMIC_STORAGE_BIT);
 		buffer.Upload(attr->Data(), attr->DataSize());
 		
 		// - hook up buffers ---
 		GLuint bufferId = AliasToBinding(attrName);
 		AttachBuffer(bufferId, buffer, attr->DatatypeSize());
 		m_vertexBuffers.Add(std::move(buffer), bufferId);
+		EnableAttribute(AliasToAttribute(attrName));
 	}
 	// - set up 
 	GPU_Buffer ebo;
 	ebo.Create();
 	size_t eboSize = _submesh.GetVertexIndexSize();
-	ebo.Allocate(eboSize, GL_STATIC_DRAW);
+	ebo.Allocate(eboSize, GL_DYNAMIC_STORAGE_BIT);
 	ebo.Upload(_submesh.GetVertexIndexData(), eboSize);
-	AttachIndexBuffer(ebo);
+	AttachIndexBuffer(ebo, _submesh.GetVertexIndexCount() * glm::uvec3::length());
+	this;
 }
 
 void GPU_Submesh::Destroy() {
@@ -41,7 +44,12 @@ void GPU_Submesh::Destroy() {
 	GPU_VertexArrayObject::Destroy();
 }
 
-void GPU_Submesh::AttachIndexBuffer(const GPU_Buffer& _buffer) {
+size_t GPU_Submesh::GetIndexBufferElementCount() const {
+	return m_indexBufferElementCount;
+}
+
+void GPU_Submesh::AttachIndexBuffer(const GPU_Buffer& _buffer, size_t _elementCount) {
 	glVertexArrayElementBuffer(m_handle.Get(), _buffer.GetHandle());
 	m_indexBuffer = _buffer;
+	m_indexBufferElementCount = _elementCount;
 }

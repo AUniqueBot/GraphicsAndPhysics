@@ -7,19 +7,21 @@
 #include <arch/resources/res_mesh/res_submesh.h>
 
 
-
 // not including the whole of assimp here.
 class Mesh;
+class GPUResourceManager;
 using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
 
 
+
+// if this is the resource, then the handles
 class Mesh : public Resource<Mesh> {
 
 private:
 
 public:
 
-	Mesh() = default;
+	//Mesh() ;
 
 
 	/// @brief loads the mesh into gpu memory.
@@ -46,11 +48,7 @@ public:
 	std::vector<Submesh>& GetSubmeshList();
 	const std::vector<Submesh>& GetSubmeshList() const;
 
-
-
 	const size_t GetVertexDataSize() const;
-
-
 
 	virtual const size_t GetIndexDataSize() const;
 	virtual const glm::uvec3* GetIndexData() const;
@@ -78,7 +76,7 @@ public:
 	const AttributeData& GetVertexInformation() const;
 
 
-
+	const GPUResourceHandle& GetGPUResourceHandle() const;
 public:
 	template <typename T>
 	inline void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
@@ -110,7 +108,12 @@ protected:
 
 	GPUResourceHandle m_meshHandle;
 protected:
-	
+	friend class MeshManager;
+	friend class GPUResourceManager;
+	void SetGPUResourceHandle(GPUResourceHandle _newHandle);
+
+	bool HasValidGPUResourceHandle() const;
+
 
 protected:
 	std::string m_vaoName							{ VAOConstants::C_VAO_DEFAULT_MESH }; // vao identifier
@@ -119,15 +122,9 @@ protected:
 	std::vector<Submesh> m_submeshList;
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 
-	std::vector<std::vector<glm::vec2>> m_uvs;
-	std::vector<glm::vec4> m_vertexColor;
-
+	
 	std::vector<glm::uvec3> m_indices;
 
-
-	// - animation -----------------------
-	std::vector<glm::vec4> m_boneWeights;
-	std::vector<glm::ivec4> m_boneIndices;
 };
 
 

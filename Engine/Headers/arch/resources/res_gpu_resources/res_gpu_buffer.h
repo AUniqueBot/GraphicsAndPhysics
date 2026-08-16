@@ -19,6 +19,8 @@ public:
 	void SetSize(size_t _size);
 	void Upload(const void* _data, size_t _size, size_t _offset = 0);
 
+
+	size_t GetSize() const;
 private:
 	size_t m_size	{  };
 	GLenum m_usage	{ GL_INVALID_ENUM };

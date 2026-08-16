@@ -26,6 +26,7 @@ MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
 	mesh->LoadMeshFromPath(_path);
 	MeshHandle handle(RegisterResource(mesh));
 	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateMesh(*mesh);
+	mesh->SetGPUResourceHandle(gpuHandle);
 	return handle;
 }
 
@@ -61,4 +62,8 @@ PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
 	PlaneHandle handle(idr);
 	Add(handle.GetResourceID());
 	return handle;
+}
+
+void MeshManager::UploadMeshToGPU(Mesh& _mesh) {
+	_mesh.SetGPUResourceHandle(m_gpuResourceManager.CreateMesh(_mesh));
 }

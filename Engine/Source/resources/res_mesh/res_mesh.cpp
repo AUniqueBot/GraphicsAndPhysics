@@ -53,6 +53,7 @@ namespace {
 
 
 
+
 void Mesh::Load() {
 
 
@@ -236,7 +237,6 @@ void Mesh::VAOIdentifier(std::string& _newIdentifier) {
 
 void Mesh::ClearMeshInformation() {
 	m_attributeData.clear();
-	m_uvs.clear();
 }
 
 // the
@@ -283,6 +283,18 @@ AttributeData& Mesh::GetVertexInformation() {
 
 const AttributeData& Mesh::GetVertexInformation() const {
 	return m_attributeData;
+}
+
+void Mesh::SetGPUResourceHandle(GPUResourceHandle _newHandle) {
+	m_meshHandle = _newHandle;
+}
+
+const GPUResourceHandle& Mesh::GetGPUResourceHandle() const {
+	return m_meshHandle;
+}
+
+bool Mesh::HasValidGPUResourceHandle() const {
+	return m_meshHandle.IsValid();
 }
 
 

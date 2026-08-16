@@ -28,6 +28,10 @@ void GPU_Buffer::SetSize(size_t _size) {
     m_size = _size;
 }
 
+size_t GPU_Buffer::GetSize() const {
+    return m_size;
+}
+
 
 void GPU_Buffer::Upload(
     const void* _data, 

@@ -7,7 +7,6 @@
 #include <arch/resources/res_textureManager.h>
 #include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
-#include <arch/systems/sys_render_modules/sys_render_vaoManager.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
 #include <arch/components/comp_light.h>
 #include <arch/components/comp_transform.h>
@@ -106,20 +105,7 @@ private:
 		const ComponentPool<MeshRenderer>& _mrPool
 	);
 private: 
-	// shadow passes.
 
-	void RenderRangedLightShadows(
-		const Light& light,
-		const Transform& lightTransform,
-		const EntityRegistry& entityRegistry,
-		const ComponentPool<MeshRenderer>& meshPool
-	);
-	void RenderPointLightShadows(
-		const Light& light,
-		const Transform& lightTransform,
-		const EntityRegistry& entityRegistry,
-		const ComponentPool<MeshRenderer>& meshPool
-	);
 
 
 public:
@@ -140,7 +126,7 @@ public:
 	);
 
 
-	void Render(const MeshRenderer& _mr, VAOHandler& _handle);
+	void Render(const MeshRenderer& _mr);
 
 	void DebugRenderPass(const unsigned& );
 
@@ -205,7 +191,6 @@ private:
 	ViewportManager m_viewportManager;
 	Compositor m_compositor;
 	UBOManager m_uboManager;
-	VAOManager m_vaoManager;
 
 
 	// to be replaced with a proper texture setup instead.

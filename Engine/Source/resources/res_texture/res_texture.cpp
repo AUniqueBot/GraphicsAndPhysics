@@ -25,6 +25,8 @@ Texture::Texture(ResourceIdentifierArg _resIdArg, GPUResourceHandle _handle) :
 
 
 void Texture::SetMinFilter(const TextureProperties::FilterBehaviour& _filterBehaviour) {
+	
+	// upload to update the data.
 	GetGPUTexture().SetFilterBehaviourMin(_filterBehaviour);
 }
 
@@ -102,3 +104,4 @@ bool Texture::TextureIsValid() const {
 	SparseSetView<GPU_Texture> texHandle = gpuMgr.GetResource<GPU_Texture>(m_gpuResHandle);
 	return static_cast<bool>(texHandle);
 }
+

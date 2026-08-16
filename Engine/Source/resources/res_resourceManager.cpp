@@ -83,7 +83,7 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 				LOG_INFO("file has no extension: " << entry.path().filename());
 				continue;
 			}
-			LoadResource(entry);
+			//LoadResource(entry);
 		}
 	}
 	else {
@@ -93,7 +93,7 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 				LOG_INFO("file has no extension: " << entry.path().filename());
 				continue;
 			}
-			LoadResource(entry);
+			//LoadResource(entry);
 		}
 	}
 
