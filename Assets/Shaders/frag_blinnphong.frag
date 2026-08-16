@@ -22,6 +22,7 @@ in VertexOutput {
 uniform sampler2D u_albedo;
 uniform sampler2D u_specular;
 uniform sampler2D u_gloss;
+uniform int u_exponent;
 
 uniform sampler2DArrayShadow u_directionalShadowMap;
 uniform sampler2DArrayShadow u_spotLightShadowMap;
@@ -396,7 +397,7 @@ void main() {
         VERTEXOUTPUT.frag_position, 
         VERTEXOUTPUT.frag_normal,
         VERTEXOUTPUT.frag_viewPosition,
-        int(gloss.r * 32.0), 1.0
+        int(gloss.r * u_exponent) , 1.0
     );
     float sValue = CalculateShadow();
 

@@ -158,9 +158,9 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::ResolveTextureValues() {
-	if (!m_textureReferenceDirty) return;
-	m_textureReferenceDirty = false;
+void Material::ResolveUniformValues() {
+	if (!m_uniformDataDirty) return;
+	m_uniformDataDirty = false;
 }
 
 bool Material::IsInitialised() const {
@@ -207,7 +207,7 @@ void Material::ApplyShadowMap(
 }
 
 void Material::ApplyUniforms() {
-	ResolveTextureValues();
+	ResolveUniformValues();
 
 	unsigned textureUnitId = 0;
 	for (const auto& [key, location] : m_uniformLocations) {

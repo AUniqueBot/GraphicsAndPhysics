@@ -27,7 +27,7 @@ public:
 
 protected:
 	void InitInternal() override;
-	void ResolveTextureValues() override;
+	void ResolveUniformValues() override;
 private:
 	void SetupTextures();
 

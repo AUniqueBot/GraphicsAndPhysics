@@ -289,10 +289,10 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 		return;
 	case PropertyType::Object:
 		DrawPropertyObject(object, prop, name);
-		break;
+		return;
 	case PropertyType::ResourceHandle:
 		DrawPropertyResourceHandle(object, prop, name);
-		break;
+		return;
 	default:
 		break;
 	}
@@ -455,7 +455,9 @@ void UIWidget_Inspector::DrawPropertyResourceHandle(
 	const PropertyMD::Property& prop, 
 	const std::string& key) {
 	ResourceHandle* handle = reinterpret_cast<ResourceHandle*>(object);
+	if (!handle) return;
 	std::shared_ptr<BaseResource> res = handle->GetBaseResource();
+	if (!res) return;
 	for (auto& prop : res->GetProperties()) {
 		DrawPropertyElement((void*)res.get(), prop, prop.m_name);
 	}
@@ -477,8 +479,8 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 		auto& list = prop.m_list;
 		size_t size = static_cast<size_t>(list.m_size(object));
 		
-		ImGui::TableSetupColumn("Index");
-		ImGui::TableSetupColumn("Element");
+		ImGui::TableSetupColumn("##Index", ImGuiTableColumnFlags_WidthFixed, 40.0f);
+		ImGui::TableSetupColumn("Element", ImGuiTableColumnFlags_WidthStretch);
 		ImGui::TableHeadersRow();
 
 		for (size_t i{}; i < size; ++i) {

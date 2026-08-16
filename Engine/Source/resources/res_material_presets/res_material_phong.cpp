@@ -13,15 +13,19 @@ void PhongMaterial::InitInternal() {
     SetupTextures();
 }
 
-void PhongMaterial::ResolveTextureValues() {
-    if (!m_textureReferenceDirty) return;
-    m_textureReferenceDirty = false;
+void PhongMaterial::ResolveUniformValues() {
+    if (!m_uniformDataDirty) return;
+    m_uniformDataDirty = false;
 
 
     m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
     m_materialValues[U_SPECULAR]->SetValue(GetSpecularTextureID());
     m_materialValues[U_GLOSS]->SetValue(GetGlossTextureID());
+
+    m_materialValues[U_EXPONENT]->SetValue(m_exponentVal);
+
 }
+
 
 
 Materials::ShadingModel PhongMaterial::GetShadingModel() const { 
@@ -54,7 +58,7 @@ void PhongMaterial::SetColorImageTexture(GLuint _textureId) {
 void PhongMaterial::SetUsesColorValue(bool _usesColor) {
     if (_usesColor == m_usesColorValue) return;
     m_usesColorValue = _usesColor;
-    m_textureReferenceDirty = true;
+    m_uniformDataDirty = true;
 }
 
 bool PhongMaterial::UsesColorValue() const {
@@ -87,7 +91,7 @@ const GLuint& PhongMaterial::GetSpecularImageTexture() const {
 void PhongMaterial::SetUsesSpecularValue(bool _usesSpecularValue) {
     if (_usesSpecularValue == m_usesSpecularValue) return;
     m_usesSpecularValue = _usesSpecularValue;
-    m_textureReferenceDirty = true;
+    m_uniformDataDirty = true;
 }
 
 bool PhongMaterial::UsesSpecularValue() const {
@@ -135,12 +139,23 @@ GLuint PhongMaterial::GetGlossTextureID() const {
 void PhongMaterial::SetUsesGlossValue(bool _usesGlossValue) {
     if (_usesGlossValue == m_usesGlossValue) return;
     m_usesGlossValue = _usesGlossValue;
-    m_textureReferenceDirty = true;
+    m_uniformDataDirty = true;
 }
 
 bool PhongMaterial::UsesGlossValue() const {
     return m_usesGlossValue;
 }
+
+void PhongMaterial::Exponent(int _expVal) {
+    if (_expVal == m_exponentVal) return;
+    m_exponentVal = _expVal;
+    m_uniformDataDirty = true;
+}
+
+const int& PhongMaterial::Exponent() const {
+    return m_exponentVal;
+}
+
 
 void PhongMaterial::SetupTextures() {
 
@@ -178,6 +193,10 @@ void PhongMaterial::SetupTextures() {
     m_materialValues.Add((MaterialValueData{ matValue }), U_GLOSS);
 
 
+    MaterialValueData expVal;
+    expVal.m_type = MaterialValueData::ValueType::Int;
+    expVal.SetValue(m_exponentVal);
+    m_materialValues.Add((MaterialValueData{}), U_EXPONENT);
 }
  
 
@@ -198,6 +217,12 @@ std::vector<PropertyMD::Property>& PhongMaterial::GetProps() {
             "Gloss", PropertyType::Float, PropertyMD::Shape::Scalar, 1,
             static_cast<const float& (PhongMaterial::*)() const>(&PhongMaterial::Gloss),
             static_cast<void(PhongMaterial::*)(float)>(&PhongMaterial::Gloss),
+            true
+        ),
+        PropertyMD::MakeProperty<PhongMaterial>(
+            "Exponent", PropertyType::Int, PropertyMD::Shape::Scalar, 1,
+            static_cast<const int& (PhongMaterial::*)() const>(&PhongMaterial::Exponent),
+            static_cast<void(PhongMaterial::*)(int)>(&PhongMaterial::Exponent),
             true
         ),
     };

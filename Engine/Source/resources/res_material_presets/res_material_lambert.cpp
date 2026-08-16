@@ -11,7 +11,7 @@ void LambertMaterial::InitInternal() {
     SetupTextures();
 }
 
-void LambertMaterial::ResolveTextureValues() {
+void LambertMaterial::ResolveUniformValues() {
     
     if (m_valuesDirty) {
         if (m_textureColor.HandleIsValid()) {
@@ -23,8 +23,8 @@ void LambertMaterial::ResolveTextureValues() {
     }
     
     // - uniform values ------------------
-    if (m_textureReferenceDirty) {
-        m_textureReferenceDirty = false;
+    if (m_uniformDataDirty) {
+        m_uniformDataDirty = false;
         m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
     }
 }
@@ -52,7 +52,7 @@ void LambertMaterial::Color(unsigned _newColor) {
 void LambertMaterial::UsesColor(bool _usesColor) {
     if (_usesColor == m_usesColor) return;
     m_usesColor = _usesColor;
-    m_textureReferenceDirty = true;
+    m_uniformDataDirty = true;
 }
 
 bool LambertMaterial::UsesColor() const {

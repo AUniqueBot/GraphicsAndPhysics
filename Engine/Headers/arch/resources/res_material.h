@@ -213,7 +213,7 @@ protected:
 	void InitUniformLocations();
 	void SetUniform(std::string _uniformName, UniformData _data) const;
 
-	virtual void ResolveTextureValues();
+	virtual void ResolveUniformValues();
 
 	GLuint m_shader								{};
 	bool m_initialized							{};
@@ -221,7 +221,7 @@ protected:
 	std::map<std::string, GLint> m_uniformLocations;
 	SparseSet<std::string, MaterialValueData> m_materialValues;
 
-	bool m_textureReferenceDirty				{ true }; // starts as true to initialize the values first.
+	bool m_uniformDataDirty				{ true }; // starts as true to initialize the values first.
 	bool m_valuesDirty							{ true };
 	
 

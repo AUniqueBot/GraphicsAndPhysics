@@ -100,5 +100,5 @@ namespace VertexLayouts {
 }
 
 
-class aiMesh;
+struct aiMesh;
 VertexLayout GenerateVertexLayout(const aiMesh& _mesh);

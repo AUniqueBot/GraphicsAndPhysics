@@ -83,7 +83,7 @@ std::shared_ptr<Material> MaterialManager::LoadMaterial(const rapidjson::Value& 
 
 	else {
 		// get resource id.
-		RES_ID id = shader.GetInt64();
+		RES_ID id = shader.GetInt();
 		// 
 	}
 

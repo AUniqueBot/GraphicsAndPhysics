@@ -50,6 +50,8 @@ public:
 	void SetUsesGlossValue(bool _usesGlossValue);
 	bool UsesGlossValue() const;
 	 
+	void Exponent(int _expVal);
+	const int& Exponent() const;
 
 
 
@@ -57,7 +59,7 @@ public:
 protected:
 
 	void InitInternal() override; 
-	void ResolveTextureValues() override;
+	void ResolveUniformValues() override;
 
 private:
 	void SetupTextures();  
@@ -73,6 +75,9 @@ private:
 	float m_glossVal					{ 1.0f };
 	bool m_usesGlossValue				{ true };
 	 
+	int m_exponentVal					{ 32 };
+
+	bool m_valuesDirty					{ true };
 
 	Texture2D m_textureColor;
 	GLuint m_reservedColorTexId{}; 

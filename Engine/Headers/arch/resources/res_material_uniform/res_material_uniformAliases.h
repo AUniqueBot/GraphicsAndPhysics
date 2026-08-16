@@ -20,9 +20,10 @@ inline constexpr const char* U_GLOSS					{ "u_gloss" };
 inline constexpr const char* U_METALNESS				{ "u_metalness" };
 inline constexpr const char* U_ROUGHNESS				{ "u_roughness" };
 
-inline constexpr const char* U_EMISIVE							{ "u_emissive" };
+inline constexpr const char* U_EMISIVE					{ "u_emissive" };
 
-
+// - phong -----------------------------------------------------
+inline constexpr const char* U_EXPONENT					{ "u_exponent" };
 
 // - other ------------------------------------------------------
 inline constexpr const char* U_DELTATIME				{ "u_deltaTime" };
