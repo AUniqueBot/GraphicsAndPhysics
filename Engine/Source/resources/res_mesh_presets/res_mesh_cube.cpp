@@ -1,97 +1,97 @@
 #include <arch/resources/res_mesh_presets/res_mesh_cube.h>
 
-Cube::Cube(CubeCreationProps _props) : 
+CubeRes::CubeRes(CubeCreationProps _props) : 
 	m_dimensions{ _props.dimensions }, m_subdivisions{ _props.subdivisions }
 {
 	m_name = "Cube";
 }
 
-void Cube::Init() {
+void CubeRes::Init() {
 	SetSubmeshCount(1);
 	AddSubmesh(Submesh());
 	UpdateVertexData();
 }
 
-void Cube::SetXDimensions(float _dims) {
+void CubeRes::SetXDimensions(float _dims) {
 	if (m_dimensions.x == _dims) return;
 	m_dimensions.x = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetYDimensions(float _dims) {
+void CubeRes::SetYDimensions(float _dims) {
 	if (m_dimensions.y == _dims) return;
 	m_dimensions.y = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetZDimensions(float _dims) {
+void CubeRes::SetZDimensions(float _dims) {
 	if (m_dimensions.z == _dims) return;
 	m_dimensions.z = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetDimensions(glm::vec3 _dims) {
+void CubeRes::SetDimensions(glm::vec3 _dims) {
 	if (m_dimensions == _dims) return;
 	m_dimensions = _dims;
 	UpdateVertexData();
 }
 
 
-const float& Cube::GetXDimensions() const {
+const float& CubeRes::GetXDimensions() const {
 	return m_dimensions.x;
 }
 
-const float& Cube::GetYDimensions() const {
+const float& CubeRes::GetYDimensions() const {
 	return m_dimensions.y;
 }
 
-const float& Cube::GetZDimensions() const {
+const float& CubeRes::GetZDimensions() const {
 	return m_dimensions.z;
 }
 
-const glm::vec3& Cube::GetDimensions() const {
+const glm::vec3& CubeRes::GetDimensions() const {
 	return m_dimensions;
 }
 
 
 // -----------------------------------------------------------
-void Cube::SetXSubdivisions(int _dims) {
+void CubeRes::SetXSubdivisions(int _dims) {
 	if (m_subdivisions.x == _dims) return;
 	m_subdivisions.x = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetYSubdivisions(int _dims) {
+void CubeRes::SetYSubdivisions(int _dims) {
 	if (m_subdivisions.y == _dims) return;
 	m_subdivisions.y = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetZSubdivisions(int _dims) {
+void CubeRes::SetZSubdivisions(int _dims) {
 	if (m_subdivisions.z == _dims) return;
 	m_subdivisions.z = _dims;
 	UpdateVertexData();
 }
 
-void Cube::SetSubdivisions(glm::ivec3 _dims) {
+void CubeRes::SetSubdivisions(glm::ivec3 _dims) {
 	if (m_subdivisions == _dims) return;
 	m_subdivisions = _dims;
 	UpdateVertexData();
 }
 
-const int& Cube::GetXSubdivisions() const {
+const int& CubeRes::GetXSubdivisions() const {
 	return m_subdivisions.x;
 }
 
-const int& Cube::GetYSubdivisions() const {
+const int& CubeRes::GetYSubdivisions() const {
 	return m_subdivisions.y;
 }
 
-const int& Cube::GetZSubdivisions() const{
+const int& CubeRes::GetZSubdivisions() const{
 	return m_subdivisions.z;
 }
 
-const glm::ivec3& Cube::GetSubdivisions() const {
+const glm::ivec3& CubeRes::GetSubdivisions() const {
 	return m_subdivisions;
 }
 
@@ -100,7 +100,7 @@ const glm::ivec3& Cube::GetSubdivisions() const {
 
 
 // -----------------------------------------------------------
-void Cube::UpdateVertexData() {
+void CubeRes::UpdateVertexData() {
 	ClearMeshInformation();
 
 	std::vector<glm::vec3> vertexPositions;

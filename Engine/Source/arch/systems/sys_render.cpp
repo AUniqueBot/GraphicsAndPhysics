@@ -176,11 +176,11 @@ void RenderSystem::PreUpdate() {
         RES_ID meshResId = mr.GetMesh();
         if (!mrMgr.Has(meshResId))
             continue;
-        std::shared_ptr<Mesh> meshRes = static_pointer_cast<Mesh>(resMgr.GetResource(meshResId));
+        std::shared_ptr<MeshRes> meshRes = static_pointer_cast<MeshRes>(resMgr.GetResource(meshResId));
         if (!meshRes || !meshRes->InfoDirty())
             continue;
         
-        Mesh& meshCpu = *meshRes;
+        MeshRes& meshCpu = *meshRes;
         meshCpu.FlagInfoClean();
 
         if (meshCpu.GetGPUResourceHandle().IsValid()) {
@@ -491,7 +491,7 @@ void RenderSystem::LightingRenderPass(
 
         RES_ID meshId = mr->GetMesh();
         if (meshId == BaseResource::C_RES_ID_INVALID) continue;
-        std::shared_ptr<Mesh> mesh = GetMesh(meshId);
+        std::shared_ptr<MeshRes> mesh = GetMesh(meshId);
 
         bool isSelected{ _er.EntityIsSelected(e.GetID()) };
         FillObjectUBO(e, *trs);
@@ -595,7 +595,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
 
             RES_ID meshId = mr.GetMesh();
             if (meshId == BaseResource::C_RES_ID_INVALID) continue;
-            std::shared_ptr<Mesh> mesh = GetMesh(meshId);
+            std::shared_ptr<MeshRes> mesh = GetMesh(meshId);
 
             // do something.
             auto trsMesh = meshEntity->GetComponent<Transform>();
@@ -630,7 +630,7 @@ void RenderSystem::SpotLightShadowRenderPass(
 
 void RenderSystem::Render(const MeshRenderer& _mr) {
     Core& c = Core::GetInstance();
-    std::shared_ptr<const Mesh> mesh    { GetMesh(_mr.GetMesh()) };
+    std::shared_ptr<const MeshRes> mesh    { GetMesh(_mr.GetMesh()) };
     if (!mesh) return;
     GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
     
@@ -692,7 +692,7 @@ const Compositor& RenderSystem::GetCompositor() const {
     return m_compositor;
 }
 
-void RenderSystem::UploadMesh(const Mesh& _mesh) {
+void RenderSystem::UploadMesh(const MeshRes& _mesh) {
     Core& c = Core::GetInstance();
     GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
 }
@@ -975,24 +975,24 @@ std::shared_ptr<const Material> RenderSystem::GetMaterial(RES_ID _matId) const {
     return ptr;
 }
 
-std::shared_ptr<Mesh> RenderSystem::GetMesh(RES_ID _meshId) {
+std::shared_ptr<MeshRes> RenderSystem::GetMesh(RES_ID _meshId) {
     MeshManager& mmgr = Core::GetInstance().GetAssetManager().GetMeshManager();
     if (!mmgr.Has(_meshId)) {
         LOG_WARN("Provided mesh id is not a registered mesh.");
         return nullptr;
     }
     ResourceManager rsmgr = Core::GetInstance().GetResourceManager();
-    auto ptr = static_pointer_cast<Mesh>(rsmgr.GetResource(_meshId));
+    auto ptr = static_pointer_cast<MeshRes>(rsmgr.GetResource(_meshId));
     return ptr;
 }
 
-std::shared_ptr<const Mesh> RenderSystem::GetMesh(RES_ID _meshId) const {
+std::shared_ptr<const MeshRes> RenderSystem::GetMesh(RES_ID _meshId) const {
     MeshManager& mmgr = Core::GetInstance().GetAssetManager().GetMeshManager();
     if (!mmgr.Has(_meshId)) {
         LOG_WARN("Provided mesh id is not a registered mesh.");
         return nullptr;
     }
     ResourceManager rsmgr = Core::GetInstance().GetResourceManager();
-    auto ptr = static_pointer_cast<Mesh>(rsmgr.GetResource(_meshId));
+    auto ptr = static_pointer_cast<MeshRes>(rsmgr.GetResource(_meshId));
     return ptr;
 }

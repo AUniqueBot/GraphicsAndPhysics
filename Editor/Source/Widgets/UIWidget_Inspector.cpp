@@ -180,33 +180,33 @@ void UIWidget_Inspector::Draw() {
 		MeshManager& meshmgr = papc->GetAssetManager().GetMeshManager();
 		// mesh handling.
 		RES_ID meshId = mr.GetMesh();
-		std::shared_ptr<Mesh> selectedMesh = static_pointer_cast<Mesh>(resmgr.GetResource(meshId));
+		std::shared_ptr<MeshRes> selectedMesh = static_pointer_cast<MeshRes>(resmgr.GetResource(meshId));
 
 
 		std::string selectedMeshName = selectedMesh->Name();
 		RES_ID selectedMeshID = selectedMesh->ResourceID();
 		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
 			const auto& resPool = resmgr.GetResourcePool();
-			const auto& meshIDs = resmgr.GetResourcePoolManifest(Mesh::GetResourceTypeID());
+			const auto& meshIDs = resmgr.GetResourcePoolManifest(MeshRes::GetResourceTypeID());
 			
 			// first are the default meshes
 			bool isSelected = false;
 			for (unsigned i{}; i < Primitive::__COUNT; ++i) {
 
-				std::shared_ptr<Mesh> mesh	{};
+				std::shared_ptr<MeshRes> mesh	{};
 				std::string primitiveType	{};
 				switch (i) {
 					case Primitive::CUBE:
-						mesh.reset(new Cube());
+						mesh.reset(new CubeRes());
 						primitiveType = "Cube";
 						break;
 					case Primitive::SPHERE:
-						mesh.reset(new Sphere());
+						mesh.reset(new SphereRes());
 						primitiveType = "Sphere";
 						break;
 					case Primitive::PLANE:
 						primitiveType = "Plane";
-						mesh.reset(new Plane());
+						mesh.reset(new PlaneRes());
 						break;
 					case Primitive::ICOSPHERE:
 						continue;
@@ -227,7 +227,7 @@ void UIWidget_Inspector::Draw() {
 				imguiMeshID += std::to_string(id);
 				PushID(imguiMeshID.c_str());
 
-				const auto& mesh = std::dynamic_pointer_cast<Mesh>(resPool.at(id));
+				const auto& mesh = std::dynamic_pointer_cast<MeshRes>(resPool.at(id));
 				std::string name { mesh->ResourcePath().filename().string()  };
 
 				isSelected = selectedMeshID == id;

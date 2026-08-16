@@ -5,14 +5,14 @@
 
 class GPU_Mesh {
 public:
-	void Load(Mesh& _mesh);
-	void Update(Mesh& _mesh);
+	void Load(MeshRes& _mesh);
+	void Update(MeshRes& _mesh);
 	void Destroy();
 
 	std::vector<GPU_Submesh>& GetGPUSubmeshList();
 	const std::vector<GPU_Submesh>& GetGPUSubmeshList() const;
 private:
-	std::shared_ptr<Mesh> m_meshPtr;
+	std::shared_ptr<MeshRes> m_meshPtr;
 	std::vector<GPU_Submesh> m_submeshList;
 	// handle is useless
 };

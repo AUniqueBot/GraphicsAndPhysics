@@ -35,5 +35,5 @@ public:
 
 public:
 	// upload
-	void UploadMeshToGPU(Mesh& _mesh);
+	void UploadMeshToGPU(MeshRes& _mesh);
 };

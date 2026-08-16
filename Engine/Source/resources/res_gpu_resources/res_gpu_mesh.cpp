@@ -1,7 +1,7 @@
 #include <pch.h>
 #include <arch/resources/res_gpu_resources/res_gpu_mesh.h>
 
-void GPU_Mesh::Load(Mesh& _mesh) {
+void GPU_Mesh::Load(MeshRes& _mesh) {
 	for (const Submesh& submesh : _mesh.GetSubmeshList()) {
 		GPU_Submesh gpuSubmesh;
 		gpuSubmesh.Load(submesh);
@@ -9,7 +9,7 @@ void GPU_Mesh::Load(Mesh& _mesh) {
 	}
 }
 
-void GPU_Mesh::Update(Mesh& _mesh) {
+void GPU_Mesh::Update(MeshRes& _mesh) {
 	for (const Submesh& submesh : _mesh.GetSubmeshList()) {
 		GPU_Submesh gpuSubmesh;
 		gpuSubmesh.Load(submesh);

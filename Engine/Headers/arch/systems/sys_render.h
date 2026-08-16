@@ -143,7 +143,7 @@ public:
 
 
 private:
-	void UploadMesh(const Mesh& _mesh);
+	void UploadMesh(const MeshRes& _mesh);
 
 private:
 	/*!
@@ -173,8 +173,8 @@ private:
 	
 	std::shared_ptr<Material> GetMaterial(RES_ID _matId);
 	std::shared_ptr<const Material> GetMaterial(RES_ID _matId) const;
-	std::shared_ptr<Mesh> GetMesh(RES_ID _meshId);
-	std::shared_ptr<const Mesh> GetMesh(RES_ID _meshId) const;
+	std::shared_ptr<MeshRes> GetMesh(RES_ID _meshId);
+	std::shared_ptr<const MeshRes> GetMesh(RES_ID _meshId) const;
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };

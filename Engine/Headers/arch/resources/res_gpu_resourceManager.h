@@ -18,7 +18,7 @@ public:
 		TextureProperties::TextureProps _props
 	);
 	GPUResourceHandle CreateVAO();
-	GPUResourceHandle CreateMesh(Mesh& _mesh);
+	GPUResourceHandle CreateMesh(MeshRes& _mesh);
 
 
 	bool DeleteResource(GPUResourceHandle _handle);

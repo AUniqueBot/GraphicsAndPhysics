@@ -7,10 +7,10 @@ struct PlaneCreationProps {
 };
 
 
-class Plane : public Mesh {
+class PlaneRes : public MeshRes {
 private:
 public:
-	Plane(PlaneCreationProps _props = PlaneCreationProps());
+	PlaneRes(PlaneCreationProps _props = PlaneCreationProps());
 
 	void Init() override;
 
@@ -47,56 +47,56 @@ struct PlaneHandle : public MeshHandle {
 
 	// - dimensions ---------------------------------
 	inline void SetXDimensions(float _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetXDimensions(_dims);
 	}
 	inline void SetYDimensions(float _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetYDimensions(_dims);
 	}
 	inline void SetDimensions(glm::vec3 _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetDimensions(_dims);
 	}
 
 
 	inline float GetXDimensions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetXDimensions() : -1.f;
 	}
 	inline float GetYDimensions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetYDimensions() : -1.f;
 	}
 	inline glm::vec2 GetDimensions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetDimensions() : glm::vec2(-1.f, -1.f);
 	}
 
 	// - subdivs ------------------------------------
 	inline void SetXSubdivisions(int _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetXSubdivisions(_dims);
 	}
 	inline void SetYSubdivisions(int _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetYSubdivisions(_dims);
 	}
 	inline void SetSubdivisions(glm::ivec3 _dims) {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		if (res) res->SetSubdivisions(_dims);
 	}
 
 	inline int GetXSubdivisions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetXSubdivisions() : -1;
 	}
 	inline int GetYSubdivisions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetYSubdivisions() : -1;
 	}
 	inline glm::ivec2 GetSubdivisions() {
-		auto res = GetResource<Plane>();
+		auto res = GetResource<PlaneRes>();
 		return res ? res->GetSubdivisions() : glm::ivec2(-1, -1);
 	}
 };

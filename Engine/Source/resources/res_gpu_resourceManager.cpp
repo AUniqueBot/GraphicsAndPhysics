@@ -28,7 +28,7 @@ GPUResourceHandle GPUResourceManager::CreateVAO() {
     return { id, GPUDatatype::VAO };
 }
 
-GPUResourceHandle GPUResourceManager::CreateMesh(Mesh& _mesh) {
+GPUResourceHandle GPUResourceManager::CreateMesh(MeshRes& _mesh) {
     GPU_Mesh mesh;
     mesh.Load(_mesh);
     GPURES_ID id = m_meshStorage.AddResource(std::move(mesh));

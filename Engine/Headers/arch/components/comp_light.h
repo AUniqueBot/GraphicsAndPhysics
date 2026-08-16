@@ -155,7 +155,7 @@ public:
 
 
 	void RenderShadow( 
-		const Mesh& _mr, 
+		const MeshRes& _mr, 
 		const glm::mat4& _objectMatrix
 	) const;
 

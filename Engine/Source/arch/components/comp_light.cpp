@@ -103,7 +103,7 @@ LightData& Light::GetLightData() {
     return m_lightData;
 }
 
-void Light::RenderShadow(const Mesh& _mr, const glm::mat4& _objectMatrix) const {
+void Light::RenderShadow(const MeshRes& _mr, const glm::mat4& _objectMatrix) const {
     
     const LightData lightData{ GetLightData() };
      

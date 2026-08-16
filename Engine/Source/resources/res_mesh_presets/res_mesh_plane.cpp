@@ -1,69 +1,69 @@
 #include <arch/resources/res_mesh_presets/res_mesh_plane.h>
 
 
-Plane::Plane(PlaneCreationProps _props) :
+PlaneRes::PlaneRes(PlaneCreationProps _props) :
 	m_dimensions { _props.dimensions }, m_subdivisions { _props.subdivisions } {
 	m_name = "Plane";
 }
 
-void Plane::Init() {
+void PlaneRes::Init() {
 	SetSubmeshCount(1);
 	AddSubmesh(Submesh());
 	UpdateVertexData();
 }
 
 
-void Plane::SetXDimensions(float _dims) {
+void PlaneRes::SetXDimensions(float _dims) {
 	if (m_dimensions.x == _dims) return;
 	m_dimensions.x = _dims;
 
 }
-void Plane::SetYDimensions(float _dims) {
+void PlaneRes::SetYDimensions(float _dims) {
 	if (m_dimensions.y == _dims) return;
 	m_dimensions.y = _dims;
 }
-void Plane::SetDimensions(glm::vec2 _dims) {
+void PlaneRes::SetDimensions(glm::vec2 _dims) {
 	if (m_dimensions == _dims) return;
 	m_dimensions = _dims;
 }
 
-const float& Plane::GetXDimensions() const { 
+const float& PlaneRes::GetXDimensions() const { 
 	return m_dimensions.x;
 }
-const float& Plane::GetYDimensions() const {
+const float& PlaneRes::GetYDimensions() const {
 	return m_dimensions.y;
 }
-const glm::vec2& Plane::GetDimensions() const {
+const glm::vec2& PlaneRes::GetDimensions() const {
 	return m_dimensions;
 }
 
-void Plane::SetXSubdivisions(int _dims) {
+void PlaneRes::SetXSubdivisions(int _dims) {
 	if (m_subdivisions.x == _dims) return;
 	m_subdivisions.x = _dims;
 
 }
-void Plane::SetYSubdivisions(int _dims) {
+void PlaneRes::SetYSubdivisions(int _dims) {
 	if (m_subdivisions.y == _dims) return;
 	m_subdivisions.y = _dims;
 
 }
-void Plane::SetSubdivisions(glm::ivec2 _dims) {
+void PlaneRes::SetSubdivisions(glm::ivec2 _dims) {
 	if (m_subdivisions == _dims) return;
 	m_subdivisions = _dims;
 }
 
-const int& Plane::GetXSubdivisions() const {
+const int& PlaneRes::GetXSubdivisions() const {
 	return m_subdivisions.x;
 }
-const int& Plane::GetYSubdivisions() const {
+const int& PlaneRes::GetYSubdivisions() const {
 	return m_subdivisions.y;
 }
-const glm::ivec2& Plane::GetSubdivisions() const {
+const glm::ivec2& PlaneRes::GetSubdivisions() const {
 	return m_subdivisions;
 }
 
 
-void Plane::UpdateVertexData() {
+void PlaneRes::UpdateVertexData() {
 
 	ClearMeshInformation();
 	std::vector<glm::vec3> vertexPositions;

@@ -21,7 +21,7 @@ void MeshManager::Init() {
 
 
 MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
-	std::shared_ptr<Mesh> mesh = std::make_shared<Mesh>();
+	std::shared_ptr<MeshRes> mesh = std::make_shared<MeshRes>();
 	// -------------------------------------------------------------------------------------------
 	mesh->LoadMeshFromPath(_path);
 	MeshHandle handle(RegisterResource(mesh));
@@ -29,21 +29,21 @@ MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
 }
 
 CubeHandle MeshManager::CreateCubeMesh(CubeCreationProps _props) {
-	std::shared_ptr<Cube> mesh = std::make_shared<Cube>(_props);	
+	std::shared_ptr<CubeRes> mesh = std::make_shared<CubeRes>(_props);	
 	mesh->Init();
 	CubeHandle handle(RegisterResource(mesh));
 	return handle;
 }
 
 SphereHandle MeshManager::CreateSphereMesh(SphereCreationProps _props) {
-	std::shared_ptr<Sphere> mesh = std::make_shared<Sphere>(_props);
+	std::shared_ptr<SphereRes> mesh = std::make_shared<SphereRes>(_props);
 	mesh->Init();
 	SphereHandle handle(RegisterResource(mesh));
 	return handle;
 }
 
 MeshHandle MeshManager::CreateIcosphereMesh() {
-	std::shared_ptr<Sphere> mesh = std::make_shared<Sphere>();
+	std::shared_ptr<SphereRes> mesh = std::make_shared<SphereRes>();
 	mesh->Init();
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
 	MeshHandle handle(idr);
@@ -52,13 +52,13 @@ MeshHandle MeshManager::CreateIcosphereMesh() {
 }
 
 PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
-	std::shared_ptr<Plane> mesh = std::make_shared<Plane>(_props);
+	std::shared_ptr<PlaneRes> mesh = std::make_shared<PlaneRes>(_props);
 	mesh->Init();
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
 	PlaneHandle handle(RegisterResource(mesh));
 	return handle;
 }
 
-void MeshManager::UploadMeshToGPU(Mesh& _mesh) {
+void MeshManager::UploadMeshToGPU(MeshRes& _mesh) {
 	_mesh.SetGPUResourceHandle(m_gpuResourceManager.CreateMesh(_mesh));
 }

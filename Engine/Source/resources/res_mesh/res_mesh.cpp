@@ -54,7 +54,7 @@ namespace {
 
 
 
-void Mesh::Load() {
+void MeshRes::Load() {
 
 
 	// general flow
@@ -151,11 +151,11 @@ void Mesh::Load() {
 
 }
 
-void Mesh::Init() {
+void MeshRes::Init() {
 	LoadAsset();
 }
 
-void Mesh::LoadAsset() {
+void MeshRes::LoadAsset() {
 	if (!BaseResource::IsAssetLoaded()) {
 		BaseResource::LoadAsset();
 		Load();
@@ -163,7 +163,7 @@ void Mesh::LoadAsset() {
 	}
 }
 
-void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
+void MeshRes::LoadMeshFromPath(std::filesystem::path _pathToModel) {
 	if (BaseResource::IsAssetLoaded()) {
 		BaseResource::UnloadAsset();	
 	}
@@ -177,75 +177,75 @@ void Mesh::LoadMeshFromPath(std::filesystem::path _pathToModel) {
 
 
 
-size_t Mesh::GetVertexCount() const {
+size_t MeshRes::GetVertexCount() const {
 	return m_attributeData.at(VertexAttributeConstants::C_VTXATTR_POSITION)->ElementCount() / 3; // pos = vec3 = 3x float
 }
 
-void Mesh::SetSubmeshCount(size_t _count) {
+void MeshRes::SetSubmeshCount(size_t _count) {
 	m_submeshList.reserve(_count);
 }
 
-size_t Mesh::GetSubmeshCount() const {
+size_t MeshRes::GetSubmeshCount() const {
 	return m_submeshList.capacity();
 }
 
-void Mesh::AddSubmesh(Submesh&& _smesh) {
+void MeshRes::AddSubmesh(Submesh&& _smesh) {
 	m_submeshList.emplace_back(std::move(_smesh));
 }
 
-Submesh& Mesh::GetSubmesh(int _idx) {
+Submesh& MeshRes::GetSubmesh(int _idx) {
 	return m_submeshList[_idx];
 }
-const Submesh& Mesh::GetSubmesh(int _idx) const {
+const Submesh& MeshRes::GetSubmesh(int _idx) const {
 	return m_submeshList[_idx];
 }
 
-std::vector<Submesh>& Mesh::GetSubmeshList() {
+std::vector<Submesh>& MeshRes::GetSubmeshList() {
 	return m_submeshList;
 }
 
-const std::vector<Submesh>& Mesh::GetSubmeshList() const {
+const std::vector<Submesh>& MeshRes::GetSubmeshList() const {
 	return m_submeshList;
 }
 
-const size_t Mesh::GetIndexDataSize() const {
+const size_t MeshRes::GetIndexDataSize() const {
 	return m_indices.size() * sizeof(glm::ivec3);
 }
 
-const glm::uvec3* Mesh::GetIndexData() const {
+const glm::uvec3* MeshRes::GetIndexData() const {
 	return m_indices.data();
 }
 
-const size_t Mesh::GetIndexDataCount() const {
+const size_t MeshRes::GetIndexDataCount() const {
 	return m_indices.size();
 }
 
 
-std::string Mesh::VAOIdentifier() const {
+std::string MeshRes::VAOIdentifier() const {
 	return m_vaoName;
 }
 
-void Mesh::VAOIdentifier(std::string& _newIdentifier) {
+void MeshRes::VAOIdentifier(std::string& _newIdentifier) {
 	if (m_vaoName == _newIdentifier) return;
 	m_vaoName = _newIdentifier;
 }
 
 
-void Mesh::ClearMeshInformation() {
+void MeshRes::ClearMeshInformation() {
 	m_attributeData.clear();
 }
 
 // the
-void Mesh::SetVertexPositions(const glm::vec3* _pointer, size_t _vertexCount) {
+void MeshRes::SetVertexPositions(const glm::vec3* _pointer, size_t _vertexCount) {
 	SetData<glm::vec3>(VertexAttributeConstants::C_VTXATTR_POSITION, _pointer, _vertexCount);
 }
 
-void Mesh::SetVertexNormals(const glm::vec3* _pointer, size_t _vertexCount) {
+void MeshRes::SetVertexNormals(const glm::vec3* _pointer, size_t _vertexCount) {
 	SetData<glm::vec3>(VertexAttributeConstants::C_VTXATTR_NORMAL, _pointer, _vertexCount);
 }
 
 
-void Mesh::SetIndices(const unsigned* _pointer, size_t _indexCount) {
+void MeshRes::SetIndices(const unsigned* _pointer, size_t _indexCount) {
 	// 1 face == 3 verts.
 	size_t faceGrpCount{ _indexCount / 3  };
 	m_indices.resize(faceGrpCount);
@@ -259,45 +259,45 @@ void Mesh::SetIndices(const unsigned* _pointer, size_t _indexCount) {
 	}
 }
 
-void Mesh::SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount) {
+void MeshRes::SetIndices(const glm::uvec3* _pointer, size_t _indexGroupCount) {
 	m_indices.assign(_pointer, _pointer + _indexGroupCount);
 }
 
-VertexAttributeDatabase* Mesh::GetDatabase(const std::string& _name) {
+VertexAttributeDatabase* MeshRes::GetDatabase(const std::string& _name) {
 	auto it = m_attributeData.find(_name);
 	return it == m_attributeData.end() ? nullptr : it->second.get();
 }
 
-const VertexAttributeDatabase* Mesh::GetDatabase(const std::string& _name) const {
+const VertexAttributeDatabase* MeshRes::GetDatabase(const std::string& _name) const {
 	auto it = m_attributeData.find(_name);
 	return it == m_attributeData.end() ? nullptr : it->second.get();
 }
 
-AttributeData& Mesh::GetVertexInformation() {
+AttributeData& MeshRes::GetVertexInformation() {
 	return m_attributeData;
 }
 
-const AttributeData& Mesh::GetVertexInformation() const {
+const AttributeData& MeshRes::GetVertexInformation() const {
 	return m_attributeData;
 }
 
-void Mesh::SetGPUResourceHandle(GPUResourceHandle _newHandle) {
+void MeshRes::SetGPUResourceHandle(GPUResourceHandle _newHandle) {
 	m_meshHandle = _newHandle;
 }
 
-const GPUResourceHandle& Mesh::GetGPUResourceHandle() const {
+const GPUResourceHandle& MeshRes::GetGPUResourceHandle() const {
 	return m_meshHandle;
 }
 
-bool Mesh::InfoDirty() const {
+bool MeshRes::InfoDirty() const {
 	return m_infoDirty;
 }
 
-void Mesh::FlagInfoClean() {
+void MeshRes::FlagInfoClean() {
 	m_infoDirty = false;
 }
 
-bool Mesh::HasValidGPUResourceHandle() const {
+bool MeshRes::HasValidGPUResourceHandle() const {
 	return m_meshHandle.IsValid();
 }
 

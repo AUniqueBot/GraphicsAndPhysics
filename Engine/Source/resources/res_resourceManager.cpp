@@ -22,7 +22,7 @@ void ResourceManager::Init() {
 	
 
 
-	RegisterResourceType<Mesh>();
+	RegisterResourceType<MeshRes>();
 	RegisterResourceType<Shader>();
 	RegisterResourceType<ShaderProgram>();
 	RegisterResourceType<Material>();
@@ -30,8 +30,8 @@ void ResourceManager::Init() {
 
 	
 	// registering the default file extensions
-	RegisterFileExtension(".stl", Mesh::GetResourceTypeID());
-	RegisterFileExtension(".obj", Mesh::GetResourceTypeID());
+	RegisterFileExtension(".stl", MeshRes::GetResourceTypeID());
+	RegisterFileExtension(".obj", MeshRes::GetResourceTypeID());
 	RegisterFileExtension(".frag", ShaderProgram::GetResourceTypeID());
 	RegisterFileExtension(".vert", ShaderProgram::GetResourceTypeID());
 
@@ -293,8 +293,8 @@ void ResourceManager::LoadResource(std::filesystem::path _filePath) {
 	}
 
 
-	if (resType == Mesh::GetResourceTypeID()) {
-		std::shared_ptr<Mesh> mesh	{ std::make_shared<Mesh>() };
+	if (resType == MeshRes::GetResourceTypeID()) {
+		std::shared_ptr<MeshRes> mesh	{ std::make_shared<MeshRes>() };
 		
 		mesh->LoadMeshFromPath(_filePath);
 		LOG_INFO("Loading mesh from "<< _filePath);

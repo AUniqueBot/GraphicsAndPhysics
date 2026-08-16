@@ -8,14 +8,14 @@
 
 
 // not including the whole of assimp here.
-class Mesh;
+class MeshRes;
 class GPUResourceManager;
 using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;
 
 
 
 // if this is the resource, then the handles
-class Mesh : public Resource<Mesh> {
+class MeshRes : public Resource<MeshRes> {
 
 private:
 
@@ -139,11 +139,11 @@ protected:
 
 struct MeshHandle : public ResourceHandle {
 	inline MeshHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
-	inline std::shared_ptr<Mesh> GetMeshResource() {
-		return GetResource<Mesh>();
+	inline std::shared_ptr<MeshRes> GetMeshResource() {
+		return GetResource<MeshRes>();
 	}
-	inline std::shared_ptr<const Mesh> GetMeshResource() const {
-		return GetResource<Mesh>();
+	inline std::shared_ptr<const MeshRes> GetMeshResource() const {
+		return GetResource<MeshRes>();
 	}
 };
 
