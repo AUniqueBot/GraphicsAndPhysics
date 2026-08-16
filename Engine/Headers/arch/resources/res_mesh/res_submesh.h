@@ -16,9 +16,6 @@ public:
 	Submesh(Submesh&&) noexcept = default;
 	Submesh& operator=(Submesh&&) noexcept = default;
 
-
-
-
 public:
 	static Submesh CreateSubmesh(const aiMesh& _mesh, bool _isTriangulated);
 
@@ -40,6 +37,7 @@ public:
 		std::vector<T> data(_elementCount);
 		data.assign(_pointer, _pointer + _elementCount);
 		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
+		m_infoDirty = true;
 	}
 
 	template <typename T>
@@ -70,10 +68,16 @@ public:
 	size_t GetVertexIndexSize() const;
 
 
-
 public:
 	const RES_ID& GetMaterialID() const;
 	void SetMaterialID(const RES_ID& _id);
+
+public:
+	bool InfoDirty() const;
+
+protected:
+	friend class RenderSystem;
+	void FlagInfoClean();
 
 private:
 
@@ -81,6 +85,8 @@ private:
 	size_t m_vertexCount{ 0 };
 	std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>> m_attributeData;
 	std::vector<glm::uvec3> m_indices;
+
+	bool m_infoDirty	{ true };
 
 	RES_ID m_materialId{ BaseResource::C_RES_ID_INVALID };
 };

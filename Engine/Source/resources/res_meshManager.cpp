@@ -25,8 +25,6 @@ MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
 	// -------------------------------------------------------------------------------------------
 	mesh->LoadMeshFromPath(_path);
 	MeshHandle handle(RegisterResource(mesh));
-	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateMesh(*mesh);
-	mesh->SetGPUResourceHandle(gpuHandle);
 	return handle;
 }
 
@@ -34,8 +32,6 @@ CubeHandle MeshManager::CreateCubeMesh(CubeCreationProps _props) {
 	std::shared_ptr<Cube> mesh = std::make_shared<Cube>(_props);	
 	mesh->Init();
 	CubeHandle handle(RegisterResource(mesh));
-
-
 	return handle;
 }
 
@@ -59,8 +55,7 @@ PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
 	std::shared_ptr<Plane> mesh = std::make_shared<Plane>(_props);
 	mesh->Init();
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
-	PlaneHandle handle(idr);
-	Add(handle.GetResourceID());
+	PlaneHandle handle(RegisterResource(mesh));
 	return handle;
 }
 

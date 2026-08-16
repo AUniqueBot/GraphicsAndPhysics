@@ -62,7 +62,8 @@ void GPU_VertexArrayObject::EnableAttribute(GLuint _attributeIndex) {
 }
 void GPU_VertexArrayObject::DisableAttribute(GLuint _attributeIndex) {
 	GLuint vao = (GLuint)m_handle;
-	glEnableVertexArrayAttrib(vao, _attributeIndex);
+	glDisableVertexArrayAttrib(vao, _attributeIndex);
+	glVertexAttrib4f(_attributeIndex, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 

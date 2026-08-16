@@ -25,14 +25,17 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 		m_vertexBuffers.Add(std::move(buffer), bufferId);
 		EnableAttribute(AliasToAttribute(attrName));
 	}
-	// - set up 
+	// - set up ebo --------------------
 	GPU_Buffer ebo;
 	ebo.Create();
 	size_t eboSize = _submesh.GetVertexIndexSize();
 	ebo.Allocate(eboSize, GL_DYNAMIC_STORAGE_BIT);
 	ebo.Upload(_submesh.GetVertexIndexData(), eboSize);
 	AttachIndexBuffer(ebo, _submesh.GetVertexIndexCount() * glm::uvec3::length());
-	this;
+}
+
+void GPU_Submesh::Update() {
+
 }
 
 void GPU_Submesh::Destroy() {
@@ -49,7 +52,13 @@ size_t GPU_Submesh::GetIndexBufferElementCount() const {
 }
 
 void GPU_Submesh::AttachIndexBuffer(const GPU_Buffer& _buffer, size_t _elementCount) {
+	LOG_INFO("Using buffer [" << _buffer.GetHandle() << "] as an index buffer.");
 	glVertexArrayElementBuffer(m_handle.Get(), _buffer.GetHandle());
 	m_indexBuffer = _buffer;
 	m_indexBufferElementCount = _elementCount;
+
+	GLint ebo;
+	glGetIntegerv(GL_ELEMENT_ARRAY_BUFFER_BINDING, &ebo);
+
+	LOG_INFO("EBO bound to: [" << ebo << "]... " << (ebo == (GLint)_buffer.GetHandle()));
 }

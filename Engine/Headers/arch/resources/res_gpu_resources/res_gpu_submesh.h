@@ -10,6 +10,7 @@
 class GPU_Submesh : public GPU_VertexArrayObject {
 public:
 	void Load(const Submesh& _submesh);
+	void Update();
 	void Destroy() override;
 
 	size_t GetIndexBufferElementCount() const;

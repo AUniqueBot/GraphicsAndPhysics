@@ -3,7 +3,6 @@
 Sphere::Sphere(SphereCreationProps _props)
     : m_radius{ _props.radius }, m_subdivisions{ _props.subdivisions } {
     m_name = "Sphere";
-    Init();
 }
 
 void Sphere::Init() {
@@ -100,9 +99,6 @@ void Sphere::UpdateVertexData() {
         }
     }
 
-    SetData<float>("position", reinterpret_cast<float*>(vertexPositions.data()), vertexPositions.size() * 3);
-    SetData<float>("normal", reinterpret_cast<float*>(vertexNormals.data()), vertexPositions.size() * 3);
-
 
     // - new system ----
     Submesh& submesh = m_submeshList[0];
@@ -110,4 +106,5 @@ void Sphere::UpdateVertexData() {
     submesh.SetVertexCount(vertexPositions.size());
     submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
     submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
+    submesh.SetVertexIndices(m_indices.data(), m_indices.size());
 }

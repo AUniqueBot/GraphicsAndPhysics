@@ -143,6 +143,14 @@ void Submesh::SetMaterialID(const RES_ID& _id) {
 	m_materialId = _id;
 }
 
+bool Submesh::InfoDirty() const {
+	return m_infoDirty;
+}
+
+void Submesh::FlagInfoClean() {
+	m_infoDirty = false;
+}
+
 
 VertexAttributeDatabase* Submesh::GetDatabase(const std::string& _name) {
 	auto it = m_attributeData.find(_name);

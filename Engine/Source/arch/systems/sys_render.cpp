@@ -163,9 +163,34 @@ void RenderSystem::Init() {
 }
  
 void RenderSystem::PreUpdate() {
-    // clear the buffer.
+    // - aliases -----
+    Core& c = Core::GetInstance();
+    EntityRegistry& er = c.GetRegistry();
+    ResourceManager& resMgr = c.GetResourceManager();
+    GPUResourceManager& gpuMgr = c.GetGPUResourceManager();
+    
+    // - update GPU meshes ----
+    MeshManager& mrMgr = c.GetAssetManager().GetMeshManager();
+    ComponentPool<MeshRenderer> mrPool = *er.GetComponentPool<MeshRenderer>();
+    for (MeshRenderer& mr : mrPool) {
+        RES_ID meshResId = mr.GetMesh();
+        if (!mrMgr.Has(meshResId))
+            continue;
+        std::shared_ptr<Mesh> meshRes = static_pointer_cast<Mesh>(resMgr.GetResource(meshResId));
+        if (!meshRes || !meshRes->InfoDirty())
+            continue;
+        
+        Mesh& meshCpu = *meshRes;
+        meshCpu.FlagInfoClean();
 
-    //m_textureManager.UpdateTextures();
+        if (meshCpu.GetGPUResourceHandle().IsValid()) {
+            // not created - create a mesh for the GPU
+            // this works for now as long as the buffers are set to dynamic_storage_bit but will break.
+            gpuMgr.DeleteResource(meshCpu.GetGPUResourceHandle());
+        }
+        meshCpu.SetGPUResourceHandle(gpuMgr.CreateMesh(meshCpu));
+    }
+    TextureManager& texMgr = c.GetAssetManager().GetTextureManager();
 
 }
 
@@ -608,11 +633,12 @@ void RenderSystem::Render(const MeshRenderer& _mr) {
     std::shared_ptr<const Mesh> mesh    { GetMesh(_mr.GetMesh()) };
     if (!mesh) return;
     GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
+    
     SparseSetView<GPU_Mesh> gpuMesh = gpuResMgr.GetResource<GPU_Mesh>(mesh->GetGPUResourceHandle());
     if (!gpuMesh) return;
     for (const GPU_Submesh& submesh : gpuMesh->GetGPUSubmeshList()) {
         submesh.Bind();
-        GLsizei idxCount { static_cast<GLsizei>(submesh.GetIndexBufferElementCount() * glm::uvec3::length()) };
+        GLsizei idxCount { static_cast<GLsizei>(submesh.GetIndexBufferElementCount()) };
         glDrawElements(GL_TRIANGLES, idxCount, GL_UNSIGNED_INT, 0);
     }
 }
@@ -664,6 +690,11 @@ Compositor& RenderSystem::GetCompositor() {
 }
 const Compositor& RenderSystem::GetCompositor() const {
     return m_compositor;
+}
+
+void RenderSystem::UploadMesh(const Mesh& _mesh) {
+    Core& c = Core::GetInstance();
+    GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
 }
 
 

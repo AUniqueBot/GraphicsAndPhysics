@@ -74,7 +74,6 @@ private:
 	void SetupRenderSettings(const Viewport& _viewport);
 
 
-
 	void ShadowRenderPass(
 		const Viewport& _viewport,
 		const EntityRegistry& _er
@@ -143,6 +142,8 @@ public:
 	const Compositor& GetCompositor() const;
 
 
+private:
+	void UploadMesh(const Mesh& _mesh);
 
 private:
 	/*!

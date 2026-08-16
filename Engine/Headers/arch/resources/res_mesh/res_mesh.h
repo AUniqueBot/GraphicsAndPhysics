@@ -74,15 +74,18 @@ public:
 
 	AttributeData& GetVertexInformation();
 	const AttributeData& GetVertexInformation() const;
-
-
 	const GPUResourceHandle& GetGPUResourceHandle() const;
+
+
+	bool InfoDirty() const;
+
 public:
 	template <typename T>
 	inline void SetData(const std::string& name, const T* _pointer, size_t _elementCount) {
 		std::vector<T> data(_elementCount);
 		data.assign(_pointer, _pointer + _elementCount);
 		m_attributeData[name] = std::make_unique<VertexAttributeData<T>>(std::move(data));
+		m_infoDirty = true;
 	}
 
 
@@ -114,6 +117,9 @@ protected:
 
 	bool HasValidGPUResourceHandle() const;
 
+protected:
+	friend class RenderSystem;
+	void FlagInfoClean();
 
 protected:
 	std::string m_vaoName							{ VAOConstants::C_VAO_DEFAULT_MESH }; // vao identifier
@@ -124,6 +130,9 @@ protected:
 
 	
 	std::vector<glm::uvec3> m_indices;
+
+protected:
+	bool m_infoDirty		{ true };
 
 };
 

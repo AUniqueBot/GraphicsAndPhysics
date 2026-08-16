@@ -190,10 +190,6 @@ size_t Mesh::GetSubmeshCount() const {
 }
 
 void Mesh::AddSubmesh(Submesh&& _smesh) {
-	size_t currentCapacity = GetSubmeshCount();
-	if (currentCapacity == m_submeshList.size()) {
-		SetSubmeshCount(currentCapacity);
-	}
 	m_submeshList.emplace_back(std::move(_smesh));
 }
 
@@ -291,6 +287,14 @@ void Mesh::SetGPUResourceHandle(GPUResourceHandle _newHandle) {
 
 const GPUResourceHandle& Mesh::GetGPUResourceHandle() const {
 	return m_meshHandle;
+}
+
+bool Mesh::InfoDirty() const {
+	return m_infoDirty;
+}
+
+void Mesh::FlagInfoClean() {
+	m_infoDirty = false;
 }
 
 bool Mesh::HasValidGPUResourceHandle() const {

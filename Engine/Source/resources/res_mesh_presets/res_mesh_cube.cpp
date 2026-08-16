@@ -4,7 +4,6 @@ Cube::Cube(CubeCreationProps _props) :
 	m_dimensions{ _props.dimensions }, m_subdivisions{ _props.subdivisions }
 {
 	m_name = "Cube";
-	Init();
 }
 
 void Cube::Init() {
@@ -106,6 +105,7 @@ void Cube::UpdateVertexData() {
 
 	std::vector<glm::vec3> vertexPositions;
 	std::vector<glm::vec3> vertexNormals;
+	std::vector<glm::uvec3> indices;
 	// forward/backward.
 	for (unsigned sign{}; sign < 2; ++sign) {
 		for (unsigned side{}; side < 3; ++side) {
@@ -192,12 +192,12 @@ void Cube::UpdateVertexData() {
 						unsigned i3 = i2 + 1;
 						
 						if (flipped) {
-							m_indices.push_back({ i0, i2, i1 });
-							m_indices.push_back({ i1, i2, i3 });
+							indices.push_back({ i0, i2, i1 });
+							indices.push_back({ i1, i2, i3 });
 						}
 						else {
-							m_indices.push_back({ i0, i1, i2 });
-							m_indices.push_back({ i1, i3, i2 });
+							indices.push_back({ i0, i1, i2 });
+							indices.push_back({ i1, i3, i2 });
 						}
 					}
 				}
@@ -205,13 +205,11 @@ void Cube::UpdateVertexData() {
 		}
 	}
  
-	SetData("position", reinterpret_cast<float*>(vertexPositions.data()), vertexPositions.size() * 3);
-	SetData("normal", reinterpret_cast<float*>(vertexNormals.data()), vertexPositions.size() * 3);
-
 	// - new system ----
 	Submesh& submesh = m_submeshList[0];
 	submesh.ClearSubmeshInformation();
 	submesh.SetVertexCount(vertexPositions.size());
 	submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
 	submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
+	submesh.SetVertexIndices(indices.data(), indices.size());
 }

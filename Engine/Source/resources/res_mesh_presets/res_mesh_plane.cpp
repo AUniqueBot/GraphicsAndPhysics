@@ -4,8 +4,6 @@
 Plane::Plane(PlaneCreationProps _props) :
 	m_dimensions { _props.dimensions }, m_subdivisions { _props.subdivisions } {
 	m_name = "Plane";
-	
-	Init();
 }
 
 void Plane::Init() {
@@ -102,14 +100,11 @@ void Plane::UpdateVertexData() {
 		}
 	}
 
-	// move to submesh.
-	SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
-	SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
-
 	// - new system ----
 	Submesh& submesh = m_submeshList[0];
 	submesh.ClearSubmeshInformation();
 	submesh.SetVertexCount(vertexPositions.size());
 	submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
 	submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
+	submesh.SetVertexIndices(m_indices.data(), m_indices.size());
 }
