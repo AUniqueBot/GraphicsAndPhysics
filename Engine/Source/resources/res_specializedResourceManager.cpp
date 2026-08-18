@@ -43,7 +43,7 @@ void SpecializedResourceManager::RemoveAliasForRes(RES_ID _id) {
 
 RES_ID SpecializedResourceManager::GetResIDFromAlias(std::string _alias) const {
 	auto itr = m_aliasToResId.find(_alias);
-	return itr == m_aliasToResId.end() ? BaseResource::C_RES_ID_INVALID : itr->second;
+	return itr == m_aliasToResId.end() ? ResourceConstants::C_RES_INVALID_ID : itr->second;
 }
 
 

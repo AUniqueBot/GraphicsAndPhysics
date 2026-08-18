@@ -7,6 +7,7 @@
 
 #include <arch/resources/res_texture/res_texture2d.h>
 #include <arch/resources/res_texture/res_texture2darray.h>
+#include <arch/resources/res_texture/res_cubemap.h>
 
 #include <arch/resources/res_specializedResourceManager.h>
 
@@ -25,16 +26,15 @@ public:
 	// you can ignore these for the time being.
 	void Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props = {});
 	Texture2DArray Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
-	void CreateCubemapTexture(int width, int height, TextureProperties::TextureProps _props = {});
+	Cubemap CreateCubemapTexture(int _dimensions,  TextureProperties::TextureProps _props = {});
 
 
-
+	Texture2D GetTexture2D(RES_ID _resourceID);
 	
 public:
 
 
 private:
-	bool TextureExists(RES_ID _id) const;
-
+	
 };
 

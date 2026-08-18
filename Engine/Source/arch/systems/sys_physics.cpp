@@ -1,3 +1,5 @@
+#include <pch.h>
+#include <arch/core.h>
 #include <arch/systems/sys_physics.h>
 #include <arch/components/comp_rigidbody.h>
 
@@ -11,9 +13,12 @@ void PhysicsSystem::PreUpdate() {
 }
 
 void PhysicsSystem::Update() {
-	// for each object.
-	
 
+}
+
+void PhysicsSystem::FixedUpdate() {
+
+	// per collider collisions
 }
 
 

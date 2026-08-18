@@ -271,28 +271,28 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 	switch (prop.m_type) {
 	case PropertyType::Color:
 		DrawPropertyColor(object, prop, name);
-		return;
+		break;
 	case PropertyType::Int:
 		DrawPropertyInt(object, prop, name);
-		return;
+		break;
 	case PropertyType::Float:
 		DrawPropertyFloat(object, prop, name);
-		return;
+		break;
 	case PropertyType::Double:
 		DrawPropertyDouble(object, prop, name);
-		return;
+		break;
 	case PropertyType::Boolean:
 		DrawPropertyBoolean(object, prop, name);
-		return;
+		break;
 	case PropertyType::String:
 		DrawPropertyString(object, prop, name);
-		return;
+		break;
 	case PropertyType::Object:
 		DrawPropertyObject(object, prop, name);
-		return;
+		break;
 	case PropertyType::ResourceHandle:
 		DrawPropertyResourceHandle(object, prop, name);
-		return;
+		break;
 	default:
 		break;
 	}

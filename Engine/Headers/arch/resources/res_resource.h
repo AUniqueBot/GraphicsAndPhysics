@@ -13,6 +13,13 @@
 using RES_ID = unsigned long;	//id of the resource (to be replaced with GUID one day)
 using RESTYPE_ID = uint32_t;	// id of the TYPE of resource
 
+
+namespace ResourceConstants {
+	inline constexpr const RES_ID	  C_RES_INVALID_ID		{ 0 };
+	inline constexpr const RESTYPE_ID C_RESTYPE_INVALID_ID	{ 0 };
+};
+
+
 inline RES_ID GenerateResourceID() {
 	static std::atomic<RES_ID> next{ 1 }; // 0 reserved = invalid
 	return next++;
@@ -51,7 +58,6 @@ class BaseResource: public Inspectable {
 private:
 public:
 
-	static const RES_ID C_RES_ID_INVALID { 0 };
 public:
 	BaseResource(RESTYPE_ID _type);
 	RESTYPE_ID ResourceType() const	{ return m_resType; }
@@ -93,7 +99,7 @@ protected:
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
 
 private:
-	RES_ID m_resourceId					{ C_RES_ID_INVALID };
+	RES_ID m_resourceId					{ ResourceConstants::C_RES_INVALID_ID };
 	RESTYPE_ID m_resType				{ 0 };	// 0 reserved as invalid.
 	unsigned m_referenceCount			{};
 	bool m_isLoaded						{ false };

@@ -111,17 +111,13 @@ ResourceIdentifier ResourceManager::AddExternalResourceInternal(
 	const RESTYPE_ID type = _resource->ResourceType();
 	const RES_ID resId = GenerateID();
 	const std::string name = _resource->m_pathToAsset.filename().string();
-	const ResourceIdentifier ret {
-		resId,
-		type,
-		name,
-		this
-	};
+
 	_resource->ResourceID(resId);
 	_resource->Name(name);
+	ResourceIdentifier idr = GenerateResourceIdentifier(_resource);
 	m_resourcePool.Add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
-	return ret;
+	return idr;
 }
 
 ResourceIdentifier ResourceManager::AddInternalResourceInternal(
@@ -131,16 +127,24 @@ ResourceIdentifier ResourceManager::AddInternalResourceInternal(
 	const RESTYPE_ID type = _resource->ResourceType();
 	const RES_ID resId = GenerateID();
 	const std::string name = _resource->m_pathToAsset.filename().string();
-	const ResourceIdentifier ret{
-		resId,
-		type,
-		name,
-		this
-	};
+
 	_resource->ResourceID(resId);
 	_resource->Name(name);
+	ResourceIdentifier idr = GenerateResourceIdentifier(_resource);
 	m_resourcePool.Add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
+	return idr;
+}
+
+ResourceIdentifier ResourceManager::GenerateResourceIdentifier(
+	std::shared_ptr<BaseResource> _resource
+) const {
+	const ResourceIdentifier ret{
+		_resource->m_resourceId,
+		_resource->m_resType,
+		_resource->m_name,
+		const_cast<ResourceManager*>(this)
+	};
 	return ret;
 }
 
@@ -200,6 +204,12 @@ std::shared_ptr<BaseResource> ResourceManager::GetResource(std::string _resName)
 
 std::shared_ptr<BaseResource> ResourceManager::GetResource(ResourceIdentifier _id) {
 	return GetResource(_id.m_resourceId);
+}
+
+ResourceIdentifier ResourceManager::GetResourceIdentifier(RES_ID _id) {
+	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.At(_id);
+	if (!itr) return ResourceIdentifier();
+	return GenerateResourceIdentifier(*itr);
 }
 
 std::deque<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {

@@ -142,7 +142,9 @@ unsigned ShadowMap::FBO() const {
 }
 
 unsigned ShadowMap::GetTextureID() const {
-	return m_textureHandle.HandleIsValid() ? m_textureHandle.GetTextureHandle() : C_INVALID_TEXTURE_ID;
+	return m_textureHandle.HandleIsValid() ? 
+		m_textureHandle.GetTextureHandle() : 
+		TextureConstants::C_INVALID_TEXTURE_ID;
 }
 
 bool ShadowMap::ValidateID(unsigned _id) const {

@@ -88,5 +88,5 @@ private:
 
 	bool m_infoDirty	{ true };
 
-	RES_ID m_materialId{ BaseResource::C_RES_ID_INVALID };
+	RES_ID m_materialId{ ResourceConstants::C_RES_INVALID_ID };
 };

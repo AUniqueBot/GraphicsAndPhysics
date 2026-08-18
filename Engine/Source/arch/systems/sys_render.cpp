@@ -490,7 +490,7 @@ void RenderSystem::LightingRenderPass(
         const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
 
         RES_ID meshId = mr->GetMesh();
-        if (meshId == BaseResource::C_RES_ID_INVALID) continue;
+        if (meshId == ResourceConstants::C_RES_INVALID_ID) continue;
         std::shared_ptr<MeshRes> mesh = GetMesh(meshId);
 
         bool isSelected{ _er.EntityIsSelected(e.GetID()) };
@@ -594,7 +594,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
 
 
             RES_ID meshId = mr.GetMesh();
-            if (meshId == BaseResource::C_RES_ID_INVALID) continue;
+            if (meshId == ResourceConstants::C_RES_INVALID_ID) continue;
             std::shared_ptr<MeshRes> mesh = GetMesh(meshId);
 
             // do something.

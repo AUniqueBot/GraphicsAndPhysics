@@ -245,6 +245,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\resources\res_resourceManager.cpp" />
     <ClCompile Include="Source\resources\res_shader.cpp" />
     <ClCompile Include="Source\resources\res_shader_generation\res_shader_generator.cpp" />
+    <ClCompile Include="Source\resources\res_texture\res_cubemap.cpp" />
+    <ClCompile Include="Source\resources\res_texture\res_imagedata.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2d.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp" />
@@ -266,6 +268,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\eventSystem.h" />
     <ClInclude Include="Headers\arch\common\inspectable.h" />
     <ClInclude Include="Headers\arch\common\singleton.h" />
+    <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_aabb.h" />
+    <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_sphere.h" />
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_gamestatemanager.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />
@@ -329,6 +333,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />
     <ClInclude Include="Headers\arch\resources\res_specializedResourceManager.h" />
+    <ClInclude Include="Headers\arch\resources\res_texture\res_imagedata.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture.h">
       <DeploymentContent>true</DeploymentContent>
     </ClInclude>

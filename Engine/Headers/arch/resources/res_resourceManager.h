@@ -61,6 +61,7 @@ public:
 	std::shared_ptr<BaseResource> GetResource(std::string _name);
 	std::shared_ptr<BaseResource> GetResource(ResourceIdentifier _id);
 
+	ResourceIdentifier GetResourceIdentifier(RES_ID _id);
 
 	std::deque<std::shared_ptr<BaseResource>>& GetResourcePool();
 	const std::deque<std::shared_ptr<BaseResource>>& GetResourcePool() const;
@@ -117,6 +118,8 @@ private:
 		RESTYPE_ID _type
 	);
 
+
+	ResourceIdentifier GenerateResourceIdentifier(std::shared_ptr<BaseResource> _resource) const;
 
 
 private:

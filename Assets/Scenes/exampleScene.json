@@ -32,7 +32,6 @@
                     "material" : [
                         {
                             "shader": "lambert"
-                            
                         }
                     ]
                 }

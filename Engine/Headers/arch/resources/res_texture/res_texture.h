@@ -2,14 +2,20 @@
 #include <pch.h>
 #include <arch/resources/res_resource.h>
 #include <arch/resources/res_resourceHandle.h>
+
+#include <arch/resources/res_texture/res_imagedata.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 #include <arch/resources/res_gpu_resources/res_gpu_texture.h>
 #include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
 
 class Texture;
-inline const RES_ID C_INVALID_TEXTURE_ID = BaseResource::C_RES_ID_INVALID;
+
+namespace TextureConstants {
+	inline constexpr const RES_ID C_INVALID_TEXTURE_ID = ResourceConstants::C_RES_INVALID_ID;
+};
 
 
+// texture class to convert to this instead.
 
 class TextureRes : public Resource<TextureRes> {
 	// a simple handle to the thing.
@@ -17,7 +23,7 @@ public:
 	std::string ResourceTypeName() override { return "Texture"; };
 private:
 
-
+	
 };
 
 
@@ -63,20 +69,21 @@ public:
 	bool TextureIsValid() const;
 
 
-
 protected:
 	// be careful when using this as this assumes it is valid.
 	GPU_Texture& GetGPUTexture();
 	const GPU_Texture& GetGPUTexture() const;
-
-
-
-
-
 protected:
 
+	friend class MeshManager;
+	friend class GPUResourceManager;
+	void SetGPUResourceHandle(GPUResourceHandle _newHandle);
+
+	bool HasValidGPUResourceHandle() const;
+
+protected:
 	glm::ivec3 m_dimensions;
-	std::vector<std::byte> m_imageData;
 	GPUResourceHandle m_gpuResHandle;
+	std::vector<std::byte> m_textureData;
 	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.
 };

@@ -58,7 +58,7 @@ private:
 	// model resource
 	
 	
-	RES_ID m_mesh										{ BaseResource::C_RES_ID_INVALID };
+	RES_ID m_mesh										{ ResourceConstants::C_RES_INVALID_ID };
 	std::vector<MaterialHandle> m_materials; // change to material handle.
 	
 

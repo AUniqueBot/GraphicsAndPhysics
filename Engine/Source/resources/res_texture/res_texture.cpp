@@ -105,3 +105,11 @@ bool Texture::TextureIsValid() const {
 	return static_cast<bool>(texHandle);
 }
 
+
+void Texture::SetGPUResourceHandle(GPUResourceHandle _handle) {
+	m_gpuResHandle = _handle;
+}
+
+bool Texture::HasValidGPUResourceHandle() const {
+	return m_gpuResHandle.IsValid();
+}

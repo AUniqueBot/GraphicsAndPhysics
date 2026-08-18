@@ -30,7 +30,7 @@ ResourceIdentifier& ResourceHandle::operator*() {
 
 RES_ID ResourceHandle::GetResourceID() const {
 	return HandleIsValid() ? 
-		m_resourceIdentifier->m_resourceId : BaseResource::C_RES_ID_INVALID;
+		m_resourceIdentifier->m_resourceId : ResourceConstants::C_RES_INVALID_ID;
 }
 
 const ResourceIdentifier& ResourceHandle::GetResourceIdentifier() const {

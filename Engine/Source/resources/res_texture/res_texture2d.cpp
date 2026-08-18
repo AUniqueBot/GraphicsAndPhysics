@@ -11,6 +11,10 @@ Texture2D::Texture2D(
 	m_textureType = TextureType::TEXTURE_2D;
 }
 
+void Texture2D::Load(std::filesystem::path _imgPath) {
+
+}
+
 glm::ivec2 Texture2D::GetDimensions() const {
 	const GPU_Texture& tex = GetGPUTexture();
 	const glm::vec3 dims = tex.GetDimensions();

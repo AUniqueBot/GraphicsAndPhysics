@@ -49,6 +49,10 @@ void LambertMaterial::Color(unsigned _newColor) {
     Color(HexToVec4F(_newColor));
 }
 
+void LambertMaterial::AlbedoTexture(Texture2D _texture) {
+    
+}
+
 void LambertMaterial::UsesColor(bool _usesColor) {
     if (_usesColor == m_usesColor) return;
     m_usesColor = _usesColor;

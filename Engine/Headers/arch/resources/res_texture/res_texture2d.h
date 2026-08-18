@@ -9,6 +9,7 @@ public:
 	Texture2D(const Texture2D&) = default;
 	Texture2D& operator=(const Texture2D&) = default;
 
+	void Load(std::filesystem::path _imgPath);
 
 	glm::ivec2 GetDimensions() const;
 	void SetDimensions(glm::ivec2 _dims);
@@ -18,6 +19,7 @@ public:
 
 	void SetWidth(int _width);
 	void SetHeight(int _height);
+
 
 
 private:

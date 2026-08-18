@@ -60,9 +60,9 @@ private:
 struct RenderShaderProgProps {
 	RES_ID vertexShader;
 	RES_ID fragShader;
-	RES_ID geometryShader				= BaseResource::C_RES_ID_INVALID;
-	RES_ID tesselationControlShader		= BaseResource::C_RES_ID_INVALID;
-	RES_ID tesselationEvaluationShader	= BaseResource::C_RES_ID_INVALID;
+	RES_ID geometryShader				= ResourceConstants::C_RES_INVALID_ID;
+	RES_ID tesselationControlShader		= ResourceConstants::C_RES_INVALID_ID;
+	RES_ID tesselationEvaluationShader	= ResourceConstants::C_RES_INVALID_ID;
 };
 
 

@@ -15,6 +15,7 @@ public:
 
 	void PreUpdate()	override;
 	void Update()		override;
+	void FixedUpdate()	override;
 	void Stop()			override { LOG_INFO("Stop"); };
 	void Cleanup()		override { LOG_INFO("Cleanup"); };
 
