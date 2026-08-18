@@ -22,8 +22,8 @@ public:
 		TextureProperties::ImageDataType _dataType
 	);
 
-
 	void SetImageData(const void* _src);
+	std::byte* GetImageData();
 
 
 	ImageData(const ImageData&) = default;

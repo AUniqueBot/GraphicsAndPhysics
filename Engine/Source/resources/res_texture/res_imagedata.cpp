@@ -62,6 +62,10 @@ void ImageData::SetImageData(const void* _src) {
 	std::memcpy(m_data.data(), _src, size);
 }
 
+std::byte* ImageData::GetImageData() {
+	return (m_data.data());
+}
+
 size_t ImageData::GetImagePixelCount() const {
 	using namespace ImageDataHelpers;
 	return GetPixelCount(m_dimensions);

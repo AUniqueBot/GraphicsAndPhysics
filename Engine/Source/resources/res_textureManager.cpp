@@ -47,7 +47,7 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	// upload data
 	TextureProperties::ImageUploadData uploadData;
 	// do conversion here.
-	auto channelConverted = ImageDataHelpers::ConvertRGBAToOtherChannel(img.m_data.data(), img.GetImagePixelCount(), img.m_originalChannels);
+	auto channelConverted = ImageDataHelpers::ConvertRGBAToOtherChannel(img.GetImageData(), img.GetImagePixelCount(), img.m_originalChannels);
 	
 	std::vector<uint8_t> tempByte8Buffer;
 	std::vector<uint16_t> tempByte16Buffer;
