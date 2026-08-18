@@ -20,8 +20,6 @@ public:
 	void SetWidth(int _width);
 	void SetHeight(int _height);
 
-
-
 private:
-
+	ImageData m_imageData;
 };

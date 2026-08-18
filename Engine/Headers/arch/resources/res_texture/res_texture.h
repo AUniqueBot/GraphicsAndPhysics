@@ -46,7 +46,9 @@ public:
 	Texture(ResourceIdentifierArg _resIdArg, GPUResourceHandle _handle); // get ResourceIdentifier instead.
 	Texture(const Texture& _other) = default;
 	Texture& operator=(const Texture& _other) = default;
+
 public:
+
 	// functions here assume you can access the texture.
 	// getters particularly do not have safety checks so write accordingly
 	void SetMinFilter(const TextureProperties::FilterBehaviour& _filterBehaviour);
@@ -84,6 +86,7 @@ protected:
 protected:
 	glm::ivec3 m_dimensions;
 	GPUResourceHandle m_gpuResHandle;
-	std::vector<std::byte> m_textureData;
-	TextureProperties::TextureType m_textureType{}; // static and cannot be changed after creation; per type.
+	TextureProperties::TextureType m_textureType		{}; // static and cannot be changed after creation; per type.
+	// explicit texture format
+	TextureProperties::TextureFormat m_textureFormat	{ TextureProperties::TextureFormat::RGBA8 };
 };

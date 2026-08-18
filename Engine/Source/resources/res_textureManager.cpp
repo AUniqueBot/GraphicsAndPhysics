@@ -10,11 +10,6 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	ImageData img = ImageData::LoadImage(_path);
 	int channelCount = static_cast<int>(img.m_channels);
 	int width = img.m_dimensions.x, height = img.m_dimensions.y;
-
-	LOG_INFO("Loaded Metadata: [Width: " << width << ", Height: " << height << ", Channels: " << channelCount << "]");
-	img.m_channels;
-	img.m_dataType;
-	img.m_originalChannels;
 	
 
 	// init required objects 
@@ -156,7 +151,8 @@ Cubemap TextureManager::CreateCubemapTexture(int _dimensions, TextureProperties:
 
 Texture2D TextureManager::GetTexture2D(RES_ID _resourceId) {
 	auto res = m_resourceManager.GetResource(_resourceId);
-
+	res->ResourceType();
+	m_resourceManager.GetResourceIdentifier(_resourceId);
 	return Texture2D();
 }
 

@@ -3,18 +3,29 @@
 #include <arch/resources/res_texture/res_texture_properties.h>
 
 struct ImageData {
+private:
 	std::vector<std::byte> m_data;
-	glm::ivec3 m_dimensions;
+public:
+	glm::ivec2 m_dimensions;
 	TextureProperties::ImageChannels m_channels;
-	TextureProperties::ImageChannels m_originalChannels;
 	TextureProperties::ImageDataType m_dataType;
 
+	glm::ivec2 m_originalDimensions;
+	TextureProperties::ImageDataType m_originalDatatype;
+	TextureProperties::ImageChannels m_originalChannels;
+
+	ImageData() = default;
 	ImageData(
 		const void* _src,
-		glm::ivec3 _dims,
+		glm::ivec2 _dims,
 		TextureProperties::ImageChannels _ogChannels,
 		TextureProperties::ImageDataType _dataType
 	);
+
+
+	void SetImageData(const void* _src);
+
+
 	ImageData(const ImageData&) = default;
 	ImageData& operator=(const ImageData&) = default;
 
@@ -23,6 +34,7 @@ struct ImageData {
 
 	static ImageData LoadImage(const std::filesystem::path& _path);
 
+		
 	template <typename T>
 	inline const T* GetData() const {
 		return reinterpret_cast<const T*>(m_data.data());
@@ -31,7 +43,7 @@ struct ImageData {
 };
 
 namespace ImageDataHelpers {
-	size_t GetPixelCount(glm::ivec3 _dimensions);
+	size_t GetPixelCount(glm::ivec2 _dimensions);
 	size_t GetByteSize(TextureProperties::ImageDataType _dataType);
 	size_t GetChannelCount(TextureProperties::ImageChannels _channels);
 

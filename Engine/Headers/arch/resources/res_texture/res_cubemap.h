@@ -1,4 +1,5 @@
 #pragma once 
+#include <array>
 #include <arch/resources/res_texture/res_texture.h>
 
 
@@ -10,5 +11,6 @@ public:
 
 	int GetWidth() const;
 	void SetWidth(int _width);
-
+private:
+	std::array<ImageData, 6> m_imageData;
 };
