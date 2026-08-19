@@ -86,11 +86,57 @@ void ShadowMap::BuildShadowMap() {
 		0
 	);
 
-	m_isBuilt = glCheckNamedFramebufferStatus(
+	GLenum status = glCheckNamedFramebufferStatus(
 		m_fbo,
 		GL_FRAMEBUFFER
 	);
+	m_isBuilt = status == GL_FRAMEBUFFER_COMPLETE;
 	if (!m_isBuilt) {
+
+		switch (status) {
+		case GL_FRAMEBUFFER_COMPLETE:
+			// Framebuffer is valid and complete.
+			break;
+
+		case GL_FRAMEBUFFER_UNDEFINED:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_UNDEFINED");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER");
+			break;
+
+		case GL_FRAMEBUFFER_UNSUPPORTED:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_UNSUPPORTED");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE");
+			break;
+
+		case GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS:
+			LOG_ERROR("Framebuffer incomplete: GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS");
+			break;
+
+		default:
+			LOG_ERROR("Framebuffer incomplete: Unknown status [" << status << "]");
+			break;
+		}
+
+
+
 		Destroy();
 	}
 }
@@ -114,7 +160,7 @@ void ShadowMap::Destroy() {
 void ShadowMap::Bind() const {
 	if (!m_textureHandle.HandleIsValid()) return;
 	glm::ivec2 framebufferSize = m_textureHandle.GetDimensions();
-
+	
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	glViewport(0, 0, framebufferSize.x, framebufferSize.y);
 	glDrawBuffer(GL_NONE);
@@ -127,9 +173,6 @@ void ShadowMap::SetBoundLayer(unsigned _layer) const {
 	if (m_currentBoundLayer == _layer) return;
 	m_currentBoundLayer = _layer;
 	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, shadowTexture, 0, _layer);
-
-	//glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, textureId, 0, _layer);
-
 }
 
 
@@ -158,13 +201,18 @@ unsigned ShadowMap::GenerateLayerID() {
 		m_freeLayers.pop_back();
 		return freeId;
 	}
-	if (m_layers > m_currentLayerCount) return m_currentLayerCount++;
+	if (m_layers > m_currentLayerCount) {
+		++m_shadowUsageCount;
+		return m_currentLayerCount++;
+	};
 	LOG_WARN("No free slots available; assigning invalid ID (max unsigned value)");
 	return std::numeric_limits<unsigned>::max();
 }
 
 void ShadowMap::ReclaimID(unsigned _id) {
-	if (ValidateID(_id)) m_freeLayers.push_back(_id);
+	if (!ValidateID(_id)) return;
+	--m_shadowUsageCount;
+	m_freeLayers.push_back(_id);
 }
 
 bool ShadowMap::HasFreeLayers() const {
@@ -179,13 +227,14 @@ void ShadowMap::SetLODLevels(unsigned _levels) {
 	m_levels = _levels;
 }
 
-void ShadowMap::SetTexture(const Texture2DArray& _info) {
+void ShadowMap::SetTexture(const Texture2DArrayHandle& _info) {
 	m_textureHandle = _info;
 }
 
-//const Texture2DArray& ShadowMap::GetTexture() const {
-//	return *m_textureHandle;
-//}
+int ShadowMap::GetShadowMapUsageCount() const {
+	return m_shadowUsageCount;
+}
+
 
 
 

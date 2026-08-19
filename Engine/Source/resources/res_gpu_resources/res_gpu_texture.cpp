@@ -57,6 +57,10 @@ GPU_Texture& GPU_Texture::operator=(GPU_Texture&& _old) noexcept {
 	return *this;
 }
 
+void GPU_Texture::Load(const TextureRes& _tex) {
+
+}
+
 const GLuint& GPU_Texture::GetTextureHandle() const {
 	return m_handle.Get();
 }
@@ -76,14 +80,14 @@ void GPU_Texture::SetInternalImageFormat(const TextureProperties::TextureFormat&
 }
 
 const TextureProperties::ImageDataType& GPU_Texture::GetDataType() const {
-	return m_textureProperties.m_pixelDataType;
+	return m_textureProperties.m_pixelDatatype;
 }
 
 
 
 void GPU_Texture::SetDataType(const TextureProperties::ImageDataType& _pixelDataType) {
-	if (_pixelDataType == m_textureProperties.m_pixelDataType) return;
-	m_textureProperties.m_pixelDataType = _pixelDataType;
+	if (_pixelDataType == m_textureProperties.m_pixelDatatype) return;
+	m_textureProperties.m_pixelDatatype = _pixelDataType;
 	m_reallocateDirty = true;
 }
 
@@ -187,7 +191,7 @@ void GPU_Texture::SetPixelColor(glm::u8vec1 _col, glm::ivec3 _pixelPos) {
 	using namespace TextureProperties;
 	InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);// this controls
 	int pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
-	int pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
+	int pixelType = static_cast<GLenum>(decomposed.m_pixelDatatype);
 	int uploadDimCount = GetUploadDimension(m_textureType);
 }
 
@@ -197,7 +201,7 @@ void GPU_Texture::SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos) {
 	using namespace TextureProperties;
 	InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
 	int pixelFormat = OpenGL::ResolveChannels(decomposed.m_pixelFormat);
-	int pixelType = OpenGL::ResolveDataType(decomposed.m_pixelDataType);
+	int pixelType = OpenGL::ResolveDataType(decomposed.m_pixelDatatype);
 	int uploadDimCount = GetUploadDimension(m_textureType);
 
 	glm::u8vec4 u8vec4col = {};
@@ -317,7 +321,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 
 	TextureProperties::InternalImageDecomposed decomposed = OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
 	GLenum pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
-	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
+	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDatatype);
 
 
 	GLuint handle = m_handle.Get();
@@ -366,7 +370,7 @@ void GPU_Texture::Upload(TextureProperties::TextureUploadData _imageData) const 
 
 		LOG_INFO("Uploading Texture Data: [" << width << "x" << height << "], "
 			<< "internal format: [" << m_textureProperties.m_internalImageFormat << "] "
-			<< "and pixel type: [" << m_textureProperties.m_pixelDataType << "]"
+			<< "and pixel type: [" << m_textureProperties.m_pixelDatatype << "]"
 		);
 
 		glTextureSubImage2D(
@@ -403,7 +407,7 @@ void GPU_Texture::UploadTexture2DData(TextureProperties::TextureUploadData _imag
 	const auto decomposed = TextureProperties::OpenGL_ToDecomposed(m_textureProperties.m_internalImageFormat);
 
 	GLenum pixelFormat = static_cast<GLenum>(decomposed.m_pixelFormat);
-	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDataType);
+	GLenum pixelType = static_cast<GLenum>(decomposed.m_pixelDatatype);
 
 	if (hasExternalData) {
 		if (!autogenMips && _imageData.value().size() != mipCount) {
@@ -476,7 +480,7 @@ void GPU_Texture::UploadCubemapData(TextureProperties::TextureUploadData _imageD
 	bool hasExternalData = _imageData != std::nullopt;
 
 	GLenum imageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
+	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDatatype);
 
 
 
@@ -571,7 +575,7 @@ void GPU_Texture::Upload3DTextureData(TextureProperties::TextureUploadData _imag
 	bool hasExternalData = _imageData != std::nullopt;
 
 	GLenum imageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
+	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDatatype);
 
 	if (hasExternalData) {
 		LOG_WARN("Uploading 1D textures not supported");
@@ -624,7 +628,7 @@ void GPU_Texture::UploadTexture2DArrayData(TextureProperties::TextureUploadData 
 	int layerDepth = 1;
 
 	GLenum imageFormat = static_cast<GLenum>(m_textureProperties.m_internalImageFormat);
-	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDataType);
+	GLenum pixelType = static_cast<GLenum>(m_textureProperties.m_pixelDatatype);
 
 	if (hasExternalData) {
 		LOG_WARN("Uploading 2D textures for arrays not supported");

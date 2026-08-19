@@ -3,12 +3,9 @@
 
 
 
-class Texture2D : public Texture {
+class Texture2DRes : public TextureRes {
 public:
-	Texture2D(ResourceIdentifierArg _resHandle = std::nullopt, GPUResourceHandle _resGpuHandle = {});
-	Texture2D(const Texture2D&) = default;
-	Texture2D& operator=(const Texture2D&) = default;
-
+	Texture2DRes();
 	void Load(std::filesystem::path _imgPath);
 
 	glm::ivec2 GetDimensions() const;
@@ -20,6 +17,12 @@ public:
 	void SetWidth(int _width);
 	void SetHeight(int _height);
 
+
+	void SetImageData(const ImageData& _imgData);
 private:
-	ImageData m_imageData;
+
+};
+
+struct Texture2DHandle : public TextureHandle {
+	Texture2DHandle(ResourceIdentifierArg _arg = std::nullopt) : TextureHandle(_arg) {}
 };

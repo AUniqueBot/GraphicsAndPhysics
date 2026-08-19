@@ -3,7 +3,7 @@
 
 
 
-Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
+Texture2DHandle TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	LOG_INFO("Loading Texture from \""<< _path <<"\"");
 
 
@@ -35,15 +35,6 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 		break;
 	}
 
-	GPU_Texture tex = { 
-		TextureProperties::TextureType::TEXTURE_2D,
-		{img.m_dimensions.x, img.m_dimensions.y, 1},
-		props
-	};
-	tex.Create();
-
-		
-
 	// upload data
 	TextureProperties::ImageUploadData uploadData;
 	// do conversion here.
@@ -55,7 +46,7 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 
 
 	void* upload = nullptr;
-	if (img.m_dataType == tex.GetDataType()) upload = channelConverted.data();
+	if (img.m_dataType == props.m_pixelDatatype) upload = channelConverted.data();
 	else {
 		size_t componentCount = img.GetImagePixelCount() * ImageDataHelpers::GetChannelCount(img.m_originalChannels);
 
@@ -81,33 +72,36 @@ Texture2D TextureManager::LoadTexture(const std::filesystem::path& _path) {
 	uploadData.m_textureData = upload;
 	uploadData.m_dimensions = { width, height, 1 };
 	uploadData.m_mipLevel = 0;
-	
-	tex.Allocate();
+
+
+	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateTexture(
+		TextureProperties::TextureType::TEXTURE_2D,
+		{ img.m_dimensions.x, img.m_dimensions.y, 1 },
+		props
+
+	);
+	GPU_Texture& tex = *m_gpuResourceManager.GetResource<GPU_Texture>(gpuHandle);
 	tex.Upload({ {uploadData} });// upload data here.
 
 	// if successful add to storage
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	m_resourceIdPool.insert(id.m_resourceId);
-	Texture2D retVal{ id };
-	return retVal;
+	Texture2DHandle handle(id);
+	return handle;
 }
 
 
 // ---------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------
-Texture2D TextureManager::Create2DTexture(int _width, int _height, TextureProperties::TextureProps _props) {
-	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateTexture(
-		TextureProperties::TextureType::TEXTURE_2D,
-		{ _width, _height, 1 },
-		_props
-	);
-	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
-	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
+Texture2DHandle TextureManager::Create2DTexture(int _width, int _height, TextureProperties::TextureProps _props) {
+	std::shared_ptr<Texture2DRes> res = std::make_shared<Texture2DRes>();
+	res->SetDimensions(glm::ivec2{_width, _height});
+	ResourceIdentifier id = m_resourceManager.AddInternalResource(res);
 	m_resourceIdPool.insert(id.m_resourceId);
 	//LOG_INFO("Allocating 2D Texture of size: [" << _width << ", " << _height << "]");
-	Texture2D retVal{ id, gpuHandle };
-	return retVal;
+	Texture2DHandle handle(id);
+	return handle;
 }
 
 void TextureManager::Create3DTexture(int _width, int _height, int _depth, TextureProperties::TextureProps _props) {
@@ -121,21 +115,19 @@ void TextureManager::Create3DTexture(int _width, int _height, int _depth, Textur
 
 }
 
-Texture2DArray TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {
-	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateTexture(
-		TextureProperties::TextureType::TEXTURE_2D_ARRAY,
-		{ _width, _height, _layers },
-		_props
-	);
-	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
-	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
+Texture2DArrayHandle TextureManager::Create2DArrayTexture(int _width, int _height, int _layers, TextureProperties::TextureProps _props) {
+	std::shared_ptr<Texture2DArrayRes> res = std::make_shared<Texture2DArrayRes>();
+	res->SetDimensions(glm::ivec2{ _width, _height });
+	res->SetLayers(_layers);
+	res->SetTextureProps(_props);
+	ResourceIdentifier id = m_resourceManager.AddInternalResource(res);
 	m_resourceIdPool.insert(id.m_resourceId);
 	//LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
-	Texture2DArray retVal { id, gpuHandle };
-	return retVal;
+	Texture2DArrayHandle handle { id };
+	return handle;
 }
 
-Cubemap TextureManager::CreateCubemapTexture(int _dimensions, TextureProperties::TextureProps _props) {
+CubemapRes TextureManager::CreateCubemapTexture(int _dimensions, TextureProperties::TextureProps _props) {
 	GPUResourceHandle gpuHandle = m_gpuResourceManager.CreateTexture(
 		TextureProperties::TextureType::CUBEMAP,
 		{ _dimensions, _dimensions, 1 },
@@ -145,15 +137,15 @@ Cubemap TextureManager::CreateCubemapTexture(int _dimensions, TextureProperties:
 	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
 	m_resourceIdPool.insert(id.m_resourceId);
 	//LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
-	Cubemap retVal{ id, gpuHandle };
+	CubemapRes retVal;
 	return retVal;
 }
 
-Texture2D TextureManager::GetTexture2D(RES_ID _resourceId) {
+Texture2DRes TextureManager::GetTexture2D(RES_ID _resourceId) {
 	auto res = m_resourceManager.GetResource(_resourceId);
 	res->ResourceType();
 	m_resourceManager.GetResourceIdentifier(_resourceId);
-	return Texture2D();
+	return Texture2DRes();
 }
 
 // ---------------------------------------------------------------------------------

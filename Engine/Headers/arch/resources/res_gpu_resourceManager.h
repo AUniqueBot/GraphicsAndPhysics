@@ -5,18 +5,23 @@
 
 
 
+
+
 class GPUResourceManager {
 	
 public:
 
 
 public:
-	GPUResourceHandle CreateGPUBuffer();
+	// Texture
 	GPUResourceHandle CreateTexture(
 		TextureProperties::TextureType _type,
 		glm::ivec3 _dims,
 		TextureProperties::TextureProps _props
 	);
+	GPUResourceHandle CreateTexture(const TextureRes& _res);
+
+	GPUResourceHandle CreateGPUBuffer();
 	GPUResourceHandle CreateVAO();
 	GPUResourceHandle CreateMesh(MeshRes& _mesh);
 

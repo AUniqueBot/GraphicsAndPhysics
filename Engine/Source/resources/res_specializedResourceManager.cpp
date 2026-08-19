@@ -9,7 +9,11 @@ void SpecializedResourceManager::Add(RES_ID _id) {
 };
 void SpecializedResourceManager::Remove(RES_ID _id) { 
 	m_resourceIdPool.erase(_id); 
-};
+}
+std::unordered_set<RES_ID> SpecializedResourceManager::List() const {
+	return m_resourceIdPool;
+}
+;
 
 void SpecializedResourceManager::SetResourceAlias(RES_ID _id, std::string _alias) {
 	if (_alias.empty()) {

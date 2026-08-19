@@ -159,26 +159,38 @@ const int& PhongMaterial::Exponent() const {
 
 void PhongMaterial::SetupTextures() {
 
-    TextureManager& texManager { Core::GetInstance().GetAssetManager().GetTextureManager() };
+    Core& c = Core::GetInstance();
+    TextureManager& texManager = c.GetAssetManager().GetTextureManager();
+    GPUResourceManager& gpuMgr = c.GetGPUResourceManager();
     
     using namespace TextureProperties;
     TextureProps colProps;
+
+    // - generating textures ---------------------------------------------
+    std::shared_ptr<TextureRes> ptr;
     colProps.m_internalImageFormat = TextureFormat::RGBA8;
     m_textureColor = texManager.Create2DTexture(1, 1, colProps);
+    ptr = m_textureColor.Get();
+    ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 
     TextureProps specProps;
     specProps.m_internalImageFormat = TextureFormat::RGBA8;
     m_textureSpecular = texManager.Create2DTexture(1, 1, specProps);
+    ptr = m_textureSpecular.Get();
+    ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_textureSpecular.SetPixelColor(m_specularCol, 0, 0, 0);
 
 
     TextureProps glossProps;
     glossProps.m_internalImageFormat = TextureFormat::R8;
     m_textureGloss = texManager.Create2DTexture(1, 1, glossProps);
+    ptr = m_textureGloss.Get();
+    ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 
 
+    // - setting values --------------------------------------------------
     MaterialValueData matValue;
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetColorTextureID());

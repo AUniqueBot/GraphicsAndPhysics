@@ -8,53 +8,53 @@ namespace TextureProperties {
 		InternalImageDecomposed decomposed{};
 		switch (_format) {
 		case TextureFormat::R8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::Red;
 			break;
 		case TextureFormat::RG8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::RG;
 			break;
 		case TextureFormat::RGB8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::RGB;
 			break;
 		case TextureFormat::RGBA8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::RGBA;
 			break;
 		case TextureFormat::SRGB8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::RGB;
 			break;
 		case TextureFormat::SRGBA8:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::RGBA;
 			break;
 		case TextureFormat::R16F:
-			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelDatatype = ImageDataType::FLOAT_32;
 			decomposed.m_pixelFormat = ImageChannels::Red;
 			break;
 		case TextureFormat::RG16F:
-			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelDatatype = ImageDataType::FLOAT_32;
 			decomposed.m_pixelFormat = ImageChannels::RG;
 			break;
 		case TextureFormat::RGB16F:
-			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelDatatype = ImageDataType::FLOAT_32;
 			decomposed.m_pixelFormat = ImageChannels::RGB;
 			break;
 		case TextureFormat::RGBA16F:
-			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelDatatype = ImageDataType::FLOAT_32;
 			decomposed.m_pixelFormat = ImageChannels::RGBA;
 			break;
 
 			// depth components.
 		case TextureFormat::DEPTH24:
-			decomposed.m_pixelDataType = ImageDataType::UINT_8;
+			decomposed.m_pixelDatatype = ImageDataType::UINT_8;
 			decomposed.m_pixelFormat = ImageChannels::Depth;
 			break;
 		case TextureFormat::DEPTH32F:
-			decomposed.m_pixelDataType = ImageDataType::FLOAT_32;
+			decomposed.m_pixelDatatype = ImageDataType::FLOAT_32;
 			decomposed.m_pixelFormat = ImageChannels::Depth;
 			break;
 		}

@@ -114,7 +114,6 @@ protected:
 	friend class MeshManager;
 	friend class GPUResourceManager;
 	void SetGPUResourceHandle(GPUResourceHandle _newHandle);
-
 	bool HasValidGPUResourceHandle() const;
 
 protected:

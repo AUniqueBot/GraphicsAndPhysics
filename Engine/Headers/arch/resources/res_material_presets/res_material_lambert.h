@@ -17,8 +17,8 @@ public:
 	void Color(const glm::vec4& _newColor);
 	void Color(unsigned _newColor);
 
-	void AlbedoTexture(Texture2D _textureHandle);
-	const Texture2D& AlbedoTexture() const;
+	void AlbedoTexture(const Texture2DHandle& _textureHandle);
+	const Texture2DHandle& AlbedoTexture() const;
 
 	void UsesColor(bool _usesTexture);
 	bool UsesColor() const;
@@ -42,8 +42,8 @@ private:
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.
 	
-	Texture2D m_textureColor;	// starts with a useless one for correctness
-	Texture2D m_albedoColor;	// starts invalid. assign with handle.
+	Texture2DHandle m_textureColor;	// starts with a useless one for correctness
+	Texture2DHandle m_albedoColor;	// starts invalid. assign with handle.
 
 
 	GLuint m_reservedNmlTexId	{}; // texture identifier, storage of normal texture.

@@ -3,6 +3,10 @@
 #include <unordered_set>
 #include <arch/resources/res_resourceManager.h>
 #include <arch/resources/res_gpu_resourceManager.h>
+enum class GPUUploadBehaviour {
+	IMMEDIATE,
+	ON_REQUEST
+};
 
 
 class SpecializedResourceManager {
@@ -21,6 +25,7 @@ public:
 	bool Has(RES_ID _id) const;
 	void Add(RES_ID _id);
 	void Remove(RES_ID _id);
+	std::unordered_set<RES_ID> List() const;
 
 	// alias
 	void SetResourceAlias(RES_ID _id, std::string _alias);

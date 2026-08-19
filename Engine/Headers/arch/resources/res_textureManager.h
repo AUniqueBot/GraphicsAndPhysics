@@ -19,17 +19,17 @@ public:
 public:
 	
 
-	friend class Texture;
-	Texture2D LoadTexture(const std::filesystem::path& _path);
-	Texture2D Create2DTexture(int width, int height, TextureProperties::TextureProps _props = {});
+	friend class TextureRes;
+	Texture2DHandle LoadTexture(const std::filesystem::path& _path);
+	Texture2DHandle Create2DTexture(int width, int height, TextureProperties::TextureProps _props = {});
 
 	// you can ignore these for the time being.
 	void Create3DTexture(int width, int height, int depth, TextureProperties::TextureProps _props = {});
-	Texture2DArray Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
-	Cubemap CreateCubemapTexture(int _dimensions,  TextureProperties::TextureProps _props = {});
+	Texture2DArrayHandle Create2DArrayTexture(int width, int height, int layers, TextureProperties::TextureProps _props = {});
+	CubemapRes CreateCubemapTexture(int _dimensions,  TextureProperties::TextureProps _props = {});
 
 
-	Texture2D GetTexture2D(RES_ID _resourceID);
+	Texture2DRes GetTexture2D(RES_ID _resourceID);
 	
 public:
 

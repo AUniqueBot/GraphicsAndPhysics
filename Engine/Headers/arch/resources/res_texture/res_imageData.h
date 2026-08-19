@@ -13,7 +13,6 @@ public:
 	glm::ivec2 m_originalDimensions;
 	TextureProperties::ImageDataType m_originalDatatype;
 	TextureProperties::ImageChannels m_originalChannels;
-
 	ImageData() = default;
 	ImageData(
 		const void* _src,

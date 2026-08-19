@@ -49,11 +49,13 @@ public:
 
 
 
-	void SetTexture(const Texture2DArray& _tex);
+	void SetTexture(const Texture2DArrayHandle& _tex);
 	//const Texture2DArray& GetTexture() const;
-
-
 	const GLuint GetTextureHandle() const;
+
+
+	// - ubo data ------------------
+	int GetShadowMapUsageCount() const;
 private:
 
 private:
@@ -68,8 +70,8 @@ private:
 	std::vector<unsigned> m_freeLayers		{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.
-	Texture2DArray m_textureHandle			{ std::nullopt }; // needs a proper constructor.
+	Texture2DArrayHandle m_textureHandle	{ std::nullopt }; // needs a proper constructor.
 	bool m_initialized						{ false };
 
-
+	int m_shadowUsageCount							{ 0 };
 };

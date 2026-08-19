@@ -299,6 +299,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_fbo.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resourceHandle.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_gpuhandle.h" />
@@ -306,6 +307,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_buffer.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource_list.h" />
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_shadowmap.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_submesh.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_vao.h" />
     <ClInclude Include="Headers\arch\resources\res_material.h" />

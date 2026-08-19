@@ -73,7 +73,7 @@ namespace TextureProperties {
 		int m_mipmapCount{ 1 };
 		bool m_autogenerateMipmaps{ false };
 		TextureFormat m_internalImageFormat{ TextureFormat::RGBA8 };
-		ImageDataType m_pixelDataType{ ImageDataType::UINT_8 };
+		ImageDataType m_pixelDatatype{ ImageDataType::UINT_8 };
 		ImageChannels m_pixelFormat{ ImageChannels::RGBA };
 
 		WrapBehaviour m_wrapU{ TextureProperties::WrapBehaviour::REPEAT };
@@ -131,7 +131,7 @@ namespace TextureProperties {
 namespace TextureProperties {
 
 	struct InternalImageDecomposed {
-		ImageDataType m_pixelDataType;
+		ImageDataType m_pixelDatatype;
 		ImageChannels m_pixelFormat;
 	};
 	// Hidden from headers.

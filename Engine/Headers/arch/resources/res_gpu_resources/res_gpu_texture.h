@@ -1,8 +1,8 @@
 #pragma once
 #include <pch.h>
+#include <arch/resources/res_texture/res_texture.h>
 #include <arch/resources/res_gpu_resources/res_gpu_resource.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
-
 
 // Internal GPU class for texture
 // handles raw allocation and upload logic
@@ -20,9 +20,10 @@ public:
 	GPU_Texture(GPU_Texture& _old) = delete;
 	GPU_Texture& operator=(GPU_Texture& _old) = delete;
 public:
+
+	void Load(const TextureRes& _tex);
+
 	const GLuint& GetTextureHandle() const;
-
-
 	const TextureProperties::TextureType& GetTextureType() const;
 
 
@@ -64,6 +65,7 @@ public:
 	void SetPixelColor(glm::u8vec2 _col, glm::ivec3 _pixelPos);	// rg
 	void SetPixelColor(glm::u8vec3 _col, glm::ivec3 _pixelPos);	// rgb
 	void SetPixelColor(glm::u8vec4 _col, glm::ivec3 _pixelPos);	// rgba 
+
 
 
 public:

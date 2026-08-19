@@ -49,8 +49,13 @@ void LambertMaterial::Color(unsigned _newColor) {
     Color(HexToVec4F(_newColor));
 }
 
-void LambertMaterial::AlbedoTexture(Texture2D _texture) {
-    
+void LambertMaterial::AlbedoTexture(const Texture2DHandle& _texture) {
+    m_albedoColor = _texture;
+}
+
+const Texture2DHandle& LambertMaterial::AlbedoTexture() const {
+    return m_albedoColor;
+    // TODO: insert return statement here
 }
 
 void LambertMaterial::UsesColor(bool _usesColor) {
@@ -68,11 +73,18 @@ GLuint LambertMaterial::GetColorTextureID() const {
 }
 
 void LambertMaterial::SetupTextures() {
-    TextureManager& texManager{ Core::GetInstance().GetAssetManager().GetTextureManager() };
+    Core& c = Core::GetInstance();
+    TextureManager& texManager = c.GetAssetManager().GetTextureManager();
+    GPUResourceManager& gpuMgr = c.GetGPUResourceManager();
     using namespace TextureProperties;
     TextureProps props;
     props.m_internalImageFormat = TextureFormat::RGBA8;
     m_textureColor = texManager.Create2DTexture(1, 1, props);
+    auto resPtr = m_textureColor.Get();
+    resPtr->SetGPUResourceHandle(gpuMgr.CreateTexture(*resPtr));
+    
+
+
     m_textureColor.SetPixelColor(m_color, 0, 0, 0);
 }
 

@@ -605,5 +605,11 @@
     <ClInclude Include="Headers\arch\resources\res_texture\res_imagedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_shadowmap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_fbo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

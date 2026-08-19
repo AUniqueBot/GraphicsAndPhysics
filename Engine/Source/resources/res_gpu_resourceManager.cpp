@@ -20,6 +20,14 @@ GPUResourceHandle GPUResourceManager::CreateTexture(
     return { id, GPUDatatype::Texture };
 }
 
+GPUResourceHandle GPUResourceManager::CreateTexture(const TextureRes& _res) {
+    return CreateTexture(
+        _res.GetTextureType(),
+        _res.GetDimensions(),
+        _res.GetTextureProps()
+    );
+}
+
 
 
 GPUResourceHandle GPUResourceManager::CreateVAO() {

@@ -15,6 +15,7 @@
 
 
 
+
 static const char* GLDebugTypeToString(GLenum type) {
     switch (type) {
     case GL_DEBUG_TYPE_ERROR:               return "ERROR";
@@ -130,6 +131,41 @@ void SetupGLDebug() {
 
 
 
+
+
+
+// ---------------------------------------------------------------------------------------------
+// - helper -----------------
+
+static void AssignLightShadowID(const Light& _light, ShadowMap& _shadowmap) {
+    // generate light data.
+    if (_light.CastShadowDirty()) {
+        bool wantsShadowId{ _light.GetCastShadow() };
+        if (!wantsShadowId) {
+            _shadowmap.ReclaimID(_light.GetShadowMapID());
+            _light.InvalidateShadowMapID();
+            LOG_INFO("clearing light id.");
+        }
+        else {
+            if (!_shadowmap.HasFreeLayers()) {
+                LOG_INFO("No free slots for shadow map. Waiting for next update.");
+                // early exit, cannot update the var.
+                return;
+            }
+            LOG_INFO("Assigning new id to light.");
+            _light.SetShadowMapID(_shadowmap.GenerateLayerID());
+        }
+        _light.CleanCastShadow();
+    }
+    if (!_light.GetCastShadow()) return; // ignore anything not asking for it.
+    unsigned shadowMapID{ _light.GetShadowMapID() };
+    if (!_shadowmap.ValidateID(shadowMapID)) return;
+    _shadowmap.SetBoundLayer(shadowMapID);
+}
+
+
+// ---------------------------------------------------------------------------------------------
+
 void RenderSystem::Init() {
 
     // - initialise gl settings -----------------
@@ -171,8 +207,11 @@ void RenderSystem::PreUpdate() {
     
     // - update GPU meshes ----
     MeshManager& mrMgr = c.GetAssetManager().GetMeshManager();
+    TextureManager& texMgr = c.GetAssetManager().GetTextureManager();
     ComponentPool<MeshRenderer> mrPool = *er.GetComponentPool<MeshRenderer>();
     for (MeshRenderer& mr : mrPool) {
+
+
         RES_ID meshResId = mr.GetMesh();
         if (!mrMgr.Has(meshResId))
             continue;
@@ -190,7 +229,7 @@ void RenderSystem::PreUpdate() {
         }
         meshCpu.SetGPUResourceHandle(gpuMgr.CreateMesh(meshCpu));
     }
-    TextureManager& texMgr = c.GetAssetManager().GetTextureManager();
+
 
 }
 
@@ -323,8 +362,6 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
     int shadowCount{ std::min(static_cast<int>(_shadowDataList.size()), C_MAX_SHADOWS) };
     // - directional light data -----------------------------------------------------
     for (int i{}; i < shadowCount; ++i) {
-
-
         if (_shadowDataList[i].GetLightType() != LightType::DIRECTIONAL) continue;
         m_smData.m_shadowData[i] = _shadowDataList[i];
     }
@@ -335,7 +372,10 @@ void RenderSystem::FillShadowMapUBO(const std::vector<ShadowData>& _shadowDataLi
         1.0f / dirLightFBSize.x,
         1.0f / dirLightFBSize.y
         );
+    m_smData.m_directionalCount = m_directionalShadowMaps.GetShadowMapUsageCount();
     // - point light data -----------------------------------------------------------
+
+
     UBO& shadowUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW);
     //shadowUBO.BindBuffer();
     shadowUBO.FillBufferData(&m_smData);
@@ -459,6 +499,10 @@ void RenderSystem::ShadowRenderPass(
     }
     ShadowMap::Unbind();
     UnbindShadowShader();
+
+
+    // fill up the Shadow UBOs here.
+    
 }
 
 void RenderSystem::LightingRenderPass(
@@ -514,33 +558,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
     const glm::vec2& fbSize             { m_directionalShadowMaps.GetFramebufferSize() };
     ShadowData& sdData                  { const_cast<Light*>(&_light)->GetShadowData() };
 
-    
-
-    // generate light data.
-    if (_light.CastShadowDirty()) {
-        bool wantsShadowId{ _light.GetCastShadow() };
-        if (!wantsShadowId) {
-            m_directionalShadowMaps.ReclaimID(_light.GetShadowMapID());
-            _light.InvalidateShadowMapID();
-            LOG_INFO("clearing light id.");
-            --m_smData.m_directionalCount;
-        }
-        else {
-            if (!m_directionalShadowMaps.HasFreeLayers()) {
-                LOG_INFO("No free slots for shadow map. Waiting for next update.");
-                // early exit, cannot update the var.
-                return;
-            }
-            LOG_INFO("Assigning new id to light.");
-            _light.SetShadowMapID(m_directionalShadowMaps.GenerateLayerID());
-            ++m_smData.m_directionalCount;
-        }
-        _light.CleanCastShadow();
-    }
-    if (!_light.GetCastShadow()) return; // ignore anything not asking for it.
-    unsigned shadowMapID{ _light.GetShadowMapID() };
-    if (!m_directionalShadowMaps.ValidateID(shadowMapID)) return;
-    m_directionalShadowMaps.SetBoundLayer(shadowMapID);
+    AssignLightShadowID(_light, m_directionalShadowMaps);
 
     // clear.
     glViewport(0, 0, static_cast<GLsizei>(fbSize.x), static_cast<GLsizei>(fbSize.y));
@@ -616,6 +634,15 @@ void RenderSystem::PointLightShadowRenderPass(
     const Light& _light, 
     const ComponentPool<MeshRenderer>& _mrPool
 ) {
+    const EntityViewConst& lightEntity{ _er.GetEntity(_light.GetEntityID()) };
+    const ComponentView<Transform>& trs{ lightEntity->GetComponent<Transform>() };
+    const glm::vec2& fbSize{ m_directionalShadowMaps.GetFramebufferSize() };
+    ShadowData& sdData{ const_cast<Light*>(&_light)->GetShadowData() };
+
+
+    for (int i{}; i < 6; ++i) {
+
+    }
 
 }
 
@@ -857,12 +884,17 @@ void RenderSystem::SetupShadowBuffers() {
     glm::ivec3 dims{};
 
     dims = { SHADOW_WH, SHADOW_WH, m_directionalShadowMaps.GetLayers() };
-    TextureManager& texManager = Core::GetInstance().GetAssetManager().GetTextureManager();
-    Texture2DArray dir = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    Core& c = Core::GetInstance();
+    TextureManager& texManager = c.GetAssetManager().GetTextureManager();
+    GPUResourceManager& gpuMgr = c.GetGPUResourceManager();
+    Texture2DArrayHandle dir = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    auto ptr = dir.Get();
+    ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_directionalShadowMaps.SetTexture(dir);
     m_directionalShadowMaps.BuildShadowMap(); 
 
-     
+
+    //m_pointLightShadowMaps.SetTexture();
 
 
 }

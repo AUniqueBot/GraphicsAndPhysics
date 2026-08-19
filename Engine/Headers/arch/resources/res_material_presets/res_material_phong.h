@@ -79,18 +79,18 @@ private:
 
 	bool m_valuesDirty					{ true };
 
-	Texture2D m_textureColor;
+	Texture2DHandle m_textureColor;
 	GLuint m_reservedColorTexId{}; 
 	GLuint m_reservedColorImageTexId{};
 
-	Texture2D m_textureSpecular;
+	Texture2DHandle m_textureSpecular;
 	GLuint m_reservedSpecularTexId{};
 	GLuint m_reservedSpecularImageTexId{};  
 
 	
 	// exponent + something
 
-	Texture2D m_textureGloss;
+	Texture2DHandle m_textureGloss;
 	GLuint m_reservedGlossTexId{}; 
 	GLuint m_reservedGlossImageTexId{};  
 	
