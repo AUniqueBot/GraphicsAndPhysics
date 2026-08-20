@@ -119,14 +119,14 @@ const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 template<std::derived_from<Component> T>
 bool ComponentPool<T>::Add(EntityID _addTo) {
 	if (_addTo == EntityID::ENTITYID_INVALID) return false;
-	std::cout << "[[ ================================================================== ]]" << std::endl;
-	std::cout << "Adding Component: " << typeid(T).name() << std::endl;
-	std::cout << "Client: " << _addTo << std::endl;
 	bool result = m_compPool.Add(T{}, _addTo);
+	//std::cout << "[[ ================================================================== ]]" << std::endl;
+	//std::cout << "Adding Component: " << typeid(T).name() << std::endl;
+	//std::cout << "Client: " << _addTo << std::endl;
 	
-	std::cout << (result ? "Good" : "Bad") << std::endl;
-	std::cout << "Comp Pool Size: " << m_compPool.size() << std::endl;
-	std::cout << "[[ ================================================================== ]]" << std::endl;
+	//std::cout << (result ? "Good" : "Bad") << std::endl;
+	//std::cout << "Comp Pool Size: " << m_compPool.size() << std::endl;
+	//std::cout << "[[ ================================================================== ]]" << std::endl;
 	
 	if (result) {
 		ComponentView<T> component = m_compPool.At(_addTo);

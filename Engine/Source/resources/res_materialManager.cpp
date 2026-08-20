@@ -1,11 +1,11 @@
 #include <arch/resources/res_materialManager.h>
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_texture/res_texture2d.h>
-
+#include <rapidjson/istreamwrapper.h>
 
 
 void MaterialManager::Init() {
-
+	RegisterFileExtension(".material");
 }
 
 GLuint MaterialManager::ResolveMaterial(std::string _materialID) const {
@@ -46,7 +46,10 @@ MaterialHandle MaterialManager::CreateGGXMaterial() {
 	return MaterialHandle(std::nullopt);
 }
 
-MaterialHandle MaterialManager::LoadMaterial(const rapidjson::Value& _materialData) {
+MaterialHandle MaterialManager::LoadMaterial(
+	const rapidjson::Value& _materialData,
+	RES_ID _existingId
+) {
 	const rapidjson::Value& shader = _materialData["shader_id"];
 	std::shared_ptr<Material> mat;
 	if (shader.IsString()) {
@@ -80,6 +83,12 @@ MaterialHandle MaterialManager::LoadMaterial(const rapidjson::Value& _materialDa
 	if (!mat) {
 		return MaterialHandle();
 	}
+
+	if (_existingId != ResourceConstants::C_RES_INVALID_ID) {
+		mat->ResourceID(_existingId);
+	}
+
+
 	mat->Name(_materialData["name"].GetString());
 	MaterialHandle handle(m_resourceManager.AddInternalResource(mat));
 	return handle;
@@ -269,5 +278,21 @@ std::shared_ptr<BlinnPhongMaterial> MaterialManager::LoadBlinnMaterial(const rap
 
 std::shared_ptr<Material> MaterialManager::LoadGGXMaterial(const rapidjson::Value& _materialData) {
 	return std::shared_ptr<Material>();
+}
+
+void MaterialManager::LoadResource(const MetafileData& _data) {
+	namespace fs = std::filesystem;
+	fs::path path = _data.path;
+	std::ifstream ifs(path);
+	if (!ifs.is_open()) {
+		ifs.close();
+		return;
+	}
+	rapidjson::IStreamWrapper isw(ifs);
+	rapidjson::Document doc;
+	doc.ParseStream(isw);
+	ifs.close();
+	MaterialHandle handle = LoadMaterial(doc, _data.id);
+	handle.GetBaseResource()->ResourcePath(path);
 }
 

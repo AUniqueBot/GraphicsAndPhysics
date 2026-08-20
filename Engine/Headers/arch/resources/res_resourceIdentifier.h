@@ -1,6 +1,7 @@
 #pragma once
 #include <arch/resources/res_resource.h>
 
+class ResourceManager;
 
 struct ResourceIdentifier {
 	RES_ID m_resourceId						{ ResourceConstants::C_RES_INVALID_ID };

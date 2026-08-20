@@ -10,7 +10,7 @@ const unsigned C_VERSION_MAJOR = 4;
 const unsigned C_VERSION_MINOR = 6;
 
 
-void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
+static void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
 
 	InputSystem& is{ _core.GetInputSystem() };
 
@@ -24,8 +24,6 @@ void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
 	}
 
 }
-
-
 
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
@@ -46,10 +44,12 @@ int main() {
 	// tbh mate, idk what this does.
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-
 	// create a window
 	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
 	c.SetWindow(mainWindow);
+
+	// if editor call this. else ignore it.
+	glfwSetDropCallback(mainWindow, UI_Core::FileDropCallback);
 
 	// failed to create window
 	if (!mainWindow) { 

@@ -5,6 +5,11 @@
 #include <arch/resources/res_materialManager.h>
 #include <arch/resources/res_textureManager.h>
 #include <arch/resources/res_meshManager.h>
+#include <arch/resources/res_metafile.h>
+
+
+
+
 
 class AssetManager {
 
@@ -22,6 +27,7 @@ public:
 public:
 	void Init();
 	void Cleanup();
+	void ScanResourcesInPath(const std::filesystem::path& _path, bool _recursive = true);
 
 	ShaderManager& GetShaderManager();
 	const ShaderManager& GetShaderManager() const;
@@ -39,6 +45,10 @@ public:
 	MeshManager& GetMeshManager();
 	const MeshManager& GetMeshManager() const;
 
+
+private:
+	
+	void LoadResource(const MetafileData& _data);
 private:
 	ShaderManager m_shaderManager;
 	ShaderProgramManager m_shaderPrgManager;

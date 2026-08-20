@@ -297,6 +297,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
+    <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_fbo.h" />
@@ -341,6 +342,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h" />
+    <ClInclude Include="Headers\arch\resources\res_metafile.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h" />

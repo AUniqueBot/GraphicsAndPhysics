@@ -20,6 +20,18 @@ namespace ShaderConstants {
 		COMPUTE,
 		_COUNT
 	};
+
+	inline std::string StringifyShaderType(const ShaderType& _type) {
+		return
+			_type == ShaderType::VERTEX ? "Vertex" :
+			_type == ShaderType::FRAG ? "Frag" :
+			_type == ShaderType::GEOMETRY ? "Geometry" :
+			_type == ShaderType::TESELLATION_CONTROL ? "Tesselation_Contrel" :
+			_type == ShaderType::TESSELATION_EVALUATION ? "Tesselation_Evaluation" :
+			_type == ShaderType::COMPUTE ? "Compute" :
+			"";
+	}
+
 }
 
 namespace ShaderUtilFunctions {

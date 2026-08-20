@@ -44,14 +44,12 @@ public:
 	bool AllowMouseInput() const;
 	void AllowMouseInput(bool _setting);
 
-
-
-
 	Core* GetCore() const;
-
-
-
 	inline GLuint GetIcon(std::string _name) const { return m_iconMap.at(_name); };
+
+
+	static void FileDropCallback(GLFWwindow* _window, int _count, const char** _paths);
+
 
 protected:
 	void BeginDockSpace();
@@ -81,6 +79,10 @@ private:
 	EntityRegistry* m_entityRegistry			{};
 	std::vector<EntityID> m_selectedEntityList	{};
 	
-	
 	mutable EntityID m_selectedEntity			{ EntityID::ENTITYID_INVALID };
+
+
+	// - drag n drop functionality -------------------
+	inline static std::vector<std::string> m_droppedPaths	{ };
+	inline static bool m_draggingExternalFiles				{ false };
 };

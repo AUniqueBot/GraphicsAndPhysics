@@ -31,14 +31,6 @@ void Core::Init() {
 	Entity& dirLight = *(m_registry.Instantiate());
 	Entity& cam =  *(m_registry.Instantiate());
 
-	
-
-	std::ifstream ifs("./Assets/Materials/lambertmaterial.material");
-	rapidjson::IStreamWrapper isw(ifs);
-	rapidjson::Document doc;
-	doc.ParseStream(isw);
-	ifs.close();
-
 
 	obj1.Name("Mesh Object");
 	ambientLight.Name("Ambient Light");
@@ -54,9 +46,8 @@ void Core::Init() {
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(mesh.GetResourceID());
-		//BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
-		//mat->Color(0xaaaaeeff);
-		auto mat = matMgr.LoadMaterial(doc);
+		BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
+		mat->Color(0xaaaaeeff);
 		component->AddMaterial(mat); // purposeful downcast.
 	}
 

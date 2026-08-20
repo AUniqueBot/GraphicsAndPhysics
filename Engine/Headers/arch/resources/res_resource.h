@@ -10,7 +10,7 @@
 */
 
 
-using RES_ID = unsigned long;	//id of the resource (to be replaced with GUID one day)
+using RES_ID = uint64_t;	//id of the resource (to be replaced with GUID one day)
 using RESTYPE_ID = uint32_t;	// id of the TYPE of resource
 
 
@@ -72,6 +72,7 @@ public:
 	virtual void UnloadAsset();
 	bool IsAssetLoaded() const;
 
+	void ResourceID(RES_ID _newId);
 	RES_ID ResourceID() const;
 	
 
@@ -82,19 +83,7 @@ public:
 	inline virtual void Destroy() {};
 
 protected:
-
-private:
 	friend class ResourceManager;
-	void ResourceID(RES_ID _newId);
-
-
-	// Res ID structure (total 64 bits)
-	// 8 Bits - 3 Digits for asset type
-	// 24 bits - something idk 
-	
-
-
-protected:
 	std::string m_name{};
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
 

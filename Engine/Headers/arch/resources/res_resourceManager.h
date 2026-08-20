@@ -2,7 +2,9 @@
 #include <pch.h>
 #include <arch/datatypes/type_sparseSet.h>
 #include <arch/resources/res_resource.h>
-
+#include <unordered_set>
+#include <random>
+#include <cstdint>
 
 /*!
 	@brief a class designed to manage resources used in the application 
@@ -41,11 +43,6 @@ public:
 
 	void ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive = true);
 	
-
-	// internal thing
-	template <std::derived_from<BaseResource> T>
-	ResourceIdentifier AddExternalResource(std::shared_ptr<T> _resource, std::filesystem::path _path);
-
 	template <std::derived_from<BaseResource> T>
 	ResourceIdentifier AddInternalResource(std::shared_ptr<T> _resource);
 
@@ -102,18 +99,11 @@ public:
 	void LoadPaths();
 
 	void LoadDefaultResources();
-
-
-	void LoadResource(std::filesystem::path _filePath);
+	RES_ID GenerateID();
 private:
-	// optional path.
-	ResourceIdentifier AddExternalResourceInternal(
-		std::shared_ptr<BaseResource> _resource, 
-		RESTYPE_ID _type, 
-		std::filesystem::path _path
-	);
 
-	ResourceIdentifier AddInternalResourceInternal(
+
+	ResourceIdentifier AddResourceInternal(
 		std::shared_ptr<BaseResource> _resource,
 		RESTYPE_ID _type
 	);
@@ -122,19 +112,16 @@ private:
 	ResourceIdentifier GenerateResourceIdentifier(std::shared_ptr<BaseResource> _resource) const;
 
 
-private:
-	static RES_ID GenerateID();
-	static RES_ID GenerateTypedID(RESTYPE_ID _rsc);
-	
+private:	
+	RES_ID GenerateTypedID(RESTYPE_ID _rsc);
 	
 	std::vector<std::filesystem::path>							m_assetPaths;
 	std::unordered_map<std::string, RESTYPE_ID>					m_fileExtensions;
-	inline static std::unordered_map<RESTYPE_ID, RES_ID>		m_nextIDTyped {};
-	inline static RES_ID										m_nextID {};
-
-	// resource pool identifiers
+	std::unordered_map<RESTYPE_ID, RES_ID>						m_nextIDTyped {};
+	std::mt19937_64 m_idGenerator								{ std::random_device{}() };
 	
-	// primary storage.
+	// resource pool identifiers
+	//primary storage.
 	SparseSet<RES_ID, std::shared_ptr<BaseResource>>			m_resourcePool;
 	//std::unordered_map<RESTYPE_ID, SparseSet<RES_ID, std::shared_ptr<BaseResource>>> m_resourceStorage;
 

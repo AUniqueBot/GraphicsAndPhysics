@@ -1,6 +1,13 @@
 #include <arch/resources/res_specializedResourceManager.h>
 #include <arch/resources/res_resourceIdentifier.h>
 
+#include <rapidjson/rapidjson.h>
+#include <rapidjson/document.h>
+#include <rapidjson/prettywriter.h>
+
+
+
+
 bool SpecializedResourceManager::Has(RES_ID _id) const { 
 	return m_resourceIdPool.contains(_id); 
 };
@@ -32,6 +39,7 @@ void SpecializedResourceManager::SetResourceAlias(RES_ID _id, std::string _alias
 	}
 	m_aliasToResId[_alias] = _id;
 	m_resIdToAlias[_id] = _alias;
+	m_resourceManager.GetResource(_id)->Name(_alias);
 }
 
 
@@ -51,7 +59,108 @@ RES_ID SpecializedResourceManager::GetResIDFromAlias(std::string _alias) const {
 }
 
 
+MetafileData SpecializedResourceManager::CreateMetafileData(
+	const std::filesystem::path& _entry,
+	std::shared_ptr<BaseResource> _res
+) {
+	MetafileData meta;
+	meta.id = _res->ResourceID();
+	meta.path = _entry;
+	return meta;
+}
 
+void SpecializedResourceManager::RegisterFileExtension(std::string _ext) {
+	std::transform(
+		_ext.begin(), _ext.end(), 
+		_ext.begin(),
+		[](unsigned char c) { return std::tolower(c); }
+	);
+	m_registeredExtensions.insert(_ext);
+}
+
+void SpecializedResourceManager::DeregisterFileExtension(std::string _ext) {
+	std::transform(
+		_ext.begin(), _ext.end(),
+		_ext.begin(),
+		[](unsigned char c) { return std::tolower(c); }
+	);
+	m_registeredExtensions.erase(_ext);
+}
+
+bool SpecializedResourceManager::AcceptsFileExtension(std::string _ext) const {
+	std::transform(
+		_ext.begin(), _ext.end(),
+		_ext.begin(),
+		[](unsigned char c) { return std::tolower(c); }
+	);
+	return m_registeredExtensions.contains(_ext);
+}
+
+
+
+void SpecializedResourceManager::UpdateResourceMetafile(const std::filesystem::path& _file) {
+	std::string ext = _file.extension().string();
+	if (!m_registeredExtensions.contains(ext)) {
+		LOG_ERROR("Cannot register an unsupported file extension.");
+		return;
+	}
+	namespace fs = std::filesystem;
+	fs::path metaPath = _file;
+	metaPath += ".meta";
+	if (!fs::exists(metaPath)) {
+		GenerateResourceMetafile(_file);
+	}
+
+
+
+	
+	
+
+}
+
+void SpecializedResourceManager::GenerateResourceMetafile(const std::filesystem::path& _metapath) {
+	/*
+		typical metafile format
+
+		{
+			"version": int,
+			"guid": uint64
+		}
+		
+	*/
+	
+	using namespace rapidjson;
+	std::ofstream ofs(_metapath);
+	if (ofs.fail()) {
+		LOG_ERROR("Problem generating metafile...");
+		ofs.close();
+		return;
+	}
+	rapidjson::Document doc;
+	doc.SetObject();
+	rapidjson::Document::AllocatorType& allocator = doc.GetAllocator();
+
+	RES_ID resId = m_resourceManager.GenerateID(); // create a resource id for you to use!
+	doc.AddMember("version",Value().SetInt(1), allocator);
+	doc.AddMember("guid",
+		rapidjson::Value().SetUint64(resId),
+		allocator
+	);
+
+	StringBuffer buffer;
+	PrettyWriter<StringBuffer> writer(buffer);
+
+	doc.Accept(writer);
+	ofs << buffer.GetString();
+	ofs.close();
+	LOG_INFO("Meta file generated in: " << _metapath << "!");
+}
+
+
+
+
+void SpecializedResourceManager::LoadResource(const MetafileData& _data) {
+}
 
 ResourceIdentifier SpecializedResourceManager::RegisterResource(std::shared_ptr<BaseResource> _res) {
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(_res);

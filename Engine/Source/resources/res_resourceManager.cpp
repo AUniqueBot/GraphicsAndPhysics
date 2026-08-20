@@ -40,7 +40,7 @@ void ResourceManager::Init() {
 	LoadDefaultResources();
 
 
-	ScanResourcesInPath("Assets", true); // scan for typical setup
+	//ScanResourcesInPath("Assets", true); // scan for typical setup
 
 
 	
@@ -101,36 +101,18 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 }
 
 
-
-
-
-ResourceIdentifier ResourceManager::AddExternalResourceInternal(
-	std::shared_ptr<BaseResource> _resource, 
-	RESTYPE_ID _type,
-	std::filesystem::path _path) {
-	const RESTYPE_ID type = _resource->ResourceType();
-	const RES_ID resId = GenerateID();
-	const std::string name = _resource->m_pathToAsset.filename().string();
-
-	_resource->ResourceID(resId);
-	_resource->Name(name);
-	ResourceIdentifier idr = GenerateResourceIdentifier(_resource);
-	m_resourcePool.Add(std::move(_resource), resId);
-	m_resourceTypeManifest[_type].push_back(resId);
-	return idr;
-}
-
-ResourceIdentifier ResourceManager::AddInternalResourceInternal(
+ResourceIdentifier ResourceManager::AddResourceInternal(
 	std::shared_ptr<BaseResource> _resource, 
 	RESTYPE_ID _type
 ) {
 	const RESTYPE_ID type = _resource->ResourceType();
-	const RES_ID resId = GenerateID();
-	const std::string name = _resource->m_pathToAsset.filename().string();
-
-	_resource->ResourceID(resId);
-	_resource->Name(name);
+	RES_ID resId = _resource->ResourceID();
+	if (resId == ResourceConstants::C_RES_INVALID_ID) {
+		resId = GenerateID();
+		_resource->ResourceID(resId);
+	}
 	ResourceIdentifier idr = GenerateResourceIdentifier(_resource);
+	LOG_INFO("Registering Resource: [" << _resource->Name() << ", res-id: " << resId << "]");
 	m_resourcePool.Add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
 	return idr;
@@ -267,56 +249,15 @@ void ResourceManager::LoadPaths() {
 
 }
 
-void ResourceManager::LoadResource(std::filesystem::path _filePath) {
-
-	// grab normalized extension.
-	std::string extension = _filePath.extension().string();
-
-	if (extension.length() == 0) {
-		LOG_INFO("file has no extension: " << _filePath.filename());
-		return;
-	}
-
-	std::transform(extension.begin(), extension.end(), extension.begin(),
-		[](unsigned char c) { return std::tolower(c); });
-
-	if (m_fileExtensions.find(extension) == m_fileExtensions.end()) {
-		LOG_INFO("File Extension for file: " << _filePath.filename()
-			<< " is not registered and will be ignored. (extension: "
-			<< extension
-			<< ")"
-		);
-		return;
-	}
-
-	// add the resource here.
-	LOG_INFO("Registering file " << _filePath);
-	const RESTYPE_ID resType = m_fileExtensions.at(extension);
-	// for now just load immediately.
-	// TODO - figure out how to load on need.
-
-	if (resType == Material::GetResourceTypeID()) {
-		
-		//
-		std::shared_ptr<Material> mat;
-		// AddResource(mat, _filePath);
-	}
-
-
-	if (resType == MeshRes::GetResourceTypeID()) {
-		std::shared_ptr<MeshRes> mesh	{ std::make_shared<MeshRes>() };
-		
-		mesh->LoadMeshFromPath(_filePath);
-		LOG_INFO("Loading mesh from "<< _filePath);
-		AddExternalResource(mesh, _filePath);
-	}
-
-
-}
-
 RES_ID ResourceManager::GenerateID() {
-	return ++m_nextID;
+	RES_ID id;
+	do {
+		id = m_idGenerator();
+	} while (m_resourcePool.At(id) && id == ResourceConstants::C_RES_INVALID_ID);
+	return id;
 }
+
+
 
 RES_ID ResourceManager::GenerateTypedID(RESTYPE_ID _rsc) {
 	unsigned idx = ++m_nextIDTyped[_rsc];

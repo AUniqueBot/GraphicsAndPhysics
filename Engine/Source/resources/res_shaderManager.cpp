@@ -59,6 +59,10 @@ ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std:
 	res->SetShaderCode(_code);
 	res->Build();
 
+	std::string name = ShaderConstants::StringifyShaderType(_type) + " Shader";
+	res->Name(name);
+
+
 	ShaderHandle handle = ShaderHandle(RegisterResource(res));
 	if (m_shaderIds.find(_type) == m_shaderIds.end()) m_shaderIds[_type] = {} ;
 	m_shaderIds[_type].push_back(handle.GetResourceID());

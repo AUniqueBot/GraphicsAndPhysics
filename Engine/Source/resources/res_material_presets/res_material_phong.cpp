@@ -78,7 +78,9 @@ const glm::vec4& PhongMaterial::Specular() const {
 void PhongMaterial::Specular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
-    m_textureSpecular->SetPixelColor(m_specularCol, 0,0,0);
+    if (m_textureSpecular.HandleIsValid()) {
+        m_textureSpecular->SetPixelColor(m_specularCol, 0,0,0);
+    }
 
 }
 
@@ -111,7 +113,9 @@ const float& PhongMaterial::Gloss() const {
 
 void PhongMaterial::Gloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
-    m_textureGloss->SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
+    if (m_textureGloss.HandleIsValid()) {
+        m_textureGloss->SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
+    }
 }
 
 const GLuint& PhongMaterial::GetGlossImageTexture() const {

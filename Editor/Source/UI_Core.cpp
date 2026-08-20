@@ -89,6 +89,8 @@ void UI_Core::Update() {
 
 	ImGui::NewFrame();
 
+
+
 	ImGuiIO& uiIO = ImGui::GetIO();
 	Core* cPointer{ GetCore() };
 
@@ -247,6 +249,14 @@ Core* UI_Core::GetCore() const {
 	return m_applicationCore;
 }
 
+void UI_Core::FileDropCallback(GLFWwindow* _window, int _count, const char** _paths) {
+	m_droppedPaths.clear();
+	for (int i{}; i < _count; ++i) {
+		m_droppedPaths.push_back(_paths[i]);
+	}
+	m_draggingExternalFiles = true;
+}
+// ---------------------------------------------------------------------------------------------
 
 void UI_Core::RenderWidgets() const {
 	for (const auto& [_, widget] : m_widgetStorage) {

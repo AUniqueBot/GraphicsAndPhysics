@@ -611,5 +611,11 @@
     <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_fbo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\resources\guid.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_metafile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
