@@ -44,7 +44,7 @@ void Core::Init() {
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(mesh.GetResourceID());
 		component->AddMaterial(mat); // purposeful downcast.
-		mat.Color(0xaaaaeeff);
+		mat->Color(0xaaaaeeff);
 	}
 
 

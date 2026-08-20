@@ -228,14 +228,6 @@ protected:
 
 };
 
-struct MaterialHandle : public ResourceHandle {
-	MaterialHandle(ResourceIdentifierArg _arg = std::nullopt) : ResourceHandle(_arg) {}
 
-	inline std::shared_ptr<Material> GetMaterialResource() {
-		return GetResource<Material>();
-	}
-	inline std::shared_ptr<const Material> GetMaterialResource() const {
-		return GetResource<Material>();
-	}
 
-};
+using MaterialHandle = ResourceHandleT<Material>;

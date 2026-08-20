@@ -926,7 +926,7 @@ void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
     }
 
     for (MaterialHandle& matHandle : materialList) {
-        auto matPtr = matHandle.GetMaterialResource();
+        auto matPtr = matHandle.Get();
         if (!matPtr) continue;
         Material& mat = *matPtr;
         ResolveMaterial(mat);

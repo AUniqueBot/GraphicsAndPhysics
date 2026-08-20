@@ -16,18 +16,6 @@ bool ResourceHandle::HandleIsValid() const {
 		m_resourceIdentifier->m_resourceManager != nullptr; 
 };
 
-std::shared_ptr<BaseResource> ResourceHandle::operator->() {
-	if (!m_resourceIdentifier.has_value()) return nullptr;
-	ResourceIdentifier& resIdr = *m_resourceIdentifier;
-	ResourceManager& resMgr = *resIdr.m_resourceManager;
-	return resMgr.GetResource(resIdr.m_resourceId);
-}
-
-ResourceIdentifier& ResourceHandle::operator*() {
-	assert(m_resourceIdentifier.has_value() && "Identifier does not have member .");
-	return *m_resourceIdentifier;
-}
-
 RES_ID ResourceHandle::GetResourceID() const {
 	return HandleIsValid() ? 
 		m_resourceIdentifier->m_resourceId : ResourceConstants::C_RES_INVALID_ID;
@@ -38,12 +26,12 @@ const ResourceIdentifier& ResourceHandle::GetResourceIdentifier() const {
 }
 
 void ResourceHandle::SetName(const std::string& _name) {
-	auto res = GetResource<BaseResource>();
+	auto res = GetBaseResource();
 	if (res) res->Name(_name);
 }
 
 std::string ResourceHandle::GetName() const {
-	auto res = GetResource<BaseResource>();
+	auto res = GetBaseResource();
 	return res ? res->Name() : "__INVALID__RESOURCE__";
 }
 

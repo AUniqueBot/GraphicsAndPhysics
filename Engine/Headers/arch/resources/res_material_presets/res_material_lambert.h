@@ -58,17 +58,4 @@ struct LambertMaterialProps : public MaterialProps {
 };
 
 
-struct LambertMaterialHandle : public MaterialHandle {
-	LambertMaterialHandle(ResourceIdentifierArg _arg) : MaterialHandle(_arg) {}
-
-	inline glm::vec4 Color() const {
-		auto res = GetResource<LambertMaterial>();
-		return res ? res->Color() : glm::vec4(0.f);
-	}
-
-	inline void Color(glm::vec4 _col) {
-		auto res = GetResource<LambertMaterial>();
-		if (res) res->Color(_col);
-	}
-
-};
+using LambertMaterialHandle = ResourceHandleDerivedT<Material, LambertMaterial>;

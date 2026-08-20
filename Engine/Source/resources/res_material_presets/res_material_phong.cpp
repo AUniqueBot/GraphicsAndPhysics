@@ -40,7 +40,9 @@ const glm::vec4& PhongMaterial::Color() const {
 void PhongMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
-    m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
+    if (m_textureColor.HandleIsValid()) {
+        m_textureColor->SetPixelColor(_newColor, 0, 0, 0);
+    }
 }
 
 void PhongMaterial::Color(unsigned _newColor) {
@@ -76,7 +78,7 @@ const glm::vec4& PhongMaterial::Specular() const {
 void PhongMaterial::Specular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
-    m_textureSpecular.SetPixelColor(m_specularCol, 0,0,0);
+    m_textureSpecular->SetPixelColor(m_specularCol, 0,0,0);
 
 }
 
@@ -109,7 +111,7 @@ const float& PhongMaterial::Gloss() const {
 
 void PhongMaterial::Gloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
-    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
+    m_textureGloss->SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 }
 
 const GLuint& PhongMaterial::GetGlossImageTexture() const {
@@ -125,15 +127,15 @@ void PhongMaterial::SetSpecularImageTexture(const GLuint& _texture) {
 }
 
 GLuint PhongMaterial::GetColorTextureID() const {
-    return m_usesColorValue ? m_textureColor.GetTextureHandle() : m_reservedColorImageTexId;
+    return m_usesColorValue ? m_textureColor->GetTextureHandle() : m_reservedColorImageTexId;
 }
 
 GLuint PhongMaterial::GetSpecularTextureID() const {
-    return m_usesSpecularValue ? m_textureSpecular.GetTextureHandle() : m_reservedSpecularImageTexId;
+    return m_usesSpecularValue ? m_textureSpecular->GetTextureHandle() : m_reservedSpecularImageTexId;
 }
 
 GLuint PhongMaterial::GetGlossTextureID() const {
-    return m_usesGlossValue ? m_textureGloss.GetTextureHandle() : m_reservedGlossImageTexId;
+    return m_usesGlossValue ? m_textureGloss->GetTextureHandle() : m_reservedGlossImageTexId;
 }
 
 void PhongMaterial::SetUsesGlossValue(bool _usesGlossValue) {
@@ -172,14 +174,14 @@ void PhongMaterial::SetupTextures() {
     m_textureColor = texManager.Create2DTexture(1, 1, colProps);
     ptr = m_textureColor.Get();
     ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
-    m_textureColor.SetPixelColor(m_color, 0, 0, 0);
+    m_textureColor->SetPixelColor(m_color, 0, 0, 0);
 
     TextureProps specProps;
     specProps.m_internalImageFormat = TextureFormat::RGBA8;
     m_textureSpecular = texManager.Create2DTexture(1, 1, specProps);
     ptr = m_textureSpecular.Get();
     ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
-    m_textureSpecular.SetPixelColor(m_specularCol, 0, 0, 0);
+    m_textureSpecular->SetPixelColor(m_specularCol, 0, 0, 0);
 
 
     TextureProps glossProps;
@@ -187,7 +189,7 @@ void PhongMaterial::SetupTextures() {
     m_textureGloss = texManager.Create2DTexture(1, 1, glossProps);
     ptr = m_textureGloss.Get();
     ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
-    m_textureGloss.SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
+    m_textureGloss->SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
 
 
     // - setting values --------------------------------------------------

@@ -136,15 +136,6 @@ protected:
 };
 
 
-struct MeshHandle : public ResourceHandle {
-	using ResourceType = MeshRes;
-	inline MeshHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {}
-	inline std::shared_ptr<MeshRes> GetMeshResource() {
-		return GetResource<MeshRes>();
-	}
-	inline std::shared_ptr<const MeshRes> GetMeshResource() const {
-		return GetResource<MeshRes>();
-	}
-};
+using MeshHandle = ResourceHandleT<MeshRes>;
 
 

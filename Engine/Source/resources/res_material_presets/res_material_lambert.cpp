@@ -42,7 +42,9 @@ const glm::vec4& LambertMaterial::Color() const {
 void LambertMaterial::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
-    m_textureColor.SetPixelColor(_newColor, 0, 0, 0);
+    if (m_textureColor.HandleIsValid()) {
+        m_textureColor->SetPixelColor(_newColor, 0, 0, 0);
+    }
 }
 
 void LambertMaterial::Color(unsigned _newColor) {
@@ -69,7 +71,7 @@ bool LambertMaterial::UsesColor() const {
 }
 
 GLuint LambertMaterial::GetColorTextureID() const {
-    return m_usesColor ? m_textureColor.GetTextureHandle() : m_reservedImageTexId;
+    return m_usesColor ? m_textureColor->GetTextureHandle() : m_reservedImageTexId;
 }
 
 void LambertMaterial::SetupTextures() {
@@ -85,7 +87,7 @@ void LambertMaterial::SetupTextures() {
     
 
 
-    m_textureColor.SetPixelColor(m_color, 0, 0, 0);
+    m_textureColor->SetPixelColor(m_color, 0, 0, 0);
 }
 
 

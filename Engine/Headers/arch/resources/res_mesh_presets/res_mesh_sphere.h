@@ -34,41 +34,4 @@ private:
 
 // --------------------------------------------------------------------------------
 
-struct SphereHandle : public MeshHandle {
-	inline SphereHandle(ResourceIdentifier _idr) : MeshHandle(_idr) {}
-
-	inline float GetRadius() const {
-		auto res = GetResource<SphereRes>();
-		return res ? res->GetRadius() : 0.f;
-	}
-	inline void SetRadius(float _radius) {
-		auto res = GetResource<SphereRes>();
-		if (res) res->SetRadius(_radius);
-	}
-
-	inline int GetSubdivisionsX() const {
-		auto res = GetResource<SphereRes>();
-		return res ? res->GetSubdivisionsX() : -1;
-	}
-	inline int GetSubdivisionsY() const {
-		auto res = GetResource<SphereRes>();
-		return res ? res->GetSubdivisionsY() : -1;
-	}
-	inline glm::ivec2 GetSubdivisions() const {
-		auto res = GetResource<SphereRes>();
-		return res ? res->GetSubdivisions() : glm::ivec2(-1, -1);
-	}
-
-	inline void SetSubdivisionsX(int _divs) {
-		auto res = GetResource<SphereRes>();
-		if (res) res->SetSubdivisionsX(_divs);
-	}
-	inline void SetSubdivisionsY(int _divs) {
-		auto res = GetResource<SphereRes>();
-		if (res) res->SetSubdivisionsY(_divs);
-	}
-	inline void SetSubdivisions(glm::ivec2 _divs) {
-		auto res = GetResource<SphereRes>();
-		if (res) res->SetSubdivisions(_divs);
-	}
-};
+using SphereHandle = ResourceHandleDerivedT<MeshRes, SphereRes>;

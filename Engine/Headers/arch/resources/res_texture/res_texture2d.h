@@ -23,6 +23,5 @@ private:
 
 };
 
-struct Texture2DHandle : public TextureHandle {
-	Texture2DHandle(ResourceIdentifierArg _arg = std::nullopt) : TextureHandle(_arg) {}
-};
+
+using Texture2DHandle = ResourceHandleDerivedT<TextureRes, Texture2DRes>;

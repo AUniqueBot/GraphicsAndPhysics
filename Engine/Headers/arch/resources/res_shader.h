@@ -96,37 +96,5 @@ private:
 
 // ------------------------------------------------------------------------------
 
-struct ShaderHandle : public ResourceHandle {
-	inline ShaderHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {};
-
-	inline std::shared_ptr<Shader> GetShaderResource() {
-		return GetResource<Shader>();
-	}
-	inline std::shared_ptr<const Shader> GetShaderResource() const {
-		return GetResource<Shader>();
-	}
-
-
-	inline ShaderConstants::ShaderType GetShaderType() {
-		return GetShaderResource()->GetShaderType();
-	}
-
-	inline void BuildShader() {
-		GetShaderResource()->Build();
-	}
-	inline void SetShaderCode(std::string _src) {
-		Shader& res = *GetShaderResource();
-		res.SetShaderCode(_src);
-	}
-
-};
-
-struct ShaderProgramHandle : public ResourceHandle {
-	inline ShaderProgramHandle(ResourceIdentifierArg _resIdArg) : ResourceHandle(_resIdArg) {};
-	inline std::shared_ptr<ShaderProgram> GetShaderResource() {
-		return GetResource<ShaderProgram>();
-	}
-	inline std::shared_ptr<const ShaderProgram> GetShaderResource() const {
-		return GetResource<const ShaderProgram>();
-	}
-};
+using ShaderHandle = ResourceHandleT<Shader>;
+using ShaderProgramHandle = ResourceHandleT<ShaderProgram>;
