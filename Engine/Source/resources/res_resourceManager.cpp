@@ -142,8 +142,8 @@ ResourceIdentifier ResourceManager::GenerateResourceIdentifier(
 	const ResourceIdentifier ret{
 		_resource->m_resourceId,
 		_resource->m_resType,
-		_resource->m_name,
-		const_cast<ResourceManager*>(this)
+		const_cast<ResourceManager*>(this),
+		_resource->m_name
 	};
 	return ret;
 }

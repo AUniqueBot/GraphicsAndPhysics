@@ -5,8 +5,8 @@
 struct ResourceIdentifier {
 	RES_ID m_resourceId						{ ResourceConstants::C_RES_INVALID_ID };
 	RESTYPE_ID m_resourceTypeId				{ };
-	std::string m_resourceName;
 	ResourceManager* m_resourceManager		{ nullptr };
+	std::string m_resourceName;
 
 	bool operator==(const ResourceIdentifier& _resId) const;
 

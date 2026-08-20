@@ -30,7 +30,7 @@ public:
 	MaterialHandle						CreateGGXMaterial();
 
 	// - loading from serialization --------------------
-	std::shared_ptr<Material> LoadMaterial(const rapidjson::Value& _materialData);
+	MaterialHandle LoadMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<LambertMaterial> LoadLambertMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<PhongMaterial> LoadPhongMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<BlinnPhongMaterial> LoadBlinnMaterial(const rapidjson::Value& _materialData);

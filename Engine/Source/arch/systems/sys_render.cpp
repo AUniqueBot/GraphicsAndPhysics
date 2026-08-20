@@ -865,8 +865,8 @@ void RenderSystem::SetupShadowProgram() {
     shadowShader.Build();
     
     m_shadowPrg = shadowShader.GetShaderProgramID();
-    m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, U_OBJECT_MATRIX);
-    m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, U_LIGHT_MATRIX);
+    m_shadowMeshLoc = glGetUniformLocation(m_shadowPrg, ShaderUniformConstants::U_OBJECT_MATRIX);
+    m_shadowLightLoc = glGetUniformLocation(m_shadowPrg, ShaderUniformConstants::U_LIGHT_MATRIX);
     LOG_DEBUG("Setting up shadow shader with program id: ["<< m_shadowPrg << "] with mesh uniform location of <"<< m_shadowMeshLoc << "> and light uniform loc of <"<< m_shadowLightLoc<<">");
 }
 

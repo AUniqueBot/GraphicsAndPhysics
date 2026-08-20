@@ -17,15 +17,12 @@ void LambertMaterial::ResolveUniformValues() {
         if (m_textureColor.HandleIsValid()) {
             Color(m_color);
         }
-        else {
-            
-        }
     }
     
     // - uniform values ------------------
     if (m_uniformDataDirty) {
         m_uniformDataDirty = false;
-        m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
+        m_materialValues[ShaderUniformConstants::U_ALBEDO]->SetValue(GetColorTextureID());
     }
 }
 

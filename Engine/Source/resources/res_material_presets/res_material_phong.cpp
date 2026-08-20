@@ -17,7 +17,7 @@ void PhongMaterial::ResolveUniformValues() {
     if (!m_uniformDataDirty) return;
     m_uniformDataDirty = false;
 
-
+    using namespace ShaderUniformConstants;
     m_materialValues[U_ALBEDO]->SetValue(GetColorTextureID());
     m_materialValues[U_SPECULAR]->SetValue(GetSpecularTextureID());
     m_materialValues[U_GLOSS]->SetValue(GetGlossTextureID());
@@ -196,21 +196,21 @@ void PhongMaterial::SetupTextures() {
     MaterialValueData matValue;
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetColorTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), U_ALBEDO);
+    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_ALBEDO);
 
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetSpecularTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), U_SPECULAR);
+    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_SPECULAR);
 
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetGlossTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), U_GLOSS);
+    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_GLOSS);
 
 
     MaterialValueData expVal;
     expVal.m_type = MaterialValueData::ValueType::Int;
     expVal.SetValue(m_exponentVal);
-    m_materialValues.Add((MaterialValueData{}), U_EXPONENT);
+    m_materialValues.Add((MaterialValueData{}), ShaderUniformConstants::U_EXPONENT);
 }
  
 

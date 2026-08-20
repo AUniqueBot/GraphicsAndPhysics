@@ -221,7 +221,7 @@ protected:
 	std::map<std::string, GLint> m_uniformLocations;
 	SparseSet<std::string, MaterialValueData> m_materialValues;
 
-	bool m_uniformDataDirty				{ true }; // starts as true to initialize the values first.
+	bool m_uniformDataDirty						{ true }; // starts as true to initialize the values first.
 	bool m_valuesDirty							{ true };
 	
 

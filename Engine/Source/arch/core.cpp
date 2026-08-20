@@ -7,7 +7,7 @@
 #include <arch/resources/res_material_presets/res_material_phong.h>
 #include <arch/resources/res_material_presets/res_material_blinnphong.h>
 
-
+#include <rapidjson/istreamwrapper.h>
 
 
 Clock Core::m_clock {};
@@ -31,6 +31,15 @@ void Core::Init() {
 	Entity& dirLight = *(m_registry.Instantiate());
 	Entity& cam =  *(m_registry.Instantiate());
 
+	
+
+	std::ifstream ifs("./Assets/Materials/lambertmaterial.material");
+	rapidjson::IStreamWrapper isw(ifs);
+	rapidjson::Document doc;
+	doc.ParseStream(isw);
+	ifs.close();
+
+
 	obj1.Name("Mesh Object");
 	ambientLight.Name("Ambient Light");
 	dirLight.Name("Directional Light");
@@ -40,11 +49,15 @@ void Core::Init() {
 	const auto& component = obj1.GetComponent<MeshRenderer>();
 	if (component) {
 		MeshHandle mesh = meshMgr.LoadMesh("./Assets/Models/sampleModel.obj");
-		BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
+		
+
+
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(mesh.GetResourceID());
+		//BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
+		//mat->Color(0xaaaaeeff);
+		auto mat = matMgr.LoadMaterial(doc);
 		component->AddMaterial(mat); // purposeful downcast.
-		mat->Color(0xaaaaeeff);
 	}
 
 

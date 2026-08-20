@@ -1,0 +1,11 @@
+{
+    "name": "TestPhong",
+    "shader_id": "BRDF_PHONG",
+    "properties" : {
+        "albedo_tex": null,
+        "albedo_col": "0XBADBEDFF",
+        "specular_tex": null,
+        "specular_col": "0X000000FF",
+        "exponent_val" : 128
+    }
+}

@@ -188,18 +188,18 @@ void Material::ApplyShadowMap(
 		return it->second;
 
 		};
-	uniformLocation = GetUniform(U_DIRECTIONALSHADOWMAP);
+	uniformLocation = GetUniform(ShaderUniformConstants::U_DIRECTIONALSHADOWMAP);
 
 	if (-1 != uniformLocation && _dirShadowId) {
 		glBindTextureUnit(31, _dirShadowId);
 		glProgramUniform1i(m_shader, uniformLocation, 31);
 	}
-	uniformLocation = GetUniformLocation(U_POINTSHADOWMAP);
+	uniformLocation = GetUniformLocation(ShaderUniformConstants::U_POINTSHADOWMAP);
 	if (-1 != uniformLocation && _pointShadowId) {
 		glBindTextureUnit(30, _pointShadowId);
 		glProgramUniform1i(m_shader, uniformLocation, 30);
 	}
-	uniformLocation = GetUniformLocation(U_SPOTSHADOWMAP);
+	uniformLocation = GetUniformLocation(ShaderUniformConstants::U_SPOTSHADOWMAP);
 	if (-1 != uniformLocation && _spotShadowId) {
 		glBindTextureUnit(29, _spotShadowId);
 		glProgramUniform1i(m_shader, uniformLocation, 29);
