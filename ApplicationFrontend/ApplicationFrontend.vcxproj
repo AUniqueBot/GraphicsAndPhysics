@@ -71,8 +71,10 @@
       <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q
-xcopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /E /I /Y /Q</Command>
+      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -92,11 +94,20 @@ xcopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /E /I /Y /Q</Command>
       <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
-      <Command>xcopy "$(SolutionDir)Assets" "$(OutDir)Assets" /E /I /Y /Q</Command>
+      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Source\applicationcontext.cpp" />
+    <ClCompile Include="Source\configparser.cpp" />
     <ClCompile Include="Source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Headers\applicationcontext.h" />
+    <ClInclude Include="Headers\configparser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

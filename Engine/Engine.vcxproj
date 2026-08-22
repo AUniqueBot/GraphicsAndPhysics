@@ -152,6 +152,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -174,6 +175,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>

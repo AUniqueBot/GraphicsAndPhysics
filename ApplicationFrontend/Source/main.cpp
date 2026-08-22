@@ -1,13 +1,18 @@
 #include <pch.h>
 #include <graphics/gfx_glfwCustomCallbackFunctions.h>
 #include <arch/core.h>
-#include <arch/resources/res_mesh/res_mesh.h>
 #include <UI_Core.h>
 #include <arch/core/core_inputRouter.h>
+#include <applicationcontext.h>
 
 
-const unsigned C_VERSION_MAJOR = 4;
-const unsigned C_VERSION_MINOR = 6;
+
+
+
+inline constexpr const unsigned C_VERSION_MAJOR = 4;
+inline constexpr const unsigned C_VERSION_MINOR = 6;
+
+
 
 
 static void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
@@ -27,76 +32,13 @@ static void InitInputs(InputRouter& _router, Core& _core, UI_Core& _uiCore) {
 
 // - main -----------------------------------------------------------------------------------------------------
 int main() {
-	Core& c = Core::GetInstance();
-	UI_Core uic{};
+	ApplicationContextProps props = ApplicationContextProps::GenerateWindowConfig("./Config/applicationconfig.cfg");
 
-	InitInputs(c.GetInputRouter(), c, uic);
+	ApplicationContext app(props);
 
-
-	// core to also initialise the timer
-	// - GLFW Initialisation ------------------------------------------------------
-	// abstract to window.
-	glfwInit();
-	// setting up opengl version (opengl 4.)
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, C_VERSION_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, C_VERSION_MINOR);
-
-	// tbh mate, idk what this does.
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
-	// create a window
-	GLFWwindow* mainWindow = glfwCreateWindow(1920, 1080, "BWOAH", nullptr, nullptr);
-	c.SetWindow(mainWindow);
-
-	// if editor call this. else ignore it.
-	glfwSetDropCallback(mainWindow, UI_Core::FileDropCallback);
-
-	// failed to create window
-	if (!mainWindow) { 
-		LOG_ERROR("Bad GLFW Init.");
-
-		glfwTerminate();
-		return -1;
-	}
-	glfwMakeContextCurrent(mainWindow);
-	glfwSetInputMode(mainWindow, GLFW_STICKY_KEYS, GLFW_TRUE);
-
-
-
-	// - GLEW Initialisation -------------------------------------------------------
-	GLenum glewStatus = glewInit();
-	//uic.Init(4, 6, mainWindow);
-	 
-	if (glewStatus != GLEW_OK) {
-		LOG_ERROR("Bad GLEW Init.");
-		//uic.Exit();
-		glfwTerminate();
-		return -1;
-	}
-
-	c.Init();
-	
-	uic.Init(C_VERSION_MAJOR, C_VERSION_MINOR, mainWindow, c);
-
-	// - Main Loop -----------------------------------------------------------------
-	while (!glfwWindowShouldClose(mainWindow)) {
-		c.GetInputRouter().BeginFrame();
-		c.PreUpdate();
-		glfwPollEvents();
-		c.Update();
-		uic.Update();
-		glfwSwapBuffers(mainWindow);
-		c.PostUpdate();
-	}
-
-
-
-	uic.Exit();
-	c.Stop();
-	c.Cleanup();
-	//uic.Exit();
-
-	glfwTerminate();
+	app.Init();
+	app.Update();
+	app.Cleanup();
 
 }
 

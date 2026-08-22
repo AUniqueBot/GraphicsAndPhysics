@@ -40,7 +40,7 @@ void UIWidget_AssetBrowser::Draw() {
 	Separator();
 	//EngineInputEnabled();
 
-	;
+	
 
 
 	const ImGuiTableFlags tableFlags = 
@@ -196,6 +196,8 @@ void UIWidget_AssetBrowser::LoadEntries() const {
 	m_directoryPaths.clear();
 
 	for (const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(m_currentDir)) {
+		// ignore files with no meta file.
+
 		m_directoryPaths.push_back(entry.path());
 	}
 	SortItemsBy(NAME);

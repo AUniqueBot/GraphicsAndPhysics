@@ -48,7 +48,10 @@ public:
 	inline GLuint GetIcon(std::string _name) const { return m_iconMap.at(_name); };
 
 
+	// -- drag n drop ----------------------------------------------
 	static void FileDropCallback(GLFWwindow* _window, int _count, const char** _paths);
+	std::vector<std::string> GetDroppedPaths() const;
+	bool IsDragging() const;
 
 
 protected:
@@ -83,6 +86,6 @@ private:
 
 
 	// - drag n drop functionality -------------------
-	inline static std::vector<std::string> m_droppedPaths	{ };
-	inline static bool m_draggingExternalFiles				{ false };
+	std::vector<std::string> m_droppedPaths		{ };
+	bool m_draggingExternalFiles				{ false };
 };

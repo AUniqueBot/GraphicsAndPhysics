@@ -1,4 +1,3 @@
-
 #include <UI_Core.h>
 #include <UI_Widget.h>
 #include <UI_Menu.h>
@@ -249,12 +248,22 @@ Core* UI_Core::GetCore() const {
 	return m_applicationCore;
 }
 
+
+
 void UI_Core::FileDropCallback(GLFWwindow* _window, int _count, const char** _paths) {
-	m_droppedPaths.clear();
+	auto* ptr = static_cast<UI_Core*>(glfwGetWindowUserPointer(_window));
+	if (!ptr) return;
+	ptr->m_droppedPaths.clear();
 	for (int i{}; i < _count; ++i) {
-		m_droppedPaths.push_back(_paths[i]);
+		ptr->m_droppedPaths.push_back(_paths[i]);
 	}
-	m_draggingExternalFiles = true;
+	ptr->m_draggingExternalFiles = true;
+}
+std::vector<std::string> UI_Core::GetDroppedPaths() const {
+	return m_droppedPaths;
+}
+bool UI_Core::IsDragging() const {
+	return m_draggingExternalFiles;
 }
 // ---------------------------------------------------------------------------------------------
 
