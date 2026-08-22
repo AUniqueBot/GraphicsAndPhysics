@@ -81,12 +81,12 @@
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\Engine\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\Engine\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>

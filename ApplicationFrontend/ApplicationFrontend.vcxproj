@@ -44,12 +44,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\Application\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Build\Application\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -68,7 +68,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Build\Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
@@ -91,7 +91,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Build\Editor\$(Platform)\$(Configuration)\Editor.lib;$(SolutionDir)Build\Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
