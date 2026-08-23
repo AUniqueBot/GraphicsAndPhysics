@@ -44,12 +44,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)Build\Application\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)Build\Application\$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(SolutionDir)Bin\$(Platform)\$(Configuration)\</OutDir>
     <IncludePath>$(ProjectDir)Headers;$(SolutionDir)vcpkg_installed\x64-windows\x64-windows\include;$(SolutionDir)Extern\src\imnodes;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)Headers;$(IncludePath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
