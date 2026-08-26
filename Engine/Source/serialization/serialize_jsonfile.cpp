@@ -1,5 +1,8 @@
 #include <fstream>
 #include <serialization/serialize_jsonfile.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
 
 // - components ----------------------------------------------------------------------------
 #include <arch/components/comp_headers.h>
@@ -7,17 +10,46 @@
 
 namespace Serialization {
 	namespace fs = std::filesystem;
-	JSONFile::JSONFile(fs::path _path) {
 
+	JSONFile::JSONFile(JSONFileType _type) {
+		switch (_type) {
+		case JSONFileType::Array:
+			m_document.SetArray();
+			break;
+		case JSONFileType::Object:
+			m_document.SetObject();
+			break;
+		default:
+			m_document.SetNull();
+		}	
+	}
+
+
+	bool JSONFile::IsObject() const {
+		return m_document.IsObject();
+	}
+
+	bool JSONFile::IsArray() const {
+		return m_document.IsArray();
+	}
+
+	bool JSONFile::Parse(const std::filesystem::path& _path) {
 		// load file
 
 		std::ifstream ifs(_path);
+		if (!ifs) {
+			ifs.close();
+			return false;
+		}	
 		std::stringstream ss;
 		ss << ifs.rdbuf();
 		ifs.close();
-
-		m_document = rapidjson::Document();
 		m_document.Parse(ss.str().c_str());
+
+		if (m_document.HasParseError()) {
+			return false;
+		}
+		return IsObject() || IsArray();
 	}
 
 	bool JSONFile::HasMember(const char* _itemName) const {
@@ -62,63 +94,75 @@ namespace Serialization {
 		return m_document[_itemName];
 	}
 
-
-#define GETCOMPONENTDATA() \
-	const rapidjson::Value& componentData = _entityData["components"];
-
-#define LOADCOMPONENT(comp) \
-	if (componentData.HasMember(#comp))  { \
-		const rapidjson::Value& compData = componentData[#comp]; \
-		entity.AddComponent<comp>();\
-		\
-	} 
-
-
-	EntityID LoadEntity(const rapidjson::Value& _entityData) {
-		EntityView ev = Core::GetInstance().GetRegistry().Instantiate();
-		if (!ev) {
-			return EntityID::ENTITYID_INVALID;
-		}
-		Entity& entity = *ev;
-				// do something
-		
-		if (_entityData.HasMember("name")) {
-			entity.Name(_entityData["name"].GetString());
-		}
-		if (_entityData.HasMember("components")) {
-			GETCOMPONENTDATA();
-			LOADCOMPONENT(Transform);
-			LOADCOMPONENT(MeshRenderer);
-			LOADCOMPONENT(Light);
-		}
-		else {
-			LOG_INFO("Data has no component data. Ignoring.");
-		}
-
-		return entity.GetID();
+	rapidjson::Value& JSONFile::operator[](const char* _itemName) {
+		return m_document[_itemName];
 	}
 
-	void LoadEntity(const rapidjson::Value& _entityData, EntityID _id) {
-
-		// id does nothing.
-		EntityView ev = Core::GetInstance().GetRegistry().Instantiate(_id);
-		if (!ev) return;
-		Entity& entity = *ev;
-		// do something
-
-		if (_entityData.HasMember("name")) {
-			entity.Name(_entityData["name"].GetString());
-		}
-		if (_entityData.HasMember("components")) {
-			GETCOMPONENTDATA();
-			LOADCOMPONENT(Transform);
-			LOADCOMPONENT(Camera);
-			LOADCOMPONENT(MeshRenderer);
-			LOADCOMPONENT(Light);
-		}
-		else {
-			LOG_INFO("Data has no component data. Ignoring.");
-		}
+	const rapidjson::GenericArray<true, rapidjson::Value>& JSONFile::GetArray() const {
+		return m_document.GetArray();
 	}
+
+	const rapidjson::Value* JSONFile::begin() const {
+		return m_document.GetArray().begin();
+	}
+	const rapidjson::Value* JSONFile::end() const {
+		return m_document.GetArray().end();
+	}
+
+	void JSONFile::AddMember(std::string _memberName, rapidjson::Value& _value) {
+		auto& allocator = m_document.GetAllocator();
+		m_document.AddMember(
+			rapidjson::Value().SetString(_memberName.c_str(), allocator), 
+			_value, 
+			allocator
+		);
+	}
+
+	void JSONFile::PushBack(rapidjson::Value _value) {
+		m_document.PushBack(_value, m_document.GetAllocator());
+	}
+
+	rapidjson::Document& JSONFile::GetDocument() {
+		return m_document;
+	}
+
+	const rapidjson::Document& JSONFile::GetDocument() const {
+		return m_document;
+	}
+
+	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> JSONFile::GetAllocator() {
+		return m_document.GetAllocator();
+	}
+
+
+
+
+	bool SaveJSONFile(const JSONFile& _file, std::filesystem::path _path) {
+		// save to thing
+		namespace fs = std::filesystem;
+		if (!fs::exists(_path.parent_path())) return false;
+		std::ofstream ofs(_path);
+		if (!ofs) return false;
+		rapidjson::StringBuffer buffer;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+		const rapidjson::Document& doc = _file.GetDocument();
+		doc.Accept(writer);
+		ofs << buffer.GetString();
+		ofs.close();
+
+		LOG_INFO("Writing data to: " << _path);
+
+		return true;
+	}
+
+
+	JSONFile LoadJSONFile(std::filesystem::path _path) {
+		JSONFile file;
+		file.Parse(_path);
+		return file;
+	}
+
+
+
 
 }

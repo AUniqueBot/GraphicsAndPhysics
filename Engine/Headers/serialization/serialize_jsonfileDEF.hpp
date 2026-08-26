@@ -4,6 +4,8 @@ namespace Serialization {
 
 	template<typename T> struct JsonTypeTraits;
 	template<> struct JsonTypeTraits<int> { static bool Is(const rapidjson::Value& v) { return v.IsInt(); } };
+	template<> struct JsonTypeTraits<unsigned> { static bool Is(const rapidjson::Value& v) { return v.IsUint(); } };
+	template<> struct JsonTypeTraits<unsigned long> { static bool Is(const rapidjson::Value& v) { return v.IsUint64(); } };
 	template<> struct JsonTypeTraits<bool> { static bool Is(const rapidjson::Value& v) { return v.IsBool(); } };
 	template<> struct JsonTypeTraits<double> { static bool Is(const rapidjson::Value& v) { return v.IsDouble(); } };
 	template<> struct JsonTypeTraits<std::string> { static bool Is(const rapidjson::Value& v) { return v.IsString(); } };

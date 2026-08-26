@@ -29,19 +29,39 @@ public:
 	BlinnPhongMaterialHandle			CreateBlinnMaterial();
 	MaterialHandle						CreateGGXMaterial();
 
-	// - loading from serialization --------------------
+	// - serialization functions -----------------------
 	MaterialHandle LoadMaterial(
 		const rapidjson::Value& _materialData, 
 		RES_ID _existingId = ResourceConstants::C_RES_INVALID_ID
 	);
-	
 	std::shared_ptr<LambertMaterial> LoadLambertMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<PhongMaterial> LoadPhongMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<BlinnPhongMaterial> LoadBlinnMaterial(const rapidjson::Value& _materialData);
 	std::shared_ptr<Material> LoadGGXMaterial(const rapidjson::Value& _materialData);
 
-	void LoadResource(const MetafileData& _data) override;
+	bool SaveMaterial(
+		const std::shared_ptr<Material>& _material
+	);
+	
+	rapidjson::Value SaveLambertMaterial(
+		std::shared_ptr<LambertMaterial> _materialData, 
+		rapidjson::Document::AllocatorType& _alloc
+		);
+	rapidjson::Value SavePhongMaterial(
+		std::shared_ptr<PhongMaterial> _materialData, 
+		rapidjson::Document::AllocatorType& _alloc
+		);
+	rapidjson::Value SaveBlinnMaterial(
+		std::shared_ptr<BlinnPhongMaterial> _materialData, 
+		rapidjson::Document::AllocatorType& _alloc
+		);
+	rapidjson::Value SaveGGXMaterial(
+		std::shared_ptr<Material> _materialData,
+		rapidjson::Document::AllocatorType& _alloc
+	);
 
+
+	void LoadResource(const Serialization::MetafileData& _data) override;
 private:
 
 

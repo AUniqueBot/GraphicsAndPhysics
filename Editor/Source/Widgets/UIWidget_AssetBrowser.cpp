@@ -1,6 +1,11 @@
 #include <Widgets/UIWidget_AssetBrowser.h>
+#include <serialization/serialize_helperfunctions.h>
 #include <chrono>
+namespace {
 
+
+
+}
 
 UIWidget_AssetBrowser::UIWidget_AssetBrowser(std::string _widgetName) : UIWidget(_widgetName) {
 
@@ -40,7 +45,7 @@ void UIWidget_AssetBrowser::Draw() {
 	Separator();
 	//EngineInputEnabled();
 
-	
+	UI_Core& uic = *UICore();
 
 
 	const ImGuiTableFlags tableFlags = 
@@ -50,6 +55,8 @@ void UIWidget_AssetBrowser::Draw() {
 		ImGuiTableFlags_::ImGuiTableFlags_Sortable |
 		ImGuiTableFlags_::ImGuiTableFlags_Reorderable
 		;
+
+
 
 	bool tableBegin = BeginTable("DirectoryContents", 4, tableFlags);
 	if (tableBegin) {
@@ -181,6 +188,57 @@ void UIWidget_AssetBrowser::Draw() {
 	if (reload) {
 		LoadEntries();
 	}
+
+
+
+	AssetManager& asmgr = ApplicationCore()->GetAssetManager();
+	MaterialManager& matmgr = asmgr.GetMaterialManager();
+	ShaderManager& shdmgr = asmgr.GetShaderManager();
+	ShaderProgramManager& spmgr = asmgr.GetShaderProgramManager();
+	std::filesystem::path currentPath = m_currentDir;
+	std::string resourceName;
+	
+
+	if (ImGui::BeginPopupContextWindow("Options")) {
+		
+		// - creation ------------------------
+		if (ImGui::BeginMenu("Create")) {
+
+			if (ImGui::MenuItem("Lambert Material")) {
+				namespace fs = std::filesystem;
+				LambertMaterialHandle mat = matmgr.CreateLambertMaterial();
+				// add a meta file and a material file.
+				resourceName = "LambertMaterial";
+				mat->Name(resourceName);
+				fs::path matpath = currentPath / (resourceName + ".material");
+				matpath = Serialization::GetUniquePath(matpath);
+				fs::path metapath = matpath;
+				metapath += ".meta";
+				mat->ResourcePath(matpath);
+				Serialization::MetafileData metadata = matmgr.CreateMetafileData(metapath, mat.GetBaseResource());
+				if (matmgr.SaveMaterial(mat.Get())) {
+					asmgr.SaveMetafileData(metadata);
+				}
+			}
+
+			if (ImGui::MenuItem("Shader")) {
+
+				// add a meta file and a thing
+			}
+
+			ImGui::EndMenu();
+		}
+
+
+		// - import --------------------------
+		
+		
+		ImGui::EndPopup();
+	}
+
+
+
+
 }
 
 void UIWidget_AssetBrowser::Exit() {

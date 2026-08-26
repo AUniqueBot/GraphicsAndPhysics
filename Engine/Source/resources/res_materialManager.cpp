@@ -1,7 +1,12 @@
 #include <arch/resources/res_materialManager.h>
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_texture/res_texture2d.h>
+#include <util/util_color.h>
+
 #include <rapidjson/istreamwrapper.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
 
 
 void MaterialManager::Init() {
@@ -93,6 +98,8 @@ MaterialHandle MaterialManager::LoadMaterial(
 	MaterialHandle handle(m_resourceManager.AddInternalResource(mat));
 	return handle;
 }
+
+
 
 
 std::shared_ptr<LambertMaterial> MaterialManager::LoadLambertMaterial(const rapidjson::Value& _materialData) {
@@ -280,9 +287,110 @@ std::shared_ptr<Material> MaterialManager::LoadGGXMaterial(const rapidjson::Valu
 	return std::shared_ptr<Material>();
 }
 
-void MaterialManager::LoadResource(const MetafileData& _data) {
+
+
+
+
+
+bool MaterialManager::SaveMaterial(const std::shared_ptr<Material>& _material) {
+	Materials::ShadingModel shadingModel = _material->GetShadingModel();
+
+	Serialization::JSONFile doc(Serialization::JSONFileType::Object);
+	
+	auto allocator = doc.GetAllocator();
+	std::string name = _material->Name();
+	doc.AddMember("name", 
+		rapidjson::Value().SetString(
+			name.c_str(),
+			static_cast<rapidjson::SizeType>(name.size())
+		)
+	);
+
+	rapidjson::Value props;
+	switch (shadingModel) {
+	case Materials::ShadingModel::LAMBERT:
+
+		props = SaveLambertMaterial(static_pointer_cast<LambertMaterial>(_material), allocator);
+		doc.AddMember("shader_id", 
+			rapidjson::Value().SetString(ShaderConstants::C_ID_LAMBERTSHADERPROG)
+		);
+		doc.AddMember("properties", 
+			props
+		);
+		break;
+	case Materials::ShadingModel::PHONG:
+		doc.AddMember("shader_id",
+			rapidjson::Value().SetString(ShaderConstants::C_ID_PHONGSHADERPROG)
+		);
+		break;
+	case Materials::ShadingModel::BLINN_PHONG:
+		doc.AddMember("shader_id",
+			rapidjson::Value().SetString(ShaderConstants::C_ID_BLINNPHONGSHADERPROG)
+		);
+		break;
+	default:
+		// do it on your own.
+		break;
+	}
+
+	// set path...
+	std::filesystem::path path = _material->ResourcePath();
+	return Serialization::SaveJSONFile(doc, path);
+}
+
+
+
+rapidjson::Value MaterialManager::SaveLambertMaterial(
+	std::shared_ptr<LambertMaterial> _materialData,
+	rapidjson::Document::AllocatorType& _alloc
+	) {
+	using namespace MaterialLookupConstants;
+	rapidjson::Value val(rapidjson::kObjectType);
+	
+	// -- color ----------------------
+	val.AddMember(
+		C_MAT_U_ALBEDO_TEX,
+		rapidjson::Value().SetNull(),
+		_alloc
+	);
+	std::string hex = std::format("0x{:X}", Color::VecToHex(_materialData->Color()));
+	val.AddMember(
+		C_MAT_U_ALBEDO_COL, 
+		rapidjson::Value().SetString(hex.c_str(), _alloc),
+		_alloc
+	);
+
+	return val;
+}
+
+rapidjson::Value MaterialManager::SavePhongMaterial(
+	std::shared_ptr<PhongMaterial> _materialData,
+	rapidjson::Document::AllocatorType& _alloc
+) {
+	return rapidjson::Value();
+}
+
+rapidjson::Value MaterialManager::SaveBlinnMaterial(
+	std::shared_ptr<BlinnPhongMaterial> _materialData,
+	rapidjson::Document::AllocatorType& _alloc
+	) {
+	return rapidjson::Value();
+}
+
+rapidjson::Value MaterialManager::SaveGGXMaterial(
+	std::shared_ptr<Material> _materialData,
+	rapidjson::Document::AllocatorType& _alloc
+) {
+	return rapidjson::Value();
+}
+
+void MaterialManager::LoadResource(const Serialization::MetafileData& _data) {
 	namespace fs = std::filesystem;
 	fs::path path = _data.path;
+	if (!fs::exists(_data.path)) {
+		LOG_WARN("Unable to open resource: " << _data.path);
+		return;
+	}
 	std::ifstream ifs(path);
 	if (!ifs.is_open()) {
 		ifs.close();

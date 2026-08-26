@@ -5,9 +5,8 @@
 #include <arch/resources/res_materialManager.h>
 #include <arch/resources/res_textureManager.h>
 #include <arch/resources/res_meshManager.h>
-#include <arch/resources/res_metafile.h>
 
-
+#include <serialization/serialize_metafilereader.h>
 
 
 
@@ -45,15 +44,17 @@ public:
 	MeshManager& GetMeshManager();
 	const MeshManager& GetMeshManager() const;
 
+public:
+	void SaveMetafileData(const Serialization::MetafileData& _data);
+	void LoadResource(const Serialization::MetafileData& _data);
 
-private:
-	
-	void LoadResource(const MetafileData& _data);
 private:
 	ShaderManager m_shaderManager;
 	ShaderProgramManager m_shaderPrgManager;
 	MaterialManager m_materialManager;
 	TextureManager m_textureManager;
 	MeshManager m_meshManager;
+private:
+	Serialization::MetafileSerializer m_serializer;
 
 };

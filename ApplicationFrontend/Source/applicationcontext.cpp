@@ -101,21 +101,6 @@ void ApplicationContext::SaveWindowConfig() {
 	fs::path configPath =
 		configDir / "applicationconfig.cfg";
 
-
-	
-	
-	/*
-		format:
-	
-		[application]
-		resolution = [x, y]
-		name = "name"
-
-		[opengl]
-		majorVersion = x
-		minorVersion = y
-	*/
-
 	ConfigData config;
 	ConfigSection& application = config["application"];
 	application.props["name"] = m_appProps.m_name;

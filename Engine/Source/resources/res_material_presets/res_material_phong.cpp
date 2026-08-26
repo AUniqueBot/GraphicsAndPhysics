@@ -46,7 +46,7 @@ void PhongMaterial::Color(const glm::vec4& _newColor) {
 }
 
 void PhongMaterial::Color(unsigned _newColor) {
-    Color(HexToVec4F(_newColor));
+    Color(Color::HexToVec4F(_newColor));
 }
 
 const GLuint& PhongMaterial::GetColorImageTexture() const {
@@ -85,7 +85,7 @@ void PhongMaterial::Specular(const glm::vec4& _newValue) {
 }
 
 void PhongMaterial::Specular(unsigned _newColor) {
-    Specular(HexToVec4F(_newColor));
+    Specular(Color::HexToVec4F(_newColor));
 }
 
 const GLuint& PhongMaterial::GetSpecularImageTexture() const {

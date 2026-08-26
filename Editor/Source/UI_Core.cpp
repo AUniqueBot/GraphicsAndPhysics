@@ -265,6 +265,9 @@ std::vector<std::string> UI_Core::GetDroppedPaths() const {
 bool UI_Core::IsDragging() const {
 	return m_draggingExternalFiles;
 }
+void UI_Core::SetIsDragging(bool _dragging) {
+	m_draggingExternalFiles = _dragging;
+}
 // ---------------------------------------------------------------------------------------------
 
 void UI_Core::RenderWidgets() const {

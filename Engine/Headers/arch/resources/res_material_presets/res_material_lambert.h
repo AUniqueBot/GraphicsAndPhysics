@@ -37,7 +37,7 @@ private:
 private:
 
 	// - color ---------------------------------------
-	glm::vec4 m_color			{ };
+	glm::vec4 m_color			{ 1, 1, 1, 1 };
 	bool m_usesColor			{ true };
 
 	GLuint m_reservedImageTexId	{}; // texture identifier, storage of image texture.

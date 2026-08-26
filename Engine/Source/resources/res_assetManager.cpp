@@ -1,28 +1,5 @@
 #include <arch/resources/res_assetManager.h>
-#include <rapidjson/istreamwrapper.h>
 
-namespace {
-	// metafile points to the actual resource file.
-
-
-
-	MetafileData ParseMetafile(const std::filesystem::directory_entry& _path) {
-		std::ifstream ifs(_path.path());
-		if (!ifs.good()) return MetafileData();
-		rapidjson::IStreamWrapper isw(ifs);
-		rapidjson::Document doc;
-		doc.ParseStream(isw);
-		ifs.close();
-
-		MetafileData metadata;
-		if (doc.HasMember("guid")) {
-			metadata.id = doc["guid"].GetUint64();
-		}
-		metadata.path = _path.path();
-		metadata.path.replace_extension();
-		return metadata;
-	}
-}
 
 
 
@@ -47,7 +24,7 @@ void AssetManager::Cleanup() {
 void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool _recursive) {
 	namespace fs = std::filesystem;
 	// phase 1 -> meta file scanning.
-	std::vector<MetafileData> metadata;
+	std::vector<Serialization::MetafileData> metadata;
 
 	
 	if (!fs::exists(_path) || !fs::is_directory(_path)) {
@@ -71,7 +48,7 @@ void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool 
 				continue;
 			}
 
-			MetafileData data = ParseMetafile(entry);
+			Serialization::MetafileData data = m_serializer.ParseMetafile(entry);
 			if (data.IsValid()) {
 				metadata.push_back(data);
 			}
@@ -85,7 +62,7 @@ void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool 
 				continue;
 			}
 
-			MetafileData data = ParseMetafile(entry);
+			Serialization::MetafileData data = m_serializer.ParseMetafile(entry);
 			if (data.IsValid()) {
 				metadata.push_back(data);
 			}
@@ -97,7 +74,7 @@ void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool 
 	// - phase 2 - parsing entries
 
 
-	for (const MetafileData& metafile : metadata) {
+	for (const Serialization::MetafileData& metafile : metadata) {
 		LoadResource(metafile);
 	}
 
@@ -142,7 +119,25 @@ const MeshManager& AssetManager::GetMeshManager() const {
 
 
 
-void AssetManager::LoadResource(const MetafileData& _metafile) {
+void AssetManager::SaveMetafileData(const Serialization::MetafileData& _data) {
+	std::ofstream ofs(_data.path);
+
+	if (!ofs) {
+		ofs.close();
+		return;
+	}
+
+	rapidjson::Document doc = m_serializer.CreateMetafileData(_data);
+	rapidjson::StringBuffer buffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
+	doc.Accept(writer);
+
+	ofs << buffer.GetString();
+	ofs.close();
+	
+}
+
+void AssetManager::LoadResource(const Serialization::MetafileData& _metafile) {
 	const std::filesystem::path& path = _metafile.path;
 	std::string extension = path.extension().string();
 	if (extension.length() == 0) {
@@ -167,3 +162,4 @@ void AssetManager::LoadResource(const MetafileData& _metafile) {
 	}
 
 }
+

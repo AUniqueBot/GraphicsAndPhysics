@@ -41,7 +41,6 @@ void Core::Init() {
 	const auto& component = obj1.GetComponent<MeshRenderer>();
 	if (component) {
 		MeshHandle mesh = meshMgr.LoadMesh("./Assets/Models/sampleModel.obj");
-		
 
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.

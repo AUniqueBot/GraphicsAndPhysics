@@ -255,6 +255,12 @@
     <ClCompile Include="Source\resources\res_texture\res_imagedata.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\serialization\serialize_helperfunctions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\serialization\serialize_metafilereader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -614,7 +620,16 @@
     <ClInclude Include="Headers\arch\resources\guid.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_metafile.h">
+    <ClInclude Include="Headers\serialization\serialize_assetserializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\serialization\serialize_metafilereader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\serialization\serialize_helperfunctions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\serialization\serialize_metafile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

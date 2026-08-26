@@ -254,7 +254,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\resources\res_texture\res_texture2darray.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_texture.cpp" />
     <ClCompile Include="Source\resources\res_texture\res_texture_properties.cpp" />
+    <ClCompile Include="Source\serialization\serialize_helperfunctions.cpp" />
     <ClCompile Include="Source\serialization\serialize_jsonfile.cpp" />
+    <ClCompile Include="Source\serialization\serialize_metafilereader.cpp" />
     <ClCompile Include="Source\serialization\serialize_reader.cpp" />
     <ClCompile Include="Source\util\util_color.cpp" />
     <ClCompile Include="Source\util\util_convenient_conversions.cpp" />
@@ -344,7 +346,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture2d.h" />
     <ClInclude Include="Headers\arch\resources\res_texture\res_texture_properties.h" />
-    <ClInclude Include="Headers\arch\resources\res_metafile.h" />
     <ClInclude Include="Headers\arch\systems\sys_headers.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics.h" />
     <ClInclude Include="Headers\arch\systems\sys_physics_modules\sys_physics_environmentValues.h" />
@@ -369,8 +370,12 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\graphics\gfx_uniformNamingDefines.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
+    <ClInclude Include="Headers\serialization\serialize_assetserializer.h" />
+    <ClInclude Include="Headers\serialization\serialize_helperfunctions.h" />
     <ClInclude Include="Headers\serialization\serialize_jsonfile.h" />
     <ClInclude Include="Headers\serialization\serialize_jsonfileDEF.hpp" />
+    <ClInclude Include="Headers\serialization\serialize_metafile.h" />
+    <ClInclude Include="Headers\serialization\serialize_metafilereader.h" />
     <ClInclude Include="Headers\serialization\serialize_reader.h" />
     <ClInclude Include="Headers\serialization\serialize_writer.h" />
     <ClInclude Include="Headers\util\util_bitshifting.h" />

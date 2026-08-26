@@ -89,7 +89,7 @@ void TextureRes::SetInternalFormat(const TextureProperties::TextureFormat& _form
 
 // - direct gpures access functions -------------
 void TextureRes::SetPixelColor(unsigned _col, int _x, int _y, int _z) {
-	SetPixelColor(HexToVec4F(_col), _x, _y, _z);
+	SetPixelColor(Color:: HexToVec4F(_col), _x, _y, _z);
 }
 
 void TextureRes::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {

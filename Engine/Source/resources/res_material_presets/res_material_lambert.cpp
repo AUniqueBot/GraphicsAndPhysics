@@ -45,7 +45,7 @@ void LambertMaterial::Color(const glm::vec4& _newColor) {
 }
 
 void LambertMaterial::Color(unsigned _newColor) {
-    Color(HexToVec4F(_newColor));
+    Color(Color::HexToVec4F(_newColor));
 }
 
 void LambertMaterial::AlbedoTexture(const Texture2DHandle& _texture) {

@@ -1,6 +1,8 @@
 #include <arch/resources/res_specializedResourceManager.h>
 #include <arch/resources/res_resourceIdentifier.h>
 
+
+#include <serialization/serialize_metafile.h>
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
@@ -59,11 +61,11 @@ RES_ID SpecializedResourceManager::GetResIDFromAlias(std::string _alias) const {
 }
 
 
-MetafileData SpecializedResourceManager::CreateMetafileData(
+Serialization::MetafileData SpecializedResourceManager::CreateMetafileData(
 	const std::filesystem::path& _entry,
 	std::shared_ptr<BaseResource> _res
 ) {
-	MetafileData meta;
+	Serialization::MetafileData meta;
 	meta.id = _res->ResourceID();
 	meta.path = _entry;
 	return meta;
@@ -159,7 +161,8 @@ void SpecializedResourceManager::GenerateResourceMetafile(const std::filesystem:
 
 
 
-void SpecializedResourceManager::LoadResource(const MetafileData& _data) {
+void SpecializedResourceManager::LoadResource(const Serialization::MetafileData& _data) {
+
 }
 
 ResourceIdentifier SpecializedResourceManager::RegisterResource(std::shared_ptr<BaseResource> _res) {

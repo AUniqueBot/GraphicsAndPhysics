@@ -9,25 +9,8 @@ bool Scene::LoadScene(std::filesystem::path _path) {
 		return false;
 	}
 
-	Serialization::JSONFile file(_path);
+	//Serialization::JSONFile file(_path);
 
-
-	// - scene loading ----------------------------------------------------
-
-
-	// - entity loading ---------------------------------------------------
-	if (!file.HasMember("emtities")) {
-		LOG_INFO("No entities listed. Ending.");
-		return true;
-	}
-	rapidjson::Value& entityListObj = file.GetMember("entities");
-
-	for (const auto& entityObj : entityListObj.GetObj()) {
-		unsigned long savedId = std::stoul(entityObj.name.GetString());
-		EntityID id(savedId);
-		Serialization::LoadEntity(entityObj.value, id);
-		m_entities.push_back(id);
-	}
 	return true;
 }
 

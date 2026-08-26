@@ -52,7 +52,7 @@ public:
 	static void FileDropCallback(GLFWwindow* _window, int _count, const char** _paths);
 	std::vector<std::string> GetDroppedPaths() const;
 	bool IsDragging() const;
-
+	void SetIsDragging(bool _dragging);
 
 protected:
 	void BeginDockSpace();
