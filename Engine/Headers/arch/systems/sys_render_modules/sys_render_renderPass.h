@@ -4,9 +4,7 @@
 
 
 class RenderPass {
-
-	
-
+ 
 public:
 	// take in texture
 

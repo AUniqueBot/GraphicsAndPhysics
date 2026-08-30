@@ -2,7 +2,7 @@
 #include <serialization/serialize_jsonfile.h>
 #include <rapidjson/prettywriter.h>
 #include <rapidjson/stringbuffer.h>
-
+#include <arch/resources/res_resource.h>
 
 // - components ----------------------------------------------------------------------------
 #include <arch/components/comp_headers.h>
@@ -121,6 +121,7 @@ namespace Serialization {
 	void JSONFile::PushBack(rapidjson::Value _value) {
 		m_document.PushBack(_value, m_document.GetAllocator());
 	}
+
 
 	rapidjson::Document& JSONFile::GetDocument() {
 		return m_document;

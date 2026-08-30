@@ -10,7 +10,7 @@
 */
 
 
-using RES_ID = uint64_t;	//id of the resource (to be replaced with GUID one day)
+using RES_ID = uint64_t;		// id of the resource (to be replaced with GUID one day)
 using RESTYPE_ID = uint32_t;	// id of the TYPE of resource
 
 

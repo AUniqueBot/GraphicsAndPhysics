@@ -2,6 +2,22 @@
 #include <UI_Widget.h>
 
 
+// for use in the thing.
+struct AssetBrowserDataEntry {
+	std::filesystem::path	 m_path {};
+	RES_ID m_guid			{ ResourceConstants::C_RES_INVALID_ID };
+};
+
+
+struct PopupContextMenuProps {
+	enum class Target {
+		None,
+		Item,
+		Selection
+	};
+	Target target;
+	std::vector<std::filesystem::path> paths;
+};
 
 class UIWidget_AssetBrowser : public UIWidget {
 public:
@@ -24,14 +40,20 @@ public:
 
 	void SetResourceManager(ResourceManager* _resManager);
 
+
+
+
 	void LoadEntries() const;
-
-
-
 	void SortItemsBy(SORTMETHOD _sortMethod, bool _inversed = false) const;
 
-
-
+private:
+	// internal widgets
+	bool AssetBrowserTable();
+	bool DrawTableEntry(const AssetBrowserDataEntry& _entry);
+	bool DrawTableEntryDirectory(const std::string& _name, const std::filesystem::path& _path);
+	bool DrawTableEntryResource(const std::string& _name, const RES_ID& _guid,  const std::filesystem::path& _path);
+	bool DrawPopupContextMenu(const PopupContextMenuProps& _props);
+	RES_ID GetRESIDFromMetafile(const std::filesystem::path& _path);
 private:
 	ResourceManager* m_resourceManager{};
 	
@@ -39,8 +61,9 @@ private:
 	// mutable states the UI stores.
 	// cache and reload.
 	// path entries.
-	mutable std::filesystem::path m_currentDir = "Assets/";
+	mutable std::filesystem::path m_currentDir = std::filesystem::absolute("Assets/");
 	mutable std::filesystem::path m_selectedPath;
-	mutable std::vector<std::filesystem::path> m_directoryPaths;
+	mutable RES_ID m_selectedResource;
+	mutable std::vector<AssetBrowserDataEntry> m_directoryEntries;
 };
  

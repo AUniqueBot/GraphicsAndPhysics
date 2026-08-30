@@ -45,6 +45,8 @@ public:
 
 	// shader
 	ShaderHandle CreateShader(ShaderConstants::ShaderType _type, std::string _code = "");
+	std::string GenerateShaderCodeTemplate(ShaderConstants::ShaderType _shaderType);
+
 	void RemoveShader(ShaderHandle _toDelete);
 	void RemoveShader(RES_ID _toDelete);
 	

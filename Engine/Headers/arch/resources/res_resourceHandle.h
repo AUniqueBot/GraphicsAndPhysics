@@ -55,7 +55,12 @@ struct ResourceHandleT : public ResourceHandle {
     std::shared_ptr<const T> Get() const {
         return GetResourceT<const T>();
     }
-
+    T* operator->() {
+        return Get().get();
+    }
+    const T* operator->() const {
+        return Get().get();
+    }
     template <typename HandleType>
     std::optional<HandleType> TryCast() const {
         using TargetResource = typename HandleType::ResourceType;

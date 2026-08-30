@@ -1,5 +1,6 @@
 #pragma once
 #include <pch.h>
+
 #include <rapidjson/rapidjson.h>
 #include <rapidjson/document.h>
 
@@ -57,8 +58,6 @@ namespace Serialization {
 		// - adding members -------------------------------
 		void AddMember(std::string _memberName, rapidjson::Value& _value);
 		void PushBack(rapidjson::Value _value);
-
-
 
 	public:
 		// - generic handle functions ---------------------
