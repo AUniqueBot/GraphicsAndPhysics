@@ -118,7 +118,7 @@ const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 
 template<std::derived_from<Component> T>
 bool ComponentPool<T>::Add(EntityID _addTo) {
-	if (_addTo == EntityID::ENTITYID_INVALID) return false;
+	if (_addTo == EntityConstants::C_ENTITYID_INVALID) return false;
 	bool result = m_compPool.Add(T{}, _addTo);
 	//std::cout << "[[ ================================================================== ]]" << std::endl;
 	//std::cout << "Adding Component: " << typeid(T).name() << std::endl;
@@ -138,7 +138,7 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 
 template<std::derived_from<Component> T>
 bool ComponentPool<T>::Remove(EntityID _removeFrom) {
-	if (_removeFrom == EntityID::ENTITYID_INVALID) return false;
+	if (_removeFrom == EntityConstants::C_ENTITYID_INVALID) return false;
 	return m_compPool.Remove(_removeFrom);
 }
 

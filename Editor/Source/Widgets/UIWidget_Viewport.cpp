@@ -163,7 +163,7 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 			(1.0f - (ndc.y * 0.5f + 0.5f))* vp.y
 		};
 		name += "##";
-		name += std::to_string(static_cast<unsigned long>(enttId));
+		name += std::to_string(static_cast<EntityIDType>(enttId));
 
 
 
@@ -208,6 +208,7 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 				ImVec2(0, 0), ImVec2(1, 1)
 			)) {
 				er.SelectEntity(enttId);
+				UICore()->SelectedItem(UI_Selectable(enttId));
 			}
 			ImGui::PopStyleColor(3);
 		}
@@ -221,6 +222,7 @@ void UIWidget_Viewport::RenderLightHelpers()  {
 
 			if (ImGui::Button(name.c_str())) {
 				er.SelectEntity(enttId);
+				UICore()->SelectedItem(UI_Selectable(enttId));
 			}
 		}
 	}
@@ -290,16 +292,19 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 
 
 	if (ImGui::IsMouseClicked(0)) {
-
-		unsigned picked = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
-		LOG_INFO("Picked ID: "<< picked );
+		EntityID pickedId = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
+		LOG_INFO("Picked ID: " << pickedId);
 		EntityRegistry& registry = ApplicationCore()->GetRegistry();
-		EntityView entity = registry.GetEntity(picked);
-		
-		ApplicationCore()->GetRegistry().SelectEntity(
-			entity ? entity->GetID() : 
-			EntityID::ENTITYID_INVALID
-		);
+		EntityView entity = registry.GetEntity(pickedId);
+		if (entity) {
+			ApplicationCore()->GetRegistry().SelectEntity(
+				pickedId
+			);
+			UICore()->SelectedItem(UI_Selectable(pickedId));
+		}
+		else {
+			UICore()->SelectedItem(UI_Selectable());
+		}
 	}
 
 }
@@ -316,9 +321,14 @@ void UIWidget_Viewport::UpdateGizmo() {
 	if (!c) return;
 	EntityRegistry& registry = c->GetRegistry();
 
+	UI_Selectable selected = UICore()->SelectedItem();
+	if (selected.m_type != UI_Selectable::GameObject) return;
+
+
 	Viewport& vp						{ *m_viewportPointer };
-	EntityID selectedEntityID			{ registry.SelectedEntity() };
-	bool objectIsSelected				{ selectedEntityID != EntityID::ENTITYID_INVALID };
+	EntityID selectedEntityID			{ selected.m_id.m_entityId };
+
+	bool objectIsSelected				{ selectedEntityID != EntityConstants::C_ENTITYID_INVALID };
 	if (!objectIsSelected) return;
 
 

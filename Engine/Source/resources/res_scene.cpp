@@ -15,7 +15,7 @@ bool Scene::LoadScene(std::filesystem::path _path) {
 }
 
 bool Scene::AddEntity(EntityID _id) {
-	if (_id == EntityID::ENTITYID_INVALID) return false;
+	if (_id == EntityConstants::C_ENTITYID_INVALID) return false;
 	m_entities.push_back(_id);
 	EnsureUnique();
 	return true;

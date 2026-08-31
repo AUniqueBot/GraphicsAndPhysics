@@ -53,6 +53,7 @@ void UIWidget_Outliner::OnUnselect() {
 
 
 
+
 void UIWidget_Outliner::Menu() {
     /* --------------------------------------------------------- */
     /*
@@ -167,7 +168,7 @@ void UIWidget_Outliner::Table() {
         TableSetColumnIndex(0);
 
         std::string labelName = entity.Name() + "##";
-        labelName += std::to_string(static_cast<unsigned long>(entity.GetID()));
+        labelName += std::to_string(static_cast<EntityIDType>(entity.GetID()));
         ImGui::AlignTextToFramePadding();
         //float y{ ImGui::GetCursorPosY() };
 
@@ -198,10 +199,11 @@ void UIWidget_Outliner::Table() {
 
         if (clicked) {
             // do something
-            m_entityRegistry->SelectEntity(
-                m_entityRegistry->SelectedEntity() == entity.GetID() ?
-                EntityID::ENTITYID_INVALID : static_cast<unsigned long>(entity.GetID())
-            );
+
+            EntityID resolvedId = m_entityRegistry->SelectedEntity() == entity.GetID() ?
+                EntityConstants::C_ENTITYID_INVALID : static_cast<EntityIDType>(entity.GetID());
+            UICore()->SelectedItem(UI_Selectable(resolvedId));
+            m_entityRegistry->SelectEntity(resolvedId);
         }
         
     }

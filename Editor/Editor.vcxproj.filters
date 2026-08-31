@@ -33,6 +33,9 @@
     <ClInclude Include="Headers\Utility\UI_LoadImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\Utility\UI_Selectable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\UI_Core.cpp">
@@ -72,6 +75,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Extern\src\imnodes\imnodes.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Utility\UI_Selectable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -50,10 +50,24 @@ private:
 	// internal widgets
 	bool AssetBrowserTable();
 	bool DrawTableEntry(const AssetBrowserDataEntry& _entry);
-	bool DrawTableEntryDirectory(const std::string& _name, const std::filesystem::path& _path);
-	bool DrawTableEntryResource(const std::string& _name, const RES_ID& _guid,  const std::filesystem::path& _path);
+	bool DrawTableEntryDirectory(
+		const std::string& _name, 
+		const std::filesystem::path& _path,
+		const int& _flags
+	);
+	bool DrawTableEntryResource(
+		const std::string& _name, 
+		const RES_ID& _guid,  
+		const std::filesystem::path& _path,
+		const int& _flags 
+		
+	);
+
+	// --------------------------------------------
 	bool DrawPopupContextMenu(const PopupContextMenuProps& _props);
-	RES_ID GetRESIDFromMetafile(const std::filesystem::path& _path);
+
+	// --------------------------------------------
+	RES_ID GetRESIDFromMetafile(const std::filesystem::path& _path) const;
 private:
 	ResourceManager* m_resourceManager{};
 	
@@ -65,5 +79,6 @@ private:
 	mutable std::filesystem::path m_selectedPath;
 	mutable RES_ID m_selectedResource;
 	mutable std::vector<AssetBrowserDataEntry> m_directoryEntries;
+	mutable bool m_itemContextMenu{};
 };
  

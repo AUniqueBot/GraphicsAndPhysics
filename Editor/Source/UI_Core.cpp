@@ -119,6 +119,14 @@ void UI_Core::Update() {
 
 }
 
+void UI_Core::SelectedItem(const UI_Selectable& _selectable) {
+	m_selectedItem = _selectable;
+}
+
+const UI_Selectable& UI_Core::SelectedItem() const {
+	return m_selectedItem;
+}
+
 void UI_Core::BeginDockSpace() {
 	ImGuiIO& io = ImGui::GetIO();
 

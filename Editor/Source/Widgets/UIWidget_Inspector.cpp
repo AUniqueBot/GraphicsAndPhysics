@@ -116,31 +116,45 @@ void UIWidget_Inspector::Draw() {
 	
 	if (!puic || !papc) return;
 
-	std::function<bool()> EnterOrTabPressed = []() { 
-		return 
-			ImGui::IsKeyPressed(ImGuiKey_Enter) || 
-			ImGui::IsKeyPressed(ImGuiKey_Tab) ||
-			ImGui::IsKeyPressed(ImGuiKey_KeypadEnter); 
-	};
+
 
 
 
 	UI_Core& uic = *puic;
-	Core& core = *papc;
-	EntityRegistry& er = core.GetRegistry();
-	EntityID selectedID = core.GetRegistry().SelectedEntity();
-	EntityView selectedObj = core.GetRegistry().GetEntity(selectedID);
+
+	const UI_Selectable& selection = uic.SelectedItem();
 
 
-
-
-	if (!selectedObj) {
-		Text("No object selected with ID [%i]", selectedID); 
-		return;
+	if (selection.m_type == UI_Selectable::GameObject) {
+		DrawEntity();
 	}
-	
+	else if (selection.m_type == UI_Selectable::Resource) {
+		DrawResource();
+	}
 
 
+}
+
+void UIWidget_Inspector::DrawEntity() {
+	using namespace ImGui;
+	Core& core = *ApplicationCore();
+	EntityID selectedID = SelectedItem().m_id.m_entityId;
+	EntityView selectedObj = core.GetRegistry().GetEntity(selectedID);
+	EntityRegistry& er = core.GetRegistry();
+	ResourceManager& rsmgr = core.GetResourceManager();
+
+
+	//if (!selectedObj) {
+	//	Text("No object selected with ID [%i]", selectedID);
+	//	return;
+	//}
+	Text("Object selected with ID [%lu]", selectedID);
+	std::function<bool()> EnterOrTabPressed = []() {
+		return
+			ImGui::IsKeyPressed(ImGuiKey_Enter) ||
+			ImGui::IsKeyPressed(ImGuiKey_Tab) ||
+			ImGui::IsKeyPressed(ImGuiKey_KeypadEnter);
+		};
 
 	Entity& obj = *selectedObj;
 	std::string s{ selectedObj->Name() };
@@ -167,7 +181,7 @@ void UIWidget_Inspector::Draw() {
 				DrawPropertyElement(comp, prop, prop.m_name);
 			}
 		}
-		
+
 	}
 
 
@@ -176,9 +190,9 @@ void UIWidget_Inspector::Draw() {
 	auto meshV = obj.GetComponent<MeshRenderer>();
 	if (meshV) {
 		MeshRenderer& mr = *meshV;
-		ResourceManager& resmgr = papc->GetResourceManager();
-		MeshManager& meshmgr = papc->GetAssetManager().GetMeshManager();
-		MaterialManager& matMgr = papc->GetAssetManager().GetMaterialManager();
+		ResourceManager& resmgr = core.GetResourceManager();
+		MeshManager& meshmgr = core.GetAssetManager().GetMeshManager();
+		MaterialManager& matMgr = core.GetAssetManager().GetMaterialManager();
 		// mesh handling.
 		RES_ID meshId = mr.GetMesh();
 		std::shared_ptr<MeshRes> selectedMesh = static_pointer_cast<MeshRes>(resmgr.GetResource(meshId));
@@ -189,47 +203,47 @@ void UIWidget_Inspector::Draw() {
 		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
 			const auto& resPool = resmgr.GetResourcePool();
 			const auto& meshIDs = resmgr.GetResourcePoolManifest(MeshRes::GetResourceTypeID());
-			
+
 			// first are the default meshes
 			bool isSelected = false;
 			for (unsigned i{}; i < Primitive::__COUNT; ++i) {
 
-				std::shared_ptr<MeshRes> mesh	{};
-				std::string primitiveType	{};
+				std::shared_ptr<MeshRes> mesh{};
+				std::string primitiveType{};
 				switch (i) {
-					case Primitive::CUBE:
-						mesh.reset(new CubeRes());
-						primitiveType = "Cube";
-						break;
-					case Primitive::SPHERE:
-						mesh.reset(new SphereRes());
-						primitiveType = "Sphere";
-						break;
-					case Primitive::PLANE:
-						primitiveType = "Plane";
-						mesh.reset(new PlaneRes());
-						break;
-					case Primitive::ICOSPHERE:
-						continue;
-						primitiveType = "WIP - Icosphere";
-						//mesh.reset(new Plane());
-						break;
+				case Primitive::CUBE:
+					mesh.reset(new CubeRes());
+					primitiveType = "Cube";
+					break;
+				case Primitive::SPHERE:
+					mesh.reset(new SphereRes());
+					primitiveType = "Sphere";
+					break;
+				case Primitive::PLANE:
+					primitiveType = "Plane";
+					mesh.reset(new PlaneRes());
+					break;
+				case Primitive::ICOSPHERE:
+					continue;
+					primitiveType = "WIP - Icosphere";
+					//mesh.reset(new Plane());
+					break;
 				}
-				
+
 				isSelected = selectedMeshName == primitiveType;
 				if (Selectable(primitiveType.c_str())) {
-					 mr.SetMesh(mesh->ResourceID());
+					mr.SetMesh(mesh->ResourceID());
 				}
 			}
-			
+
 
 			for (const RES_ID& id : meshIDs) {
-				std::string imguiMeshID	{ "##meshID" };
+				std::string imguiMeshID{ "##meshID" };
 				imguiMeshID += std::to_string(id);
 				PushID(imguiMeshID.c_str());
 
 				const auto& mesh = std::dynamic_pointer_cast<MeshRes>(resPool.at(id));
-				std::string name { mesh->ResourcePath().filename().string()  };
+				std::string name{ mesh->ResourcePath().filename().string() };
 
 				isSelected = selectedMeshID == id;
 				if (Selectable(name.c_str(), isSelected)) {
@@ -243,12 +257,57 @@ void UIWidget_Inspector::Draw() {
 	}
 }
 
+void UIWidget_Inspector::DrawResource() {
+	using namespace ImGui;
+	Core& core = *ApplicationCore();
+	EntityRegistry& er = core.GetRegistry();
+	ResourceManager& rsmgr = core.GetResourceManager();
+	RES_ID selectedID = SelectedItem().m_id.m_resId;
+	auto res = rsmgr.GetResource(selectedID);
+	
+	if (!res) {
+		Text("No resource with ID [%i]", selectedID);
+		return;
+	}
+
+	if (res->ResourceType() == ResourceConstants::C_RESTYPE_INVALID_ID) {
+		return;
+	}
+
+	ResourceTypeMetadata metadata = rsmgr.GetResourceTypeMetadata(res->ResourceType());
+	PushID(selectedID);
+	
+	if (CollapsingHeader(metadata.GetName().c_str())) {
+		for (const PropertyMD::Property& prop : res->GetProperties()) {
+			ImGui::SeparatorText(prop.m_name.c_str());
+			DrawPropertyElement(res.get(), prop, prop.m_name);
+		}
+	}
+	PopID();
+}
+
 
 void UIWidget_Inspector::Exit() {
 
 }
 
+void UIWidget_Inspector::PinTrackedItem() {
+	m_trackedItem = UICore()->SelectedItem();
+}
 
+void UIWidget_Inspector::UnpinTrackedItem() {
+	m_trackedItem = UI_Selectable();
+}
+bool UIWidget_Inspector::IsTrackingItem() const {
+	return m_trackedItem.m_type != UI_Selectable::NONE;
+}
+
+UI_Selectable UIWidget_Inspector::SelectedItem() {
+	return IsTrackingItem() ?  m_trackedItem : UICore()->SelectedItem();
+}
+
+
+// - individual elements --------------------------------
 
 void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Property& prop, const std::string& key) {
 	using namespace PropertyMD;

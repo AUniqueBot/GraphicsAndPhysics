@@ -33,7 +33,7 @@ public:
 private:
 	ComponentType m_type						{ __INVALID };
 	inline static unsigned s_compIdCounter		{ 0 }; // 0 is invalid.
-	EntityID m_registeredEntity					{ EntityID::ENTITYID_INVALID };
+	EntityID m_registeredEntity					{ EntityConstants::C_ENTITYID_INVALID };
 };
 
 template <typename T>

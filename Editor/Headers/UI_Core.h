@@ -4,13 +4,14 @@
 #include <arch/common/entityid.h>
 #include <unordered_map>
 #include <memory>
-
+#include <Utility/UI_Selectable.h>
 
 
 
 struct GLFWwindow;
 class UIWidget;
 class UIMenu;
+
 
 class UI_Core {
 
@@ -54,6 +55,10 @@ public:
 	bool IsDragging() const;
 	void SetIsDragging(bool _dragging);
 
+	// -- selected item --------------------------------------------
+	void SelectedItem(const UI_Selectable& _selectable);
+	const UI_Selectable& SelectedItem() const;
+
 protected:
 	void BeginDockSpace();
 
@@ -79,11 +84,13 @@ private:
 
 	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;
 	std::unordered_map<std::string, std::shared_ptr<UIMenu>> m_menuStorage;
+
+
 	EntityRegistry* m_entityRegistry			{};
 	std::vector<EntityID> m_selectedEntityList	{};
 	
-	mutable EntityID m_selectedEntity			{ EntityID::ENTITYID_INVALID };
-
+	mutable EntityID m_selectedEntity			{ EntityConstants::C_ENTITYID_INVALID };
+	mutable UI_Selectable m_selectedItem;
 
 	// - drag n drop functionality -------------------
 	std::vector<std::string> m_droppedPaths		{ };

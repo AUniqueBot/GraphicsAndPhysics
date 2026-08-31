@@ -238,7 +238,7 @@ RESTYPE_ID ResourceManager::GetResourceType(std::string _extension) const {
 	return 
 		m_fileExtensions.find(_extension) != m_fileExtensions.end() ? 
 		m_fileExtensions.at(_extension) : 
-		0;
+		ResourceConstants::C_RESTYPE_INVALID_ID;
 }
 
 

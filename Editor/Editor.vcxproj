@@ -91,6 +91,7 @@
     <ClInclude Include="Headers\UI_Menu.h" />
     <ClInclude Include="Headers\UI_Widget.h" />
     <ClInclude Include="Headers\Utility\UI_LoadImage.h" />
+    <ClInclude Include="Headers\Utility\UI_Selectable.h" />
     <ClInclude Include="Headers\Widgets\UIWidget_AssetBrowser.h" />
     <ClInclude Include="Headers\Widgets\UIWidget_Viewport.h" />
   </ItemGroup>
@@ -99,6 +100,7 @@
     <ClCompile Include="Headers\Widgets\UIWidget_Compositor.h" />
     <ClCompile Include="Source\UI_Menu.cpp" />
     <ClCompile Include="Source\Utility\UI_LoadImage.cpp" />
+    <ClCompile Include="Source\Utility\UI_Selectable.cpp" />
     <ClCompile Include="Source\Widgets\UIWidget_AssetBrowser.cpp" />
     <ClCompile Include="Headers\Widgets\UIWidget_Inspector.h" />
     <ClCompile Include="Headers\Widgets\UIWidget_Outliner.h" />

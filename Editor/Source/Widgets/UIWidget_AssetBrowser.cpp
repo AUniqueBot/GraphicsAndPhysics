@@ -3,7 +3,28 @@
 #include <Windows.h>
 #include <chrono>
 namespace {
+	std::string GetLastModifiedTime(const std::filesystem::path& _path) {
 
+		if (!std::filesystem::exists(_path)) return "";
+		
+		using namespace std::chrono;
+		std::filesystem::file_time_type ftime = std::filesystem::last_write_time(_path);
+		auto sctp = time_point_cast<system_clock::duration>(
+			ftime - decltype(ftime)::clock::now() + system_clock::now()
+		);
+
+		std::time_t cftime = system_clock::to_time_t(sctp);
+		std::tm localTime;
+
+#ifdef _WIN32
+		localtime_s(&localTime, &cftime);
+#else
+		localtime_r(&cftime, &localTime);
+#endif
+		std::ostringstream oss;
+		oss << std::put_time(&localTime, "%d/%m/%Y %H:%M:%S");
+		return oss.str();
+	}
 
 
 }
@@ -43,14 +64,14 @@ void UIWidget_AssetBrowser::Draw() {
 	Text("Path: %s", m_currentDir.string().c_str());
 
 	Separator();
-	if (ImGui::BeginPopupContextWindow("Options")) {
+	reload |= AssetBrowserTable();
+	if (!m_itemContextMenu && ImGui::BeginPopupContextWindow("Options")) {
 		reload |= DrawPopupContextMenu({ 
 			PopupContextMenuProps::Target::None, 
 			{ m_currentDir } 
 			});
 		ImGui::EndPopup();
 	}
-	reload |= AssetBrowserTable();
 
 	// reload 
 	if (reload) {
@@ -76,26 +97,24 @@ void UIWidget_AssetBrowser::LoadEntries() const {
 	m_directoryEntries.clear();
 	for (const auto& dirEntry : std::filesystem::directory_iterator(m_currentDir)) {
 		AssetBrowserDataEntry dataEntry;
-		fs::path currentPath = dirEntry;
+		fs::path currentPath = dirEntry.path();
 		if (!fs::is_directory(dirEntry)) {
 
 			// ignore everything but metafiles
 			fs::path metafilePath = dirEntry.path();
 			if (metafilePath.extension() != ".meta") continue;
-
-			currentPath = metafilePath.replace_extension();
-			if (!fs::exists(currentPath)) {
+			fs::path resPath = metafilePath;
+			resPath.replace_extension();
+			if (!fs::exists(resPath)) {
 				LOG_WARN(
 					"Missing resource file for metafile: " << 
-					currentPath << "\n searching for " << 
-					metafilePath
+					metafilePath << "\n searching for " <<
+					resPath
 				);
 				continue;
 			}
-
-			Serialization::JSONFile json;
-			json.Parse(dirEntry);
-			dataEntry.m_guid = json["guid"].GetUint64();
+			currentPath = resPath;
+			dataEntry.m_guid = GetRESIDFromMetafile(metafilePath);
 		}
 		dataEntry.m_path = currentPath;
 		// get the id direct from the metafile.
@@ -167,15 +186,12 @@ void UIWidget_AssetBrowser::SortItemsBy(SORTMETHOD _sortMethod, bool _inversed) 
 	}
 }
 
-
 // --- asset browser widgets ------------------------------------------------------------------
-
-
 
 bool UIWidget_AssetBrowser::AssetBrowserTable() {
 	using namespace ImGui;
 	bool reload{};
-
+	m_itemContextMenu = false;
 
 
 	Separator();
@@ -213,10 +229,12 @@ bool UIWidget_AssetBrowser::AssetBrowserTable() {
 			}
 		}
 
-
+		int flags =
+			ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
+			ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns;
 		
 		std::filesystem::path parentPath = std::filesystem::absolute(m_currentDir.parent_path());
-		reload |= DrawTableEntryDirectory("...", parentPath);
+		reload |= DrawTableEntryDirectory("...", parentPath, flags);
 		for (const auto& entry : m_directoryEntries) {
 			reload |= DrawTableEntry(entry);
 		}
@@ -227,97 +245,64 @@ bool UIWidget_AssetBrowser::AssetBrowserTable() {
 }
 
 bool UIWidget_AssetBrowser::DrawTableEntry(const AssetBrowserDataEntry& _entry) {
-	using namespace ImGui;
-	ImGuiSelectableFlags selectableFlags =
-		ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
-		ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns
-		;
-	std::string filename = _entry.m_path.filename().string();
-	std::string filepath = _entry.m_path.string();
-	std::string extension = _entry.m_path.extension().string();
-	bool isDir = std::filesystem::is_directory(_entry.m_path);
 	bool reload{};
-
-	TableNextRow();
-	//  - col 0 ------------------
-	ImGui::TableSetColumnIndex(0);
-	ImGui::PushID(filepath.c_str());
-	const bool clicked = Selectable(filename.c_str(), m_selectedPath == _entry.m_path, selectableFlags);
-	if (ImGui::BeginPopupContextItem("Options")) {
-		DrawPopupContextMenu({
-			PopupContextMenuProps::Target::Item,
-			{ _entry.m_path }
-			});
-		
-		ImGui::EndPopup();
-	}
-	ImGui::PopID();
-
-
-
-	if (clicked) {
-		m_selectedPath = _entry.m_path;
-		if (isDir && IsMouseDoubleClicked(0)) {
-			// navigate to the next one.
-			m_currentDir = _entry.m_path;
-			m_selectedPath.clear();
-			reload = true;
-		}
-	}
-
-	//  - col 1 ------------------
-	ImGui::TableSetColumnIndex(1);
-	if (!isDir) {
-		RESTYPE_ID restypeid = m_resourceManager->GetResourceType(extension);
-
-	}
-	
-	//  - col 2 ------------------
-	ImGui::TableSetColumnIndex(2);
-
-	using namespace std::chrono;
-	std::filesystem::file_time_type ftime = std::filesystem::last_write_time(_entry.m_path);
-	auto sctp = time_point_cast<system_clock::duration>(
-		ftime - decltype(ftime)::clock::now() + system_clock::now()
+	namespace fs = std::filesystem;
+	bool isDir = fs::is_directory(
+		_entry.m_path
 	);
+	std::string name = _entry.m_path.filename().string();
+	const fs::path& path = _entry.m_path;
+	int flags =
+		ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
+		ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns;
 
-	std::time_t cftime = system_clock::to_time_t(sctp);
-	std::tm localTime;
-
-#ifdef _WIN32
-	localtime_s(&localTime, &cftime);
-#else
-	localtime_r(&cftime, &localTime);
-#endif
-	std::ostringstream oss;
-	oss << std::put_time(&localTime, "%d/%m/%Y %H:%M:%S");
-	ImGui::Text(oss.str().c_str());
-	//  - col 3 ------------------
-	ImGui::TableSetColumnIndex(3);
-	if (!isDir) {
-		// show id.
+	if (isDir) {
+		reload = DrawTableEntryDirectory(name, path, flags);
 	}
-
+	else {
+		reload = DrawTableEntryResource(name, _entry.m_guid, path, flags);
+	}
 
 	return reload;
 }
 
-bool UIWidget_AssetBrowser::DrawTableEntryDirectory(const std::string& _name, const std::filesystem::path& _path) {
+bool UIWidget_AssetBrowser::DrawTableEntryDirectory(
+	const std::string& _name, 
+	const std::filesystem::path& _path,
+	const int& _flags
+) {
+	using namespace ImGui;
 	if (!std::filesystem::exists(_path)) return false;
 	bool reload{};
 	// first entry is always move back if there's a root.
-	ImGui::TableNextRow();
-	ImGui::TableSetColumnIndex(0);
-	const bool clicked = ImGui::Selectable("...##ASSETBROWSERUPONELEVEL", m_selectedPath == _path,
-		ImGuiSelectableFlags_::ImGuiSelectableFlags_AllowDoubleClick |
-		ImGuiSelectableFlags_::ImGuiSelectableFlags_SpanAllColumns 
+	TableNextRow();
+	std::string selectableName = _name + "##ASSETBROWSERUPONELEVEL";
+
+
+	TableSetColumnIndex(0);
+	const bool clicked = Selectable(
+		selectableName.c_str(),
+		m_selectedPath == _path,
+		_flags
 	);
 
+	if (_name != "...") {
+		TableSetColumnIndex(1);
+		Text("Directory");
+
+		TableSetColumnIndex(2);
+		Text(GetLastModifiedTime(_path).c_str());
+
+		TableSetColumnIndex(3);
+		Text("-");
+
+	}
+	
 	if (clicked) {
 		// path is ALWAYS absolute.
 		m_selectedPath = _path;
 		// Double-click to enter directory
-		if (ImGui::IsMouseDoubleClicked(0)) {
+		if (IsMouseDoubleClicked(0)) {
 			m_currentDir = _path;
 			m_selectedPath.clear();
 			reload = true;
@@ -326,8 +311,57 @@ bool UIWidget_AssetBrowser::DrawTableEntryDirectory(const std::string& _name, co
 	return reload;
 }
 
+bool UIWidget_AssetBrowser::DrawTableEntryResource(
+	const std::string& _name, 
+	const RES_ID& _guid, 
+	const std::filesystem::path& _path,
+	const int& _flags
+) {
+	using namespace ImGui;
+	std::string filename	{ _path.filename().string() };
+	std::string extension	{ _path.extension().string() };
+	TableNextRow();
+	//  - col 0 ------------------
+	TableSetColumnIndex(0);
+	PushID(std::to_string(_guid).c_str());
 
-// -- context menu -------------------------------
+	const bool clicked = Selectable(filename.c_str(), m_selectedPath == _path, _flags);
+	bool reload{};
+	if (ImGui::BeginPopupContextItem("Options")) {
+		m_itemContextMenu = true;
+		reload = DrawPopupContextMenu({
+			PopupContextMenuProps::Target::Item,
+			{ _path }
+			});
+
+		ImGui::EndPopup();
+	}
+
+	ImGui::PopID();
+
+	//  - col 1 ------------------
+	ImGui::TableSetColumnIndex(1);
+	RESTYPE_ID restypeid = m_resourceManager->GetResourceType(extension);
+	if (restypeid != ResourceConstants::C_RESTYPE_INVALID_ID) {
+		std::string resType = m_resourceManager->GetResourceTypeMetadata(restypeid).GetName();
+		ImGui::Text(resType.c_str());
+	}
+	//  - col 2 ------------------
+	ImGui::TableSetColumnIndex(2);
+	ImGui::Text(GetLastModifiedTime(_path).c_str());
+	//  - col 3 ------------------
+	ImGui::TableSetColumnIndex(3);
+	ImGui::Text(std::to_string(_guid).c_str());
+
+	if (clicked) {
+		UICore()->SelectedItem(UI_Selectable(_guid));
+	}
+
+	return reload;
+}
+
+
+// -- context menu -----------------------------------------------------------------------------
 
 bool UIWidget_AssetBrowser::DrawPopupContextMenu(const PopupContextMenuProps& _props) {
 
@@ -355,7 +389,8 @@ bool UIWidget_AssetBrowser::DrawPopupContextMenu(const PopupContextMenuProps& _p
 			);
 		}
 		if (ImGui::MenuItem("Delete")) {
-			// Delete this file
+			// Delete this file and the metafile.
+			std::filesystem::remove(path/".meta");
 			std::filesystem::remove(path);
 			path.clear();
 			reload = true;
@@ -452,13 +487,14 @@ bool UIWidget_AssetBrowser::DrawPopupContextMenu(const PopupContextMenuProps& _p
 	return reload;
 }
 
-RES_ID UIWidget_AssetBrowser::GetRESIDFromMetafile(const std::filesystem::path& _path) {
+RES_ID UIWidget_AssetBrowser::GetRESIDFromMetafile(const std::filesystem::path& _path) const {
 	// assumes is a metafile path and exists.
 	Serialization::JSONFile jsonFile;
 	jsonFile.Parse(_path);
-	
-
-	return jsonFile["guid"].GetUint64();
+	return 
+		jsonFile.HasMember("guid") ? 
+		jsonFile["guid"].GetUint64() : 
+		ResourceConstants::C_RES_INVALID_ID;
 }
 
 

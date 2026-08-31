@@ -2,6 +2,8 @@
 #include <UI_Widget.h>
 #include <arch/common/properties.h>
 
+
+
 class UIWidget_Inspector : public UIWidget {
 public:
     UIWidget_Inspector(std::string _widgetName);
@@ -11,11 +13,18 @@ public:
     void Draw() override;
     void Exit() override;
 
+    void PinTrackedItem();
+    void UnpinTrackedItem();
 
     void OnSelect();
     void OnUnselect();
     
 private:
+    void DrawEntity();
+    void DrawResource();
+    bool IsTrackingItem() const;
+    UI_Selectable SelectedItem();
+
 private:
 
     void DrawPropertyElement(void* object, const PropertyMD::Property& prop, const std::string& key);
@@ -36,7 +45,8 @@ private:
     
     
     void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
-
+private:
+    UI_Selectable m_trackedItem;
 };
 
 

@@ -4,6 +4,8 @@
 #include <arch/ecs/ecs_entityFactory.h>
 
 
+
+
 class UIWidget_Outliner : public UIWidget {
 
 
@@ -27,6 +29,7 @@ private:
 
     void SetEntityRegistry(EntityRegistry* _registry);
     void SetFactory(EntityFactory* _registry);
+
 
 private:
     EntityRegistry* m_entityRegistry{};

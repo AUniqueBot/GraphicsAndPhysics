@@ -98,7 +98,7 @@ void EntityRegistry::Destroy(Entity _remove, bool _recursiveDeleteChildren) {
 }
 
 void EntityRegistry::Destroy(EntityID _id, bool _recursiveDeleteChildren) {
-	if (EntityID::ENTITYID_INVALID == _id) return;
+	if (EntityConstants::C_ENTITYID_INVALID == _id) return;
 	EntityView e { GetEntity(_id) };
 	if (e) Destroy(*e, _recursiveDeleteChildren);
 }
@@ -142,12 +142,12 @@ const std::vector<EntityID>& EntityRegistry::SelectedEntities() const {
 }
 
 EntityID EntityRegistry::SelectedEntity() const {
-	return m_selectedEntitiesList.size() > 0 ? m_selectedEntitiesList.back() : EntityID::ENTITYID_INVALID;
+	return m_selectedEntitiesList.size() > 0 ? m_selectedEntitiesList.back() : EntityConstants::C_ENTITYID_INVALID;
 }
 
 
 void EntityRegistry::DeselectEntity(EntityID _selectedID) {
-	if (EntityID::ENTITYID_INVALID == _selectedID) return;
+	if (EntityConstants::C_ENTITYID_INVALID == _selectedID) return;
 	
 	// case of deselecting the most current selection
 	if (SelectedEntity() == _selectedID) {

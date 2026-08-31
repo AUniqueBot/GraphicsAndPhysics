@@ -309,6 +309,16 @@ void RenderSystem::ClearBuffers(const Viewport& _vp) {
     glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
     glClearDepth(1.0f);
     glClear(clearFlags);
+
+
+
+    // clear object id.
+    GLuint clearValue = EntityConstants::C_ENTITYID_INVALID;
+    glClearBufferuiv(
+        GL_COLOR,
+        C_RENDER_OBJECTID,
+        &clearValue
+    );
 }
 
 void RenderSystem::UseViewport(const Viewport& _viewport) {
@@ -338,10 +348,12 @@ void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
     glClear(clearFlags);
     glStencilMask(0xff);
 
-    GLuint clearID = 0;
-
-    // viewport set.
-    glClearBufferuiv(GL_COLOR, 1, &clearID);
+    GLuint clearValue = EntityConstants::C_ENTITYID_INVALID;
+    glClearBufferuiv(
+        GL_COLOR,
+        C_RENDER_OBJECTID,
+        &clearValue
+    );
 
 }
 
