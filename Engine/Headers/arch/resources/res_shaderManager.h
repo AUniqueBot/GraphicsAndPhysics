@@ -42,17 +42,31 @@ public:
 	void Init() override;
 	void Cleanup() override;
 
-
 	// shader
 	ShaderHandle CreateShader(ShaderConstants::ShaderType _type, std::string _code = "");
 	std::string GenerateShaderCodeTemplate(ShaderConstants::ShaderType _shaderType);
+	ShaderHandle LoadShader(
+		const std::filesystem::path& _shaderPath,
+		RES_ID _existingId = ResourceConstants::C_RES_INVALID_ID
+	);
+
+
 
 	void RemoveShader(ShaderHandle _toDelete);
 	void RemoveShader(RES_ID _toDelete);
 	
+
+	void LoadResource(const Serialization::MetafileData& _meta) override;
 public:
+
 	const std::vector<RES_ID>& GetShadersOfType(ShaderConstants::ShaderType _type) const;
 private:
+	void RegisterFileExtensionToShaderType(const std::string& _extension, ShaderConstants::ShaderType _type);
+	ShaderConstants::ShaderType GetShaderType(const std::string& _extension) const;
+
+
+private:
+	std::unordered_map<std::string, ShaderConstants::ShaderType> m_extensionToShaderType;
 	std::unordered_map<ShaderConstants::ShaderType, std::vector<RES_ID>> m_shaderIds;
 };
 

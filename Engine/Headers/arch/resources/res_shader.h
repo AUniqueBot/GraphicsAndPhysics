@@ -52,8 +52,8 @@ public:
 
 public:
 
-	void SetShaderType(ShaderConstants::ShaderType _type);
-	const ShaderConstants::ShaderType& GetShaderType() const;
+	void ShaderType(const ShaderConstants::ShaderType& _type);
+	const ShaderConstants::ShaderType& ShaderType() const;
 
 	void SetShaderCode(const std::string& _shaderCode);
 	const std::string& GetShaderCode() const;
@@ -68,6 +68,9 @@ private:
 	std::string m_shaderCode	{};
 	ShaderConstants::ShaderType m_shaderType {};
 	bool m_shaderIsBuilt		{ false };
+
+public:
+	INSPECTABLE_DECLAREPROPS(Shader);
 };
 
 
@@ -104,6 +107,7 @@ private:
 private:
 	GLuint m_shaderProgramId								{ 0 };
 	SparseSet<ShaderConstants::ShaderType, GLuint> m_shaderIds;
+
 };
 
 // ------------------------------------------------------------------------------

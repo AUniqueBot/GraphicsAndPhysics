@@ -175,7 +175,8 @@ void UIWidget_Inspector::DrawEntity() {
 		if (!props.size()) {
 			continue;
 		}
-		if (ImGui::CollapsingHeader(compHandle.m_componentMetadata->GetComponentName().c_str())) {
+		std::string compName = compHandle.m_componentMetadata->GetComponentName();
+		if (ImGui::CollapsingHeader(compName.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			for (const PropertyMD::Property& prop : props) {
 				ImGui::SeparatorText(prop.m_name.c_str());
 				DrawPropertyElement(comp, prop, prop.m_name);
@@ -277,7 +278,7 @@ void UIWidget_Inspector::DrawResource() {
 	ResourceTypeMetadata metadata = rsmgr.GetResourceTypeMetadata(res->ResourceType());
 	PushID(selectedID);
 	
-	if (CollapsingHeader(metadata.GetName().c_str())) {
+	if (CollapsingHeader(metadata.GetName().c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 		for (const PropertyMD::Property& prop : res->GetProperties()) {
 			ImGui::SeparatorText(prop.m_name.c_str());
 			DrawPropertyElement(res.get(), prop, prop.m_name);

@@ -865,8 +865,8 @@ void RenderSystem::SetupShadowProgram() {
     Shader fragmentShader       {};
     vertexShader.SetShaderCode(vertexShaderSource);
     fragmentShader.SetShaderCode(fragmentShaderSource);
-    vertexShader.SetShaderType(ShaderConstants::ShaderType::VERTEX);
-    fragmentShader.SetShaderType(ShaderConstants::ShaderType::FRAG);
+    vertexShader.ShaderType(ShaderConstants::ShaderType::VERTEX);
+    fragmentShader.ShaderType(ShaderConstants::ShaderType::FRAG);
     vertexShader.Build();
     fragmentShader.Build();
     shadowShader.SetShader(vertexShader, ShaderConstants::ShaderType::VERTEX);

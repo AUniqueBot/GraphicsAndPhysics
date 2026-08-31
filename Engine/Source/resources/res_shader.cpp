@@ -14,11 +14,11 @@ static std::string GetRawText(std::string _pathToFile) {
 	return toRet.str();
 }
 
-void Shader::SetShaderType(ShaderConstants::ShaderType _type) {
+void Shader::ShaderType(const ShaderConstants::ShaderType& _type) {
 	m_shaderType = _type;
 }
 
-const ShaderConstants::ShaderType& Shader::GetShaderType() const {
+const ShaderConstants::ShaderType& Shader::ShaderType() const {
 	return m_shaderType;
 }
 
@@ -109,6 +109,37 @@ void Shader::Destroy() {
 }
 
 
+
+
+std::vector<PropertyMD::Property>& Shader::GetProps() {
+	using namespace PropertyMD;
+	using namespace ShaderConstants;
+
+
+
+
+	static std::vector<Property> props{
+		MakeEnumProperty<Shader>(
+			"Shader Type",
+			&Shader::ShaderType,
+			&Shader::ShaderType,
+			std::vector<Option> {
+				Option{ "Vertex",					static_cast<int>(ShaderType::VERTEX) },
+				Option{ "Fragment",					static_cast<int>(ShaderType::FRAG) },
+				Option{ "Geometry",					static_cast<int>(ShaderType::GEOMETRY) },
+				Option{ "Tesselation - Control",	static_cast<int>(ShaderType::TESELLATION_CONTROL) },
+				Option{ "Tesselation - Evaluation", static_cast<int>(ShaderType::TESSELATION_EVALUATION) },
+				Option{ "Compute" ,					static_cast<int>(ShaderType::COMPUTE) }
+			})
+	};
+
+	return props;
+}
+
+
+
+
+
 // - material side --------------------------------------------------------------------------------
 void ShaderProgram::Init() {
 
@@ -123,7 +154,7 @@ void ShaderProgram::Unload() {
 }
 
 void ShaderProgram::SetShader(const Shader& _shader) {
-	SetShader(_shader, _shader.GetShaderType());
+	SetShader(_shader, _shader.ShaderType());
 }
 
 void ShaderProgram::SetShader(const Shader& _shader, const ShaderConstants::ShaderType& _type) {

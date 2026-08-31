@@ -31,6 +31,7 @@ namespace PropertyMD {
 		None
 	};
 
+
 	struct Option {
 		const char* label;
 		int value;

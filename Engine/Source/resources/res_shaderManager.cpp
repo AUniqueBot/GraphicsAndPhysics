@@ -1,8 +1,19 @@
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_resourceIdentifier.h>
+#include <rapidjson/istreamwrapper.h>
+#include <rapidjson/prettywriter.h>
+#include <rapidjson/stringbuffer.h>
+
 
 void ShaderManager::Init() {
 	
+	RegisterFileExtensionToShaderType(".frag", ShaderConstants::ShaderType::FRAG);
+	RegisterFileExtensionToShaderType(".vert", ShaderConstants::ShaderType::VERTEX);
+	RegisterFileExtensionToShaderType(".comp", ShaderConstants::ShaderType::COMPUTE);
+	RegisterFileExtensionToShaderType(".tesc", ShaderConstants::ShaderType::TESELLATION_CONTROL);
+	RegisterFileExtensionToShaderType(".tese", ShaderConstants::ShaderType::TESSELATION_EVALUATION);
+	RegisterFileExtensionToShaderType(".geom", ShaderConstants::ShaderType::GEOMETRY);
+
 	// - vertex shader ---------------------------------------------------------------------
 
 	std::string shaderSrc;
@@ -53,9 +64,12 @@ void ShaderManager::Cleanup() {
 
 
 
-ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std::string _code) {
+ShaderHandle ShaderManager::CreateShader(
+	ShaderConstants::ShaderType _type, 
+	std::string _code
+) {
 	std::shared_ptr<Shader> res = std::make_shared<Shader>();
-	res->SetShaderType(_type);
+	res->ShaderType(_type);
 	res->SetShaderCode(_code);
 	res->Build();
 
@@ -64,7 +78,6 @@ ShaderHandle ShaderManager::CreateShader(ShaderConstants::ShaderType _type, std:
 
 
 	ShaderHandle handle = ShaderHandle(RegisterResource(res));
-	if (m_shaderIds.find(_type) == m_shaderIds.end()) m_shaderIds[_type] = {} ;
 	m_shaderIds[_type].push_back(handle.GetResourceID());
 
 	return handle;
@@ -82,7 +95,45 @@ void ShaderManager::RemoveShader(RES_ID _toDelete) {
 	// remove
 }
 
-const std::vector<RES_ID>& ShaderManager::GetShadersOfType(ShaderConstants::ShaderType _type) const {
+
+ShaderHandle ShaderManager::LoadShader(
+	const std::filesystem::path& _shaderPath,
+	RES_ID _existingId
+) {
+	std::string extension = _shaderPath.extension().string();
+	ShaderConstants::ShaderType type = GetShaderType(extension);
+	auto res = std::make_shared<Shader>();
+	std::string code = ShaderUtilFunctions::ParseShaderCode(_shaderPath.string());
+	res->ResourceID(_existingId);
+	res->SetShaderCode(code);
+	res->ShaderType(type);
+	ShaderHandle handle(m_resourceManager.AddInternalResource(res));
+	return handle;
+}
+
+void ShaderManager::LoadResource(const Serialization::MetafileData& _data)  {
+	namespace fs = std::filesystem;
+	ShaderHandle handle = LoadShader(_data.path, _data.id);
+	handle.GetBaseResource()->ResourcePath(_data.path);
+}
+
+void ShaderManager::RegisterFileExtensionToShaderType(
+	const std::string& _extension, 
+	ShaderConstants::ShaderType _type
+) {
+	RegisterFileExtension(_extension);
+	m_extensionToShaderType[_extension] = _type;
+}
+
+ShaderConstants::ShaderType ShaderManager::GetShaderType(
+	const std::string& _extension
+) const {
+	return m_extensionToShaderType.at(_extension);
+}
+
+const std::vector<RES_ID>& ShaderManager::GetShadersOfType(
+	ShaderConstants::ShaderType _type
+) const {
 	return m_shaderIds.at(_type);
 }
 
