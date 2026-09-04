@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Source\resources\res_sceneManager.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp" />
     <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
@@ -336,6 +337,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\res_resourceManager.h" />
     <ClInclude Include="Headers\arch\resources\res_resourceManagerDEF.hpp" />
     <ClInclude Include="Headers\arch\resources\res_scene.h" />
+    <ClInclude Include="Headers\arch\resources\res_sceneManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader.h" />
     <ClInclude Include="Headers\arch\resources\res_shaderManager.h" />
     <ClInclude Include="Headers\arch\resources\res_shader_generation\res_shader_generator.h" />

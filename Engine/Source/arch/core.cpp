@@ -179,7 +179,7 @@ void Core::RegisterComponents() {
 	m_registry.RegisterComponent<Camera>();
 	m_registry.RegisterComponent<MeshRenderer>();
 	m_registry.RegisterComponent<Light>();
-
+;
 
 	// register all types here.
 	m_registry.RegisterComponentsForSerialisation();

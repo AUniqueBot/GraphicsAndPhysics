@@ -38,10 +38,6 @@ namespace PropertyMD {
 	};
 
 
-
-
-
-
 	struct Property {
 		std::string m_name;
 		PropertyType m_type;
