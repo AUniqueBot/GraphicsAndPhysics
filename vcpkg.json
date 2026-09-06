@@ -7,6 +7,7 @@
     "glm",
     "assimp",
     "stb",
+    "nameof",
     {
         "name": "imgui",
         "features": [

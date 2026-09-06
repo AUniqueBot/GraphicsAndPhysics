@@ -4,117 +4,104 @@
 
 
 void AssetManager::Init() {
-	m_shaderManager.Init();
-	m_shaderPrgManager.Init();
-	m_materialManager.Init();
-	m_textureManager.Init();
-	m_meshManager.Init();
+
+	RegisterManager<Shader, ShaderManager>();
+	RegisterManager<ShaderProgram, ShaderProgramManager>();
+	RegisterManager<Material, MaterialManager>();
+	RegisterManager<TextureRes, TextureManager>();
+	RegisterManager<MeshRes, MeshManager>();
+
+	GetShaderProgramManager().InitShaderPrograms(GetShaderManager());
 
 	ScanResourcesInPath("./Assets");
 }
 
 void AssetManager::Cleanup() {
-	m_shaderManager.Cleanup();
-	m_shaderPrgManager.Cleanup();
-	m_materialManager.Cleanup();
-	m_textureManager.Cleanup();
-	m_meshManager.Cleanup();
+	for (auto& manager : m_managerList) {
+		manager->Cleanup();
+	}
 }
 
 void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool _recursive) {
 	namespace fs = std::filesystem;
+	using namespace Serialization;
 	// phase 1 -> meta file scanning.
-	std::vector<Serialization::MetafileData> metadata;
-
-	
-	if (!fs::exists(_path) || !fs::is_directory(_path)) {
-		LOG_ERROR("Provided path is not a directory \"" << _path << "\"");
-		return;
-	}
-	LOG_INFO("Scanned Path: " << _path);
-
-
-	if (_recursive) {
-		for (const fs::directory_entry& entry : fs::recursive_directory_iterator(_path)) {
-			if (entry.is_directory()) {
-				//LOG_INFO("Scanning path: " << entry.path());
-				continue;
-			}
-			// scan for associated types.
-			// match file extensions to asset types
-			// grab normalized extension.
-			std::string extension = entry.path().extension().string();
-			if (extension != ".meta") {
-				continue;
-			}
-
-			Serialization::MetafileData data = m_serializer.ParseMetafile(entry);
-			if (data.IsValid()) {
-				metadata.push_back(data);
-			}
-		}
-	}
-	else {
-		for (const fs::directory_entry& entry : fs::directory_iterator(_path)) {
-			std::string extension = entry.path().extension().string();
-			if (extension.length() == 0) {
-				//LOG_INFO("file has no extension: " << entry.path().filename());
-				continue;
-			}
-
-			Serialization::MetafileData data = m_serializer.ParseMetafile(entry);
-			if (data.IsValid()) {
-				metadata.push_back(data);
-			}
-		}
-	}
-
-
-
+	std::vector<Serialization::MetafileData> metadata = 
+		MetafileSerializer::ScanForMetafilesInPath(_path, _recursive);
 	// - phase 2 - parsing entries
-
-
 	for (const Serialization::MetafileData& metafile : metadata) {
 		LoadResource(metafile);
 	}
 
 }
 
+
+
 ShaderManager& AssetManager::GetShaderManager() { 
-	return m_shaderManager; 
+	auto mgr = std::static_pointer_cast<ShaderManager>(
+		*m_managerList.At(Shader::GetResourceTypeID())
+	);
+	return *mgr;
 }
 const ShaderManager& AssetManager::GetShaderManager() const { 
-	return m_shaderManager; 
+	auto mgr = std::static_pointer_cast<ShaderManager>(
+		*m_managerList.At(Shader::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 ShaderProgramManager& AssetManager::GetShaderProgramManager() {
-	return m_shaderPrgManager;
+	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
+		*m_managerList.At(ShaderProgram::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 const ShaderProgramManager& AssetManager::GetShaderProgramManager() const {
-	return m_shaderPrgManager;
+	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
+		*m_managerList.At(ShaderProgram::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 MaterialManager& AssetManager::GetMaterialManager() { 
-	return m_materialManager; 
+	auto mgr = std::static_pointer_cast<MaterialManager>(
+		*m_managerList.At(Material::GetResourceTypeID())
+	);
+	return *mgr;
 }
 const MaterialManager& AssetManager::GetMaterialManager() const { 
-	return m_materialManager; 
+	auto mgr = std::static_pointer_cast<MaterialManager>(
+		*m_managerList.At(Material::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 TextureManager& AssetManager::GetTextureManager() { 
-	return m_textureManager; 
+	auto mgr = std::static_pointer_cast<TextureManager>(
+		*m_managerList.At(TextureRes::GetResourceTypeID())
+	);
+	return *mgr; 
 }
 const TextureManager& AssetManager::GetTextureManager() const { 
-	return m_textureManager; 
+	auto mgr = std::static_pointer_cast<TextureManager>(
+		*m_managerList.At(TextureRes::GetResourceTypeID())
+	);
+	return *mgr; 
 }
 
 MeshManager& AssetManager::GetMeshManager() {
-	return m_meshManager;
+	auto mgr = std::static_pointer_cast<MeshManager>(
+		*m_managerList.At(MeshRes::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 const MeshManager& AssetManager::GetMeshManager() const {
-	return m_meshManager;
+	auto mgr = std::static_pointer_cast<MeshManager>(
+		*m_managerList.At(MeshRes::GetResourceTypeID())
+	);
+	return *mgr;
 }
 
 
@@ -127,7 +114,7 @@ void AssetManager::SaveMetafileData(const Serialization::MetafileData& _data) {
 		return;
 	}
 
-	rapidjson::Document doc = m_serializer.CreateMetafileData(_data);
+	rapidjson::Document doc = Serialization::MetafileSerializer::CreateMetafileData(_data);
 	rapidjson::StringBuffer buffer;
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(buffer);
 	doc.Accept(writer);
@@ -144,22 +131,15 @@ void AssetManager::LoadResource(const Serialization::MetafileData& _metafile) {
 		//LOG_INFO("file has no extension: " << entry.path().filename());
 		return;
 	}
-	if (m_materialManager.AcceptsFileExtension(extension)) {
-		LOG_INFO("Reading material path: " << path);
-		m_materialManager.LoadResource(_metafile);
+
+	for (auto& manager : m_managerList) {
+		if (!manager || !manager->AcceptsFileExtension(extension)) {
+			continue;
+		}
+		manager->LoadResource(_metafile);
+		return;
 	}
-	else if (m_meshManager.AcceptsFileExtension(extension)) {
-		LOG_INFO("Reading mesh path: " << path);
-		m_meshManager.LoadResource(_metafile);
-	}
-	else if (m_shaderManager.AcceptsFileExtension(extension)) {
-		LOG_INFO("Reading shader path: " << path);
-		m_shaderManager.LoadResource(_metafile);
-	}
-	else if (m_textureManager.AcceptsFileExtension(extension)) {
-		LOG_INFO("Reading texture path: " << path);
-		m_textureManager.LoadResource(_metafile);
-	}
+	
 
 }
 

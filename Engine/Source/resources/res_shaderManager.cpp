@@ -142,12 +142,15 @@ const std::vector<RES_ID>& ShaderManager::GetShadersOfType(
 
 void ShaderProgramManager::Init() {
 
+}
+
+void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	// get shader resource ids.
-	RES_ID vtxShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_VERTEXSHADER);
-	RES_ID lambertFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_LAMBERTFRAGSHADER);
-	RES_ID phongFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_PHONGFRAGSHADER);
-	RES_ID blinnFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
-	RES_ID errorFragShaderRID = m_shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
+	RES_ID vtxShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_VERTEXSHADER);
+	RES_ID lambertFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_LAMBERTFRAGSHADER);
+	RES_ID phongFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_PHONGFRAGSHADER);
+	RES_ID blinnFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
+	RES_ID errorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
 
 	// generate programs
 	ShaderProgramHandle lambert = CreateRenderShaderProgram({ vtxShaderRID, lambertFragShaderRID });

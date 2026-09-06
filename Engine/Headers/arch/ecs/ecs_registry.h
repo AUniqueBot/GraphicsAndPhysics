@@ -104,7 +104,8 @@ public:
 		std::string _name,
 		CompType _compId,
 		CompTypeID _id,
-		std::function<void()> _registerFunction
+		std::function<void()> _registerFunction,
+		std::function<void(Entity&, const Serialization::JSONFile&)> _deserializationFunction
 	) :
 		m_componentName		{ _name },
 		m_componentType		{ _compId },
@@ -117,8 +118,8 @@ public:
 	const CompTypeID& GetComponentTypeID() const					{ return m_componentTypeID; };
 
 
-
 	std::function<void()> GetComponentRegisterFunction()			{ return m_registerFunction; }
+
 
 private:
 	CompTypeID	m_componentTypeID;
@@ -126,8 +127,11 @@ private:
 	std::string m_componentName;
 	//std::shared_ptr<IComponentPool> m_componentPool;
 	std::function<void()> m_registerFunction;
+	std::function<void(Entity&, const Serialization::JSONFile&)> m_deserializeFunction	{ nullptr };
 };
 
+
+//  void Deserialize(EntityID& _id, Serialization::JSONFile _data)
 struct ComponentPackedData {
 	ComponentMetadata m_componentMetadata;
 	std::shared_ptr<IComponentPool> m_componentPool;
@@ -171,20 +175,29 @@ public:
 		ComponentMetadata::CompTypeID id = ++s_componentIdxId;
 		std::shared_ptr<IComponentPool> pool = std::make_shared<ComponentPool<T>>();
 		std::function<void()> registerFunction = T::Register;
-		
+		std::function<void(Entity&, const Serialization::JSONFile&)> deserializeFunction = [](
+			Entity& _entity, const Serialization::JSONFile& _data
+			) {
+				_entity.AddComponent<T>();
+				_entity.GetComponent<T>()->Deserialize(_data);
+		};
+
+
 		ComponentMetadata cmdata = ComponentMetadata(
 			componentName,
 			componentId, id,
-			registerFunction
+			registerFunction,
+			deserializeFunction
 		);
 			
 		// setup to lookup and metadata.
 		m_componentIDLookup.Add(typeid(T), id);
+		m_componentNameIDMap.Add(std::move(CompID(id)), componentName);
 		m_componentData.insert({ componentId, ComponentPackedData{ cmdata, pool } });
 
 		
 		std::string log{"Registering Component: "};
-		log += Reflection::TypeName<T>();
+		log += componentName;
 
 		LOG_INFO(log);
 	}
@@ -242,9 +255,9 @@ public:
 	///! @param Entity: entity to remove
 	///! @param EntityID: ALT entityID to remove
 	///! @param EntityID: ALT list - IDs of entities to remove
-	void Destroy(Entity _remove, bool _recursiveDeleteChildren = true);
-	void Destroy(EntityID _remove, bool _recursiveDeleteChildren = true);
-	void Destroy(std::vector<EntityID> _remove, bool _recursiveDeleteChildren = true);
+	void Destroy(Entity _remove);
+	void Destroy(EntityID _remove);
+	void Destroy(std::vector<EntityID> _remove);
 
 
 	// - existence checks -------------------------------------------------
@@ -281,6 +294,7 @@ private:
 
 	// 1 lookup integer mapped to 1 
 	SparseSet<CompID, CompTypeID> m_componentIDLookup;
+	SparseSet<std::string, CompID> m_componentNameIDMap;
 	std::unordered_map<CompTypeID, ComponentPackedData> m_componentData;
 
 

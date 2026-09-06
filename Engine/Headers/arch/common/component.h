@@ -4,7 +4,7 @@
 #include <arch/components/componentList.h>
 #include <arch/common/properties.h>
 #include <arch/common/inspectable.h>
-
+#include <serialization/serialize_jsonfile.h>
 
 class Component : public Inspectable {
 	
@@ -24,16 +24,23 @@ public:
 	// serialization function
 	static void Register() { LOG_INFO("Registering Component - Generic. If you see this, you didn't override this in your component."); };
 
+
 	inline virtual std::vector<PropertyMD::Property>& GetProperties() {
 		static std::vector<PropertyMD::Property> props;
 		return props;
 	};
 
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
+public:
+	inline virtual void Deserialize(const Serialization::JSONFile& _data) {}
+	inline virtual Serialization::JSONFile Serialize() { return Serialization::JSONFile(); };
+
 private:
 	ComponentType m_type						{ __INVALID };
 	inline static unsigned s_compIdCounter		{ 0 }; // 0 is invalid.
 	EntityID m_registeredEntity					{ EntityConstants::C_ENTITYID_INVALID };
+
+
 };
 
 template <typename T>

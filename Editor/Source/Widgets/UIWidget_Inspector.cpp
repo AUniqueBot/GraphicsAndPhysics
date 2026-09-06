@@ -162,7 +162,7 @@ void UIWidget_Inspector::DrawEntity() {
 		obj.Name(s);
 	}
 
-	Text("ID: [%i]", obj.GetID());
+	Text("ID: [%lu]", obj.GetID());
 
 	// render components here.
 
@@ -349,6 +349,10 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 		break;
 	case PropertyType::Object:
 		DrawPropertyObject(object, prop, name);
+		break;
+
+	case PropertyType::Resource:
+
 		break;
 	case PropertyType::ResourceHandle:
 		DrawPropertyResourceHandle(object, prop, name);

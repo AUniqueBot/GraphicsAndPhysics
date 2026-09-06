@@ -18,10 +18,16 @@ public:
 		SpecializedResourceManager(_rsm, _gpuRsm) {
 	}
 	
+	void Init() override;
+
+public:
 	void CreateScene();
 	void DeleteScene();
 	void LoadScene(const std::filesystem::path& _path);
 	void SaveScene(const std::filesystem::path& _path);
+public:
+	void LoadResource(const Serialization::MetafileData& _data) override;
 private:
+	SceneState m_currentState				{ Stop };
 	RES_ID m_currentScene					{ ResourceConstants::C_RES_INVALID_ID };
 };

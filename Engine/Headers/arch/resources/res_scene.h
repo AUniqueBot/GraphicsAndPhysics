@@ -23,9 +23,9 @@ class Scene : public Resource<Scene> {
 public:
 
 	bool AddEntity(EntityID _id);
-	EntityView Instantiate();
-	bool RemoveEntity(EntityView _entity, bool _recursive = true);
-	bool RemoveEntity(EntityID _id, bool _recursive = true);
+	EntityView Instantiate(RES_ID _prefab = EntityConstants::C_ENTITYID_INVALID);
+	bool Destroy(EntityView _entity, bool _recursive = true);
+	bool Destroy(EntityID _id, bool _recursive = true);
 
 public:
 	// set to 0 to unparent.
@@ -38,10 +38,10 @@ public:
 	void Registry(EntityRegistry* _registry);
 
 public:
-	static Scene LoadScene(std::filesystem::path _path);
-
+	void LoadScene(const Serialization::JSONFile& _jsonData);
+	static Scene LoadScene(const Serialization::JSONFile& _jsonData, EntityRegistry& _registry);
 private:
-	void EnsureUnique();
+
 	void ClearEntities();
 private:
 	EntityRegistry* m_registry;

@@ -126,10 +126,8 @@ private:
 	AssetManager m_assetManager				{ m_resourceManager, m_gpuResourceManager };
 	EntityFactory m_entityFactory			{ m_registry, m_assetManager };
 	
-	
 	// - save management ---------------------------
-	GameStateManager m_gsm;
-	SceneManager m_sceneManager;
+	SceneManager m_sceneManager; // context?
 
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;

@@ -84,11 +84,12 @@ struct RenderShaderProgProps {
 
 class ShaderProgramManager : public SpecializedResourceManager {
 public: 
-	ShaderProgramManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr, ShaderManager& _shaderMgr) : 
-		SpecializedResourceManager(_mgr, _gpuMgr), m_shaderMgr(_shaderMgr) {}
+	ShaderProgramManager(ResourceManager& _mgr, GPUResourceManager& _gpuMgr) : 
+		SpecializedResourceManager(_mgr, _gpuMgr) {}
 
 
 	void Init() override;
+	void InitShaderPrograms(ShaderManager& _shaderMgr);
 	void Cleanup() override;
 
 	//ShaderProgramHandle CreateComputeShaderProgram();
@@ -101,6 +102,6 @@ public:
 	std::shared_ptr<ShaderProgram> GetShaderProgram(RES_ID _id);
 
 private:
-	ShaderManager& m_shaderMgr;
+
 
 };

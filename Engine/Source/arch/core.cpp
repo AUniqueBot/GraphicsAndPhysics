@@ -21,10 +21,19 @@ void Core::Init() {
 	CoreInit();
 
 
+
+
 	// create an entity via loading here...
-	AssetManager& asMgr = Core::GetInstance().GetAssetManager();
+	AssetManager& asMgr = m_assetManager;
 	MaterialManager& matMgr = asMgr.GetMaterialManager();
-	MeshManager& meshMgr = m_assetManager.GetMeshManager();
+	MeshManager& meshMgr = asMgr.GetMeshManager();
+	
+	
+
+	m_sceneManager; // load a scene directly from file.
+	
+	
+	
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
 	Entity& ambientLight = *(m_registry.Instantiate());

@@ -83,9 +83,9 @@ EntityView EntityRegistry::Instantiate(EntityID _existingID) {
 	return m_entityList.At(_existingID);
 }
 
-void EntityRegistry::Destroy(Entity _remove, bool _recursiveDeleteChildren) {
+void EntityRegistry::Destroy(Entity _remove) {
 	// do child recursion here.
-	(void)_recursiveDeleteChildren;
+
 
 
 	for (unsigned _id : _remove.GetAttachedComponents()) {
@@ -97,15 +97,15 @@ void EntityRegistry::Destroy(Entity _remove, bool _recursiveDeleteChildren) {
 	m_entityList.Remove(_remove.GetID());
 }
 
-void EntityRegistry::Destroy(EntityID _id, bool _recursiveDeleteChildren) {
+void EntityRegistry::Destroy(EntityID _id) {
 	if (EntityConstants::C_ENTITYID_INVALID == _id) return;
 	EntityView e { GetEntity(_id) };
-	if (e) Destroy(*e, _recursiveDeleteChildren);
+	if (e) Destroy(*e);
 }
 
-void EntityRegistry::Destroy(std::vector<EntityID> _remove, bool _recursiveDeleteChildren) {
+void EntityRegistry::Destroy(std::vector<EntityID> _remove) {
 	for (EntityID id : _remove) {
-		Destroy(id, _recursiveDeleteChildren);
+		Destroy(id);
 	}
 }
 

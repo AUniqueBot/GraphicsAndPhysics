@@ -7,11 +7,10 @@
 bool Scene::AddEntity(EntityID _id) {
 	if (_id == EntityConstants::C_ENTITYID_INVALID) return false;
 
-	EnsureUnique();
 	return true;
 }
 
-EntityView Scene::Instantiate() {
+EntityView Scene::Instantiate(RES_ID _prefab) {
 	if (!m_registry) {
 		return EntityView(std::nullopt);
 	}
@@ -22,23 +21,27 @@ EntityView Scene::Instantiate() {
 	// generate an entity node to push into the thing
 	EntityNode entitynode;
 	entitynode.m_entityId = entity->GetID();
-	m_sceneEntities.Add(std::move(entitynode), entitynode.m_entityId);
+	EntityID id = entitynode.m_entityId;
+	m_sceneEntities.Add(std::move(entitynode), id);
+	//if (_prefab != EntityConstants::C_ENTITYID_INVALID)  { Get the resource, looks like a scene file. }
+
 	return entity;
 }
 
-bool Scene::RemoveEntity(EntityView _entity, bool _recursive) {
+bool Scene::Destroy(EntityView _entity, bool _recursive) {
 	if (!_entity) return false;
-	return RemoveEntity(_entity->GetID(), _recursive);
+	return Destroy(_entity->GetID(), _recursive);
 }
 
-bool Scene::RemoveEntity(EntityID _id, bool _recursive) {
+bool Scene::Destroy(EntityID _id, bool _recursive) {
 	// dfs removal
 	auto entitynode = m_sceneEntities.At(_id);
 	if (!entitynode) return false;
 	for (EntityID child : entitynode->m_children) {
-		RemoveEntity(child, true);
+		Destroy(child, true);
 	}
-	return m_sceneEntities.Remove(_id);;
+	m_registry->Destroy(_id);
+	return m_sceneEntities.Remove(_id);
 }
 
 void Scene::Parent(EntityID _child, EntityID _parent) {
@@ -118,12 +121,64 @@ void Scene::Registry(EntityRegistry* _registry) {
 	m_registry = _registry;
 }
 
-void Scene::EnsureUnique() {
+void Scene::LoadScene(const Serialization::JSONFile& _jsonData) {
+	// structured data to form relations with.
+	struct EntityRelations {
+		EntityIDType originalId			{ EntityConstants::C_ENTITYID_INVALID };
+		EntityIDType originalParentId	{ EntityConstants::C_ENTITYID_INVALID };
+		EntityView entity				{ std::nullopt };
+	};
+
+	std::unordered_map<EntityIDType, EntityRelations> mappings;
+
+	// first is en
+
+
+	if (_jsonData.HasMember("environment")) {
+
+		// do env serialization.
+
+	}
+	if (_jsonData.HasMember("entities")) {
+		const rapidjson::Value& entities = _jsonData.GetMember("entities");
+		for (auto itr = entities.MemberBegin(); itr != entities.MemberEnd(); ++itr) {
+			EntityRelations relationData;
+
+			EntityIDType originalId{ std::stoul(itr->name.GetString()) };
+			relationData.originalId = originalId;
+
+			// props.
+			const rapidjson::Value& entityprops = itr->value;
+			if (entityprops.HasMember("parent")) {
+				relationData.originalParentId = std::stoul(entityprops["parent"].GetString());
+			}
+
+			EntityView entity = Instantiate();
+			relationData.entity = entity;
+
+
+
+			// instantiate and generate.
+			if (entityprops.HasMember("components")) {
+				const rapidjson::Value& compdata = entityprops["components"];
+				for (auto comp = compdata.MemberBegin(); comp != compdata.MemberEnd(); ++comp) {
+					// what is the comp name?
+					comp->name; // defines the component.
+
+					comp->value; // deserialize; you should have enough data for this.
+				}
+			}
+			
+		}
+
+
+
+	}
 
 }
 
-void Scene::ClearEntities() {
-	for (EntityNode entity : m_sceneEntities) {
 
-	}
+void Scene::ClearEntities() {
+	m_sceneEntities.clear();
+	m_registry->ClearEntitiesAndComponentData();
 }

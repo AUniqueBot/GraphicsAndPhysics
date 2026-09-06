@@ -12,13 +12,15 @@ namespace Serialization {
 
 	class MetafileSerializer {
 	public:
-		rapidjson::Document CreateMetafileData(const MetafileData& _data);
-		MetafileData ParseMetafile(const std::filesystem::directory_entry& _path);
+		static rapidjson::Document CreateMetafileData(const MetafileData& _data);
+		static MetafileData ParseMetafile(const std::filesystem::directory_entry& _path);
+
+		static std::vector<Serialization::MetafileData>
+			ScanForMetafilesInPath(const std::filesystem::path& _path, bool _recursive = true);
 
 	private:
-
-		rapidjson::Document CreateMetafileData_V1(const MetafileData& _data);
-		MetafileData ParseMetafile_V1(const std::filesystem::directory_entry& _path);
+		static rapidjson::Document CreateMetafileData_V1(const MetafileData& _data);
+		static MetafileData ParseMetafile_V1(const std::filesystem::directory_entry& _path);
 
 	};
 }
