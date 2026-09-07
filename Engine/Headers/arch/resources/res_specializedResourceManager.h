@@ -46,6 +46,9 @@ public:
 
 
 	void UpdateResourceMetafile(const std::filesystem::path& _file);
+
+
+	const std::unordered_set<RES_ID>& GetResourcePool() const;
 protected:
 
 	ResourceIdentifier RegisterResource(std::shared_ptr<BaseResource> _res);

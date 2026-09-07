@@ -105,6 +105,13 @@ const MeshManager& AssetManager::GetMeshManager() const {
 }
 
 
+SparseSetView<SpecializedManager> AssetManager::GetManager(RESTYPE_ID _type) {
+	return m_managerList.At(_type);
+}
+SparseSetView<const SpecializedManager> AssetManager::GetManager(RESTYPE_ID _type) const {
+	return m_managerList.At(_type);
+}
+
 
 void AssetManager::SaveMetafileData(const Serialization::MetafileData& _data) {
 	std::ofstream ofs(_data.path);
@@ -132,6 +139,8 @@ void AssetManager::LoadResource(const Serialization::MetafileData& _metafile) {
 		return;
 	}
 
+
+	// dirty one. to replace with a different lookup.
 	for (auto& manager : m_managerList) {
 		if (!manager || !manager->AcceptsFileExtension(extension)) {
 			continue;

@@ -113,11 +113,11 @@ void SpecializedResourceManager::UpdateResourceMetafile(const std::filesystem::p
 		GenerateResourceMetafile(_file);
 	}
 
+}
 
 
-	
-	
-
+const std::unordered_set<RES_ID>& SpecializedResourceManager::GetResourcePool() const {
+	return m_resourceIdPool;
 }
 
 void SpecializedResourceManager::GenerateResourceMetafile(const std::filesystem::path& _metapath) {

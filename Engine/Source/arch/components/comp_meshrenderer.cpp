@@ -61,6 +61,12 @@ Material& MeshRenderer::GetDefaultMaterial() {
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
 	static std::vector<PropertyMD::Property> props{
+		MakeResourceProperty<MeshRenderer>(
+			"Mesh",
+			MeshRes::GetResourceTypeID(),
+			&MeshRenderer::GetMesh,
+			&MeshRenderer::SetMesh
+		),
 		MakeListProperty<MeshRenderer, MaterialHandle>(
 			"Materials",
 			static_cast<std::vector<MaterialHandle>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),

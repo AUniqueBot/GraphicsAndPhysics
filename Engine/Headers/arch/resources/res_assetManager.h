@@ -6,11 +6,10 @@
 #include <arch/resources/res_textureManager.h>
 #include <arch/resources/res_meshManager.h>
 
-#include <serialization/serialize_helperfunctions.h>
+
 #include <serialization/serialize_metafilereader.h>
 
-
-
+using SpecializedManager = std::shared_ptr<SpecializedResourceManager>;
 class AssetManager {
 
 
@@ -47,9 +46,9 @@ public:
 		}
 	}
 
-
-
 public:
+	// default managers
+
 	ShaderManager& GetShaderManager();
 	const ShaderManager& GetShaderManager() const;
 	
@@ -68,6 +67,8 @@ public:
 
 
 
+	SparseSetView<SpecializedManager> GetManager(RESTYPE_ID _type);
+	SparseSetView<const SpecializedManager> GetManager(RESTYPE_ID _type) const;
 
 public:
 	void SaveMetafileData(const Serialization::MetafileData& _data);
@@ -84,5 +85,6 @@ private:
 	// references to core managers.
 	ResourceManager& m_resourceManager; 
 	GPUResourceManager& m_gpuResourceManager;
-	SparseSet<RESTYPE_ID, std::shared_ptr<SpecializedResourceManager>> m_managerList;
+	SparseSet<RESTYPE_ID, SpecializedManager> m_managerList;
+
 };

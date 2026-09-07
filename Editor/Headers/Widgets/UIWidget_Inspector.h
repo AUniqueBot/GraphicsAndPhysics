@@ -41,8 +41,9 @@ private:
 
     void DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key);
 
-    void DrawPropertyResourceHandle(void* object, const PropertyMD::Property& prop, const std::string& key);
+    void DrawPropertyResource(void* object, const PropertyMD::Property& prop, const std::string& key);
     
+    void DrawPropertyResourceHandle(void* object, const PropertyMD::Property& prop, const std::string& key);
     
     void DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key);
 private:

@@ -4,6 +4,8 @@
 #include <memory>
 
 
+
+
 namespace PropertyMD {
 	enum class PropertyType {
 		Int,
@@ -46,7 +48,7 @@ namespace PropertyMD {
 		bool m_draggable = false;
 		std::function<void(void*, void*)> m_get = nullptr;
 		std::function<void(void*, const void*)> m_set = nullptr;
-
+		uint32_t m_resourceType;
 
 
 		bool m_isEnum = false;
@@ -240,6 +242,25 @@ namespace PropertyMD {
 		return prop;
 	}
 
+	template<typename T, typename Getter, typename Setter>
+	Property MakeResourceProperty(
+		const char* name,
+		uint32_t resType,
+		Getter getter,
+		Setter setter
+	) {
+		Property prop = MakeProperty<T, Getter, Setter>(
+			name, 
+			PropertyType::Resource, 
+			Shape::Scalar, 
+			1, 
+			getter, 
+			setter, 
+			false
+		);
+		prop.m_resourceType = resType;
+		return prop;
+	}
 
 
 

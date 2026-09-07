@@ -143,12 +143,7 @@ void UIWidget_Inspector::DrawEntity() {
 	EntityRegistry& er = core.GetRegistry();
 	ResourceManager& rsmgr = core.GetResourceManager();
 
-
-	//if (!selectedObj) {
-	//	Text("No object selected with ID [%i]", selectedID);
-	//	return;
-	//}
-	Text("Object selected with ID [%lu]", selectedID);
+	//Text("Object selected with ID [%lu]", selectedID);
 	std::function<bool()> EnterOrTabPressed = []() {
 		return
 			ImGui::IsKeyPressed(ImGuiKey_Enter) ||
@@ -183,78 +178,6 @@ void UIWidget_Inspector::DrawEntity() {
 			}
 		}
 
-	}
-
-
-
-
-	auto meshV = obj.GetComponent<MeshRenderer>();
-	if (meshV) {
-		MeshRenderer& mr = *meshV;
-		ResourceManager& resmgr = core.GetResourceManager();
-		MeshManager& meshmgr = core.GetAssetManager().GetMeshManager();
-		MaterialManager& matMgr = core.GetAssetManager().GetMaterialManager();
-		// mesh handling.
-		RES_ID meshId = mr.GetMesh();
-		std::shared_ptr<MeshRes> selectedMesh = static_pointer_cast<MeshRes>(resmgr.GetResource(meshId));
-
-
-		std::string selectedMeshName = selectedMesh->Name();
-		RES_ID selectedMeshID = selectedMesh->ResourceID();
-		if (BeginCombo("Mesh##Inspector_Meshes", selectedMeshName.c_str())) {
-			const auto& resPool = resmgr.GetResourcePool();
-			const auto& meshIDs = resmgr.GetResourcePoolManifest(MeshRes::GetResourceTypeID());
-
-			// first are the default meshes
-			bool isSelected = false;
-			for (unsigned i{}; i < Primitive::__COUNT; ++i) {
-
-				std::shared_ptr<MeshRes> mesh{};
-				std::string primitiveType{};
-				switch (i) {
-				case Primitive::CUBE:
-					mesh.reset(new CubeRes());
-					primitiveType = "Cube";
-					break;
-				case Primitive::SPHERE:
-					mesh.reset(new SphereRes());
-					primitiveType = "Sphere";
-					break;
-				case Primitive::PLANE:
-					primitiveType = "Plane";
-					mesh.reset(new PlaneRes());
-					break;
-				case Primitive::ICOSPHERE:
-					continue;
-					primitiveType = "WIP - Icosphere";
-					//mesh.reset(new Plane());
-					break;
-				}
-
-				isSelected = selectedMeshName == primitiveType;
-				if (Selectable(primitiveType.c_str())) {
-					mr.SetMesh(mesh->ResourceID());
-				}
-			}
-
-
-			for (const RES_ID& id : meshIDs) {
-				std::string imguiMeshID{ "##meshID" };
-				imguiMeshID += std::to_string(id);
-				PushID(imguiMeshID.c_str());
-
-				const auto& mesh = std::dynamic_pointer_cast<MeshRes>(resPool.at(id));
-				std::string name{ mesh->ResourcePath().filename().string() };
-
-				isSelected = selectedMeshID == id;
-				if (Selectable(name.c_str(), isSelected)) {
-					mesh->Init();
-					mr.SetMesh(mesh->ResourceID());
-				}
-				PopID();
-			}
-			EndCombo();
-		}
 	}
 }
 
@@ -352,8 +275,9 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 		break;
 
 	case PropertyType::Resource:
-
+		DrawPropertyResource(object, prop, name);
 		break;
+
 	case PropertyType::ResourceHandle:
 		DrawPropertyResourceHandle(object, prop, name);
 		break;
@@ -512,6 +436,43 @@ void UIWidget_Inspector::DrawPropertyObject(void* object, const PropertyMD::Prop
 	for (auto& prop : data->GetProperties()) {
 		DrawPropertyElement(object, prop, prop.m_name);
 	}
+}
+
+void UIWidget_Inspector::DrawPropertyResource(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	// get the correct asset manager.
+	auto managerView = ApplicationCore()->GetAssetManager().GetManager(prop.m_resourceType);
+	if (!managerView) {
+		return;
+	}
+	SpecializedManager manager = *managerView;
+	// do something.
+	const std::unordered_set<RES_ID>& resIdPool = manager->GetResourcePool();
+	ResourceManager& resMgr = ApplicationCore()->GetResourceManager();
+	
+	RES_ID currentResource{};
+	prop.m_get(object, &currentResource);
+	RES_ID selectedResource{currentResource};
+
+	std::shared_ptr<BaseResource> resPtr = resMgr.GetResource(currentResource);
+	std::string currentResName = resPtr ?  resPtr->Name() : "INVALID_ID";
+
+	if (ImGui::BeginCombo(prop.m_name.c_str(), currentResName.c_str())) {
+		for (const RES_ID& resid : resIdPool) {
+			std::string name = resMgr.GetResource(resid)->Name();
+			ImGui::PushID(resid);
+			if (ImGui::Selectable(name.c_str())) {
+				selectedResource = resid;
+			}
+			ImGui::PopID();
+		}
+		ImGui::EndCombo();
+	}
+	if (selectedResource != currentResource) {
+		prop.m_set(object, &selectedResource);
+	}
+
+	
+
 }
 
 void UIWidget_Inspector::DrawPropertyResourceHandle(

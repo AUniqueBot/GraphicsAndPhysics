@@ -79,6 +79,7 @@ public:
 	const AssetManager& GetAssetManager() const		{ return m_assetManager; }
 
 
+
 public:
 	// - public parameters --------------------------
 
