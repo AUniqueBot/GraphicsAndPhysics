@@ -15,8 +15,7 @@
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_assetManager.h>
 
-#include <arch/core/core_gamestatemanager.h>
-#include <arch/core/core_scenemanager.h>
+#include <arch/resources/res_sceneManager.h>
 
 
 class Core : public Singleton<Core> {
@@ -128,7 +127,7 @@ private:
 	EntityFactory m_entityFactory			{ m_registry, m_assetManager };
 	
 	// - save management ---------------------------
-	SceneManager m_sceneManager; // context?
+	SceneManager m_sceneManager				{ m_resourceManager, m_gpuResourceManager, m_registry, m_assetManager };
 
 	CoordinateSystem m_coordinateSystem;
 	static Clock m_clock;

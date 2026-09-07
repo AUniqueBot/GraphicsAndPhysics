@@ -140,6 +140,9 @@ void UIWidget_Inspector::DrawEntity() {
 	Core& core = *ApplicationCore();
 	EntityID selectedID = SelectedItem().m_id.m_entityId;
 	EntityView selectedObj = core.GetRegistry().GetEntity(selectedID);
+	if (!selectedObj) return;
+	
+	
 	EntityRegistry& er = core.GetRegistry();
 	ResourceManager& rsmgr = core.GetResourceManager();
 
@@ -150,6 +153,7 @@ void UIWidget_Inspector::DrawEntity() {
 			ImGui::IsKeyPressed(ImGuiKey_Tab) ||
 			ImGui::IsKeyPressed(ImGuiKey_KeypadEnter);
 		};
+
 
 	Entity& obj = *selectedObj;
 	std::string s{ selectedObj->Name() };

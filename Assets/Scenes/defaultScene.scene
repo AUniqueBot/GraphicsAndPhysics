@@ -1,0 +1,117 @@
+{
+    "environment": {
+        
+    },
+    "entities":{
+        "0451" : {
+            "name": "BaseEntity1",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [10, 10, -10],
+                    "Rotation": [0, 0, 0],
+                    "Scale": [1, 1, 1]
+                },
+                "MeshRenderer": {
+                    "Mesh": 466735032382132234,
+                    "Material": [
+                        15550170195157180089
+                    ],
+                    "Casts Shadow": true
+                }
+            }
+        },
+        "4096" : {
+            "name": "BaseEntity2",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [3, 3, -2],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [1, 1, 1]
+                },
+                "MeshRenderer": {
+                    "Mesh": 9423376448481607,
+                    "Material": [
+                        3911558884168242736
+                    ],
+                    "Casts Shadow": true
+                }
+            }
+        },
+        "2048" : {
+            "name": "plane",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [0, 0, 0],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [10, 10, 1]
+                },
+                "MeshRenderer": {
+                    "Mesh": "C_DEFAULT_MESH_PLANE",
+                    "Material": [
+                        1234567890
+                    ],
+                    "Casts Shadow": true
+                }
+            }
+        },
+        "1201" : {
+            "name" : "directional light",
+            "components": {
+                "Transform" : {
+                    "Position": [0, 0, 0],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [1, 1, 1]
+                },
+                "Light" :{
+                    "Light Type": "Directional",
+                    "Color": [1, 1, 1],
+                    "Casts Shadow": true, 
+                    "Power": 0.5
+                }
+
+            }
+        },
+        "1202" : {
+            "name" : "point light 1",
+            "parent": 0,
+            "components": {
+                "Transform" : {
+                    "Position": [10, 0, 10],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [1, 1, 1]
+                },
+                "Light" :{
+                    "Light Type": "Point",
+                    "Color": [0, 0, 1],
+                    "Casts Shadow": false, 
+                    "Power": 100
+                }
+                
+            }
+        },
+        "1203" : {
+            "name" : "point light 2",
+            "parent": 0,
+            "components": {
+                "Transform" : {
+                    "Position": [-10, 0, 3],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [1, 1, 1]
+                },
+                "Light" :{
+                    "Light Type": "Point",
+                    "Color": [0, 1, 1],
+                    "Casts Shadow": false, 
+                    "Power": 10
+                }
+
+            }
+        }
+
+        
+    }
+
+}

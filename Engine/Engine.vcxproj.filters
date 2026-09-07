@@ -177,9 +177,6 @@
     <ClCompile Include="Source\serialization\serialize_jsonfile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\arch\core\core_scenemanager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_material_blinnphong.h">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -262,6 +259,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_sceneManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\arch\common\inspectable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -543,9 +543,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\serialization\serialize_jsonfile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\core\core_scenemanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\serialization\serialize_jsonfileDEF.hpp">

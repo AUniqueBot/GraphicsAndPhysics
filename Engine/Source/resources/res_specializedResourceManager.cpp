@@ -42,6 +42,8 @@ void SpecializedResourceManager::SetResourceAlias(RES_ID _id, std::string _alias
 	m_aliasToResId[_alias] = _id;
 	m_resIdToAlias[_id] = _alias;
 	m_resourceManager.GetResource(_id)->Name(_alias);
+	m_resourceManager.SetAliasToResource(_alias, _id);
+	
 }
 
 
@@ -118,6 +120,10 @@ void SpecializedResourceManager::UpdateResourceMetafile(const std::filesystem::p
 
 const std::unordered_set<RES_ID>& SpecializedResourceManager::GetResourcePool() const {
 	return m_resourceIdPool;
+}
+
+void SpecializedResourceManager::AddResourceToPool(ResourceHandle _handle) {
+	m_resourceIdPool.insert(_handle.GetResourceID());
 }
 
 void SpecializedResourceManager::GenerateResourceMetafile(const std::filesystem::path& _metapath) {

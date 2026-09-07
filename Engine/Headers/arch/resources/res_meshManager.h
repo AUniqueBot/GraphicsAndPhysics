@@ -22,7 +22,7 @@ public:
 
 
 	// creation
-	MeshHandle LoadMesh(std::filesystem::path _path);
+	MeshHandle LoadMesh(std::filesystem::path _path, RES_ID _id = ResourceConstants::C_RES_INVALID_ID);
 	
 	// presets
 	CubeHandle CreateCubeMesh(CubeCreationProps _props = CubeCreationProps()); 
@@ -31,7 +31,7 @@ public:
 	PlaneHandle CreatePlaneMesh(PlaneCreationProps _props = PlaneCreationProps());
 	
 
-
+	void LoadResource(const Serialization::MetafileData& _data) override;
 
 public:
 	// upload

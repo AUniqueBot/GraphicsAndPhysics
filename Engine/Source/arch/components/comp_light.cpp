@@ -122,11 +122,9 @@ void Light::UpdateLightData() const {
 }
 
 void Light::UpdateShadowData() const {
-    
-
     m_shadowDataMismatch = false;
 }
-
+    
 
 
 

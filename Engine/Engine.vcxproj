@@ -181,6 +181,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Source\arch\common\inspectable.cpp" />
     <ClCompile Include="Source\resources\res_sceneManager.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp" />
     <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h" />
@@ -199,7 +200,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\resources\res_texture\res_cubemap.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture2darray.h" />
     <ClCompile Include="Headers\arch\resources\res_texture\res_texture3d.h" />
-    <ClCompile Include="Source\arch\core\core_scenemanager.cpp" />
     <ClCompile Include="Source\arch\systems\sys_render_modules\sys_render_renderPass.cpp" />
     <ClCompile Include="Source\resources\res_meshManager.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_mesh.cpp" />
@@ -278,7 +278,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_gamestatemanager.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />
-    <ClInclude Include="Headers\arch\core\core_scenemanager.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
     <ClInclude Include="Headers\arch\components\componentList.h" />

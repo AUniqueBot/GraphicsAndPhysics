@@ -8,6 +8,8 @@
 #include <assimp/postprocess.h>     // Post processing flags
 
 void MeshManager::Init() {
+	RegisterFileExtension(".obj"); // should it ever be here?
+
 	CubeHandle cube = CreateCubeMesh();
 	PlaneHandle plane = CreatePlaneMesh();
 	SphereHandle sphere = CreateSphereMesh();
@@ -20,11 +22,15 @@ void MeshManager::Init() {
 
 
 
-MeshHandle MeshManager::LoadMesh(std::filesystem::path _path) {
+MeshHandle MeshManager::LoadMesh(std::filesystem::path _path, RES_ID _id) {
 	std::shared_ptr<MeshRes> mesh = std::make_shared<MeshRes>();
+	if (_id != ResourceConstants::C_RES_INVALID_ID) {
+		mesh->ResourceID(_id);
+	}
 	// -------------------------------------------------------------------------------------------
 	mesh->LoadMeshFromPath(_path);
 	MeshHandle handle(RegisterResource(mesh));
+	AddResourceToPool(handle);
 	return handle;
 }
 
@@ -32,6 +38,7 @@ CubeHandle MeshManager::CreateCubeMesh(CubeCreationProps _props) {
 	std::shared_ptr<CubeRes> mesh = std::make_shared<CubeRes>(_props);	
 	mesh->Init();
 	CubeHandle handle(RegisterResource(mesh));
+	AddResourceToPool(handle);
 	return handle;
 }
 
@@ -39,6 +46,7 @@ SphereHandle MeshManager::CreateSphereMesh(SphereCreationProps _props) {
 	std::shared_ptr<SphereRes> mesh = std::make_shared<SphereRes>(_props);
 	mesh->Init();
 	SphereHandle handle(RegisterResource(mesh));
+	AddResourceToPool(handle);
 	return handle;
 }
 
@@ -47,7 +55,7 @@ MeshHandle MeshManager::CreateIcosphereMesh() {
 	mesh->Init();
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
 	MeshHandle handle(idr);
-	Add(handle.GetResourceID());
+	AddResourceToPool(handle);
 	return handle;
 }
 
@@ -56,7 +64,20 @@ PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
 	mesh->Init();
 	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
 	PlaneHandle handle(RegisterResource(mesh));
+	AddResourceToPool(handle);
 	return handle;
+}
+
+void MeshManager::LoadResource(const Serialization::MetafileData& _data) {
+	namespace fs = std::filesystem;
+	fs::path path = _data.path;
+	if (!fs::exists(_data.path)) {
+		LOG_WARN("Unable to open resource: " << _data.path);
+		return;
+	}
+	MeshHandle mesh = LoadMesh(path, _data.id);
+	mesh->ResourcePath(path);
+	AddResourceToPool(mesh);
 }
 
 void MeshManager::UploadMeshToGPU(MeshRes& _mesh) {

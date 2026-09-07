@@ -96,6 +96,7 @@ MaterialHandle MaterialManager::LoadMaterial(
 
 	mat->Name(_materialData["name"].GetString());
 	MaterialHandle handle(m_resourceManager.AddInternalResource(mat));
+	AddResourceToPool(handle);
 	return handle;
 }
 
@@ -401,6 +402,6 @@ void MaterialManager::LoadResource(const Serialization::MetafileData& _data) {
 	doc.ParseStream(isw);
 	ifs.close();
 	MaterialHandle handle = LoadMaterial(doc, _data.id);
-	handle.GetBaseResource()->ResourcePath(path);
+	handle->ResourcePath(path);
 }
 

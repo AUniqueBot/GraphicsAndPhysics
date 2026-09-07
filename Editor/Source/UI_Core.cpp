@@ -105,11 +105,14 @@ void UI_Core::Update() {
 	if (cPointer) {
 		Core& c = *cPointer;
 		if (ImGui::IsKeyPressed(ImGuiKey_Delete)) {
-			EntityRegistry& er	{ c.GetRegistry() };
+			SelectedItem(UI_Selectable());
 			
+			EntityRegistry& er	{ c.GetRegistry() };
 			EntityID deletedId { er.SelectedEntity() } ;
 			er.DeselectEntity(deletedId);
 			er.Destroy(deletedId);
+
+
 		}
 	}
 

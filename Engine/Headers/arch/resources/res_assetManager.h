@@ -70,6 +70,18 @@ public:
 	SparseSetView<SpecializedManager> GetManager(RESTYPE_ID _type);
 	SparseSetView<const SpecializedManager> GetManager(RESTYPE_ID _type) const;
 
+	void RegisterExtensionToType(std::string _extension, RESTYPE_ID _id);
+
+
+
+public:
+	ResourceManager& GetResourceManager();
+	const ResourceManager& GetResourceManager() const;
+
+	GPUResourceManager& GetGPUResourceManager();
+	const GPUResourceManager& GetGPUResourceManager() const;
+
+
 public:
 	void SaveMetafileData(const Serialization::MetafileData& _data);
 	void LoadResource(const Serialization::MetafileData& _data);
@@ -86,5 +98,5 @@ private:
 	ResourceManager& m_resourceManager; 
 	GPUResourceManager& m_gpuResourceManager;
 	SparseSet<RESTYPE_ID, SpecializedManager> m_managerList;
-
+	std::unordered_map<std::string, RESTYPE_ID> m_extensionToType;
 };

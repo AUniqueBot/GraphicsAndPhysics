@@ -112,6 +112,27 @@ SparseSetView<const SpecializedManager> AssetManager::GetManager(RESTYPE_ID _typ
 	return m_managerList.At(_type);
 }
 
+void AssetManager::RegisterExtensionToType(std::string _extension, RESTYPE_ID _id) {
+	m_extensionToType[_extension] = _id;
+}
+
+
+
+ResourceManager& AssetManager::GetResourceManager() {
+	return m_resourceManager;
+}
+const ResourceManager& AssetManager::GetResourceManager() const {
+	return m_resourceManager;
+}
+
+GPUResourceManager& AssetManager::GetGPUResourceManager() {
+	return m_gpuResourceManager;
+}
+const GPUResourceManager& AssetManager::GetGPUResourceManager() const {
+	return m_gpuResourceManager;
+}
+
+
 
 void AssetManager::SaveMetafileData(const Serialization::MetafileData& _data) {
 	std::ofstream ofs(_data.path);

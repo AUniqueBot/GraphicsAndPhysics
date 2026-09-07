@@ -21,7 +21,6 @@ namespace Serialization {
 	public:
 		JSONFile(JSONFileType _type  = JSONFileType::Null);
 
-
 		bool IsObject() const;
 		bool IsArray() const;
 		// ctors.
@@ -46,6 +45,7 @@ namespace Serialization {
 		const rapidjson::Value& GetMember(const char* _itemName) const;
 
 		rapidjson::Value& operator[](const char* _itemName);
+
 
 	public:
 		// - array doc ------------------------------------

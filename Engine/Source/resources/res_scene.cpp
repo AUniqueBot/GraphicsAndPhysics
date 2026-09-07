@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <arch/resources/res_scene.h>
 #include <arch/ecs/ecs_registry.h>
+#include <arch/resources/res_assetManager.h>
 #include <arch/core.h>
 
 
@@ -109,19 +110,42 @@ bool Scene::DescendantOf(EntityID _toCheck, EntityID _parent) const {
 	return false;
 }
 
-EntityRegistry* Scene::Registry() {
+EntityRegistry* Scene::GetRegistry() {
 	return m_registry;
 }
 
-const EntityRegistry* Scene::Registry() const {
+const EntityRegistry* Scene::GetRegistry() const {
 	return m_registry;
 }
 
-void Scene::Registry(EntityRegistry* _registry) {
+void Scene::SetRegistry(EntityRegistry* _registry) {
 	m_registry = _registry;
 }
 
-void Scene::LoadScene(const Serialization::JSONFile& _jsonData) {
+
+
+AssetManager* Scene::GetAssetManager() {
+	return m_assetManager;
+}
+
+const AssetManager* Scene::GetAssetManager() const {
+	return m_assetManager;
+}
+
+void Scene::SetAssetManager(AssetManager* _registry) {
+	m_assetManager = _registry;
+}
+
+
+
+
+
+void Scene::SetSceneJSON(const Serialization::JSONFile& _jsonData) {
+	rapidjson::Document& doc = m_jsonFile.GetDocument();
+	doc.CopyFrom(_jsonData.GetDocument(), doc.GetAllocator());
+}
+
+void Scene::Load() {
 	// structured data to form relations with.
 	struct EntityRelations {
 		EntityIDType originalId			{ EntityConstants::C_ENTITYID_INVALID };
@@ -129,32 +153,43 @@ void Scene::LoadScene(const Serialization::JSONFile& _jsonData) {
 		EntityView entity				{ std::nullopt };
 	};
 
-	std::unordered_map<EntityIDType, EntityRelations> mappings;
-
-	// first is en
-
-
-	if (_jsonData.HasMember("environment")) {
-
-		// do env serialization.
-
+	if (m_jsonFile.HasMember("environment")) {
+		// do environment loading here.
+		
 	}
-	if (_jsonData.HasMember("entities")) {
-		const rapidjson::Value& entities = _jsonData.GetMember("entities");
+
+
+
+	std::unordered_map<EntityIDType, EntityRelations> mappings;
+	// -- pass 1 -----------------------
+	if (m_jsonFile.HasMember("entities")) {
+		const rapidjson::Value& entities = m_jsonFile.GetMember("entities");
 		for (auto itr = entities.MemberBegin(); itr != entities.MemberEnd(); ++itr) {
 			EntityRelations relationData;
 
 			EntityIDType originalId{ std::stoul(itr->name.GetString()) };
 			relationData.originalId = originalId;
 
+			
+
+
 			// props.
 			const rapidjson::Value& entityprops = itr->value;
-			if (entityprops.HasMember("parent")) {
-				relationData.originalParentId = std::stoul(entityprops["parent"].GetString());
+			
+			
+			EntityView entity = Instantiate();
+			if (!entity) continue;
+
+			relationData.entity = entity;
+
+			if (entityprops.HasMember("name")) {
+				entity->Name(entityprops["name"].GetString());
 			}
 
-			EntityView entity = Instantiate();
-			relationData.entity = entity;
+			if (entityprops.HasMember("parent")) {
+				relationData.originalParentId = entityprops["parent"].GetUint();
+			}
+			
 
 
 
@@ -162,19 +197,48 @@ void Scene::LoadScene(const Serialization::JSONFile& _jsonData) {
 			if (entityprops.HasMember("components")) {
 				const rapidjson::Value& compdata = entityprops["components"];
 				for (auto comp = compdata.MemberBegin(); comp != compdata.MemberEnd(); ++comp) {
-					// what is the comp name?
-					comp->name; // defines the component.
+					// name -> compid -> compid -> type
+					auto comptypeid = m_registry->GetCompTypeID(comp->name.GetString());
+					if (!comptypeid) continue;
 
-					comp->value; // deserialize; you should have enough data for this.
+					// get the deserialize function here.
+					ComponentPackedData& packedData = m_registry->GetComponentData(*comptypeid);
+					DeserializeFunction deserializeFunction = packedData.m_componentMetadata.GetDeserializeFunction();
+					if (!deserializeFunction) continue;
+					Serialization::JSONFile jsonFile;
+					auto& doc = jsonFile.GetDocument();
+					doc.CopyFrom(comp->value, doc.GetAllocator());
+					deserializeFunction(*entity, jsonFile, *m_assetManager);
+					
 				}
 			}
+			mappings[originalId] = relationData;
 			
 		}
 
 
-
+		// -- parenting to new ids ---
+		for (auto& [originalId, relationData] : mappings) {
+			if (relationData.originalParentId != EntityConstants::C_ENTITYID_INVALID) {
+				EntityIDType newId = relationData.originalId;
+				EntityIDType parentId = mappings.at(relationData.originalParentId).originalId;
+				Parent(newId, parentId);
+			}
+		}
 	}
 
+}
+
+std::shared_ptr<Scene> Scene::LoadScene(
+	const Serialization::JSONFile& _jsonData, 
+	EntityRegistry& _registry, 
+	AssetManager& _asMgr
+) {
+	auto newScene = std::make_shared<Scene>();
+	newScene->SetRegistry(&_registry);
+	newScene->SetAssetManager(&_asMgr);
+	newScene->SetSceneJSON(_jsonData);
+	return newScene;
 }
 
 

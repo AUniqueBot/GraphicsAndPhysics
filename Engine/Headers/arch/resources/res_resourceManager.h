@@ -78,6 +78,10 @@ public:
 	}
 
 
+	void SetAliasToResource(std::string _alias, RES_ID _resource);
+	RES_ID GetResourceFromAlias(std::string _alias);
+
+
 	// registration
 	void RegisterFileExtension(std::string _extension, RESTYPE_ID _type);
 	void DeregisterFileExtension(std::string _extension);
@@ -117,6 +121,7 @@ private:
 	
 	std::vector<std::filesystem::path>							m_assetPaths;
 	std::unordered_map<std::string, RESTYPE_ID>					m_fileExtensions;
+	std::unordered_map<std::string, RES_ID>						m_resourceAliases;
 	std::unordered_map<RESTYPE_ID, RES_ID>						m_nextIDTyped {};
 	std::mt19937_64 m_idGenerator								{ std::random_device{}() };
 	

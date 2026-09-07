@@ -32,8 +32,7 @@ public:
 
 	void SetEntityID(const EntityID& _id)		{ m_registeredEntity = _id; };
 public:
-	inline virtual void Deserialize(const Serialization::JSONFile& _data) {}
-	inline virtual Serialization::JSONFile Serialize() { return Serialization::JSONFile(); };
+
 
 private:
 	ComponentType m_type						{ __INVALID };

@@ -160,6 +160,7 @@ void EntityRegistry::DeselectEntity(EntityID _selectedID) {
 	// swap pop idiom
 	std::rotate(itr, itr + 1, m_selectedEntitiesList.end());
 	m_selectedEntitiesList.pop_back();
+
 }
 
 

@@ -80,7 +80,7 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 			&MeshRenderer::SetCastShadow
 		)
 	};
-	
+		
 	// list out the props for the materials.
 	return props;
 }

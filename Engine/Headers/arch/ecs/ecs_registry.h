@@ -13,13 +13,14 @@
 
 #include <util/util_serialisation.h>
 #include <arch/common/entity.h>
+#include <arch/resources/res_assetManager.h>
 
 class Entity;
 class EntityID;
 
 
 
-
+using DeserializeFunction = std::function<void(Entity&, const Serialization::JSONFile&, AssetManager&)>;
 
 
 
@@ -105,12 +106,13 @@ public:
 		CompType _compId,
 		CompTypeID _id,
 		std::function<void()> _registerFunction,
-		std::function<void(Entity&, const Serialization::JSONFile&)> _deserializationFunction
+		DeserializeFunction _deserializationFunction
 	) :
-		m_componentName		{ _name },
-		m_componentType		{ _compId },
-		m_registerFunction	{ _registerFunction },
-		m_componentTypeID	{_id}
+		m_componentName			{ _name },
+		m_componentType			{ _compId },
+		m_registerFunction		{ _registerFunction },
+		m_deserializeFunction	{ _deserializationFunction },
+		m_componentTypeID		{ _id }
 	{}
 
 	const std::string& GetComponentName() const						{ return m_componentName; }
@@ -120,14 +122,14 @@ public:
 
 	std::function<void()> GetComponentRegisterFunction()			{ return m_registerFunction; }
 
-
+	DeserializeFunction GetDeserializeFunction()					{ return m_deserializeFunction; };
 private:
 	CompTypeID	m_componentTypeID;
 	CompType	m_componentType;
 	std::string m_componentName;
 	//std::shared_ptr<IComponentPool> m_componentPool;
 	std::function<void()> m_registerFunction;
-	std::function<void(Entity&, const Serialization::JSONFile&)> m_deserializeFunction	{ nullptr };
+	DeserializeFunction m_deserializeFunction	{ nullptr };
 };
 
 
@@ -175,11 +177,12 @@ public:
 		ComponentMetadata::CompTypeID id = ++s_componentIdxId;
 		std::shared_ptr<IComponentPool> pool = std::make_shared<ComponentPool<T>>();
 		std::function<void()> registerFunction = T::Register;
-		std::function<void(Entity&, const Serialization::JSONFile&)> deserializeFunction = [](
-			Entity& _entity, const Serialization::JSONFile& _data
+		DeserializeFunction deserializeFunction = [](
+			Entity& _entity, const Serialization::JSONFile& _data,
+			AssetManager& _asMgr
 			) {
 				_entity.AddComponent<T>();
-				_entity.GetComponent<T>()->Deserialize(_data);
+				_entity.GetComponent<T>()->Deserialize(_data, _asMgr);
 		};
 
 
@@ -281,7 +284,12 @@ public:
 
 	void ClearEntitiesAndComponentData();
 
+	template <std::derived_from<Component> Comp>
+	inline ComponentPackedData& GetComponentData() { return m_componentData.at(Comp::GetComponentID()); }
+	inline ComponentPackedData& GetComponentData(CompTypeID _id) { return m_componentData.at(_id); }
+	inline const ComponentPackedData& GetComponentData(CompTypeID _id) const { return m_componentData.at(_id); }
 
+	SparseSetView<CompTypeID> GetCompTypeID(std::string _name) { return m_componentIDLookup.At(*m_componentNameIDMap.At(_name)); }
 
 private:
 

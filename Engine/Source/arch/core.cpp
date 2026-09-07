@@ -28,23 +28,20 @@ void Core::Init() {
 	MaterialManager& matMgr = asMgr.GetMaterialManager();
 	MeshManager& meshMgr = asMgr.GetMeshManager();
 	
-	
 
-	m_sceneManager; // load a scene directly from file.
-	
+	std::unordered_set<RES_ID> scenes = m_sceneManager.GetResourcePool();
+	auto itr = scenes.begin();
+	RES_ID scene = itr != scenes.end() ? *itr : ResourceConstants::C_RES_INVALID_ID;
+	m_sceneManager.SetCurrentScene(scene);
+	m_sceneManager.LoadCurrentScene();
+		
 	
 	
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
-	Entity& ambientLight = *(m_registry.Instantiate());
-	Entity& dirLight = *(m_registry.Instantiate());
-	Entity& cam =  *(m_registry.Instantiate());
 
 
 	obj1.Name("Mesh Object");
-	ambientLight.Name("Ambient Light");
-	dirLight.Name("Directional Light");
-	cam.Name("Camera");
 	
 	obj1.AddComponent<MeshRenderer>();	// object
 	const auto& component = obj1.GetComponent<MeshRenderer>();
@@ -58,27 +55,15 @@ void Core::Init() {
 		mat->Color(0xaaaaeeff);
 		component->AddMaterial(mat); // purposeful downcast.
 	}
-
-
-	ambientLight.AddComponent<Light>();			// ambient light
-	dirLight.AddComponent<Light>();			// directional light
-	cam.AddComponent<Camera>();			// cameara
-
-	Light& _ambientLight = *(ambientLight.GetComponent<Light>());
-	_ambientLight.Power(0.3f);
-	_ambientLight.Type(LightType::AMBIENT);
-
 	obj1.GetComponent<Transform>()->Position(glm::vec3(0, 0, 2));
-	ambientLight.GetComponent<Transform>()->Position(glm::vec3(2, 0, 4));
-	cam.GetComponent<Transform>()->Position(glm::vec3(3, 4, -5));
+
+
+
+	//Entity& cam =  *(m_registry.Instantiate());
+	//cam.Name("Camera");
+	//cam.AddComponent<Camera>();			// cameara
+	//cam.GetComponent<Transform>()->Position(glm::vec3(3, 4, -5));
 	
-	Light& _dirLight = *(dirLight.GetComponent<Light>());
-
-	_dirLight.Type(DIRECTIONAL);
-	_dirLight.Power(1); 
-
-	dirLight.GetComponent<Transform>()->Forward(glm::vec3(0, 0, 1));
-
 
 	// initialise here.
 	for (System* s : m_systemInstances) {
@@ -178,6 +163,7 @@ void Core::CoreInit() {
 	m_inputSystem.Init(m_window);
 	m_resourceManager.Init(); 
 	m_assetManager.Init();
+	m_sceneManager.Init();
 }
 
 

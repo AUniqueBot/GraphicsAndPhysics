@@ -1,6 +1,9 @@
 #pragma once
 #include <arch/common/properties.h>
+#include <serialization/serialize_jsonfile.h>
 
+
+class AssetManager;
 class Inspectable {
 
 
@@ -9,6 +12,11 @@ public:
 		static std::vector<PropertyMD::Property> props{};
 		return props;
 	};
+
+
+public:
+    virtual void Deserialize(const Serialization::JSONFile& _data, AssetManager& _asMgr);
+    inline virtual Serialization::JSONFile Serialize() { return Serialization::JSONFile(); };
 };
 
 

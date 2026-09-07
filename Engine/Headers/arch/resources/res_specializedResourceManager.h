@@ -50,6 +50,7 @@ public:
 
 	const std::unordered_set<RES_ID>& GetResourcePool() const;
 protected:
+	void AddResourceToPool(ResourceHandle _handle);
 
 	ResourceIdentifier RegisterResource(std::shared_ptr<BaseResource> _res);
 	std::string GetAliasForRes(RES_ID _id) const;
