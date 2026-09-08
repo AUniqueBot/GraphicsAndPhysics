@@ -278,12 +278,9 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 		DrawPropertyObject(object, prop, name);
 		break;
 
-	case PropertyType::Resource:
-		DrawPropertyResource(object, prop, name);
-		break;
 
 	case PropertyType::ResourceHandle:
-		DrawPropertyResourceHandle(object, prop, name);
+		DrawPropertyResourceHandle(object, prop, name, true);
 		break;
 	default:
 		break;
@@ -442,8 +439,9 @@ void UIWidget_Inspector::DrawPropertyObject(void* object, const PropertyMD::Prop
 	}
 }
 
-void UIWidget_Inspector::DrawPropertyResource(void* object, const PropertyMD::Property& prop, const std::string& key) {
+void UIWidget_Inspector::DrawPropertyResourceCombo(void* object, const PropertyMD::Property& prop, const std::string& key) {
 	// get the correct asset manager.
+	
 	auto managerView = ApplicationCore()->GetAssetManager().GetManager(prop.m_resourceType);
 	if (!managerView) {
 		return;
@@ -453,11 +451,11 @@ void UIWidget_Inspector::DrawPropertyResource(void* object, const PropertyMD::Pr
 	const std::unordered_set<RES_ID>& resIdPool = manager->GetResourcePool();
 	ResourceManager& resMgr = ApplicationCore()->GetResourceManager();
 	
-	RES_ID currentResource{};
+	ResourceHandle currentResource{};
 	prop.m_get(object, &currentResource);
-	RES_ID selectedResource{currentResource};
+	ResourceHandle selectedResource{currentResource};
 
-	std::shared_ptr<BaseResource> resPtr = resMgr.GetResource(currentResource);
+	std::shared_ptr<BaseResource> resPtr = currentResource.GetBaseResource();
 	std::string currentResName = resPtr ?  resPtr->Name() : "INVALID_ID";
 
 	if (ImGui::BeginCombo(prop.m_name.c_str(), currentResName.c_str())) {
@@ -465,7 +463,7 @@ void UIWidget_Inspector::DrawPropertyResource(void* object, const PropertyMD::Pr
 			std::string name = resMgr.GetResource(resid)->Name();
 			ImGui::PushID(resid);
 			if (ImGui::Selectable(name.c_str())) {
-				selectedResource = resid;
+				selectedResource = ResourceHandle(resMgr.GetResourceIdentifier(resid));
 			}
 			ImGui::PopID();
 		}
@@ -480,18 +478,30 @@ void UIWidget_Inspector::DrawPropertyResource(void* object, const PropertyMD::Pr
 }
 
 void UIWidget_Inspector::DrawPropertyResourceHandle(
-	void* object, 
-	const PropertyMD::Property& prop, 
-	const std::string& key) {
-	ResourceHandle* handle = reinterpret_cast<ResourceHandle*>(object);
-	if (!handle) return;
-	std::shared_ptr<BaseResource> res = handle->GetBaseResource();
+	void* object,
+	const PropertyMD::Property& prop,
+	const std::string& key,
+	bool _drawCombo
+) {
+	if (!prop.m_get || !prop.m_set) return;
+
+	ResourceHandle handle;
+	prop.m_get(object, &handle);
+	if (!handle.HandleIsValid()) return;
+	std::shared_ptr<BaseResource> res = handle.GetBaseResource();
 	if (!res) return;
 	for (auto& prop : res->GetProperties()) {
 		DrawPropertyElement((void*)res.get(), prop, prop.m_name);
 	}
+	if (_drawCombo) {
+		DrawPropertyResourceCombo(object, prop, key);
+	}
 
 }
+
+
+
+
 
 void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyMD::Property& prop, const std::string& key) {
 	// explain how it works.
@@ -541,10 +551,20 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 				DrawPropertyObject(currentElement, prop, prop.m_name);
 				break;	
 			}
-			case PropertyMD::PropertyType::ResourceHandle:
-				DrawPropertyResourceHandle(currentElement, prop, prop.m_name);
+			case PropertyMD::PropertyType::ResourceHandle: {
+
+				// if the object is the resource handle, you'll need the getters and setters
+
+				ResourceHandle* handle = (ResourceHandle*)currentElement;
+				if (!handle) break;
+				std::shared_ptr<BaseResource> res = handle->GetBaseResource();
+				for (auto& prop : res->GetProperties()) {
+					DrawPropertyElement((void*)res.get(), prop, prop.m_name);
+				}
+
 				break;
 
+			}
 			default:
 				break;
 			}

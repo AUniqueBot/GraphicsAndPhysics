@@ -22,6 +22,9 @@ struct ResourceHandle {
 	std::shared_ptr<BaseResource> GetBaseResource();
 	std::shared_ptr<const BaseResource> GetBaseResource() const;
 
+    ResourceManager* GetResourceManager();
+    const ResourceManager* GetResourceManager() const;
+
 protected:
     template <std::derived_from<BaseResource>T>
     std::shared_ptr<T> GetResourceT() {

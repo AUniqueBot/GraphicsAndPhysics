@@ -121,13 +121,28 @@ ResourceIdentifier ResourceManager::AddResourceInternal(
 ResourceIdentifier ResourceManager::GenerateResourceIdentifier(
 	std::shared_ptr<BaseResource> _resource
 ) const {
-	const ResourceIdentifier ret{
+	ResourceIdentifier ret{
 		_resource->m_resourceId,
 		_resource->m_resType,
 		const_cast<ResourceManager*>(this),
 		_resource->m_name
 	};
 	return ret;
+}
+
+ResourceIdentifier ResourceManager::GetResourceIdentifier(RES_ID _id) const {
+	SparseSetView<const std::shared_ptr<BaseResource>> resView = m_resourcePool.At(_id);
+	if (!resView) {
+		return ResourceIdentifier();
+	}
+	ResourceIdentifier id;
+
+	std::shared_ptr<BaseResource> res = *resView;
+	id.m_resourceId = _id;
+	id.m_resourceManager = const_cast<ResourceManager*>(this);
+	id.m_resourceName = res->Name();
+	id.m_resourceTypeId = res->ResourceType();
+	return id;
 }
 
 
@@ -268,7 +283,7 @@ RES_ID ResourceManager::GenerateID() {
 
 
 RES_ID ResourceManager::GenerateTypedID(RESTYPE_ID _rsc) {
-	unsigned idx = ++m_nextIDTyped[_rsc];
+	uint64_t idx = ++m_nextIDTyped[_rsc];
 	RESTYPE_ID rst = _rsc;
 	
 	// [8-bit rst][24-bit index]

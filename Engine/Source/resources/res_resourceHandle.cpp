@@ -45,3 +45,10 @@ std::shared_ptr<const BaseResource> ResourceHandle::GetBaseResource() const {
 
 
 
+ResourceManager* ResourceHandle::GetResourceManager() {
+	return m_resourceIdentifier->m_resourceManager;
+}
+
+const ResourceManager* ResourceHandle::GetResourceManager() const {
+	return m_resourceIdentifier->m_resourceManager;
+}

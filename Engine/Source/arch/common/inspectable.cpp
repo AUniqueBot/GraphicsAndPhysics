@@ -133,19 +133,21 @@ namespace {
     void SetResource(const PropertyMD::Property& _prop, Inspectable* _object, const rapidjson::Value& _value, AssetManager& _asMgr) {
         // it cannot use a string.
         // always a value.
+        ResourceManager& rsMgr = _asMgr.GetResourceManager();
+        
         uint64_t resId { ResourceConstants::C_RES_INVALID_ID };
         if (_value.IsString()) {
             // do 
             std::string alias = _value.GetString();
-            resId = _asMgr.GetResourceManager().GetResourceFromAlias(alias );
+            resId = _asMgr.GetResourceManager().GetResourceFromAlias(alias);
         }
-        else {
+        else if (_value.IsUint64()) {
             resId = _value.GetUint64();
         }
 
-
-
-        _prop.m_set(_object, &resId);
+        ResourceHandle handle(rsMgr.GetResourceIdentifier(resId));
+        
+        _prop.m_set(_object, &handle);
     }
     
     void SetColor(const PropertyMD::Property& _prop, Inspectable* _object, const rapidjson::Value& _value) {
@@ -166,6 +168,60 @@ namespace {
             prop.m_set(object, &val);
         }
     }
+
+
+    void SetValue(const PropertyMD::Property& _prop, Inspectable* _object, const rapidjson::Value& _value, AssetManager& _asMgr) {
+        using namespace PropertyMD;
+
+        if (_prop.m_isEnum) {
+            SetEnum(_prop, _object, _value);
+            return;
+        }
+
+
+
+
+
+        switch (_prop.m_type) {
+        case PropertyType::Color: {
+            SetColor(_prop, _object, _value);
+            break;
+        }
+        case PropertyType::Int: {
+            SetInt(_prop, _object, _value);
+            break;
+        }
+        case PropertyType::Float: {
+            SetFloat(_prop, _object, _value);
+            break;
+        }
+        case PropertyType::Double: {
+            SetDouble(_prop, _object, _value);
+            break;
+        }
+        case PropertyType::Boolean: {
+            SetBool(_prop, _object, _value);
+            break;
+        }
+        case PropertyType::String: {
+            std::string value = _value.GetString();
+            _prop.m_set(_object, &value);
+            break;
+        }
+        case PropertyType::Object: {
+            // ??
+            break;
+        }
+
+
+        case PropertyType::ResourceHandle:
+            SetResource(_prop, _object, _value, _asMgr);
+
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 
@@ -179,60 +235,15 @@ void Inspectable::Deserialize(const Serialization::JSONFile& _data, AssetManager
         if (_data.HasMember(attrName.c_str())) {
             // deserialize members here.
             PropertyMD::PropertyType type = prop.m_type;
-
             const rapidjson::Value& val = _data.GetMember(attrName.c_str());
-
-            if (prop.m_isEnum) {
-                SetEnum(prop, this, val);
-                continue;
+            if (prop.m_shape == Shape::DynamicList || prop.m_shape == Shape::FixedArray) {
+                prop.m_list;
+                _data.IsArray();
+                               
             }
-
-            switch (prop.m_type) {
-            case PropertyType::Color: {
-                SetColor(prop, this, val);
-                break;
+            else {
+                SetValue(prop, this, val, _asMgr);
             }
-            case PropertyType::Int: {
-                SetInt(prop, this, val);
-                break;
-            }
-            case PropertyType::Float: {
-                SetFloat(prop, this, val);
-                break;
-            }
-            case PropertyType::Double: {
-                SetDouble(prop, this, val);
-                break;
-            }
-            case PropertyType::Boolean: {
-                SetBool(prop, this, val);
-                break;
-            }
-            case PropertyType::String: {
-                std::string value = val.GetString();
-                prop.m_set(this, &value);
-                break;
-            }
-            case PropertyType::Object: {
-                // ??
-                break;
-            }
-
-            case PropertyType::Resource: {
-                // we are
-                SetResource(prop, this, val, _asMgr);
-                break;
-            }
-
-            case PropertyType::ResourceHandle:
-
-                break;
-            default:
-                break;
-            }
-
-
-
 
         }
     }

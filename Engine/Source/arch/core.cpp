@@ -29,13 +29,9 @@ void Core::Init() {
 	MeshManager& meshMgr = asMgr.GetMeshManager();
 	
 
-	std::unordered_set<RES_ID> scenes = m_sceneManager.GetResourcePool();
-	auto itr = scenes.begin();
-	RES_ID scene = itr != scenes.end() ? *itr : ResourceConstants::C_RES_INVALID_ID;
-	m_sceneManager.SetCurrentScene(scene);
-	m_sceneManager.LoadCurrentScene();
-		
-	
+	// using the default scene data.
+	//m_sceneManager.SetCurrentScene(4051038013427589782);
+	//m_sceneManager.LoadCurrentScene();
 	
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());
@@ -50,7 +46,7 @@ void Core::Init() {
 
 
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
-		component->SetMesh(mesh.GetResourceID());
+		component->SetMesh(mesh);
 		BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
 		mat->Color(0xaaaaeeff);
 		component->AddMaterial(mat); // purposeful downcast.

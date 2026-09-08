@@ -27,8 +27,9 @@ public:
 
 
 
-	void SetMesh(RES_ID _mesh);
-	RES_ID GetMesh() const;
+	void SetMesh(const MeshHandle& _mesh);
+	MeshHandle& GetMesh();
+	const MeshHandle& GetMesh() const;
 	
 
 	/*
@@ -59,7 +60,7 @@ private:
 	// model resource
 	
 	
-	RES_ID m_mesh										{ ResourceConstants::C_RES_INVALID_ID };
+	MeshHandle m_mesh									{ std::nullopt };
 	std::vector<MaterialHandle> m_materials; // change to material handle.
 	
 

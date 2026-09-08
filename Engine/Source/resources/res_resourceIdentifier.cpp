@@ -10,9 +10,9 @@ bool ResourceIdentifier::operator==(const ResourceIdentifier& _resId) const {
 }
 
 std::shared_ptr<BaseResource> ResourceIdentifier::GetResource() {
-	return std::static_pointer_cast<BaseResource>(m_resourceManager->GetResource(m_resourceId));
+	return m_resourceManager->GetResource(m_resourceId);
 }
 
 std::shared_ptr<const BaseResource> ResourceIdentifier::GetResource() const {
-	return std::static_pointer_cast<const BaseResource>(m_resourceManager->GetResource(m_resourceId));
+	return m_resourceManager->GetResource(m_resourceId);
 }

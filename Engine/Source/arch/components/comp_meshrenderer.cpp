@@ -21,11 +21,15 @@ void MeshRenderer::End() {
 	
 }
 
-void MeshRenderer::SetMesh(RES_ID _mesh) {
+void MeshRenderer::SetMesh(const MeshHandle& _mesh) {
 	m_mesh = _mesh;
 }
 
-RES_ID MeshRenderer::GetMesh() const { 
+MeshHandle& MeshRenderer::GetMesh() {
+	return m_mesh; 
+}
+
+const MeshHandle& MeshRenderer::GetMesh() const {
 	return m_mesh; 
 }
 
@@ -64,7 +68,7 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 		MakeResourceProperty<MeshRenderer>(
 			"Mesh",
 			MeshRes::GetResourceTypeID(),
-			&MeshRenderer::GetMesh,
+			static_cast<const MeshHandle&(MeshRenderer::*)()const>(&MeshRenderer::GetMesh),
 			&MeshRenderer::SetMesh
 		),
 		MakeListProperty<MeshRenderer, MaterialHandle>(

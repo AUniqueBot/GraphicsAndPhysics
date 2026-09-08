@@ -115,7 +115,7 @@ private:
 
 	ResourceIdentifier GenerateResourceIdentifier(std::shared_ptr<BaseResource> _resource) const;
 
-
+	ResourceIdentifier GetResourceIdentifier(RES_ID _id) const;
 private:	
 	RES_ID GenerateTypedID(RESTYPE_ID _rsc);
 	

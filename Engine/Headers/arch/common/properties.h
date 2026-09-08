@@ -17,7 +17,6 @@ namespace PropertyMD {
 		// not sure how to handle these just yet.
 		Object,
 		Pointer,
-		Resource,
 		ResourceHandle
 	};
 
@@ -48,7 +47,7 @@ namespace PropertyMD {
 		bool m_draggable = false;
 		std::function<void(void*, void*)> m_get = nullptr;
 		std::function<void(void*, const void*)> m_set = nullptr;
-		uint32_t m_resourceType;
+		uint32_t m_resourceType{};
 
 
 		bool m_isEnum = false;
@@ -84,6 +83,7 @@ namespace PropertyMD {
 			, m_get(std::move(get))
 			, m_set(std::move(set))
 			, m_draggable(draggable)
+			, m_resourceType()
 		{
 		}
 	};
@@ -251,7 +251,7 @@ namespace PropertyMD {
 	) {
 		Property prop = MakeProperty<T, Getter, Setter>(
 			name, 
-			PropertyType::Resource, 
+			PropertyType::ResourceHandle,
 			Shape::Scalar, 
 			1, 
 			getter, 

@@ -5,7 +5,7 @@ class ResourceManager;
 
 struct ResourceIdentifier {
 	RES_ID m_resourceId						{ ResourceConstants::C_RES_INVALID_ID };
-	RESTYPE_ID m_resourceTypeId				{ };
+	RESTYPE_ID m_resourceTypeId				{ ResourceConstants::C_RESTYPE_INVALID_ID };
 	ResourceManager* m_resourceManager		{ nullptr };
 	std::string m_resourceName;
 
