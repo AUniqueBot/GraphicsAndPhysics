@@ -150,7 +150,7 @@ float PCF_PoissonDisk(
             rotatedDisk.x * cosAngle - rotatedDisk.y * sinAngle,
             rotatedDisk.x * sinAngle + rotatedDisk.y * cosAngle
         );
-
+        // to worry about - Texel Size & size of thing.
         vec2 sampledPosition = poissonDisk[i] * texelSize * filterRadius;
         float shadow = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
         accShadowVal += shadow;
@@ -194,7 +194,12 @@ float CalculateDirectionalShadow(
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
 
+
+    // reference texel size
     vec2 texelSize = 1.0 / framebufferSize;
+    // texel size needs to account of the level.
+    float texelScale = tileSize.x / framebufferSize.x;  // we are assuming the tile size scale is constant!
+    texelSize *= texelScale;
 
     shadowLowest = PCF_PoissonDisk(
         coords,

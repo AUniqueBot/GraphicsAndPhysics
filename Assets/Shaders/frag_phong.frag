@@ -202,8 +202,11 @@ float CalculateDirectionalShadow(
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
 
     // poisson disk sampling.
+    // reference texel size
     vec2 texelSize = 1.0 / framebufferSize;
-
+    // texel size needs to account of the level.
+    float texelScale = tileSize.x / framebufferSize.x;  // we are assuming the tile size scale is constant!
+    texelSize *= texelScale;
     shadowLowest = PCF_PoissonDisk(
         coords,
         texelSize,
