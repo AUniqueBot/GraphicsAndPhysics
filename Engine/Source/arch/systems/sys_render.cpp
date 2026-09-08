@@ -571,6 +571,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
     ShadowData& sdData                  { const_cast<Light*>(&_light)->GetShadowData() };
 
     AssignLightShadowID(_light, m_directionalShadowMaps);
+    if (!_light.GetCastShadow()) return;
 
     // clear.
     glViewport(0, 0, static_cast<GLsizei>(fbSize.x), static_cast<GLsizei>(fbSize.y));

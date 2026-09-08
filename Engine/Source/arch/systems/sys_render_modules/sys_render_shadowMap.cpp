@@ -200,6 +200,7 @@ unsigned ShadowMap::GenerateLayerID() {
 	if (m_freeLayers.size() > 0) {
 		unsigned freeId = m_freeLayers.back();
 		m_freeLayers.pop_back();
+		++m_shadowUsageCount;
 		return freeId;
 	}
 	if (m_layers > m_currentLayerCount) {
