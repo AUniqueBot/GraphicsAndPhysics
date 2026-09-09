@@ -30,8 +30,8 @@ void Core::Init() {
 	
 
 	// using the default scene data.
-	//m_sceneManager.SetCurrentScene(4051038013427589782);
-	//m_sceneManager.LoadCurrentScene();
+	m_sceneManager.SetCurrentScene(4051038013427589782);
+	m_sceneManager.LoadCurrentScene();
 	
 	// test out this stuff.	
 	Entity& obj1 = *(m_registry.Instantiate());

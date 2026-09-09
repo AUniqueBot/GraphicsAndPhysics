@@ -236,7 +236,7 @@ void Inspectable::Deserialize(const Serialization::JSONFile& _data, AssetManager
             // deserialize members here.
             PropertyMD::PropertyType type = prop.m_type;
             const rapidjson::Value& val = _data.GetMember(attrName.c_str());
-            if (prop.m_shape == Shape::DynamicList || prop.m_shape == Shape::FixedArray) {
+            if (prop.m_shape == Shape::DynamicList) {
                 prop.m_list;
                 _data.IsArray();
                                

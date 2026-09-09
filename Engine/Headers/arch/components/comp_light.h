@@ -16,7 +16,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_position_type		{};	// x,y,z - position,  w - type
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
-	glm::vec4 m_attenuation			{};	// x,y - attenuation, z,w - padding
+	glm::vec4 m_attenuation_id		{ 0, 0, -1, 0 };	// x,y - attenuation, z,w - padding
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
@@ -31,7 +31,11 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	void SetColor(const glm::vec3& color) { m_color_power = glm::vec4(color, m_color_power.w); }
 	void SetPower(float power) { m_color_power.w = power; }
 
-	void SetAttenuation(const glm::vec2& att) { m_attenuation.x = att.x; m_attenuation.y = att.y; }
+	void SetAttenuation(const glm::vec2& att) { m_attenuation_id.x = att.x; m_attenuation_id.y = att.y; }
+	void SetShadowID(int _id) {
+		m_attenuation_id.z = static_cast<float>(_id);
+	}
+		
 };
 
 

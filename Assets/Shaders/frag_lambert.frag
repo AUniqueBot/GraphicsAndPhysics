@@ -50,7 +50,7 @@ struct LightData {
 	vec4 position_type;	// 1, 2, 3, 4
 	vec4 direction_roll;
 	vec4 color_power;
-	vec4 attenuation;
+	vec4 attenuation_id;
 };
 layout (std140, binding=2) uniform LightUBO {
 	LightData m_lightData[MAX_LIGHT_COUNT];
@@ -324,39 +324,80 @@ LightingResult CalculateLighting(vec3 fragPosition, vec3 fragNormal) {
 
 
 void main() {
+	    
     out_objectId = OBJECTPARAMS.objectId;
+    vec4 diff = texture(u_albedo, VERTEXOUTPUT.frag_uv);
 
 
-	vec4 diff = texture(u_albedo, VERTEXOUTPUT.frag_uv);
-    // out_color = float(u_objectId % 256u) / 255.0; // testing
-    LightingResult lighting =
-        CalculateLighting(
-            VERTEXOUTPUT.frag_position,
-            VERTEXOUTPUT.frag_normal
-            );
 
-    // values here.
-    float sValue = CalculateShadow();
-    vec3 ambientComponent = lighting.ambient * diff.rgb;
-    vec3 diffuseComponent = lighting.diffuse * diff.rgb * sValue;
+    // for each light accumulate
+    LightingResult result = LightingResult(vec3(0), vec3(0));
+    for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
+        LightData currentLight = LIGHTPARAMS.m_lightData[i];
+        int ShadowID = int(currentLight.attenuation_id.z);
+        int LightType = int(currentLight.position_type.w);
+        vec3 LightDir = normalize(VERTEXOUTPUT.frag_position - currentLight.position_type.xyz);
+        vec3 LightCol = currentLight.color_power.rgb;
+
+        
+        if (LightType == LIGHT_POINT) {
+            vec3 diffL = CalculatePointLighting(
+                currentLight, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_normal
+                );
+            result.diffuse += diffL;
+
+        }
+        else if (LightType == LIGHT_DIRECTIONAL) {
+            vec3 diffL = CalculateDirectionalLighting(
+                currentLight, 
+                VERTEXOUTPUT.frag_normal
+                );
 
 
+            if (ShadowID != -1) {
+                ShadowData currentShadow = SHADOWPARAMS.shadowData[int(currentLight.attenuation_id.z)];
+                float sValue = CalculateDirectionalShadow(
+                    currentShadow, 
+                    VERTEXOUTPUT.frag_position, 
+                    VERTEXOUTPUT.frag_viewPosition, 
+                    SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
+                    0.01
+                    );
+                diffL *= sValue;
+            }
+            result.diffuse += diffL;
+        }
+        else if (LightType == LIGHT_SPOT) {
+
+        }
+        else if (LightType == LIGHT_AMBIENT) {
+            result.ambient += LightCol * currentLight.color_power.w;
+        }
+    }
+
+    vec3 ambientComponent  = result.ambient * diff.rgb;
+    vec3 diffuseComponent  = result.diffuse * diff.rgb;
+
+
+    // Combine everything for the final frag color
+    out_color += vec4(ambientComponent, 1.0); 
     out_color += vec4(diffuseComponent, 1.0);
-    out_color += vec4(ambientComponent, 1.0);
 
-
+    // CSM testing.
     // vec4 color_RED = vec4(1.0, 0.0, 0.0, 1.0);
     // vec4 color_GREEN = vec4(0.0, 1.0, 0.0, 1.0);
     // vec4 color_BLUE = vec4(0.0, 0.0, 1.0, 1.0);
-
     // float depth = -VERTEXOUTPUT.frag_viewPosition.z;
     // int depthIndex = min(int(depth/50.0), 3);
-    // vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0,0,0,1.0);
+    // vec4 shadowCol = depthIndex == 0 ?  color_RED : depthIndex == 1 ? color_GREEN : depthIndex == 2 ? color_BLUE: vec4(0.0, 0.0, 0.0, 1.0);
     // if (sValue != 1.0) {
     //     out_color = mix(out_color, shadowCol, 0.5);;
     // }
     
     // out_color = vec4(vec3(s), 1.0);
+  
   
     return;
 }

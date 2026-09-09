@@ -43,6 +43,7 @@ void Light::SetCastShadow(bool _cast) {
     }
     m_castShadow = _cast;
     m_castShadowDirty = true;
+    
 }
  
 void Light::InvalidateShadowMapID() const {
@@ -118,6 +119,8 @@ void Light::UpdateLightData() const {
     m_lightData.SetType(static_cast<float>(m_lightType));
     m_lightData.SetColor(m_color); 
     m_lightData.SetPower(m_power);
+    
+    m_lightData.SetShadowID(m_shadowMapID);
     m_lightDataMismatch = false;
 }
 

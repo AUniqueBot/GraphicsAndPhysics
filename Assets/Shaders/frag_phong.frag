@@ -53,7 +53,7 @@ struct LightData {
 	vec4 position_type;	// 1, 2, 3, 4
 	vec4 direction_roll;
 	vec4 color_power;
-	vec4 attenuation;
+	vec4 attenuation_id;
 };
 layout (std140, binding=2) uniform LightUBO {
 	LightData m_lightData[MAX_LIGHT_COUNT];
@@ -224,35 +224,6 @@ float CalculateDirectionalShadow(
 
 
 
-float CalculateShadow() {
-    float shadowLowest = 1.0;
-    for (int i= 0; i < SHADOWPARAMS.directionalShadowCount; ++i) {
-        ShadowData currentShadowData = SHADOWPARAMS.shadowData[i]; 
-        int lightType = int(currentShadowData.lightTypeShadowId.x);
-        if (LIGHT_DIRECTIONAL == lightType) {
-            shadowLowest = min(
-                CalculateDirectionalShadow(
-                currentShadowData, 
-                VERTEXOUTPUT.frag_position, 
-                VERTEXOUTPUT.frag_viewPosition, 
-                SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
-                0.01
-                ), shadowLowest
-                );
-            // sample the texture.
-        }
-        else if (LIGHT_POINT == lightType) {
-
-        }
-        else if (LIGHT_SPOT == lightType) {
-
-        }
-
-    }
-
-    return shadowLowest;
-
-}
 
 
 // ------------------------------------------------------------------------------------
@@ -311,80 +282,7 @@ struct LightingResult {
     vec3 ambient;
 };
 
-LightingResult CalculateLighting(
-    vec3 fragPosition, 
-    vec3 fragNormal, 
-    vec3 cameraPosition, 
-    int glossiness,
-    float strength
-    ) {
-    vec3 N = normalize(fragNormal);
 
-    vec3 diffuseRes = vec3(0.0);
-    vec3 specularRes = vec3(0.0);
-    vec3 ambientRes = vec3(0.0);
-    
-    
-    for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
-        LightData currentLight = LIGHTPARAMS.m_lightData[i];
-        int lightType = int(currentLight.position_type.w);
-        // point light
-        if (lightType == LIGHT_POINT) {
-            diffuseRes += CalculatePointLighting(
-    currentLight,
-    fragPosition,
-    N
-                );
-
-            vec3 lightDir = normalize(fragPosition - currentLight.position_type.xyz);
-            vec3 lightColor = currentLight.color_power.rgb;
-            specularRes +=  lightColor * CalculateSpecularHighlight(
-                lightDir, 
-                cameraPosition, 
-                fragPosition, 
-                N,
-                glossiness, strength
-            );
-
-        }
-
-
-        // directional
-        else if (lightType == LIGHT_DIRECTIONAL) {
-            // process in 2 steps; 
-            diffuseRes += CalculateDirectionalLighting(
-                currentLight, 
-                N
-                );
-
-            vec3 lightDir = normalize(currentLight.direction_roll.xyz);
-            vec3 lightColor = currentLight.color_power.rgb;
-            specularRes += lightColor * CalculateSpecularHighlight(
-                lightDir, 
-                cameraPosition, 
-                fragPosition, 
-                N,
-                glossiness, strength
-            );
-
-        }
-
-        // ambient
-        else if (lightType == LIGHT_AMBIENT) {
-            vec3 lightColor = currentLight.color_power.xyz;
-            float power = currentLight.color_power.w;
-            ambientRes += vec3(lightColor * power);
-        }
-    }
-    ambientRes = clamp(ambientRes, 0.0, 1.0);
-
-    return LightingResult(
-        diffuseRes,
-        specularRes,
-        ambientRes
-    );
-
-}
 
 // ------------------------------------------------------------------------------------
 
@@ -396,17 +294,77 @@ void main() {
     vec4 spec = texture(u_specular, VERTEXOUTPUT.frag_uv);
     vec4 gloss = texture(u_gloss, VERTEXOUTPUT.frag_uv);
 
-    LightingResult lighting = CalculateLighting(
-        VERTEXOUTPUT.frag_position, 
-        VERTEXOUTPUT.frag_normal,
-        VERTEXOUTPUT.frag_viewPosition,
-        int(gloss.r * u_exponent) , 1.0
-    );
-    float sValue = CalculateShadow();
 
-    vec3 ambientComponent  = lighting.ambient * diff.rgb;
-    vec3 diffuseComponent  = lighting.diffuse * diff.rgb * sValue;
-    vec3 specularComponent = lighting.specular * spec.rgb * sValue; // Masked by spec texture
+    // for each light accumulate
+    LightingResult result = LightingResult(vec3(0), vec3(0), vec3(0));
+    for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
+        LightData currentLight = LIGHTPARAMS.m_lightData[i];
+        ShadowData currentShadow = SHADOWPARAMS.shadowData[int(currentLight.attenuation_id.z)];
+        int LightType = int(currentLight.position_type.w);
+        vec3 LightDir = normalize(VERTEXOUTPUT.frag_position - currentLight.position_type.xyz);
+        vec3 LightCol = currentLight.color_power.rgb;
+
+        
+        if (LightType == LIGHT_POINT) {
+            vec3 diffL = CalculatePointLighting(
+                currentLight, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_normal
+                );
+
+            vec3 specL = LightCol * CalculateSpecularHighlight(
+                LightDir, 
+                VERTEXOUTPUT.frag_viewPosition, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_normal, 
+                int(gloss.r * u_exponent) , 1.0
+                );
+
+            result.diffuse += diffL;
+            result.specular += specL;
+        }
+        else if (LightType == LIGHT_DIRECTIONAL) {
+            float sValue = CalculateDirectionalShadow(
+                currentShadow, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_viewPosition, 
+                SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
+                0.01
+                );
+            vec3 diffL = CalculateDirectionalLighting(
+                currentLight, 
+                VERTEXOUTPUT.frag_normal
+                );
+            vec3 specL = LightCol * CalculateSpecularHighlight(
+                LightDir, 
+                VERTEXOUTPUT.frag_viewPosition, 
+                VERTEXOUTPUT.frag_position, 
+                VERTEXOUTPUT.frag_normal, 
+                int(gloss.r * u_exponent) , 1.0
+                );
+
+            result.diffuse += diffL * sValue;
+            result.specular += specL * sValue;
+        }
+        else if (LightType == LIGHT_SPOT) {
+
+        }
+        else if (LightType == LIGHT_AMBIENT) {
+            result.ambient += LightCol * currentLight.color_power.w;
+        }
+    }
+
+    // LightingResult lighting = CalculateLighting(
+    //     VERTEXOUTPUT.frag_position, 
+    //     VERTEXOUTPUT.frag_normal,
+    //     VERTEXOUTPUT.frag_viewPosition,
+    //     int(gloss.r * u_exponent) , 1.0
+    // );
+    // float sValue = CalculateShadow();
+
+    vec3 ambientComponent  = result.ambient * diff.rgb;
+    vec3 diffuseComponent  = result.diffuse * diff.rgb;
+    vec3 specularComponent = result.specular * spec.rgb; // Masked by spec texture
 
 
     // Combine everything for the final frag color

@@ -40,13 +40,13 @@
             }
         },
         "2048" : {
-            "name": "plane",
+            "name": "Plane",
             "parent": 0,
             "components": {
                 "Transform": {
-                    "Position": [0, 0, 0],
+                    "Position": [0, -10, 0],
                     "Rotation": [0, 0, 0, 1],
-                    "Scale": [10, 10, 10]
+                    "Scale": [1000, 1, 1000]
                 },
                 "MeshRenderer": {
                     "Mesh": "C_DEFAULT_MESH_PLANE",
