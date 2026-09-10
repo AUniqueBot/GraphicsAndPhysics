@@ -76,7 +76,9 @@ public:
 
 	void clear()						{ m_typeContainer.clear(); m_idxToValue.clear(); m_valueToIdx.clear(); }
 
-
+	const IDType& getKey(int _idx) const{ return m_idxToValue.at(_idx); }
+	T& getValue(int _idx)				{ return m_typeContainer.at(_idx); }
+	const T& getValue(int _idx)	const	{ return m_typeContainer.at(_idx); }
 private:
 	// the container containing the type's data.
 	std::vector<T> m_typeContainer; // why were you a deque??
