@@ -143,7 +143,7 @@ struct ComponentPackedData {
 
 struct ComponentHandle {
 	Component* m_componentPtr;
-	ComponentMetadata* m_componentMetadata;
+	ComponentMetadata m_componentMetadata;
 };
 
 
@@ -229,8 +229,7 @@ public:
 
 	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.At(_id); };
 	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.At(_id); };
-	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id);
-	const std::vector<ComponentHandle>& GetEntityComponents(const EntityID& _id) const;
+	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id) const;
 	
 	// component handling.
 
@@ -281,6 +280,7 @@ public:
 	// remove all from selection.
 	void ClearSelection();
 	bool EntityIsSelected(EntityID _id, bool _isCurrentSelection = true) const;
+
 
 	void ClearEntitiesAndComponentData();
 

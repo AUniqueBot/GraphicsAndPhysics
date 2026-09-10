@@ -14,7 +14,7 @@
                 },
                 "MeshRenderer": {
                     "Mesh": 466735032382132234,
-                    "Material": [
+                    "Materials": [
                         15550170195157180089
                     ],
                     "Casts Shadow": true
@@ -32,7 +32,7 @@
                 },
                 "MeshRenderer": {
                     "Mesh": 9423376448481607,
-                    "Material": [
+                    "Materials": [
                         3911558884168242736
                     ],
                     "Casts Shadow": true
@@ -50,7 +50,7 @@
                 },
                 "MeshRenderer": {
                     "Mesh": "C_DEFAULT_MESH_PLANE",
-                    "Material": [
+                    "Materials": [
                         1234567890
                     ],
                     "Casts Shadow": true
@@ -109,7 +109,25 @@
                 }
 
             }
+        },
+        "5831" : {
+            "name" : "ambient light",
+            "parent": 0,
+            "components": {
+                "Transform" : {
+                    "Position": [-10, 0, 3],
+                    "Rotation": [0, 0, 0, 1],
+                    "Scale": [1, 1, 1]
+                },
+                "Light" :{
+                    "Light Type": "Ambient",
+                    "Color": [1, 0.75, 0.9],
+                    "Casts Shadow": false, 
+                    "Power": 0.2
+                }
+            }
         }
+
 
         
     }

@@ -58,9 +58,15 @@ namespace PropertyMD {
 			std::function<int(void*)> m_size = nullptr;
 			std::function<void* (void*, int)> m_get = nullptr;
 			std::function<void*(void*)> m_listAccessor = nullptr;
-			std::function<void(void*)> m_add = nullptr;
-			std::function<void(void*, int)> m_remove = nullptr;
+
+			//std::function<void(void*)> m_add = nullptr;
+			//std::function<void(void*, int)> m_remove = nullptr;
+
 			std::function<void* (void*)> m_getObject = nullptr;
+
+			std::function<void(void*, void*)> m_addFunction = nullptr;
+			std::function<void(void*, int)> m_removeFunction = nullptr;
+
 			bool m_valid = false;
 
 			//
@@ -191,11 +197,12 @@ namespace PropertyMD {
 	template<typename T, typename Element>
 	Property MakeListProperty(
 		const char* name,
-		std::function<std::vector<Element>& (T*)> listAccessor,
 		PropertyType _elementType,
+		std::function<std::vector<Element>& (T*)> listAccessor,
+		std::function<void(T*, Element)> listAdder = nullptr,
+		std::function<void(T*, int)> listRemover = nullptr,
 		int _componentCount = 1
-	)
-	{
+	) {
 		Property prop(
 			name,
 			PropertyType::Object,          // or Element type if you want stricter typing
@@ -225,18 +232,25 @@ namespace PropertyMD {
 			return ReflectElement<Element>::Get(list[index]);
 			};
 
-		ls.m_add = [listAccessor](void* obj) {
-			T* t = static_cast<T*>(obj);
-			std::invoke(listAccessor, t).emplace_back();
-			};
+		//ls.m_add = [listAccessor](void* obj) {
+		//	T* t = static_cast<T*>(obj);
+		//	std::invoke(listAccessor, t).emplace_back();
+		//	};
 
-		ls.m_remove = [listAccessor](void* obj, int index) {
-			T* t = static_cast<T*>(obj);
-			auto& vec = std::invoke(listAccessor, t);
-			vec.erase(vec.begin() + index);
+		//ls.m_remove = [listAccessor](void* obj, int index) {
+		//	T* t = static_cast<T*>(obj);
+		//	auto& vec = std::invoke(listAccessor, t);
+		//	vec.erase(vec.begin() + index);
+		//	};
+		ls.m_addFunction = [listAdder](void* obj, void* element) {
+			T* a = static_cast<T*>(obj);
+			Element* val = static_cast<Element*>(element);
+			listAdder(a, *val);
 			};
-		
-		
+		ls.m_removeFunction = [listRemover](void* obj, int index) {
+			T* a = static_cast<T*>(obj);
+			listRemover(a, index);
+			};
 
 
 		return prop;

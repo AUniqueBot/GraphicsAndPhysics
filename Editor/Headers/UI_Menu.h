@@ -22,24 +22,33 @@ public:
 
 	unsigned MenuItemID() const;
 
-private:
+protected:
+
+	inline static unsigned s_menuItemIdCounter	{};
+	unsigned m_menuItemId;
 	/*
 		0 = hovered over,
 		1 = clicked,
 		2 = selected,
 		3 = disabled,
 	*/
-
-	inline static unsigned s_menuItemIdCounter	{};
-	unsigned m_menuItemId;
 	mutable std::bitset<4> m_itemFlags;
 	std::string m_menuItemLabel{};
 	std::function<void()> m_itemFunction;
 };
 
+class UI_MenuItemSeparator : public UI_MenuItem {
+public:
+	UI_MenuItemSeparator(std::string _name = "") : UI_MenuItem(_name, nullptr) {}
+public:
+	void Draw() const override;
+};
+
 
 class UIMenu : public UI_MenuItem {
 
+public:
+	UIMenu(const std::string& _label) : UI_MenuItem(_label) {}
 public:
 	void Draw() const override;
 	int AddMenuItem(UI_MenuItem _item);

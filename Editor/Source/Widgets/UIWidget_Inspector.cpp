@@ -166,15 +166,17 @@ void UIWidget_Inspector::DrawEntity() {
 	// render components here.
 
 
-	for (auto& compHandle : er.GetEntityComponents(selectedID)) {
+	for (ComponentHandle& compHandle : er.GetEntityComponents(selectedID)) {
 		Component* comp{ compHandle.m_componentPtr };
+		
+		if (!comp) continue;
 		ImGui::Separator();
 
 		const std::vector<PropertyMD::Property>& props{ comp->GetProperties() };
 		if (!props.size()) {
 			continue;
 		}
-		std::string compName = compHandle.m_componentMetadata->GetComponentName();
+		std::string compName = compHandle.m_componentMetadata.GetComponentName();
 		if (ImGui::CollapsingHeader(compName.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			for (const PropertyMD::Property& prop : props) {
 				ImGui::SeparatorText(prop.m_name.c_str());

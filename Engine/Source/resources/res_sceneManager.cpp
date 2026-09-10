@@ -2,7 +2,7 @@
 #include <arch/resources/res_sceneManager.h>
 #include <serialization/serialize_metafilereader.h>
 #include <serialization/serialize_jsonfile.h>
-
+#include <arch/ecs/ecs_registry.h>
 
 void SceneManager::Init() {
 	RegisterFileExtension(".scene");
@@ -23,20 +23,34 @@ void SceneManager::Init() {
 
 
 void SceneManager::CreateScene() {
-
+	// makes a new scene and clears EVERYTHING.
+	auto scene = std::make_shared<Scene>();
+	SceneHandle handle(m_resourceManager.AddInternalResource(scene));
+	AddResourceToPool(handle);
+	ClearScene();
+	// set this handle as the current scene
+	m_currentScene = handle; 
 }
 
 void SceneManager::LoadCurrentScene() {
-	if (m_resourceIdPool.contains(m_currentScene)) {
-		auto ptr = static_pointer_cast<Scene>(m_resourceManager.GetResource(m_currentScene));
-		ptr->Load();
+	if (m_resourceIdPool.contains(m_currentScene->ResourceID())) {
+		m_currentScene->Load();
 	}
 }
 
 void SceneManager::SetCurrentScene(RES_ID _sceneId) {
-	if (_sceneId == m_currentScene ) return;
-	m_currentScene = _sceneId;
-	// set load state. async later?
+	SceneHandle handle(m_resourceManager.GetResourceIdentifier(_sceneId));
+	SetCurrentScene(handle);
+}
+
+void SceneManager::SetCurrentScene(SceneHandle _scene) {
+	if (_scene == m_currentScene) return;
+	m_currentScene = _scene;
+}
+
+
+void SceneManager::ClearScene() {
+	m_entityRegistry.ClearEntitiesAndComponentData();
 }
 
 SceneHandle SceneManager::LoadScene(const std::filesystem::path& _path, RES_ID _existingId) {
@@ -48,6 +62,17 @@ SceneHandle SceneManager::LoadScene(const std::filesystem::path& _path, RES_ID _
 	}
 	SceneHandle handle(m_resourceManager.AddInternalResource(scene));
 	return handle;
+}
+
+void SceneManager::SaveScene(const std::filesystem::path& _path) {
+	Serialization::JSONFile json(Serialization::JSONFileType::Object);
+
+	rapidjson::Value envVal;
+	json.AddMember("environment", envVal);
+
+	rapidjson::Value entities;
+	json.AddMember("entities", entities);
+
 }
 
 

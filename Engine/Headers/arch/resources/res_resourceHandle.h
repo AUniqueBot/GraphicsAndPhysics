@@ -50,6 +50,10 @@ struct ResourceHandleT : public ResourceHandle {
     ResourceHandleT(ResourceIdentifierArg _arg = std::nullopt)
         : ResourceHandle(_arg) {
     }
+    ResourceHandleT(ResourceHandle _handle)
+        : ResourceHandle(_handle) {
+    }
+
 
     std::shared_ptr<T> Get() {
         return GetResourceT<T>();

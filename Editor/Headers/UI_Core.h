@@ -10,7 +10,7 @@
 
 struct GLFWwindow;
 class UIWidget;
-class UIMenu;
+class UI_MenuItem;
 
 
 class UI_Core {
@@ -29,7 +29,7 @@ public:
 	std::string AddWidget(std::shared_ptr<UIWidget> _widget);
 	void RemoveWidget(std::string _id);
 
-	std::string AddMenuItem(std::shared_ptr<UIMenu> _menu);
+	std::string AddMenuItem(std::shared_ptr<UI_MenuItem> _menu);
 	void RemoveMenuItem(std::string _id);
 
 
@@ -83,7 +83,7 @@ private:
 
 
 	std::unordered_map<std::string, std::shared_ptr<UIWidget>> m_widgetStorage;
-	std::unordered_map<std::string, std::shared_ptr<UIMenu>> m_menuStorage;
+	std::unordered_map<std::string, std::shared_ptr<UI_MenuItem>> m_menuStorage;
 
 
 	EntityRegistry* m_entityRegistry			{};

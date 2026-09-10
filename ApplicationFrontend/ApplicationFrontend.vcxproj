@@ -72,8 +72,11 @@
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
-robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+if %errorlevel% leq 7 exit 0
+
 robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+if %errorlevel% leq 7 exit 0
+
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -95,8 +98,11 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     </Link>
     <PreBuildEvent>
       <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
-robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+if %errorlevel% leq 7 exit 0
+
 robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+if %errorlevel% leq 7 exit 0
+
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>

@@ -17,7 +17,10 @@
 #include <Widgets/UIWidget_Compositor.h>
 #include <arch/systems/sys_render.h>
 
+
 #include <Utility/UI_LoadImage.h>
+#include <UI_Menu.h>
+
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
 
@@ -54,6 +57,23 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 
 	LoadIcons();
 	
+
+	// -- menu -------------------------------------------------
+
+	auto fileMenu = std::make_shared<UIMenu>("File");
+
+	Core& c = *m_applicationCore;
+	SceneManager& scm = c.GetSceneManager();
+	fileMenu->AddMenuItem(
+		UI_MenuItem(std::string("Create Scene"), 
+		std::bind(&SceneManager::CreateScene, &scm)
+		)
+	);
+	fileMenu->AddMenuItem(UI_MenuItem("Load Scene"));
+	fileMenu->AddMenuItem(UI_MenuItem("Save Scene"));
+	AddMenuItem(fileMenu);
+
+
 
 	// -- widget initialisation --------------------------------
 	LOG_INFO("Adding Widgets here...");
@@ -203,13 +223,12 @@ void UI_Core::RemoveWidget(std::string _id) {
 	m_widgetStorage.erase(_id);
 }
 
-std::string UI_Core::AddMenuItem(std::shared_ptr<UIMenu> _menu) {
-
-	UIMenu& menu = *_menu;
+std::string UI_Core::AddMenuItem(std::shared_ptr<UI_MenuItem> _menu) {
+	UI_MenuItem& menu = *_menu;
 	std::string menuId = menu.MenuLabel() + "##" + std::to_string(menu.MenuItemID());
 	m_menuStorage.emplace(menuId, _menu);
 
-	return std::string();
+	return menuId;
 }
 
 void UI_Core::RemoveMenuItem(std::string _id) {

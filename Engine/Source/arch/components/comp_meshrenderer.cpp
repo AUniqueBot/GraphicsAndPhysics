@@ -45,6 +45,16 @@ void MeshRenderer::RemoveMaterial(MaterialHandle _material) {
 	m_materials.pop_back();
 }
 
+void MeshRenderer::RemoveMaterial(int _index) {
+	if (_index < m_materials.size()) {
+		return;
+	}
+	auto itr = m_materials.begin() + _index;
+	std::rotate(itr, itr + 1, m_materials.end());
+	m_materials.pop_back();
+
+}
+
 
 
 Material& MeshRenderer::GetDefaultMaterial() {
@@ -68,13 +78,15 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 		MakeResourceProperty<MeshRenderer>(
 			"Mesh",
 			MeshRes::GetResourceTypeID(),
-			static_cast<const MeshHandle&(MeshRenderer::*)()const>(&MeshRenderer::GetMesh),
+			static_cast<const MeshHandle & (MeshRenderer::*)()const>(&MeshRenderer::GetMesh),
 			&MeshRenderer::SetMesh
 		),
 		MakeListProperty<MeshRenderer, MaterialHandle>(
 			"Materials",
+			PropertyType::ResourceHandle,
 			static_cast<std::vector<MaterialHandle>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-			PropertyType::ResourceHandle 
+			&MeshRenderer::AddMaterial,
+			static_cast<void(MeshRenderer::*)(int)>(&MeshRenderer::RemoveMaterial)
 		),
 		MakeProperty<MeshRenderer>(
 			"Cast Shadow",

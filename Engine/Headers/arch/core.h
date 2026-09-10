@@ -78,6 +78,9 @@ public:
 	const AssetManager& GetAssetManager() const		{ return m_assetManager; }
 
 
+	SceneManager& GetSceneManager()					{ return m_sceneManager; };
+	const SceneManager& GetSceneManager() const		{ return m_sceneManager; };
+
 
 public:
 	// - public parameters --------------------------

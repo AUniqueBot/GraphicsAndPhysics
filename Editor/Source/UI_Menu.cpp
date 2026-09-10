@@ -3,8 +3,9 @@
 
 
 UI_MenuItem::UI_MenuItem(std::string _name, std::function<void()> _callback)
-	: m_menuItemLabel{ _name }, m_itemFunction{_callback} {
+	: m_menuItemLabel{ _name }, m_itemFunction{ _callback } {
 	m_menuItemId = s_menuItemIdCounter++;
+	m_itemFlags[3] = _callback != nullptr;
 }
 void UI_MenuItem::MenuLabel(const std::string& _label) {
 	if (_label == m_menuItemLabel) return;
@@ -67,11 +68,11 @@ void UI_MenuItem::Draw() const {
 void UIMenu::Draw() const {
 	using namespace ImGui;
 
-	if (BeginMenu) {
+	if (ImGui::BeginMenu(m_menuItemLabel.c_str())) {
 		for (const std::shared_ptr<UI_MenuItem>& item : m_menuItems) {
 			item->Draw();
 		}
-		EndMenu();
+		ImGui::EndMenu();
 	}
 }
 
@@ -86,4 +87,11 @@ void UIMenu::RemoveMenuItem(int _index) {
 	m_menuItems.erase(m_menuItems.begin() + _index);
 }
 
-
+void UI_MenuItemSeparator::Draw() const {
+	if (m_menuItemLabel.empty()) {
+		ImGui::Separator();
+	}
+	else {
+		ImGui::SeparatorText(m_menuItemLabel.c_str());
+	}
+}

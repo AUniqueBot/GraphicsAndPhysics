@@ -151,8 +151,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
       <AdditionalLibraryDirectories>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
-robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+      <Command>cmd /c "robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
+cmd /c "robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
+cmd /c "robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
@@ -174,8 +175,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
       <AdditionalLibraryDirectories>$(SolutionDir)Editor\$(Platform)\$(Configuration)\Editor.lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>
-      <Command>robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
-robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP
+      <Command>cmd /c "robocopy "$(SolutionDir)Assets" "$(OutDir)Assets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
+cmd /c "robocopy "$(SolutionDir)EditorAssets" "$(OutDir)EditorAssets" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
+cmd /c "robocopy "$(SolutionDir)Config" "$(OutDir)Config" /MIR /R:0 /W:0 /NFL /NDL /NJH /NJS /NP ^&amp; if %errorlevel% leq 7 exit 0"
 FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>

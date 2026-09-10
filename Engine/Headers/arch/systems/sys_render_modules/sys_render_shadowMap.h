@@ -59,7 +59,7 @@ public:
 private:
 
 private:
-	glm::ivec2 m_framebufferSize			{ 2048, 2048};
+	glm::ivec2 m_framebufferSize			{ 2048, 2048 };
 	glm::ivec2 m_baseTileSize				{ 1024, 1024 };	// 2048, 1024, 512, 256
 	unsigned m_layers						{ 8 };
 	unsigned m_fbo							{ 0 }; 
@@ -73,5 +73,7 @@ private:
 	Texture2DArrayHandle m_textureHandle	{ std::nullopt }; // needs a proper constructor.
 	bool m_initialized						{ false };
 
-	int m_shadowUsageCount							{ 0 };
+	int m_shadowUsageCount					{ 0 }; //
+
+	// texture layout for shadows is a 3x2.
 };

@@ -32,7 +32,9 @@ public:
 
 	void LoadCurrentScene();
 	void SetCurrentScene(RES_ID _sceneId);
+	void SetCurrentScene(SceneHandle _scene);
 
+	void ClearScene();
 
 	SceneHandle LoadScene(const std::filesystem::path& _path, RES_ID _existingId = ResourceConstants::C_RES_INVALID_ID);
 	void SaveScene(const std::filesystem::path& _path);
@@ -40,7 +42,7 @@ public:
 	void LoadResource(const Serialization::MetafileData& _data) override;
 private:
 	SceneState m_currentState				{ Stop };
-	RES_ID m_currentScene					{ ResourceConstants::C_RES_INVALID_ID };
+	SceneHandle m_currentScene				{ std::nullopt };
 	EntityRegistry& m_entityRegistry;
 	AssetManager& m_assetManager;
 };

@@ -41,6 +41,7 @@ public:
 
 	void AddMaterial(MaterialHandle _material);
 	void RemoveMaterial(MaterialHandle _material);
+	void RemoveMaterial(int _material);
 	
 
 

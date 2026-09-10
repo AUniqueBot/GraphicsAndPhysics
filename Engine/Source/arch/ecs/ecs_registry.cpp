@@ -30,21 +30,8 @@ void EntityRegistry::PrintDebugInfo() const {
 	std::cout << ss.str();
 }
 
-std::vector<ComponentHandle> EntityRegistry::GetEntityComponents(const EntityID& _entityId) {
-	std::vector<ComponentHandle> comps;
-	EntityView entity{ GetEntity(_entityId) };
 
-	for (const CompID& compId : entity->GetAttachedComponents()) {
-		// access.
-		SparseSetView<CompTypeID> compType{ m_componentIDLookup.At(compId) };
-		if (!compType) continue;
-		Component* ptr = m_componentData.at(*compType).m_componentPool->GetComponent(_entityId);
-		if (ptr) comps.push_back(ComponentHandle{ ptr, &m_componentData.at(*compType).m_componentMetadata });
-	}
-	return comps;
-}
-
-const std::vector<ComponentHandle>& EntityRegistry::GetEntityComponents(const EntityID& _entityId) const {
+std::vector<ComponentHandle> EntityRegistry::GetEntityComponents(const EntityID& _entityId) const {
 	std::vector<ComponentHandle> comps;
 	EntityViewConst entity { GetEntity(_entityId) };
 
@@ -52,8 +39,12 @@ const std::vector<ComponentHandle>& EntityRegistry::GetEntityComponents(const En
 		// access.
 		SparseSetView<const CompTypeID> compType{ m_componentIDLookup.At(compId) };
 		if (!compType) continue;
-		Component* ptr = m_componentData.at(*compType).m_componentPool->GetComponent(_entityId);
-		if (ptr) comps.push_back(ComponentHandle{ptr});
+		const ComponentPackedData& compData = m_componentData.at(*compType);
+		Component* ptr = compData.m_componentPool->GetComponent(_entityId);
+		if (ptr) {
+			ComponentHandle handle{ ptr, compData.m_componentMetadata };
+			comps.push_back(handle);
+		}
 	}
 	// TODO: insert return statement here
 	return comps;
