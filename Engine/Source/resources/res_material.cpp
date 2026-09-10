@@ -463,3 +463,9 @@ void Material::SetUniformTextureUnit(GLint _uniformLocation, GLuint _textureHand
 
 
 
+std::vector<PropertyMD::Property>& Material::GetProps() {
+	using namespace PropertyMD;
+	std::vector<PropertyMD::Property> props;
+	return props;
+
+}

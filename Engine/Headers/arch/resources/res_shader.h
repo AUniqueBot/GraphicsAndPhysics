@@ -103,7 +103,7 @@ public:
 
 private:
 
-	std::deque<GLuint> GetShaderIDList() const;
+	std::vector<GLuint> GetShaderIDList() const;
 private:
 	GLuint m_shaderProgramId								{ 0 };
 	SparseSet<ShaderConstants::ShaderType, GLuint> m_shaderIds;

@@ -7,6 +7,13 @@
 namespace {
     using SetterFunction = std::function<void(void*, const void*)>;
     using Options = std::vector<PropertyMD::Option>;
+    struct PropertyProps {
+        SetterFunction setter;
+        int componentCount;
+        const Options& options;
+        PropertyMD::PropertyType propType;
+    };
+
 
     void SetEnum(SetterFunction _setter, const Options& _options, Inspectable* _object, const rapidjson::Value& _value) {
         int val{};
@@ -160,14 +167,6 @@ namespace {
             _setter(object, &val);
         }
     }
-
-
-    struct PropertyProps {
-        SetterFunction setter;
-        int componentCount;
-        const Options& options;
-        PropertyMD::PropertyType propType;
-    };
 
     void SetValue(PropertyProps _props, AssetManager& _asMgr, Inspectable* _object, const rapidjson::Value& _value) {
         SetterFunction setter = _props.setter;

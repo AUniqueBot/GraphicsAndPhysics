@@ -14,7 +14,7 @@
 
 
 
-
+// not used at all.
 template <std::derived_from<BaseResource> T>
 struct ResourceSlot {
 
@@ -60,8 +60,8 @@ public:
 
 	ResourceIdentifier GetResourceIdentifier(RES_ID _id);
 
-	std::deque<std::shared_ptr<BaseResource>>& GetResourcePool();
-	const std::deque<std::shared_ptr<BaseResource>>& GetResourcePool() const;
+	std::vector<std::shared_ptr<BaseResource>>& GetResourcePool();
+	const std::vector<std::shared_ptr<BaseResource>>& GetResourcePool() const;
 	
 
 	const std::vector<RES_ID>& GetResourcePoolManifest(RESTYPE_ID _typeId) const;

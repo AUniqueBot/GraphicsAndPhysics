@@ -223,8 +223,8 @@ public:
 
 
 
-	std::deque<Entity>& GetEntityList()					{ return m_entityList.Data(); }
-	const std::deque<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
+	std::vector<Entity>& GetEntityList()					{ return m_entityList.Data(); }
+	const std::vector<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
 	
 
 	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.At(_id); };

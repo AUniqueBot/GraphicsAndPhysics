@@ -204,7 +204,8 @@ public:
 	void SetInitialised(bool _setting);
 
 	
-	
+	// 
+	std::vector<MaterialValueData> GetMaterialValues();
 
 protected:
 	virtual void InitInternal();
@@ -224,8 +225,7 @@ protected:
 	bool m_uniformDataDirty						{ true }; // starts as true to initialize the values first.
 	bool m_valuesDirty							{ true };
 	
-
-
+	INSPECTABLE_DECLAREPROPS(Material);
 };
 
 

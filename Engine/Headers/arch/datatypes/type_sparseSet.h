@@ -12,7 +12,7 @@
 #include <arch/datatypes/type_sparseSet_viewHandle.h>
 
 
-
+// why is it a deque?
 template <typename IDType, typename T>
 class SparseSet {
 
@@ -27,6 +27,7 @@ public:
 	///! @param _id: identifier
 	///! @return true if adding is successful. false for anything else.
 	bool Add(T&& _newItem, IDType _id);
+	bool Add(const T& _newItem, IDType _id);
 
 
 	///! @brief removes the data type associated with [_id]
@@ -36,9 +37,9 @@ public:
 
 	// getters for the container
 
-	std::deque<T>& Data()				{ return m_typeContainer; } ///<! try not to use this
+	std::vector<T>& Data()				{ return m_typeContainer; } ///<! try not to use this
 	
-	const std::deque<T>& Data() const	{ return m_typeContainer; } ///<! use this instead.
+	const std::vector<T>& Data() const	{ return m_typeContainer; } ///<! use this instead.
 
 
 public:
@@ -78,7 +79,7 @@ public:
 
 private:
 	// the container containing the type's data.
-	std::deque<T> m_typeContainer;
+	std::vector<T> m_typeContainer; // why were you a deque??
 	
 
 private:

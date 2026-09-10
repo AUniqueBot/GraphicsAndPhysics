@@ -5,7 +5,7 @@
         "albedo_tex": null,
         "albedo_col": "0XBADBEDFF",
         "specular_tex": null,
-        "specular_col": "0X000000FF",
-        "exponent_val" : 128
+        "specular_col": "0XFF0000FF",
+        "exponent_val" : 32
     }
 }

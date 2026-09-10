@@ -209,11 +209,11 @@ ResourceIdentifier ResourceManager::GetResourceIdentifier(RES_ID _id) {
 	return GenerateResourceIdentifier(*itr);
 }
 
-std::deque<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
+std::vector<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
 	return m_resourcePool.Data();
 }
 
-const std::deque<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
+const std::vector<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
 	return m_resourcePool.Data();
 }
 

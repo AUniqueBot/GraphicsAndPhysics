@@ -34,6 +34,13 @@ const MeshHandle& MeshRenderer::GetMesh() const {
 }
 
 
+std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() { 
+	return m_materials; 
+}
+const std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() const { 
+	return m_materials; 
+}
+
 void MeshRenderer::AddMaterial(MaterialHandle _material) {
 	m_materials.push_back(_material);
 }
@@ -55,6 +62,16 @@ void MeshRenderer::RemoveMaterial(int _index) {
 
 }
 
+MaterialHandle MeshRenderer::GetMaterial(int _index) {
+	if (m_materials.size() <= _index) return MaterialHandle();
+	return m_materials[_index];
+}
+
+const MaterialHandle MeshRenderer::GetMaterial(int _index) const {
+	if (m_materials.size() <= _index) return MaterialHandle();
+	return m_materials.at(_index);
+}
+
 
 
 Material& MeshRenderer::GetDefaultMaterial() {
@@ -69,11 +86,38 @@ Material& MeshRenderer::GetDefaultMaterial() {
 	return m_defaultMaterial;
 }
 
+// ------------------------------------------------------------------------------------------------------------
 
 
+const bool& MeshRenderer::CastShadows() const { 
+	return m_castShadows; 
+};
+void MeshRenderer::CastShadows(const bool& _cast) { 
+	m_castShadows = _cast; 
+};
+
+const bool& MeshRenderer::ReceiveShadows() const {
+	return m_receiveShadows;
+}
+void MeshRenderer::ReceiveShadows(const bool& _setting) {
+	m_receiveShadows = _setting;
+}
+
+const bool& MeshRenderer::StaticShadows() const {
+	return m_staticShadows;
+}
+
+void MeshRenderer::StaticShadows(const bool& _setting) {
+	m_staticShadows = _setting;
+}
+
+
+// ------------------------------------------------------------------------------------------------------------
 
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
+	using MaterialList = std::vector<MaterialHandle>;
+
 	static std::vector<PropertyMD::Property> props{
 		MakeResourceProperty<MeshRenderer>(
 			"Mesh",
@@ -84,16 +128,16 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 		MakeListProperty<MeshRenderer, MaterialHandle>(
 			"Materials",
 			PropertyType::ResourceHandle,
-			static_cast<std::vector<MaterialHandle>&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-			&MeshRenderer::AddMaterial,
+			static_cast<MaterialList&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
+			static_cast<void(MeshRenderer::*)(MaterialHandle)>(&MeshRenderer::AddMaterial),
 			static_cast<void(MeshRenderer::*)(int)>(&MeshRenderer::RemoveMaterial)
 		),
 		MakeProperty<MeshRenderer>(
 			"Cast Shadow",
 			PropertyType::Boolean,
 			Shape::Scalar, 1,
-			&MeshRenderer::GetCastShadow,
-			&MeshRenderer::SetCastShadow
+			static_cast<const bool& (MeshRenderer::*)() const>(&MeshRenderer::CastShadows),
+			static_cast<void (MeshRenderer::*)(const bool&)>(&MeshRenderer::CastShadows)
 		)
 	};
 		

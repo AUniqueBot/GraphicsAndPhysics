@@ -36,21 +36,28 @@ public:
 		@brief
 			gets material list
 	*/
-	std::vector<MaterialHandle>& GetMaterialList()				{ return m_materials; }
-	const std::vector<MaterialHandle>& GetMaterialList() const	{ return m_materials; }
+	std::vector<MaterialHandle>& GetMaterialList();
+	const std::vector<MaterialHandle>& GetMaterialList() const;
 
 	void AddMaterial(MaterialHandle _material);
 	void RemoveMaterial(MaterialHandle _material);
 	void RemoveMaterial(int _material);
 	
-
+	MaterialHandle GetMaterial(int _index);
+	const MaterialHandle GetMaterial(int _index) const;
 
 
 	static Material& GetDefaultMaterial();
 
 	// - shadows ----------------------------------------------------------------------------------
-	inline const bool& GetCastShadow() const			{ return m_castShadow; };
-	inline void SetCastShadow(bool _cast)				{ m_castShadow = _cast; };
+	const bool& CastShadows() const;
+	void CastShadows(const bool& _setting);
+
+	const bool& ReceiveShadows() const;
+	void ReceiveShadows(const bool& _setting);
+
+	const bool& StaticShadows() const;
+	void StaticShadows(const bool& _setting);
 
 public:
 
@@ -65,8 +72,9 @@ private:
 	std::vector<MaterialHandle> m_materials; // change to material handle.
 	
 
-	bool m_castShadow									{ true };
-	bool m_staticShadow									{}; // bake!
+	bool m_castShadows									{ true };
+	bool m_receiveShadows								{ true };
+	bool m_staticShadows								{ false }; // bake!
 
 
 public:

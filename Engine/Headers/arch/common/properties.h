@@ -23,8 +23,10 @@ namespace PropertyMD {
 	enum class Shape {
 		Scalar,
 		FixedArray,
-		DynamicList
+		DynamicList,
+		Map
 	};
+
 
 	enum class DynamicListType {
 		Vector,
@@ -73,6 +75,15 @@ namespace PropertyMD {
 			PropertyType m_type		{};
 			int m_componentCount {};
 		} m_list;
+
+		struct Map {
+			bool m_valid = false;
+			std::function<int(void*)> m_size = nullptr;
+			std::function<void* (void*, int)> m_getKey = nullptr;
+			std::function<void* (void*, int)> m_getValue = nullptr;
+
+		} m_map;
+
 
 		Property(
 			std::string name,
@@ -276,7 +287,9 @@ namespace PropertyMD {
 		return prop;
 	}
 
-
+	//Property MakeMapProperty() {
+	//	return Property();
+	//}
 
 
 }

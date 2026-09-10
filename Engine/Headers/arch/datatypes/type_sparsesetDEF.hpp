@@ -20,6 +20,22 @@ bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 }
 
 template <typename IDType, typename T>
+bool SparseSet<IDType, T>::Add(const T& _newItem, IDType _id) {
+
+	// checks if there's a value for that entity existing already
+	if (m_valueToIdx.contains(_id)) {
+		LOG_WARN("Attempting to add an item for a registered client.");
+		return false;
+	}
+	// add this value 
+	m_valueToIdx[_id] = static_cast<int>(m_idxToValue.size());
+	m_idxToValue.push_back(_id);
+	m_typeContainer.push_back(_newItem);
+	return true;
+}
+
+
+template <typename IDType, typename T>
 bool SparseSet<IDType, T>::Remove(IDType _id){
 	
 	// find if this key exists

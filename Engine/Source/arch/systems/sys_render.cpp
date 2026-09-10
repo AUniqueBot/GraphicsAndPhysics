@@ -617,7 +617,7 @@ void RenderSystem::DirectionalLightShadowRenderPass(
 
         for (const MeshRenderer& mr : _mrPool.Data()) {
             const auto meshEntity{ _er.GetEntity(mr.GetEntityID()) };
-            if (!meshEntity->Active() || !meshEntity->IsVisible() || !mr.GetCastShadow()) continue;
+            if (!meshEntity->Active() || !meshEntity->IsVisible() || !mr.CastShadows()) continue;
 
 
             RES_ID meshId = mr.GetMesh().GetResourceID();

@@ -66,6 +66,7 @@ struct InspectTraits<std::shared_ptr<T>> {
 
 #define INSPECTABLE_DECLAREPROPS(TYPE) \
 public:\
-	inline std::vector<PropertyMD::Property>& GetProperties() override { return TYPE::GetProps(); }; \
+    using PropertyList = std::vector<PropertyMD::Property>;\
+	inline PropertyList& GetProperties() override { return TYPE::GetProps(); }; \
 protected:\
-	static std::vector<PropertyMD::Property>& GetProps();
+	static PropertyList& GetProps();

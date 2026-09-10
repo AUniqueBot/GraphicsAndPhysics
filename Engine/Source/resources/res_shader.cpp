@@ -211,7 +211,7 @@ void ShaderProgram::Build() {
 		return;
 	}
 
-	std::deque<GLuint> shaderList{ GetShaderIDList() };
+	std::vector<GLuint> shaderList{ GetShaderIDList() };
 	GLuint prg{ glCreateProgram() };
 	for (const GLuint& shader : shaderList) {
 		glAttachShader(prg, shader);
@@ -244,7 +244,7 @@ void ShaderProgram::Destroy(){
 	m_shaderProgramId = 0;
 }
 
-std::deque<GLuint> ShaderProgram::GetShaderIDList() const {
+std::vector<GLuint> ShaderProgram::GetShaderIDList() const {
 	bool hasFragShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::FRAG);
 	bool hasVertexShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::VERTEX);
 	if (!hasVertexShader || !hasFragShader) {
