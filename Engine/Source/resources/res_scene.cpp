@@ -23,7 +23,7 @@ EntityView Scene::Instantiate(RES_ID _prefab) {
 	EntityNode entitynode;
 	entitynode.m_entityId = entity->GetID();
 	EntityID id = entitynode.m_entityId;
-	m_sceneEntities.Add(std::move(entitynode), id);
+	m_sceneEntities.add(std::move(entitynode), id);
 	//if (_prefab != EntityConstants::C_ENTITYID_INVALID)  { Get the resource, looks like a scene file. }
 
 	return entity;
@@ -36,13 +36,13 @@ bool Scene::Destroy(EntityView _entity, bool _recursive) {
 
 bool Scene::Destroy(EntityID _id, bool _recursive) {
 	// dfs removal
-	auto entitynode = m_sceneEntities.At(_id);
+	auto entitynode = m_sceneEntities.at(_id);
 	if (!entitynode) return false;
 	for (EntityID child : entitynode->m_children) {
 		Destroy(child, true);
 	}
 	m_registry->Destroy(_id);
-	return m_sceneEntities.Remove(_id);
+	return m_sceneEntities.remove(_id);
 }
 
 void Scene::Parent(EntityID _child, EntityID _parent) {
@@ -65,12 +65,12 @@ void Scene::Parent(EntityID _child, EntityID _parent) {
 	}
 
 	// find child and to be parent.
-	auto child = m_sceneEntities.At(_child);
+	auto child = m_sceneEntities.at(_child);
 	if (!child) {
 		LOG_WARN("Cannot find entity: [" << _child << "]");
 		return;
 	}
-	auto newParent = m_sceneEntities.At(_parent);
+	auto newParent = m_sceneEntities.at(_parent);
 	if (_parent != EntityConstants::C_ENTITYID_INVALID && !newParent) {
 		LOG_WARN("Cannot find entity: [" << _parent << "]");
 		return;
@@ -78,7 +78,7 @@ void Scene::Parent(EntityID _child, EntityID _parent) {
 
 
 	// deparent old. remove child from old
-	auto oldParent = m_sceneEntities.At(child->m_parentId);
+	auto oldParent = m_sceneEntities.at(child->m_parentId);
 	if (oldParent) {
 		oldParent->m_children.erase(_child);
 	}
@@ -97,7 +97,7 @@ bool Scene::DescendantOf(EntityID _toCheck, EntityID _parent) const {
 		return true;
 	}
 
-	auto parentView = m_sceneEntities.At(_parent);
+	auto parentView = m_sceneEntities.at(_parent);
 	// extra conditional
 	if (!parentView) return false;
 

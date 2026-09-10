@@ -35,10 +35,10 @@ public:
 	template <std::derived_from<BaseResource> ResType, std::derived_from<SpecializedResourceManager> ManagerType>
 	void RegisterManager() {
 		RESTYPE_ID typeId = ResType::GetResourceTypeID();
-		if (!m_managerList.At(typeId)) {
+		if (!m_managerList.at(typeId)) {
 			auto manager = std::make_shared<ManagerType>(m_resourceManager, m_gpuResourceManager);
 			manager->Init();
-			m_managerList.Add(std::move(manager), ResType::GetResourceTypeID());
+			m_managerList.add(std::move(manager), ResType::GetResourceTypeID());
 		}
 		else {
 			LOG_WARN("ignoring attempt to overwrite existing manager for resource. " 

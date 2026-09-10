@@ -37,7 +37,7 @@ std::vector<ComponentHandle> EntityRegistry::GetEntityComponents(const EntityID&
 
 	for (const CompID& compId : entity->GetAttachedComponents()) {
 		// access.
-		SparseSetView<const CompTypeID> compType{ m_componentIDLookup.At(compId) };
+		SparseSetView<const CompTypeID> compType{ m_componentIDLookup.at(compId) };
 		if (!compType) continue;
 		const ComponentPackedData& compData = m_componentData.at(*compType);
 		Component* ptr = compData.m_componentPool->GetComponent(_entityId);
@@ -54,24 +54,24 @@ std::vector<ComponentHandle> EntityRegistry::GetEntityComponents(const EntityID&
 EntityView EntityRegistry::Instantiate() {
 	Entity newEntt{ this };
 	EntityID refID = newEntt.GetID();
-	m_entityList.Add(std::move(newEntt), refID);
+	m_entityList.add(std::move(newEntt), refID);
 
 	// note to add a transform component.
-	auto toRet = m_entityList.At(refID);
+	auto toRet = m_entityList.at(refID);
 	toRet->AddComponent<Transform>(); // it will ALWAYS add a transform component.
 
-	return m_entityList.At(refID);
+	return m_entityList.at(refID);
 }
 
 EntityView EntityRegistry::Instantiate(EntityID _existingID) {
 	Entity newEntt	{ this, _existingID };
-	m_entityList.Add(std::move(newEntt), _existingID);
+	m_entityList.add(std::move(newEntt), _existingID);
 
 	// note to add a transform component.
-	auto toRet = m_entityList.At(_existingID);
+	auto toRet = m_entityList.at(_existingID);
 	toRet->AddComponent<Transform>(); // it will ALWAYS add a transform component.
 
-	return m_entityList.At(_existingID);
+	return m_entityList.at(_existingID);
 }
 
 void EntityRegistry::Destroy(Entity _remove) {
@@ -80,12 +80,12 @@ void EntityRegistry::Destroy(Entity _remove) {
 
 
 	for (unsigned _id : _remove.GetAttachedComponents()) {
-		SparseSetView compTypeIDView = m_componentIDLookup.At(_id);
+		SparseSetView compTypeIDView = m_componentIDLookup.at(_id);
 		if (!compTypeIDView) continue;
 		const EntityRegistry::CompTypeID& compTypeID = *compTypeIDView;
 		m_componentData.at(compTypeID).m_componentPool->Remove(_remove.GetID());
 	}
-	m_entityList.Remove(_remove.GetID());
+	m_entityList.remove(_remove.GetID());
 }
 
 void EntityRegistry::Destroy(EntityID _id) {

@@ -3,7 +3,7 @@
 
 
 template <typename IDType, typename T>
-bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
+bool SparseSet<IDType, T>::add(T&& _newItem, IDType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_valueToIdx.contains(_id)) {
@@ -20,7 +20,7 @@ bool SparseSet<IDType, T>::Add(T&& _newItem, IDType _id) {
 }
 
 template <typename IDType, typename T>
-bool SparseSet<IDType, T>::Add(const T& _newItem, IDType _id) {
+bool SparseSet<IDType, T>::add(const T& _newItem, IDType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_valueToIdx.contains(_id)) {
@@ -36,7 +36,7 @@ bool SparseSet<IDType, T>::Add(const T& _newItem, IDType _id) {
 
 
 template <typename IDType, typename T>
-bool SparseSet<IDType, T>::Remove(IDType _id){
+bool SparseSet<IDType, T>::remove(IDType _id){
 	
 	// find if this key exists
 	if (!m_valueToIdx.contains(_id)) return false;
@@ -74,7 +74,7 @@ SparseSetView<T> SparseSet<IDType, T>::operator[](IDType _entityID) {
 }
 
 template <typename IDType, typename T>
-inline SparseSetView<T> SparseSet<IDType, T>::At(IDType _entityID) {
+inline SparseSetView<T> SparseSet<IDType, T>::at(IDType _entityID) {
 	if (m_valueToIdx.contains(_entityID)) {
 		return SparseSetView<T>(
 			std::ref(
@@ -85,7 +85,7 @@ inline SparseSetView<T> SparseSet<IDType, T>::At(IDType _entityID) {
 }
 
 template <typename IDType, typename T>
-inline SparseSetView<const T> SparseSet<IDType, T>::At(IDType _entityID) const {
+inline SparseSetView<const T> SparseSet<IDType, T>::at(IDType _entityID) const {
 	if (m_valueToIdx.contains(_entityID)) {
 		return SparseSetView<const T>(
 			std::ref(

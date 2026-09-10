@@ -36,25 +36,25 @@ public:
 
 public:
 	SparseSetView<T> GetResource(TrackedID _id) {
-		return m_storage.At(_id);
+		return m_storage.at(_id);
 	}
 	SparseSetView<const T> GetResource(TrackedID _id) const {
-		return m_storage.At(_id);
+		return m_storage.at(_id);
 	}
 
 	TrackedID AddResource(T&& _data) {
 		TrackedID id = AllocateID();
-		m_storage.Add(std::move(_data), id);
+		m_storage.add(std::move(_data), id);
 		return id;
 	}
 
 	bool RemoveResource(TrackedID _id) {
-		SparseSetView<T> view = m_storage.At(_id);
+		SparseSetView<T> view = m_storage.at(_id);
 		if (!view) return false;
 		if (m_releaseFunction) {
 			m_releaseFunction(*view);
 		}
-		bool result = m_storage.Remove(_id);
+		bool result = m_storage.remove(_id);
 		if (result) ReclaimID(_id);
 		return result;
 

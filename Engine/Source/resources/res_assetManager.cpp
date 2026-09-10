@@ -39,77 +39,77 @@ void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool 
 
 ShaderManager& AssetManager::GetShaderManager() { 
 	auto mgr = std::static_pointer_cast<ShaderManager>(
-		*m_managerList.At(Shader::GetResourceTypeID())
+		*m_managerList.at(Shader::GetResourceTypeID())
 	);
 	return *mgr;
 }
 const ShaderManager& AssetManager::GetShaderManager() const { 
 	auto mgr = std::static_pointer_cast<ShaderManager>(
-		*m_managerList.At(Shader::GetResourceTypeID())
+		*m_managerList.at(Shader::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 ShaderProgramManager& AssetManager::GetShaderProgramManager() {
 	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
-		*m_managerList.At(ShaderProgram::GetResourceTypeID())
+		*m_managerList.at(ShaderProgram::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 const ShaderProgramManager& AssetManager::GetShaderProgramManager() const {
 	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
-		*m_managerList.At(ShaderProgram::GetResourceTypeID())
+		*m_managerList.at(ShaderProgram::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 MaterialManager& AssetManager::GetMaterialManager() { 
 	auto mgr = std::static_pointer_cast<MaterialManager>(
-		*m_managerList.At(Material::GetResourceTypeID())
+		*m_managerList.at(Material::GetResourceTypeID())
 	);
 	return *mgr;
 }
 const MaterialManager& AssetManager::GetMaterialManager() const { 
 	auto mgr = std::static_pointer_cast<MaterialManager>(
-		*m_managerList.At(Material::GetResourceTypeID())
+		*m_managerList.at(Material::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 TextureManager& AssetManager::GetTextureManager() { 
 	auto mgr = std::static_pointer_cast<TextureManager>(
-		*m_managerList.At(TextureRes::GetResourceTypeID())
+		*m_managerList.at(TextureRes::GetResourceTypeID())
 	);
 	return *mgr; 
 }
 const TextureManager& AssetManager::GetTextureManager() const { 
 	auto mgr = std::static_pointer_cast<TextureManager>(
-		*m_managerList.At(TextureRes::GetResourceTypeID())
+		*m_managerList.at(TextureRes::GetResourceTypeID())
 	);
 	return *mgr; 
 }
 
 MeshManager& AssetManager::GetMeshManager() {
 	auto mgr = std::static_pointer_cast<MeshManager>(
-		*m_managerList.At(MeshRes::GetResourceTypeID())
+		*m_managerList.at(MeshRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 const MeshManager& AssetManager::GetMeshManager() const {
 	auto mgr = std::static_pointer_cast<MeshManager>(
-		*m_managerList.At(MeshRes::GetResourceTypeID())
+		*m_managerList.at(MeshRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 
 SparseSetView<SpecializedManager> AssetManager::GetManager(RESTYPE_ID _type) {
-	return m_managerList.At(_type);
+	return m_managerList.at(_type);
 }
 SparseSetView<const SpecializedManager> AssetManager::GetManager(RESTYPE_ID _type) const {
-	return m_managerList.At(_type);
+	return m_managerList.at(_type);
 }
 
 void AssetManager::RegisterExtensionToType(std::string _extension, RESTYPE_ID _id) {

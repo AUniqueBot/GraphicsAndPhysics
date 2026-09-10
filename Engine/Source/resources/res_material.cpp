@@ -143,7 +143,7 @@ void Material::InitUniformLocations() {
 		m_uniformLocations.emplace(name, location);
 
 		MaterialValueData::ValueType vt = OpenGL_ShaderTypeToValueType(type);
-		m_materialValues.Add({ vt, GetDefaultValue(vt) }, name);
+		m_materialValues.add({ vt, GetDefaultValue(vt) }, name);
 
 	}
 }
@@ -211,7 +211,7 @@ void Material::ApplyUniforms() {
 
 	unsigned textureUnitId = 0;
 	for (const auto& [key, location] : m_uniformLocations) {
-		SparseSetView<MaterialValueData> valView = m_materialValues.At(key);
+		SparseSetView<MaterialValueData> valView = m_materialValues.at(key);
 		if (!valView) continue;
 		MaterialValueData val { *valView };
 		switch (val.m_type) {

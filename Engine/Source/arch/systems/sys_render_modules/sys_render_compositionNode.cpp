@@ -66,19 +66,19 @@ CompositionNode::~CompositionNode() {
 void CompositionNode::AddInput(SlotType _inputSlot) {
 	SlotID id = GenerateSlotID(false);
 	_inputSlot.GenerateIDs(m_id, id, true);
-	m_inputs.Add(std::move(_inputSlot), id);
+	m_inputs.add(std::move(_inputSlot), id);
 }
 
 
 void CompositionNode::RemoveInput(SlotID _id) {
-	m_inputs.Remove(_id);
+	m_inputs.remove(_id);
 	m_inputSlotIdFreeList.push_back(_id);
 }
 
 void CompositionNode::AddOutput(SlotType _inputSlot) {
 	SlotID id = GenerateSlotID(false);
 	_inputSlot.GenerateIDs(m_id, id, false);
-	m_outputs.Add(std::move(_inputSlot), id);
+	m_outputs.add(std::move(_inputSlot), id);
 }
 
 void CompositionNode::Name(std::string _name) {
@@ -107,7 +107,7 @@ const SparseSet<SlotID, SlotType>& CompositionNode::GetOutputs() const {
 
 
 void CompositionNode::RemoveOutput(SlotID _id) {
-	m_outputs.Remove(_id);
+	m_outputs.remove(_id);
 	m_outputSlotIdFreeList.push_back(_id);
 }
 
@@ -160,10 +160,10 @@ void CompositionNode::SetID(NodeID _id) {
 	if (_id == m_id) return;
 	m_id = _id;
 	// regen ids;
-	for (auto& input : m_inputs.Data()) {
+	for (auto& input : m_inputs.data()) {
 		input.GenerateIDs(m_id, input.m_slotId, true);
 	}
-	for (auto& output : m_outputs.Data()) {
+	for (auto& output : m_outputs.data()) {
 		output.GenerateIDs(m_id, output.m_slotId, true);
 	}
 

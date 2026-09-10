@@ -10,13 +10,13 @@ void CompositorNodeFactory::Init() {
 
 
 void CompositorNodeFactory::RegisterNode(CompositionNodeMetadata _def) {
-	m_definitions.Add(std::move(_def), _def.m_nodeName);
+	m_definitions.add(std::move(_def), _def.m_nodeName);
 }
 void CompositorNodeFactory::DeregisterNode(std::string _name) {
-	m_definitions.Remove(_name);
+	m_definitions.remove(_name);
 }
 CompositionNode CompositorNodeFactory::CreateNode(std::string _name) {
-	CompositionNodeMetadata def	{ *m_definitions.At(_name) };
+	CompositionNodeMetadata def	{ *m_definitions.at(_name) };
 	CompositionNode node{};
 
 	node.Name(def.m_nodeName);
@@ -32,7 +32,7 @@ CompositionNode CompositorNodeFactory::CreateNode(std::string _name) {
 }
 
 bool CompositorNodeFactory::IsNodeRegistered(std::string _name) const {
-	return static_cast<bool>(m_definitions.At(_name));
+	return static_cast<bool>(m_definitions.at(_name));
 }
 
 SparseSet<std::string, CompositionNodeMetadata>& CompositorNodeFactory::GetNodeDefinitionsList() {
@@ -65,12 +65,12 @@ NodeID Compositor::AddNode(std::string _name) {
 	CompositionNode cn	{ m_nodeFactory.CreateNode(_name) };
 	NodeID id			{ GenerateNodeID() };
 	cn.SetID(id);
-	m_compositionNodes.Add(std::move(cn), id);
+	m_compositionNodes.add(std::move(cn), id);
 	return id;
 }
 
 void Compositor::RemoveNode(NodeID _toRemove) {
-	m_compositionNodes.Remove(_toRemove);
+	m_compositionNodes.remove(_toRemove);
 }
 
 
@@ -83,25 +83,25 @@ LinkID Compositor::AddLink(PinID _from, PinID _to) {
 	PackedPinInfo fromData	{ PackedPinInfo::DecomposePinID(_from) };
 	PackedPinInfo toData	{ PackedPinInfo::DecomposePinID(_to) };
 
-	m_compositionNodes.At(fromData.m_node)->AddLink(id, false);
-	m_compositionNodes.At(toData.m_node)->AddLink(id, true);
+	m_compositionNodes.at(fromData.m_node)->AddLink(id, false);
+	m_compositionNodes.at(toData.m_node)->AddLink(id, true);
 
 
 
-	m_compositionLinks.Add(std::move(link),id);
+	m_compositionLinks.add(std::move(link),id);
 	return id;
 }
 
 void Compositor::RemoveLink(LinkID _id) {
 	// remove references from the thing.
-	auto view{ m_compositionLinks.At(_id) };
+	auto view{ m_compositionLinks.at(_id) };
 	if (!view) return;
 
-	CompositionLink& link{ *m_compositionLinks.At(_id) };
+	CompositionLink& link{ *m_compositionLinks.at(_id) };
 	// remove dependencies from the from side.
-	m_compositionNodes.At(link.m_fromNode)->RemoveLink(_id, false);
-	m_compositionNodes.At(link.m_toNode)->RemoveLink(_id, true);
-	m_compositionLinks.Remove(_id);
+	m_compositionNodes.at(link.m_fromNode)->RemoveLink(_id, false);
+	m_compositionNodes.at(link.m_toNode)->RemoveLink(_id, true);
+	m_compositionLinks.remove(_id);
 }
 
 SparseSet<LinkID, CompositionLink> Compositor::GetLinkList() {
@@ -118,11 +118,11 @@ const SparseSet<LinkID, CompositionLink> Compositor::GetLinkList() const {
 
 
 SparseSetView<CompositionNode> Compositor::GetNode(NodeID _id) {
-	return m_compositionNodes.At(_id);
+	return m_compositionNodes.at(_id);
 }
 
 SparseSetView<const CompositionNode> Compositor::GetNode(NodeID _id) const {
-	return m_compositionNodes.At(_id);
+	return m_compositionNodes.at(_id);
 }
 
 

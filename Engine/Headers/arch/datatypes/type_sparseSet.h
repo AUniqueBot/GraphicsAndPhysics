@@ -26,20 +26,20 @@ public:
 	///! @param _newItem: the data paired to the id
 	///! @param _id: identifier
 	///! @return true if adding is successful. false for anything else.
-	bool Add(T&& _newItem, IDType _id);
-	bool Add(const T& _newItem, IDType _id);
+	bool add(T&& _newItem, IDType _id);
+	bool add(const T& _newItem, IDType _id);
 
 
 	///! @brief removes the data type associated with [_id]
 	///! @param _id: the id that you want the data to remove.
 	///! @return returns true if removal is successful. false for anything else.
-	bool Remove(IDType _id);
+	bool remove(IDType _id);
 
 	// getters for the container
 
-	std::vector<T>& Data()				{ return m_typeContainer; } ///<! try not to use this
+	std::vector<T>& data()				{ return m_typeContainer; } ///<! try not to use this
 	
-	const std::vector<T>& Data() const	{ return m_typeContainer; } ///<! use this instead.
+	const std::vector<T>& data() const	{ return m_typeContainer; } ///<! use this instead.
 
 
 public:
@@ -54,8 +54,8 @@ public:
 	/// @brief accesses the data type given the [_entityID]
 	///! @param _entityID: the id of the item associated with this.
 	///! @return a std::optional of the data type. returns nullopt if the item doesn't exist
-	SparseSetView<T> At(IDType _entityID);
-	SparseSetView<const T> At(IDType _entityID) const;
+	SparseSetView<T> at(IDType _entityID);
+	SparseSetView<const T> at(IDType _entityID) const;
 
 
 	// functions to enable for range loop functionality

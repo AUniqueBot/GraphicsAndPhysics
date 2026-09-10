@@ -66,7 +66,7 @@ void UBOManager::Init() {
 
 
 void UBOManager::CreateUBO(std::string _bufferName, int _bindIndex, size_t _size) {
-	if (m_uboDatabase.At(_bufferName)) { 
+	if (m_uboDatabase.at(_bufferName)) { 
 		LOG_WARN("Buffer <" << _bufferName << "> already created.");
 		return; 
 	}
@@ -74,17 +74,17 @@ void UBOManager::CreateUBO(std::string _bufferName, int _bindIndex, size_t _size
 	newUbo.BufferSize(_size);
 	newUbo.SetBindingIndex(_bindIndex);
 	newUbo.Init();
-	m_uboDatabase.Add(std::move(newUbo), _bufferName);
+	m_uboDatabase.add(std::move(newUbo), _bufferName);
 }
 
 UBO* UBOManager::GetUBO(std::string _bufferName) {
-	SparseSetView<UBO> data{ m_uboDatabase.At(_bufferName) };
+	SparseSetView<UBO> data{ m_uboDatabase.at(_bufferName) };
 	if (!data) return nullptr;
 	return &*data;
 }
 
 const UBO* UBOManager::GetUBO(std::string _bufferName) const {
-	SparseSetView<const UBO> data{ m_uboDatabase.At(_bufferName) };
+	SparseSetView<const UBO> data{ m_uboDatabase.at(_bufferName) };
 	if (!data) return nullptr;
 	return &*data;
 }
@@ -93,11 +93,11 @@ const UBO* UBOManager::GetUBO(std::string _bufferName) const {
 
 
 void UBOManager::RemoveUBO(std::string _bufferName) {
-	m_uboDatabase.Remove(_bufferName);
+	m_uboDatabase.remove(_bufferName);
 }
 
 bool UBOManager::HasUBO(std::string _bufferName) const {
-	return static_cast<bool>(m_uboDatabase.At(_bufferName));
+	return static_cast<bool>(m_uboDatabase.at(_bufferName));
 }
 
 

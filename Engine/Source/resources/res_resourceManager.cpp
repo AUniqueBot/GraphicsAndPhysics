@@ -49,7 +49,7 @@ void ResourceManager::Init() {
 
 void ResourceManager::Cleanup() {
 	
-	for (std::shared_ptr<BaseResource>& res : m_resourcePool.Data()) {
+	for (std::shared_ptr<BaseResource>& res : m_resourcePool.data()) {
 		res->Destroy();// final cleanup
 	}
 }
@@ -113,7 +113,7 @@ ResourceIdentifier ResourceManager::AddResourceInternal(
 	}
 	ResourceIdentifier idr = GenerateResourceIdentifier(_resource);
 	LOG_INFO("Registering Resource: [" << _resource->Name() << ", res-id: " << resId << "]");
-	m_resourcePool.Add(std::move(_resource), resId);
+	m_resourcePool.add(std::move(_resource), resId);
 	m_resourceTypeManifest[_type].push_back(resId);
 	return idr;
 }
@@ -131,7 +131,7 @@ ResourceIdentifier ResourceManager::GenerateResourceIdentifier(
 }
 
 ResourceIdentifier ResourceManager::GetResourceIdentifier(RES_ID _id) const {
-	SparseSetView<const std::shared_ptr<BaseResource>> resView = m_resourcePool.At(_id);
+	SparseSetView<const std::shared_ptr<BaseResource>> resView = m_resourcePool.at(_id);
 	if (!resView) {
 		return ResourceIdentifier();
 	}
@@ -161,7 +161,7 @@ bool ResourceManager::RegisterResourceKey(RES_ID _resId, std::string _name) {
 
 void ResourceManager::RemoveResource(RES_ID _id) {
 	// get the resource
-	const std::shared_ptr<BaseResource>& res = *m_resourcePool.At(_id);
+	const std::shared_ptr<BaseResource>& res = *m_resourcePool.at(_id);
 	const std::string name = res->m_pathToAsset.filename().string();
 	
 	// caches to clear
@@ -170,7 +170,7 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 
 
 	// erasing from primary containers
-	m_resourcePool.Remove(_id);
+	m_resourcePool.remove(_id);
 
 	// erasing from secondary containers
 	auto& resIdVector{ m_resourceTypeManifest[typeId] };
@@ -188,12 +188,12 @@ void ResourceManager::RemoveResource(RES_ID _id) {
 
 
 std::shared_ptr<BaseResource> ResourceManager::GetResource(RES_ID _id) {
-	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.At(_id);
+	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.at(_id);
 	if (!itr) return nullptr;
 	return *itr;
 }
 std::shared_ptr<BaseResource> ResourceManager::GetResource(std::string _resName) {
-	for (std::shared_ptr<BaseResource>& res : m_resourcePool.Data()) {
+	for (std::shared_ptr<BaseResource>& res : m_resourcePool.data()) {
 		if (res->m_name == _resName) return res;
 	}
 	return nullptr;
@@ -204,17 +204,17 @@ std::shared_ptr<BaseResource> ResourceManager::GetResource(ResourceIdentifier _i
 }
 
 ResourceIdentifier ResourceManager::GetResourceIdentifier(RES_ID _id) {
-	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.At(_id);
+	SparseSetView<std::shared_ptr<BaseResource>> itr = m_resourcePool.at(_id);
 	if (!itr) return ResourceIdentifier();
 	return GenerateResourceIdentifier(*itr);
 }
 
 std::vector<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() {
-	return m_resourcePool.Data();
+	return m_resourcePool.data();
 }
 
 const std::vector<std::shared_ptr<BaseResource>>& ResourceManager::GetResourcePool() const {
-	return m_resourcePool.Data();
+	return m_resourcePool.data();
 }
 
 
@@ -276,7 +276,7 @@ RES_ID ResourceManager::GenerateID() {
 	RES_ID id;
 	do {
 		id = m_idGenerator();
-	} while (m_resourcePool.At(id) && id == ResourceConstants::C_RES_INVALID_ID);
+	} while (m_resourcePool.at(id) && id == ResourceConstants::C_RES_INVALID_ID);
 	return id;
 }
 

@@ -67,21 +67,21 @@ public:
 	bool Add(EntityID _addTo) override;
 	bool Remove(EntityID _removeFrom) override;
 
-	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.At(_id)); }
+	bool ComponentExistsForEntity(const EntityID& _id) { return static_cast<bool>(m_compPool.at(_id)); }
 	void Clear() { m_compPool.clear(); }
 
 	ComponentView<T> Get(EntityID _client);
 	ComponentView<const T> Get(EntityID _client) const;
 	
 	Component* GetComponent(EntityID _from) override {
-		ComponentView<T> view{ m_compPool.At(_from) };
+		ComponentView<T> view{ m_compPool.at(_from) };
 		if (!view) {
 			return nullptr;
 		}
 		return &*view;
 	}
 	const Component* GetComponent(EntityID _from) const override {
-		ComponentView<const T> view{ m_compPool.At(_from) };
+		ComponentView<const T> view{ m_compPool.at(_from) };
 		if (!view) {
 			return nullptr;
 		}
@@ -194,8 +194,8 @@ public:
 		);
 			
 		// setup to lookup and metadata.
-		m_componentIDLookup.Add(typeid(T), id);
-		m_componentNameIDMap.Add(std::move(CompID(id)), componentName);
+		m_componentIDLookup.add(typeid(T), id);
+		m_componentNameIDMap.add(std::move(CompID(id)), componentName);
 		m_componentData.insert({ componentId, ComponentPackedData{ cmdata, pool } });
 
 		
@@ -223,12 +223,12 @@ public:
 
 
 
-	std::vector<Entity>& GetEntityList()					{ return m_entityList.Data(); }
-	const std::vector<Entity>& GetEntityList() const		{ return m_entityList.Data(); }
+	std::vector<Entity>& GetEntityList()					{ return m_entityList.data(); }
+	const std::vector<Entity>& GetEntityList() const		{ return m_entityList.data(); }
 	
 
-	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.At(_id); };
-	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.At(_id); };
+	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.at(_id); };
+	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.at(_id); };
 	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id) const;
 	
 	// component handling.
@@ -289,7 +289,7 @@ public:
 	inline ComponentPackedData& GetComponentData(CompTypeID _id) { return m_componentData.at(_id); }
 	inline const ComponentPackedData& GetComponentData(CompTypeID _id) const { return m_componentData.at(_id); }
 
-	SparseSetView<CompTypeID> GetCompTypeID(std::string _name) { return m_componentIDLookup.At(*m_componentNameIDMap.At(_name)); }
+	SparseSetView<CompTypeID> GetCompTypeID(std::string _name) { return m_componentIDLookup.at(*m_componentNameIDMap.at(_name)); }
 
 private:
 

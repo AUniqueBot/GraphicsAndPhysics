@@ -22,7 +22,7 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 		// - hook up buffers ---
 		GLuint bufferId = AliasToBinding(attrName);
 		AttachBuffer(bufferId, buffer, attr->DatatypeSize());
-		m_vertexBuffers.Add(std::move(buffer), bufferId);
+		m_vertexBuffers.add(std::move(buffer), bufferId);
 		EnableAttribute(AliasToAttribute(attrName));
 	}
 	// - set up ebo --------------------

@@ -119,7 +119,7 @@ const SparseSet<EntityID, T>& ComponentPool<T>::Data() const {
 template<std::derived_from<Component> T>
 bool ComponentPool<T>::Add(EntityID _addTo) {
 	if (_addTo == EntityConstants::C_ENTITYID_INVALID) return false;
-	bool result = m_compPool.Add(T{}, _addTo);
+	bool result = m_compPool.add(T{}, _addTo);
 	//std::cout << "[[ ================================================================== ]]" << std::endl;
 	//std::cout << "Adding Component: " << typeid(T).name() << std::endl;
 	//std::cout << "Client: " << _addTo << std::endl;
@@ -129,7 +129,7 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 	//std::cout << "[[ ================================================================== ]]" << std::endl;
 	
 	if (result) {
-		ComponentView<T> component = m_compPool.At(_addTo);
+		ComponentView<T> component = m_compPool[_addTo];
 		component->SetEntityID(_addTo);
 	}
 	
@@ -139,19 +139,19 @@ bool ComponentPool<T>::Add(EntityID _addTo) {
 template<std::derived_from<Component> T>
 bool ComponentPool<T>::Remove(EntityID _removeFrom) {
 	if (_removeFrom == EntityConstants::C_ENTITYID_INVALID) return false;
-	return m_compPool.Remove(_removeFrom);
+	return m_compPool.remove(_removeFrom);
 }
 
 template<std::derived_from<Component> T>
 inline ComponentView<T> ComponentPool<T>::Get(EntityID _client) {
 	
-	return m_compPool.At(_client);
+	return m_compPool[_client];
 }
 
 
 template<std::derived_from<Component> T>
 inline ComponentView<const T> ComponentPool<T>::Get(EntityID _client) const {
-	return m_compPool.At(_client);
+	return m_compPool.at(_client);
 }
 
 

@@ -200,21 +200,21 @@ void PhongMaterial::SetupTextures() {
     MaterialValueData matValue;
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetColorTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_ALBEDO);
+    m_materialValues.add((MaterialValueData{ matValue }), ShaderUniformConstants::U_ALBEDO);
 
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetSpecularTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_SPECULAR);
+    m_materialValues.add((MaterialValueData{ matValue }), ShaderUniformConstants::U_SPECULAR);
 
     matValue.m_type = MaterialValueData::ValueType::Texture;
     matValue.SetValue(GetGlossTextureID());
-    m_materialValues.Add((MaterialValueData{ matValue }), ShaderUniformConstants::U_GLOSS);
+    m_materialValues.add((MaterialValueData{ matValue }), ShaderUniformConstants::U_GLOSS);
 
 
     MaterialValueData expVal;
     expVal.m_type = MaterialValueData::ValueType::Int;
     expVal.SetValue(m_exponentVal);
-    m_materialValues.Add((MaterialValueData{}), ShaderUniformConstants::U_EXPONENT);
+    m_materialValues.add((MaterialValueData{}), ShaderUniformConstants::U_EXPONENT);
 }
  
 

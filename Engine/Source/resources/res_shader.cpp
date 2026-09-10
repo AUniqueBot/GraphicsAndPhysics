@@ -162,12 +162,12 @@ void ShaderProgram::SetShader(const Shader& _shader, const ShaderConstants::Shad
 }
 
 void ShaderProgram::SetShader(const GLuint& _shaderId, const ShaderConstants::ShaderType& _type) {
-	SparseSetView<GLuint> shaderId{ m_shaderIds.At(_type) };
+	SparseSetView<GLuint> shaderId{ m_shaderIds.at(_type) };
 	if (shaderId) {
 		*shaderId = _shaderId;
 	}
 	else {
-		m_shaderIds.Add(GLuint{ _shaderId }, _type);
+		m_shaderIds.add(GLuint{ _shaderId }, _type);
 	}
 }
 
@@ -181,12 +181,12 @@ bool ShaderProgram::IsValid() const {
 }
 
 bool ShaderProgram::IsValidComputeShader() const {
-	return (bool)m_shaderIds.At(ShaderConstants::ShaderType::COMPUTE);	
+	return (bool)m_shaderIds.at(ShaderConstants::ShaderType::COMPUTE);	
 }
 
 bool ShaderProgram::IsValidRenderShader() const {
-	bool hasFragShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::FRAG);
-	bool hasVertexShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::VERTEX);
+	bool hasFragShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::FRAG);
+	bool hasVertexShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::VERTEX);
 	if (!hasVertexShader || !hasFragShader) {
 		std::string missingShaders{};
 		if (!hasVertexShader) missingShaders += "VERTEX";
@@ -245,8 +245,8 @@ void ShaderProgram::Destroy(){
 }
 
 std::vector<GLuint> ShaderProgram::GetShaderIDList() const {
-	bool hasFragShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::FRAG);
-	bool hasVertexShader = (bool)m_shaderIds.At(ShaderConstants::ShaderType::VERTEX);
+	bool hasFragShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::FRAG);
+	bool hasVertexShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::VERTEX);
 	if (!hasVertexShader || !hasFragShader) {
 		std::string missingShaders{};
 		if (!hasVertexShader) missingShaders += "VERTEX";
@@ -256,7 +256,7 @@ std::vector<GLuint> ShaderProgram::GetShaderIDList() const {
 	}
 
 
-	return m_shaderIds.Data();
+	return m_shaderIds.data();
 }
 
 
