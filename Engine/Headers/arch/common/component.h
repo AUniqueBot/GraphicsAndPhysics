@@ -26,7 +26,7 @@ public:
 
 
 	inline virtual std::vector<PropertyMD::Property>& GetProperties() {
-		static std::vector<PropertyMD::Property> props;
+		static std::vector<PropertyMD::Property> props{};
 		return props;
 	};
 

@@ -5,17 +5,24 @@
 
 
 namespace {
-    using SetterFunction = std::function<void(void*, const void*)>;
     using Options = std::vector<PropertyMD::Option>;
+    using GetterFunction = std::function<void (void*, void*)>;
+    using SetterFunction = std::function<void(void*, const void*)>;
     struct PropertyProps {
         SetterFunction setter;
+        GetterFunction getter;
         int componentCount;
         const Options& options;
         PropertyMD::PropertyType propType;
     };
+}
 
-
-    void SetEnum(SetterFunction _setter, const Options& _options, Inspectable* _object, const rapidjson::Value& _value) {
+// deserialization
+namespace {
+    void SetEnum(
+        SetterFunction _setter, const Options& _options, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         int val{};
         if (_value.IsInt()) {
             val = _value.GetInt();
@@ -32,7 +39,10 @@ namespace {
         _setter(_object, &val);
     }
 
-    void SetInt(SetterFunction _setter, int _componentCount, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetInt(
+        SetterFunction _setter, int _componentCount, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         Inspectable* object = _object;
         switch (_componentCount) {
         case 1: {
@@ -61,7 +71,10 @@ namespace {
         }
     }
 
-    void SetFloat(SetterFunction _setter, int _componentCount, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetFloat(
+        SetterFunction _setter, int _componentCount, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         Inspectable* object = _object;
         switch (_componentCount) {
 
@@ -91,7 +104,10 @@ namespace {
         }
     }
 
-    void SetDouble(SetterFunction _setter, int _componentCount, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetDouble(
+        SetterFunction _setter, int _componentCount, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         Inspectable* object = _object;
         switch (_componentCount) {
 
@@ -121,17 +137,26 @@ namespace {
         }
     }
 
-    void SetString(SetterFunction _setter, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetString(
+        SetterFunction _setter, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         std::string value = _value.GetString();
         _setter(&_object, &value);
     }
     
-    void SetBool(SetterFunction _setter, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetBool(
+        SetterFunction _setter, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         bool val{ _value.IsString() ? _value.GetString() == "true" : _value.GetBool() };
         _setter(_object, &val);
     }
 
-    void SetResource(SetterFunction _setter, Inspectable* _object, const rapidjson::Value& _value, AssetManager& _asMgr) {
+    void SetResource(
+        SetterFunction _setter, 
+        Inspectable* _object, const rapidjson::Value& _value, AssetManager& _asMgr
+    ) {
         // it cannot use a string.
         // always a value.
         ResourceManager& rsMgr = _asMgr.GetResourceManager();
@@ -148,9 +173,10 @@ namespace {
         _setter(_object, &handle);
     }
 
-    
-
-    void SetColor(SetterFunction _setter, int _componentCount, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetColor(
+        SetterFunction _setter, int _componentCount, 
+        Inspectable* _object, const rapidjson::Value& _value
+    ) {
         // color is set as vectors and not unsigned.
         Inspectable* object = _object;
         if (_componentCount == 3) {
@@ -168,7 +194,7 @@ namespace {
         }
     }
 
-    void SetValue(PropertyProps _props, AssetManager& _asMgr, Inspectable* _object, const rapidjson::Value& _value) {
+    void SetValue(PropertyProps _props, AssetManager& _asMgr, Inspectable* _object, const Serialization::JSONValue& _value) {
         SetterFunction setter = _props.setter;
         int compCount = _props.componentCount;
         const Options& options = _props.options;
@@ -220,11 +246,15 @@ namespace {
 
     }
 
-    void SetValue(const PropertyMD::Property& _prop, Inspectable* _object, const rapidjson::Value& _value, AssetManager& _asMgr) {
+    void SetValue(
+        const PropertyMD::Property& _prop, Inspectable* _object, 
+        const rapidjson::Value& _value, AssetManager& _asMgr
+    ) {
         using namespace PropertyMD;
 
         PropertyProps props{
             _prop.m_set,
+            _prop.m_get,
             _prop.m_componentCount,
             _prop.m_options,
             _prop.m_type
@@ -240,7 +270,7 @@ namespace {
         const rapidjson::Value& _val, 
         AssetManager& _asMgr
     ) {
-        std::function<void(void*, void*)> addFunction = _prop.m_list.m_addFunction;
+        std::function<void(void*, void*)> addFunction = _prop.m_list.m_add;
         if (!addFunction) {
             LOG_ERROR("Add function not set.");
             return;
@@ -265,8 +295,314 @@ namespace {
 
 }
 
+// serialization
+namespace {
 
-void Inspectable::Deserialize(const Serialization::JSONFile& _data, AssetManager& _asMgr) {
+    
+    Serialization::JSONValue CreateEnumValue(
+        GetterFunction _getter, const Options& _options, 
+        Inspectable* _inspectable, Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue val;
+        int enumVal{}; 
+        
+        _getter(_inspectable, &enumVal);
+
+        std::string label { "UNKNOWN VALUE" };
+        for (const auto& option : _options) {
+            if (option.value == enumVal) {
+                label = option.label;
+                break;
+            }
+        }
+        val.SetString(
+            label.c_str(),
+            _allocator
+        );
+        return val;
+    }
+
+    Serialization::JSONValue CreateIntValue(
+        GetterFunction _getter, int _componentCount, 
+        Inspectable* _inspectable, Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue jsonVal;
+        switch (_componentCount) {
+        case 1: {
+            int val{}; 
+            _getter(_inspectable, &val);
+            jsonVal.SetInt(val);
+            break;
+        }
+        case 2: {
+            glm::ivec2 val{}; 
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.y), _allocator);
+            break;
+        }
+        case 3: {
+            glm::ivec3 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.y), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.z), _allocator);
+            break;
+        }
+        case 4: {
+            glm::ivec4 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.r), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.g), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.b), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetInt(val.a), _allocator);
+            break;
+        }
+        }
+        return jsonVal;
+    }
+
+    Serialization::JSONValue CreateFloatValue(
+        GetterFunction _getter, int _componentCount, 
+        Inspectable* _inspectable, Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue jsonVal;
+        switch (_componentCount) {
+        case 1: {
+            float val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetFloat(val);
+            break;
+        }
+        case 2: {
+            glm::fvec2 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.y), _allocator);
+            break;
+        }
+        case 3: {
+            glm::fvec3 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.y), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.z), _allocator);
+            break;
+        }
+        case 4: {
+            glm::fvec4 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.r), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.g), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.b), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetFloat(val.a), _allocator);
+            break;
+        }
+        }
+        return jsonVal;
+    }
+    Serialization::JSONValue CreateDoubleValue(
+        GetterFunction _getter, int _componentCount, 
+        Inspectable* _inspectable, Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue jsonVal;
+        switch (_componentCount) {
+        case 1: {
+            int val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetInt(val);
+            break;
+        }
+        case 2: {
+            glm::dvec2 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.y), _allocator);
+            break;
+        }
+        case 3: {
+            glm::dvec3 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.x), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.y), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.z), _allocator);
+            break;
+        }
+        case 4: {
+            glm::dvec4 val{};
+            _getter(_inspectable, &val);
+            jsonVal.SetArray();
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.r), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.g), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.b), _allocator);
+            jsonVal.PushBack(Serialization::JSONValue().SetDouble(val.a), _allocator);
+        }
+            break;
+        }
+        return jsonVal;
+    }
+    Serialization::JSONValue CreateColorValue(
+        GetterFunction _getter, int _componentCount, 
+        Inspectable* _inspectable, Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue val;
+        switch (_componentCount) {
+        case 1: {
+            unsigned col{};
+            _getter(_inspectable, &col);
+            val.SetUint(col);
+        }
+        case 3: {
+            glm::fvec3 col{};
+            _getter(_inspectable, &col);
+            val.SetArray();
+            val.PushBack(Serialization::JSONValue().SetFloat(col.x), _allocator);
+            val.PushBack(Serialization::JSONValue().SetFloat(col.y), _allocator);
+            val.PushBack(Serialization::JSONValue().SetFloat(col.z), _allocator);
+        }
+        case 4: {
+            glm::fvec4 col{};
+            _getter(_inspectable, &col);
+            val.SetArray();
+            val.PushBack(Serialization::JSONValue().SetFloat(col.r), _allocator);
+            val.PushBack(Serialization::JSONValue().SetFloat(col.g), _allocator);
+            val.PushBack(Serialization::JSONValue().SetFloat(col.b), _allocator);
+            val.PushBack(Serialization::JSONValue().SetFloat(col.a), _allocator);
+        }
+        }
+        return val;
+
+    }
+    Serialization::JSONValue CreateStringValue(
+        GetterFunction _getter, Inspectable* _inspectable, 
+        Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue val;
+        std::string str{}; 
+        _getter(_inspectable, &str);
+        val.SetString(str.c_str(), _allocator);
+        return val;
+    }
+
+    Serialization::JSONValue CreateBoolValue(
+        GetterFunction _getter, Inspectable* _inspectable, 
+        Serialization::JSONAllocator& _allocator
+    ) {
+        Serialization::JSONValue val;
+        bool b{};
+        _getter(_inspectable, &b);
+        val.SetBool(b);
+        return val;
+
+    }
+
+    Serialization::JSONValue CreateResourceValue(
+        GetterFunction _getter, Inspectable* _inspectable, 
+        Serialization::JSONAllocator& _allocator, ResourceManager& _rsm
+    ) {
+        Serialization::JSONValue val;
+        ResourceHandle handle{ std::nullopt };
+        _getter(_inspectable, &handle);
+        
+        std::string alias = _rsm.GetAliasFromResourceID(handle.GetResourceID());
+        if (!alias.empty()) {
+            val.SetString(alias.c_str(), _allocator);
+        }
+        else {
+            val.SetUint64(handle.GetResourceID());
+        }
+        return val;
+
+    }
+
+    Serialization::JSONValue CreateValue(
+        PropertyProps _props,
+        Inspectable* _object,
+        Serialization::JSONAllocator& _allocator,
+        AssetManager& _asMgr
+    ) {
+        using namespace PropertyMD;
+        Serialization::JSONValue val;
+        auto type = _props.propType;
+        auto getter = _props.getter;
+        int compCount = _props.componentCount;
+
+        if (!_props.options.empty()) {
+            val = CreateEnumValue(getter, _props.options, _object, _allocator);
+        }
+        else {
+            switch (type) {
+        
+            
+            case PropertyType::Color: {
+                val = CreateColorValue(getter, compCount, _object, _allocator);
+                break;
+            }
+            case PropertyType::Int: {
+                val = CreateIntValue(getter, compCount, _object, _allocator);
+                break;
+            }
+            case PropertyType::Float: {
+                val = CreateFloatValue(getter, compCount, _object, _allocator);
+                break;
+            }
+            case PropertyType::Double: {
+                val = CreateDoubleValue(getter, compCount, _object, _allocator);
+                break;
+            }
+            case PropertyType::Boolean: {
+                val = CreateBoolValue(getter, _object, _allocator);
+                break;
+            }
+            case PropertyType::String: {
+                val = CreateStringValue(getter, _object, _allocator);
+                break;
+            }
+            case PropertyType::Object: {
+                // ??
+                break;
+            }
+            case PropertyType::ResourceHandle:
+                val = CreateResourceValue(getter, _object, _allocator, _asMgr.GetResourceManager());
+
+                break;
+            default:
+                break;
+            }
+        }
+        return val;
+    }
+
+    Serialization::JSONValue CreateValue(
+        const PropertyMD::Property& _prop, Inspectable* _object,
+        Serialization::JSONAllocator& _allocator, 
+        AssetManager& _asMgr
+    ) {
+        using namespace PropertyMD;
+        PropertyProps props{
+            _prop.m_set,
+            _prop.m_get,
+            _prop.m_componentCount,
+            _prop.m_options,
+            _prop.m_type
+        };
+
+        return CreateValue(props, _object, _allocator, _asMgr);
+    
+    }
+}
+
+
+void Inspectable::Deserialize(const Serialization::JSONValue& _data, AssetManager& _asMgr) {
+    if (_data.IsNull()) return;
     using namespace PropertyMD;
     // the ability to override is to allow you to deserialize custom data.
     auto& props = GetProperties();
@@ -275,8 +611,11 @@ void Inspectable::Deserialize(const Serialization::JSONFile& _data, AssetManager
         std::string attrName = prop.m_name;
         if (_data.HasMember(attrName.c_str())) {
             // deserialize members here.
-            PropertyMD::PropertyType type = prop.m_type;
-            const rapidjson::Value& val = _data.GetMember(attrName.c_str());
+
+
+            const Serialization::JSONValue& val = _data[attrName.c_str()];
+            if (val.IsNull()) continue;
+            
             if (prop.m_list.m_valid) {
                 // for now we'll use the resource ids.
                 SetList(prop, this, val, _asMgr);
@@ -287,4 +626,20 @@ void Inspectable::Deserialize(const Serialization::JSONFile& _data, AssetManager
 
         }
     } 
+}
+
+Serialization::JSONValue Inspectable::Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr) {
+    Serialization::JSONValue inspectableVal(rapidjson::kObjectType);
+    std::vector<PropertyMD::Property>& props = GetProperties();
+    for (const PropertyMD::Property& prop : props) {
+        std::string label = prop.m_name;
+        Serialization::JSONValue propVal = CreateValue(prop, this, _allocator, _asMgr);
+        inspectableVal.AddMember(
+            Serialization::JSONValue().SetString(label.c_str(), _allocator), 
+            propVal,
+            _allocator
+        );
+    }
+
+    return inspectableVal;
 }

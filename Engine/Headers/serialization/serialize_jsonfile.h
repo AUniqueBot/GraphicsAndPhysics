@@ -6,6 +6,10 @@
 
 
 namespace Serialization {
+	using JSONDoc = rapidjson::Document;
+	using JSONValue = rapidjson::Value;
+	using JSONAllocator = rapidjson::Document::AllocatorType;
+
 	enum class JSONFileType {
 		Array,
 		Object,
@@ -27,6 +31,8 @@ namespace Serialization {
 
 	public:
 		bool Parse(const std::filesystem::path& _path);
+		void CopyFrom(const JSONValue& _val);
+
 	public:
 		// - object doc -----------------------------------
 		// object
@@ -61,11 +67,10 @@ namespace Serialization {
 
 	public:
 		// - generic handle functions ---------------------
-		rapidjson::Document& GetDocument();
-		const rapidjson::Document& GetDocument() const;
+		JSONDoc& GetDocument();
+		const JSONDoc& GetDocument() const;
 
-		rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> GetAllocator();
-
+		JSONAllocator& GetAllocator();
 	private:
 		rapidjson::Document m_document;
 	};

@@ -30,7 +30,9 @@ void Core::Init() {
 	
 
 	// using the default scene data.
-	m_sceneManager.SetCurrentScene(4051038013427589782);
+	// test scene 1 - 4051038013427589782
+	// test scene 2 - 5576267115073075432
+	m_sceneManager.SetCurrentScene(5576267115073075432);
 	m_sceneManager.LoadCurrentScene();
 	
 	// test out this stuff.	

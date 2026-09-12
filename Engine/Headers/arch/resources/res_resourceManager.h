@@ -72,10 +72,8 @@ public:
 		return m_resourceTypeMetadata.at(_typeId);
 	}
 
-	template <std::derived_from<BaseResource>>
-	void GetResourceTypeMetadata() const {
 
-	}
+	std::string GetAliasFromResourceID(const RES_ID& _id) const;
 
 
 	void SetAliasToResource(std::string _alias, RES_ID _resource);
@@ -121,7 +119,7 @@ private:
 	
 	std::vector<std::filesystem::path>							m_assetPaths;
 	std::unordered_map<std::string, RESTYPE_ID>					m_fileExtensions;
-	std::unordered_map<std::string, RES_ID>						m_resourceAliases;
+	SparseSet<std::string, RES_ID>								m_resourceAliases;
 	std::unordered_map<RESTYPE_ID, RES_ID>						m_nextIDTyped {};
 	std::mt19937_64 m_idGenerator								{ std::random_device{}() };
 	

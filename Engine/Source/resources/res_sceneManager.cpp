@@ -25,6 +25,8 @@ void SceneManager::Init() {
 void SceneManager::CreateScene() {
 	// makes a new scene and clears EVERYTHING.
 	auto scene = std::make_shared<Scene>();
+	scene->SetRegistry(&m_entityRegistry);
+	scene->SetAssetManager(&m_assetManager);
 	SceneHandle handle(m_resourceManager.AddInternalResource(scene));
 	AddResourceToPool(handle);
 	ClearScene();
@@ -64,15 +66,25 @@ SceneHandle SceneManager::LoadScene(const std::filesystem::path& _path, RES_ID _
 	return handle;
 }
 
+
+SceneHandle& SceneManager::GetCurrentScene() {
+	return m_currentScene;
+}
+const SceneHandle& SceneManager::GetCurrentScene() const {
+	return m_currentScene;
+}
+
+
 void SceneManager::SaveScene(const std::filesystem::path& _path) {
-	Serialization::JSONFile json(Serialization::JSONFileType::Object);
+	if (!_path.empty() && std::filesystem::exists(_path.parent_path())) {
+		m_currentScene->ResourcePath(_path);
+	}
 
-	rapidjson::Value envVal;
-	json.AddMember("environment", envVal);
+	m_currentScene->Save(); // saves to internal document
+	std::filesystem::path outputPath = m_currentScene->ResourcePath();
 
-	rapidjson::Value entities;
-	json.AddMember("entities", entities);
-
+	Serialization::SaveJSONFile(m_currentScene->GetJSONData(), outputPath);
+	
 }
 
 

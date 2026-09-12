@@ -30,6 +30,9 @@ public:
 	MeshHandle CreateIcosphereMesh(); 
 	PlaneHandle CreatePlaneMesh(PlaneCreationProps _props = PlaneCreationProps());
 	
+	CubeHandle GetDefaultCubeMesh();
+	SphereHandle GetDefaultSphereMesh();
+	PlaneHandle GetDefaultPlaneMesh();
 
 	void LoadResource(const Serialization::MetafileData& _data) override;
 

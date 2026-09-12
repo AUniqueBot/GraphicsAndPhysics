@@ -47,26 +47,38 @@ public:
 	void SetAssetManager(AssetManager* _registry);
 
 public:
-	void SetSceneJSON(const Serialization::JSONFile& _jsonData);
-	void Load();
+	void SetSceneJSONData(
+		const Serialization::JSONValue& _jsonData
+	);
 
 	
+public:
+	// - loading and saving -----------------------------
+	void Load();
 	static std::shared_ptr<Scene> LoadScene(
-		const Serialization::JSONFile& _jsonData, 
+		Serialization::JSONFile& _jsonData, 
 		EntityRegistry& _registry,
 		AssetManager& _assetManager
 		);
+
+	void Save();
+	Serialization::JSONValue Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr) override;
+	
+	Serialization::JSONFile& GetJSONData();
+	const Serialization::JSONFile& GetJSONData() const;
+
 private:
 
 	void ClearEntities();
-private:
 
-	// todo - 
+private:
 	EntityRegistry* m_registry;
 	AssetManager* m_assetManager;
-	SparseSet<EntityID, EntityNode> m_sceneEntities;
 private:
-	Serialization::JSONFile m_jsonFile;
+	Serialization::JSONFile m_jsonData	{ Serialization::JSONFileType::Object };
+	SparseSet<EntityID, EntityNode> m_sceneEntities;
+	bool m_isDirty{};
+
 };
 
 

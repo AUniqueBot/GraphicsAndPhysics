@@ -19,7 +19,8 @@
 
 
 #include <Utility/UI_LoadImage.h>
-#include <UI_Menu.h>
+#include <Windows/Window_FileDialog.h>
+
 
 
 void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& _core) {
@@ -64,13 +65,52 @@ void UI_Core::Init(unsigned _major, unsigned _minor, GLFWwindow* _window, Core& 
 
 	Core& c = *m_applicationCore;
 	SceneManager& scm = c.GetSceneManager();
+	AssetManager& asMgr = c.GetAssetManager();
 	fileMenu->AddMenuItem(
-		UI_MenuItem(std::string("Create Scene"), 
-		std::bind(&SceneManager::CreateScene, &scm)
+		UI_MenuItem(
+			"Create Scene", 
+			std::bind(&SceneManager::CreateScene, &scm)
 		)
 	);
+
+
 	fileMenu->AddMenuItem(UI_MenuItem("Load Scene"));
-	fileMenu->AddMenuItem(UI_MenuItem("Save Scene"));
+	auto saveFunction = [&scm, &asMgr]() {
+		using Path = std::filesystem::path;
+		SceneHandle scene = scm.GetCurrentScene();
+		if (scene->ResourcePath().empty()) {
+			std::filesystem::path path;
+			// open a dialogue.
+			if (path.empty()) {
+				std::string newFileName = "Scene.scene";
+				Path currentDir = std::filesystem::current_path();
+				path = Serialization::GetUniquePath(currentDir/newFileName);
+				
+				path = FileDialog::SaveFile(
+					"New Scene.scene", 
+					"Scene Files\0*.scene\0All Files\0*.*\0"
+				);
+				path = std::filesystem::absolute(path);
+			}
+			scene->ResourcePath(path);
+		}
+		Path path = scene->ResourcePath();
+		
+		scm.SaveScene(path);
+		Path metaPath = path;
+		metaPath += ".meta";
+		asMgr.SaveMetafileData(
+			scm.CreateMetafileData(metaPath, scm.GetCurrentScene().Get())
+		);
+
+	};
+
+	fileMenu->AddMenuItem(
+		UI_MenuItem(
+			"Save Scene",
+			saveFunction
+		)
+	);
 	AddMenuItem(fileMenu);
 
 

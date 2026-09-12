@@ -20,7 +20,8 @@ class EntityID;
 
 
 
-using DeserializeFunction = std::function<void(Entity&, const Serialization::JSONFile&, AssetManager&)>;
+using DeserializationFunction = std::function<void(Entity&, const Serialization::JSONValue&, AssetManager&)>;
+using SerializationFunction = std::function<Serialization::JSONValue (Entity&, Serialization::JSONAllocator&, AssetManager&)>;
 
 
 
@@ -99,37 +100,41 @@ public:
 struct ComponentMetadata {
 public:
 	using CompType = std::type_index;
-	using CompTypeID = unsigned;
+	using CompTypeID = uint32_t;
 public:
 	ComponentMetadata(
 		std::string _name,
 		CompType _compId,
 		CompTypeID _id,
 		std::function<void()> _registerFunction,
-		DeserializeFunction _deserializationFunction
+		DeserializationFunction _deserializationFunction,
+		SerializationFunction _serializationFunction
 	) :
-		m_componentName			{ _name },
-		m_componentType			{ _compId },
-		m_registerFunction		{ _registerFunction },
-		m_deserializeFunction	{ _deserializationFunction },
-		m_componentTypeID		{ _id }
+		m_componentName				{ _name },
+		m_componentType				{ _compId },
+		m_registerFunction			{ _registerFunction },
+		m_deserializationFunction	{ _deserializationFunction },
+		m_serializationFunction		{ _serializationFunction },
+		m_componentTypeID			{ _id }
 	{}
 
-	const std::string& GetComponentName() const						{ return m_componentName; }
-	const CompType& GetComponentType() const						{ return m_componentType; };
-	const CompTypeID& GetComponentTypeID() const					{ return m_componentTypeID; };
+	const std::string& GetComponentName() const				{ return m_componentName; }
+	const CompType& GetComponentType() const				{ return m_componentType; };
+	const CompTypeID& GetComponentTypeID() const			{ return m_componentTypeID; };
 
 
-	std::function<void()> GetComponentRegisterFunction()			{ return m_registerFunction; }
+	std::function<void()> GetComponentRegisterFunction()	{ return m_registerFunction; }
 
-	DeserializeFunction GetDeserializeFunction()					{ return m_deserializeFunction; };
+	DeserializationFunction GetDeserializeFunction()		{ return m_deserializationFunction; };
+	SerializationFunction GetSerializeFunction()			{ return m_serializationFunction; };
 private:
 	CompTypeID	m_componentTypeID;
 	CompType	m_componentType;
 	std::string m_componentName;
 	//std::shared_ptr<IComponentPool> m_componentPool;
 	std::function<void()> m_registerFunction;
-	DeserializeFunction m_deserializeFunction	{ nullptr };
+	DeserializationFunction m_deserializationFunction	{ nullptr };
+	SerializationFunction m_serializationFunction		{ nullptr };
 };
 
 
@@ -156,7 +161,7 @@ class EntityRegistry {
 	friend class EntityID;
 
 	using CompTypeID = std::type_index;
-	using CompID = unsigned;
+	using CompID = uint32_t;
 
 public:
 
@@ -177,20 +182,27 @@ public:
 		ComponentMetadata::CompTypeID id = ++s_componentIdxId;
 		std::shared_ptr<IComponentPool> pool = std::make_shared<ComponentPool<T>>();
 		std::function<void()> registerFunction = T::Register;
-		DeserializeFunction deserializeFunction = [](
-			Entity& _entity, const Serialization::JSONFile& _data,
+		DeserializationFunction deserializeFunction = [](
+			Entity& _entity, const rapidjson::Value& _data,
 			AssetManager& _asMgr
 			) {
 				_entity.AddComponent<T>();
 				_entity.GetComponent<T>()->Deserialize(_data, _asMgr);
 		};
-
+		SerializationFunction serializeFunction = [](
+			Entity& _entity,
+			Serialization::JSONAllocator& _allocator,
+			AssetManager& _asMgr
+			) -> Serialization::JSONValue {
+				return _entity.GetComponent<T>()->Serialize(_allocator, _asMgr);
+		};
 
 		ComponentMetadata cmdata = ComponentMetadata(
 			componentName,
 			componentId, id,
 			registerFunction,
-			deserializeFunction
+			deserializeFunction,
+			serializeFunction
 		);
 			
 		// setup to lookup and metadata.
@@ -229,6 +241,7 @@ public:
 
 	EntityView GetEntity(const EntityID& _id)				{ return m_entityList.at(_id); };
 	EntityViewConst GetEntity(const EntityID& _id)	const   { return m_entityList.at(_id); };
+	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id) ;
 	std::vector<ComponentHandle> GetEntityComponents(const EntityID& _id) const;
 	
 	// component handling.

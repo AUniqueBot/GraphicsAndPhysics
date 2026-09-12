@@ -68,17 +68,17 @@ void UIWidget_Outliner::Menu() {
     //
     if (ImGui::BeginMenu("Primitives")) {
         if (ImGui::MenuItem("Cube")) {
-            m_entityFactory->CreateCube();
+            m_entityFactory->CreateDefaultCube();
         }
         if (ImGui::MenuItem("Sphere")) {
-            m_entityFactory->CreateSphere();
+            m_entityFactory->CreateDefaultSphere();
         }
         if (ImGui::MenuItem("Plane")) {
-            m_entityFactory->CreatePlane();
+            m_entityFactory->CreateDefaultPlane();
         }
-        if (ImGui::MenuItem("Object")) {
-            m_entityFactory->CreatePlane();
-        }
+        //if (ImGui::MenuItem("Object")) {
+        //    m_entityFactory->CreateDefaultPlane();
+        //}
         ImGui::EndMenu();
     }
 

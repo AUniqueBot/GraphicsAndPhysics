@@ -281,6 +281,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_gamestatemanager.h" />
     <ClInclude Include="Headers\arch\core\core_inputRouter.h" />
+    <ClInclude Include="Headers\arch\datatypes\type_dynamicType.h" />
     <ClInclude Include="Headers\arch\datatypes\type_sparseSet_viewHandle.h" />
     <ClInclude Include="Headers\arch\common\system.h" />
     <ClInclude Include="Headers\arch\components\componentList.h" />
@@ -304,6 +305,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\ecs\ecs_fwdDecl_entityRegistry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registry.h" />
     <ClInclude Include="Headers\arch\ecs\ecs_registryDEF.hpp" />
+    <ClInclude Include="Headers\arch\ecs\ecs_typeRegistry.h" />
     <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />

@@ -437,7 +437,7 @@ bool UIWidget_AssetBrowser::DrawPopupContextMenu(const PopupContextMenuProps& _p
 				fs::path metapath = matpath;
 				metapath += ".meta";
 				asmgr.SaveMetafileData(
-					matmgr.CreateMetafileData(metapath, mat.GetBaseResource())
+					matmgr.CreateMetafileData(metapath, mat.Get())
 				);
 			}
 			reload = true;

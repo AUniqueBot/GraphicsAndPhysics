@@ -47,7 +47,7 @@ public:
 	const EntityRegistry* GetRegistry() const					{ return m_registry; }
 
 
-	const std::set<unsigned>&
+	const std::set<uint32_t>&
 		GetAttachedComponents() const							{ return m_componentsAttached; };
 
 protected:

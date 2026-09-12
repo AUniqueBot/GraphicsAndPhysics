@@ -52,6 +52,10 @@ namespace Serialization {
 		return IsObject() || IsArray();
 	}
 
+	void JSONFile::CopyFrom(const JSONValue& _val) {
+		m_document.CopyFrom(_val, m_document.GetAllocator());
+	}
+
 	bool JSONFile::HasMember(const char* _itemName) const {
 		return m_document.HasMember(_itemName);
 	}
@@ -131,10 +135,9 @@ namespace Serialization {
 		return m_document;
 	}
 
-	rapidjson::MemoryPoolAllocator<rapidjson::CrtAllocator> JSONFile::GetAllocator() {
+	Serialization::JSONAllocator& JSONFile::GetAllocator() {
 		return m_document.GetAllocator();
 	}
-
 
 
 

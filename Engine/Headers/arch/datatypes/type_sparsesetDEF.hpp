@@ -2,8 +2,8 @@
 #include <arch/datatypes/type_sparseset.h>
 
 
-template <typename IDType, typename T>
-bool SparseSet<IDType, T>::add(T&& _newItem, IDType _id) {
+template <typename KeyType, typename ValueType>
+bool SparseSet<KeyType, ValueType>::add(ValueType&& _newItem, KeyType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_valueToIdx.contains(_id)) {
@@ -19,8 +19,8 @@ bool SparseSet<IDType, T>::add(T&& _newItem, IDType _id) {
 	return true;
 }
 
-template <typename IDType, typename T>
-bool SparseSet<IDType, T>::add(const T& _newItem, IDType _id) {
+template <typename KeyType, typename ValueType>
+bool SparseSet<KeyType, ValueType>::add(const ValueType& _newItem, KeyType _id) {
 
 	// checks if there's a value for that entity existing already
 	if (m_valueToIdx.contains(_id)) {
@@ -35,8 +35,8 @@ bool SparseSet<IDType, T>::add(const T& _newItem, IDType _id) {
 }
 
 
-template <typename IDType, typename T>
-bool SparseSet<IDType, T>::remove(IDType _id){
+template <typename KeyType, typename ValueType>
+bool SparseSet<KeyType, ValueType>::remove(KeyType _id){
 	
 	// find if this key exists
 	if (!m_valueToIdx.contains(_id)) return false;
@@ -46,7 +46,7 @@ bool SparseSet<IDType, T>::remove(IDType _id){
 	
 	// first get the index of the removed element and the back element.
 	int toRemoveIndex				= m_valueToIdx.at(_id);
-	IDType backIdx					= m_idxToValue.back();
+	KeyType backIdx					= m_idxToValue.back();
 
 	// swap the elements in the container and the idxToEntity
 
@@ -65,32 +65,32 @@ bool SparseSet<IDType, T>::remove(IDType _id){
 	return true;
 }
 
-template <typename IDType, typename T>
-SparseSetView<T> SparseSet<IDType, T>::operator[](IDType _entityID) {
+template <typename KeyType, typename ValueType>
+SparseSetView<ValueType> SparseSet<KeyType, ValueType>::operator[](KeyType _entityID) {
 	if (m_valueToIdx.contains(_entityID)) {
-		return SparseSetView<T>(m_typeContainer[m_valueToIdx[_entityID]]);
+		return SparseSetView<ValueType>(m_typeContainer[m_valueToIdx[_entityID]]);
 	}
-	return SparseSetView<T>(std::nullopt);
+	return SparseSetView<ValueType>(std::nullopt);
 }
 
-template <typename IDType, typename T>
-inline SparseSetView<T> SparseSet<IDType, T>::at(IDType _entityID) {
+template <typename KeyType, typename ValueType>
+inline SparseSetView<ValueType> SparseSet<KeyType, ValueType>::at(KeyType _entityID) {
 	if (m_valueToIdx.contains(_entityID)) {
-		return SparseSetView<T>(
+		return SparseSetView<ValueType>(
 			std::ref(
 				m_typeContainer.at(m_valueToIdx.at(_entityID))
 			));
 	}
-	return SparseSetView<T>(std::nullopt);
+	return SparseSetView<ValueType>(std::nullopt);
 }
 
-template <typename IDType, typename T>
-inline SparseSetView<const T> SparseSet<IDType, T>::at(IDType _entityID) const {
+template <typename KeyType, typename ValueType>
+inline SparseSetView<const ValueType> SparseSet<KeyType, ValueType>::at(KeyType _entityID) const {
 	if (m_valueToIdx.contains(_entityID)) {
-		return SparseSetView<const T>(
+		return SparseSetView<const ValueType>(
 			std::ref(
 				m_typeContainer.at(m_valueToIdx.at(_entityID))
 			));
 	}
-	return SparseSetView<const T>(std::nullopt);
+	return SparseSetView<const ValueType>(std::nullopt);
 }

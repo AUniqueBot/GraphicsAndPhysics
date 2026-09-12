@@ -140,10 +140,12 @@ void Scene::SetAssetManager(AssetManager* _registry) {
 
 
 
-void Scene::SetSceneJSON(const Serialization::JSONFile& _jsonData) {
-	rapidjson::Document& doc = m_jsonFile.GetDocument();
-	doc.CopyFrom(_jsonData.GetDocument(), doc.GetAllocator());
+void Scene::SetSceneJSONData(
+	const Serialization::JSONValue& _jsonData
+) {
+	m_jsonData.GetDocument().CopyFrom(_jsonData, m_jsonData.GetAllocator());
 }
+
 
 void Scene::Load() {
 	// structured data to form relations with.
@@ -153,7 +155,7 @@ void Scene::Load() {
 		EntityView entity				{ std::nullopt };
 	};
 
-	if (m_jsonFile.HasMember("environment")) {
+	if (m_jsonData.HasMember("environment")) {
 		// do environment loading here.
 		
 	}
@@ -162,16 +164,13 @@ void Scene::Load() {
 
 	std::unordered_map<EntityIDType, EntityRelations> mappings;
 	// -- pass 1 -----------------------
-	if (m_jsonFile.HasMember("entities")) {
-		const rapidjson::Value& entities = m_jsonFile.GetMember("entities");
+	if (m_jsonData.HasMember("entities")) {
+		const rapidjson::Value& entities = m_jsonData["entities"];
 		for (auto itr = entities.MemberBegin(); itr != entities.MemberEnd(); ++itr) {
 			EntityRelations relationData;
 
 			EntityIDType originalId{ std::stoul(itr->name.GetString()) };
 			relationData.originalId = originalId;
-
-			
-
 
 			// props.
 			const rapidjson::Value& entityprops = itr->value;
@@ -203,12 +202,10 @@ void Scene::Load() {
 
 					// get the deserialize function here.
 					ComponentPackedData& packedData = m_registry->GetComponentData(*comptypeid);
-					DeserializeFunction deserializeFunction = packedData.m_componentMetadata.GetDeserializeFunction();
+					DeserializationFunction deserializeFunction = packedData.m_componentMetadata.GetDeserializeFunction();
 					if (!deserializeFunction) continue;
-					Serialization::JSONFile jsonFile;
-					auto& doc = jsonFile.GetDocument();
-					doc.CopyFrom(comp->value, doc.GetAllocator());
-					deserializeFunction(*entity, jsonFile, *m_assetManager);
+					const Serialization::JSONValue& compValue = comp->value;
+					deserializeFunction(*entity, comp->value, *m_assetManager);
 					
 				}
 			}
@@ -230,17 +227,103 @@ void Scene::Load() {
 }
 
 std::shared_ptr<Scene> Scene::LoadScene(
-	const Serialization::JSONFile& _jsonData, 
+	Serialization::JSONFile& _jsonData, 
 	EntityRegistry& _registry, 
 	AssetManager& _asMgr
 ) {
 	auto newScene = std::make_shared<Scene>();
 	newScene->SetRegistry(&_registry);
 	newScene->SetAssetManager(&_asMgr);
-	newScene->SetSceneJSON(_jsonData);
+	newScene->SetSceneJSONData(_jsonData.GetDocument());
 	return newScene;
 }
 
+
+void Scene::Save() {
+	// error handling
+	if (!m_registry) {
+		return;
+	}
+
+	Serialization::JSONAllocator& allocator = m_jsonData.GetAllocator();
+	m_jsonData.GetDocument().SetObject();
+	
+	rapidjson::Value env(rapidjson::kObjectType);
+	m_jsonData.AddMember("environment", env);
+
+	rapidjson::Value entities;
+	entities.SetObject();
+
+	EntityRegistry& registry = *m_registry;
+	for (const EntityNode& node : m_sceneEntities) {
+		EntityID id = node.m_entityId;
+		if (!id.IsValid()) {
+			continue;
+		}
+
+		Entity& entity = *registry.GetEntity(id);
+		rapidjson::Value entityData;
+		entityData.SetObject();
+		// --- metadata -----------------------
+		entityData.AddMember(
+			"name",
+			rapidjson::Value().SetString(
+				entity.Name().c_str(),
+				allocator
+			),
+			allocator
+		);
+		entityData.AddMember("parent",
+			rapidjson::Value().SetUint(node.m_parentId.GetID()),
+			allocator
+		);
+
+		rapidjson::Value componentData(rapidjson::kObjectType);
+		std::vector<ComponentHandle> compList = registry.GetEntityComponents(id);
+		for (ComponentHandle& compHandle : compList) {
+			std::string componentName = compHandle.m_componentMetadata.GetComponentName();
+			auto serializer = compHandle.m_componentMetadata.GetSerializeFunction();
+			Serialization::JSONValue compJson = serializer(entity, allocator, *m_assetManager);
+			componentData.AddMember(
+				Serialization::JSONValue().SetString(componentName.c_str(), allocator),
+				compJson,
+				allocator
+			);
+		}
+		entityData.AddMember("components", componentData, allocator);
+
+		;
+
+		entities.AddMember(
+			
+			Serialization::JSONValue().SetString(
+				std::to_string(id.GetID()).c_str(), 
+				allocator
+			),
+
+			entityData,
+			allocator
+		);
+
+	}
+	m_jsonData.AddMember("entities", entities);
+
+
+}
+
+Serialization::JSONValue Scene::Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr) {
+	Serialization::JSONValue val;
+	val.CopyFrom(m_jsonData.GetDocument(), _allocator);
+	return val;
+}
+
+Serialization::JSONFile& Scene::GetJSONData() {
+	return m_jsonData;
+}
+
+const Serialization::JSONFile& Scene::GetJSONData() const {
+	return m_jsonData;
+}
 
 void Scene::ClearEntities() {
 	m_sceneEntities.clear();

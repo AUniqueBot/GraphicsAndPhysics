@@ -25,7 +25,7 @@ public:
 	}
 	
 	void Init() override;
-
+	
 public:
 	void CreateScene();
 	void DeleteScene();
@@ -34,10 +34,14 @@ public:
 	void SetCurrentScene(RES_ID _sceneId);
 	void SetCurrentScene(SceneHandle _scene);
 
+	SceneHandle& GetCurrentScene();
+	const SceneHandle& GetCurrentScene() const;
+
+
 	void ClearScene();
 
 	SceneHandle LoadScene(const std::filesystem::path& _path, RES_ID _existingId = ResourceConstants::C_RES_INVALID_ID);
-	void SaveScene(const std::filesystem::path& _path);
+	void SaveScene(const std::filesystem::path& _path = "");
 public:
 	void LoadResource(const Serialization::MetafileData& _data) override;
 private:

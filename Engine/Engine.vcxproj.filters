@@ -638,5 +638,11 @@
     <ClInclude Include="Headers\arch\common\context.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\datatypes\type_dynamicType.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\arch\ecs\ecs_typeRegistry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

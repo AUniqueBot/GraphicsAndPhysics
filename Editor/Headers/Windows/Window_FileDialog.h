@@ -2,10 +2,11 @@
 
 #include <pch.h>
 #include <optional>
+#include <serialization/serialize_helperfunctions.h>
 
 class FileDialog {
 public:
-    static std::optional<std::filesystem::path> SaveFile(
+    static std::filesystem::path SaveFile(
         const char* title,
         const char* filter
     );

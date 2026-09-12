@@ -68,6 +68,25 @@ PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
 	return handle;
 }
 
+CubeHandle MeshManager::GetDefaultCubeMesh() {
+	const char* alias = VertexAttributeConstants::C_DEFAULT_MESH_CUBE;
+	RES_ID defaultModel = m_resourceManager.GetResourceFromAlias(alias);
+	return CubeHandle(m_resourceManager.GetResourceIdentifier(defaultModel));
+	
+}
+
+SphereHandle MeshManager::GetDefaultSphereMesh() {
+	const char* alias = VertexAttributeConstants::C_DEFAULT_MESH_SPHERE;
+	RES_ID defaultModel = m_resourceManager.GetResourceFromAlias(alias);
+	return SphereHandle(m_resourceManager.GetResourceIdentifier(defaultModel));
+}
+
+PlaneHandle MeshManager::GetDefaultPlaneMesh() {
+	const char* alias = VertexAttributeConstants::C_DEFAULT_MESH_SPHERE;
+	RES_ID defaultModel = m_resourceManager.GetResourceFromAlias(alias);
+	return PlaneHandle(m_resourceManager.GetResourceIdentifier(defaultModel));
+}
+
 void MeshManager::LoadResource(const Serialization::MetafileData& _data) {
 	namespace fs = std::filesystem;
 	fs::path path = _data.path;

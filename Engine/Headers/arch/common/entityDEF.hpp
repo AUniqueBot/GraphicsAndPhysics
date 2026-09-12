@@ -25,7 +25,7 @@ void Entity::AddComponent() {
 
 		compPool->Get(m_id)->Init();
 	}
-
+	m_componentsAttached;
 }
 
 

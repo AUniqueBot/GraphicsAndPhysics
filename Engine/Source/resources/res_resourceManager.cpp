@@ -239,12 +239,18 @@ const std::vector<RES_ID>& ResourceManager::GetResourcePoolManifest(RESTYPE_ID _
 	return m_resourceTypeManifest.at(_typeId);
 }
 
+std::string ResourceManager::GetAliasFromResourceID(const RES_ID& _id) const {
+	auto alias = m_resourceAliases.getKeyFromValue(_id);
+	return alias.has_value() ? *alias : "";
+}
+
 void ResourceManager::SetAliasToResource(std::string _alias, RES_ID _resource) {
-	m_resourceAliases[_alias] = _resource;
+	m_resourceAliases.add(_resource, _alias);
 }
 
 RES_ID ResourceManager::GetResourceFromAlias(std::string _alias) {
-	return m_resourceAliases.contains(_alias) ? m_resourceAliases.at(_alias) : ResourceConstants::C_RES_INVALID_ID;
+	auto res = m_resourceAliases.at(_alias);
+	return res.operator bool() ? *res : ResourceConstants::C_RES_INVALID_ID;
 }
 
 void ResourceManager::RegisterFileExtension(std::string _extension, RESTYPE_ID _type) {

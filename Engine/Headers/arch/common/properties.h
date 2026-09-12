@@ -1,4 +1,5 @@
 #pragma once
+
 #include <string>
 #include <functional>
 #include <memory>
@@ -27,13 +28,11 @@ namespace PropertyMD {
 		Map
 	};
 
-
 	enum class DynamicListType {
 		Vector,
 		SparseSet,
 		None
 	};
-
 
 	struct Option {
 		const char* label;
@@ -66,8 +65,8 @@ namespace PropertyMD {
 
 			std::function<void* (void*)> m_getObject = nullptr;
 
-			std::function<void(void*, void*)> m_addFunction = nullptr;
-			std::function<void(void*, int)> m_removeFunction = nullptr;
+			std::function<void(void*, void*)> m_add = nullptr;
+			std::function<void(void*, int)> m_remove = nullptr;
 
 			bool m_valid = false;
 
@@ -78,10 +77,12 @@ namespace PropertyMD {
 
 		struct Map {
 			bool m_valid = false;
-			std::function<int(void*)> m_size = nullptr;
+			std::function<void* (void*)> m_dataAccessor = nullptr;
+			std::function<size_t(void*)> m_size = nullptr;
 			std::function<void* (void*, int)> m_getKey = nullptr;
 			std::function<void* (void*, int)> m_getValue = nullptr;
-
+			std::function<void* (void*, void*, void*)> m_insert = nullptr;
+			std::function<void* (void*, int)> m_remove = nullptr;
 		} m_map;
 
 
@@ -115,8 +116,7 @@ namespace PropertyMD {
 		Getter getter,
 		Setter setter,
 		bool draggable = false
-	)
-	{
+	) {
 		using ReturnT = std::invoke_result_t<Getter, const T*>;
 		using ValueT = std::remove_cv_t<std::remove_reference_t<ReturnT>>;
 
@@ -150,8 +150,7 @@ namespace PropertyMD {
 		const Enum& (T::* getter)() const,
 		void (T::* setter)(const Enum&),
 		std::vector<Option> options
-	)
-	{
+	) {
 		Property prop(
 			name,
 			PropertyType::Int,
@@ -243,22 +242,12 @@ namespace PropertyMD {
 			return ReflectElement<Element>::Get(list[index]);
 			};
 
-		//ls.m_add = [listAccessor](void* obj) {
-		//	T* t = static_cast<T*>(obj);
-		//	std::invoke(listAccessor, t).emplace_back();
-		//	};
-
-		//ls.m_remove = [listAccessor](void* obj, int index) {
-		//	T* t = static_cast<T*>(obj);
-		//	auto& vec = std::invoke(listAccessor, t);
-		//	vec.erase(vec.begin() + index);
-		//	};
-		ls.m_addFunction = [listAdder](void* obj, void* element) {
+		ls.m_add = [listAdder](void* obj, void* element) {
 			T* a = static_cast<T*>(obj);
 			Element* val = static_cast<Element*>(element);
 			listAdder(a, *val);
 			};
-		ls.m_removeFunction = [listRemover](void* obj, int index) {
+		ls.m_remove = [listRemover](void* obj, int index) {
 			T* a = static_cast<T*>(obj);
 			listRemover(a, index);
 			};
@@ -266,6 +255,60 @@ namespace PropertyMD {
 
 		return prop;
 	}
+
+
+
+
+
+	template<
+		typename T,
+		typename KeyType,
+		typename ValueType
+	>
+	Property MakeMapProperty(
+		const char* name,
+		PropertyType _elementType,
+		std::function<void*(T*)> _dataAccessor,
+		std::function<const KeyType& (const T*, int)> _getKey,
+		std::function<ValueType& (T*, int)> _getValue,
+		std::function<void (T*, const KeyType&, const ValueType&)> _insert,
+		std::function<void (T*, int)> _remove,
+		std::function<size_t(const T*)> _size
+	) {
+		Property prop(name, PropertyType::Object, Shape::Map, 1, nullptr, nullptr);
+		Property::Map& map = prop.m_map;
+		map.m_valid = true;
+		map.m_dataAccessor = [_dataAccessor](void* _obj) {
+			return &std::invoke(_dataAccessor, static_cast<T*>(_obj));
+		};
+
+
+		map.m_getKey = [_getKey](void* _obj, int _idx) -> void* {
+			T* a = static_cast<T*>(_obj);
+			return std::invoke(_getKey, a, _idx);
+		};
+		map.m_getValue = [_getValue](void* _obj, int _idx) -> void* {
+			T* a = static_cast<T*>(_obj);
+			return std::invoke(_getValue, a, _idx);
+		};
+		map.m_size = [_size](void* _obj) -> size_t {
+			T* a = static_cast<T*>(_obj);
+			return std::invoke(_size, a);
+		};
+		map.m_insert = [_insert](void* _obj, void* _key, void* _value) {
+			T* a = static_cast<T*>(_obj);
+			std::invoke(_insert, a, _key, _value);
+		};
+		map.m_remove = [_remove](void* _obj, int _idx) {
+			T* a = static_cast<T*>(_obj);
+			std::invoke(_remove, a, _idx);
+		};
+
+		return prop;
+	}
+
+
+
 
 	template<typename T, typename Getter, typename Setter>
 	Property MakeResourceProperty(
@@ -290,6 +333,6 @@ namespace PropertyMD {
 	//Property MakeMapProperty() {
 	//	return Property();
 	//}
-
+		
 
 }
