@@ -82,6 +82,8 @@ class ShaderProgramRes : public Resource<ShaderProgramRes> {
 	Not responsible for loading the program
 */
 public:
+	RESOURCE_TYPENAMEOVERRIDE(Shader Program);
+public:
 	void Init();
 	void Load();
 	void Unload();

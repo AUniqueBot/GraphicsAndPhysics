@@ -152,7 +152,7 @@ public:
 	};
 
 public:
-	RESOURCE_TYPENAMEOVERRIDE(MaterialRes);
+	RESOURCE_TYPENAMEOVERRIDE(Material);
 public:
 
 	void Init();
