@@ -20,15 +20,13 @@ class MeshRes : public Resource<MeshRes> {
 private:
 
 public:
-
-	//Mesh() ;
-
-
+	RESOURCE_TYPENAMEOVERRIDE(Mesh);
+public:
 	/// @brief loads the mesh into gpu memory.
 	void Load();
 
 	virtual void Init();
-	std::string ResourceTypeName() override { return "Mesh"; }
+
 
 
 

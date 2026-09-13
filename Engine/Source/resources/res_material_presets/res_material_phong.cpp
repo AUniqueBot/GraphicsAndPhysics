@@ -6,14 +6,14 @@
 
 
 
-void PhongMaterial::InitInternal() {
+void PhongMaterialRes::InitInternal() {
 
     // - setting up uniforms -------------
     InitUniformLocations();
     SetupTextures();
 }
 
-void PhongMaterial::ResolveUniformValues() {
+void PhongMaterialRes::ResolveUniformValues() {
     if (!m_uniformDataDirty) return;
     m_uniformDataDirty = false;
 
@@ -28,16 +28,16 @@ void PhongMaterial::ResolveUniformValues() {
 
 
 
-Materials::ShadingModel PhongMaterial::GetShadingModel() const { 
+Materials::ShadingModel PhongMaterialRes::GetShadingModel() const { 
     return Materials::ShadingModel::PHONG; 
 }
 
-const glm::vec4& PhongMaterial::Color() const {
+const glm::vec4& PhongMaterialRes::Color() const {
     return m_color;
 }
 
 
-void PhongMaterial::Color(const glm::vec4& _newColor) {
+void PhongMaterialRes::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
     if (m_textureColor.HandleIsValid()) {
@@ -45,25 +45,25 @@ void PhongMaterial::Color(const glm::vec4& _newColor) {
     }
 }
 
-void PhongMaterial::Color(unsigned _newColor) {
+void PhongMaterialRes::Color(unsigned _newColor) {
     Color(Color::HexToVec4F(_newColor));
 }
 
-const GLuint& PhongMaterial::GetColorImageTexture() const {
+const GLuint& PhongMaterialRes::GetColorImageTexture() const {
     return m_reservedColorImageTexId;
 }
 
-void PhongMaterial::SetColorImageTexture(GLuint _textureId) {
+void PhongMaterialRes::SetColorImageTexture(GLuint _textureId) {
     m_reservedColorImageTexId = _textureId;
 }
 
-void PhongMaterial::SetUsesColorValue(bool _usesColor) {
+void PhongMaterialRes::SetUsesColorValue(bool _usesColor) {
     if (_usesColor == m_usesColorValue) return;
     m_usesColorValue = _usesColor;
     m_uniformDataDirty = true;
 }
 
-bool PhongMaterial::UsesColorValue() const {
+bool PhongMaterialRes::UsesColorValue() const {
     return m_usesColorValue;
 }
 
@@ -71,11 +71,11 @@ bool PhongMaterial::UsesColorValue() const {
 
 
 // -----------------------------------------------------------------------------
-const glm::vec4& PhongMaterial::Specular() const {
+const glm::vec4& PhongMaterialRes::Specular() const {
     return m_specularCol;
 }
 
-void PhongMaterial::Specular(const glm::vec4& _newValue) {
+void PhongMaterialRes::Specular(const glm::vec4& _newValue) {
     if (m_specularCol == _newValue) return;
     m_specularCol = _newValue;
     if (m_textureSpecular.HandleIsValid()) {
@@ -84,21 +84,21 @@ void PhongMaterial::Specular(const glm::vec4& _newValue) {
 
 }
 
-void PhongMaterial::Specular(unsigned _newColor) {
+void PhongMaterialRes::Specular(unsigned _newColor) {
     Specular(Color::HexToVec4F(_newColor));
 }
 
-const GLuint& PhongMaterial::GetSpecularImageTexture() const {
+const GLuint& PhongMaterialRes::GetSpecularImageTexture() const {
     return m_reservedSpecularImageTexId;
 }
 
-void PhongMaterial::SetUsesSpecularValue(bool _usesSpecularValue) {
+void PhongMaterialRes::SetUsesSpecularValue(bool _usesSpecularValue) {
     if (_usesSpecularValue == m_usesSpecularValue) return;
     m_usesSpecularValue = _usesSpecularValue;
     m_uniformDataDirty = true;
 }
 
-bool PhongMaterial::UsesSpecularValue() const {
+bool PhongMaterialRes::UsesSpecularValue() const {
     return m_usesSpecularValue;
 }
 
@@ -106,64 +106,64 @@ bool PhongMaterial::UsesSpecularValue() const {
 
 
 // -----------------------------------------------------------------------------
-const float& PhongMaterial::Gloss() const {
+const float& PhongMaterialRes::Gloss() const {
     // TODO: insert return statement here
     return m_glossVal;
 }
 
-void PhongMaterial::Gloss(float _value) {
+void PhongMaterialRes::Gloss(float _value) {
     m_glossVal = std::clamp(_value, 0.0f, 1.0f);
     if (m_textureGloss.HandleIsValid()) {
         m_textureGloss->SetPixelColor(glm::vec4(m_glossVal, m_glossVal, m_glossVal, 1.0f), 0, 0, 0);
     }
 }
 
-const GLuint& PhongMaterial::GetGlossImageTexture() const {
+const GLuint& PhongMaterialRes::GetGlossImageTexture() const {
     return m_reservedGlossTexId;
 }
 
-void PhongMaterial::SetGlossImageTexture(const GLuint& _texture) {
+void PhongMaterialRes::SetGlossImageTexture(const GLuint& _texture) {
     m_reservedGlossImageTexId = _texture;
 }
 
-void PhongMaterial::SetSpecularImageTexture(const GLuint& _texture) {
+void PhongMaterialRes::SetSpecularImageTexture(const GLuint& _texture) {
     m_reservedSpecularImageTexId = _texture;
 }
 
-GLuint PhongMaterial::GetColorTextureID() const {
+GLuint PhongMaterialRes::GetColorTextureID() const {
     return m_usesColorValue ? m_textureColor->GetTextureHandle() : m_reservedColorImageTexId;
 }
 
-GLuint PhongMaterial::GetSpecularTextureID() const {
+GLuint PhongMaterialRes::GetSpecularTextureID() const {
     return m_usesSpecularValue ? m_textureSpecular->GetTextureHandle() : m_reservedSpecularImageTexId;
 }
 
-GLuint PhongMaterial::GetGlossTextureID() const {
+GLuint PhongMaterialRes::GetGlossTextureID() const {
     return m_usesGlossValue ? m_textureGloss->GetTextureHandle() : m_reservedGlossImageTexId;
 }
 
-void PhongMaterial::SetUsesGlossValue(bool _usesGlossValue) {
+void PhongMaterialRes::SetUsesGlossValue(bool _usesGlossValue) {
     if (_usesGlossValue == m_usesGlossValue) return;
     m_usesGlossValue = _usesGlossValue;
     m_uniformDataDirty = true;
 }
 
-bool PhongMaterial::UsesGlossValue() const {
+bool PhongMaterialRes::UsesGlossValue() const {
     return m_usesGlossValue;
 }
 
-void PhongMaterial::Exponent(int _expVal) {
+void PhongMaterialRes::Exponent(int _expVal) {
     if (_expVal == m_exponentVal) return;
     m_exponentVal = _expVal;
     m_uniformDataDirty = true;
 }
 
-const int& PhongMaterial::Exponent() const {
+const int& PhongMaterialRes::Exponent() const {
     return m_exponentVal;
 }
 
 
-void PhongMaterial::SetupTextures() {
+void PhongMaterialRes::SetupTextures() {
 
     Core& c = Core::GetInstance();
     TextureManager& texManager = c.GetAssetManager().GetTextureManager();
@@ -218,29 +218,29 @@ void PhongMaterial::SetupTextures() {
 }
  
 
-std::vector<PropertyMD::Property>& PhongMaterial::GetProps() {
+std::vector<PropertyMD::Property>& PhongMaterialRes::GetProps() {
     using namespace PropertyMD;
     static std::vector<Property> props{
-        PropertyMD::MakeProperty<PhongMaterial>(
+        PropertyMD::MakeProperty<PhongMaterialRes>(
             "Color", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
-            static_cast<const glm::vec4 & (PhongMaterial::*)() const>(&PhongMaterial::Color),
-            static_cast<void(PhongMaterial::*)(const glm::vec4&)>(&PhongMaterial::Color)
+            static_cast<const glm::vec4 & (PhongMaterialRes::*)() const>(&PhongMaterialRes::Color),
+            static_cast<void(PhongMaterialRes::*)(const glm::vec4&)>(&PhongMaterialRes::Color)
         ),
-        PropertyMD::MakeProperty<PhongMaterial>(
+        PropertyMD::MakeProperty<PhongMaterialRes>(
             "Specular", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
-            static_cast<const glm::vec4 & (PhongMaterial::*)() const>(&PhongMaterial::Specular),
-            static_cast<void(PhongMaterial::*)(const glm::vec4&)>(&PhongMaterial::Specular)
+            static_cast<const glm::vec4 & (PhongMaterialRes::*)() const>(&PhongMaterialRes::Specular),
+            static_cast<void(PhongMaterialRes::*)(const glm::vec4&)>(&PhongMaterialRes::Specular)
         ),
-        PropertyMD::MakeProperty<PhongMaterial>(
+        PropertyMD::MakeProperty<PhongMaterialRes>(
             "Gloss", PropertyType::Float, PropertyMD::Shape::Scalar, 1,
-            static_cast<const float& (PhongMaterial::*)() const>(&PhongMaterial::Gloss),
-            static_cast<void(PhongMaterial::*)(float)>(&PhongMaterial::Gloss),
+            static_cast<const float& (PhongMaterialRes::*)() const>(&PhongMaterialRes::Gloss),
+            static_cast<void(PhongMaterialRes::*)(float)>(&PhongMaterialRes::Gloss),
             true
         ),
-        PropertyMD::MakeProperty<PhongMaterial>(
+        PropertyMD::MakeProperty<PhongMaterialRes>(
             "Exponent", PropertyType::Int, PropertyMD::Shape::Scalar, 1,
-            static_cast<const int& (PhongMaterial::*)() const>(&PhongMaterial::Exponent),
-            static_cast<void(PhongMaterial::*)(int)>(&PhongMaterial::Exponent),
+            static_cast<const int& (PhongMaterialRes::*)() const>(&PhongMaterialRes::Exponent),
+            static_cast<void(PhongMaterialRes::*)(int)>(&PhongMaterialRes::Exponent),
             true
         ),
     };

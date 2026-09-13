@@ -47,9 +47,9 @@ std::ostream& operator<<(std::ostream& _os, ShaderConstants::ShaderType _type);
 
 
 
-class Shader : public Resource<Shader> {
+class ShaderRes : public Resource<ShaderRes> {
 public:
-
+	RESOURCE_TYPENAMEOVERRIDE(Shader);
 public:
 
 	void ShaderType(const ShaderConstants::ShaderType& _type);
@@ -70,12 +70,12 @@ private:
 	bool m_shaderIsBuilt		{ false };
 
 public:
-	INSPECTABLE_DECLAREPROPS(Shader);
+	INSPECTABLE_DECLAREPROPS(ShaderRes);
 };
 
 
 
-class ShaderProgram : public Resource<ShaderProgram> {
+class ShaderProgramRes : public Resource<ShaderProgramRes> {
 /*
 	@brief
 		contains the shader program
@@ -86,8 +86,8 @@ public:
 	void Load();
 	void Unload();
 
-	void SetShader(const Shader& _shader); // uses the shader's internal type. wrapper of explicit version.
-	void SetShader(const Shader& _shader, const ShaderConstants::ShaderType& _type);
+	void SetShader(const ShaderRes& _shader); // uses the shader's internal type. wrapper of explicit version.
+	void SetShader(const ShaderRes& _shader, const ShaderConstants::ShaderType& _type);
 	void SetShader(const GLuint& _shaderId, const ShaderConstants::ShaderType& _type);
 
 
@@ -112,5 +112,5 @@ private:
 
 // ------------------------------------------------------------------------------
 
-using ShaderHandle = ResourceHandleT<Shader>;
-using ShaderProgramHandle = ResourceHandleT<ShaderProgram>;
+using ShaderHandle = ResourceHandleT<ShaderRes>;
+using ShaderProgramHandle = ResourceHandleT<ShaderProgramRes>;

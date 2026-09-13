@@ -168,11 +168,11 @@ private:
 
 
 	void ResolveMeshRendererMaterials(MeshRenderer& _mr);
-	void ResolveMaterial(Material& _mr);
+	void ResolveMaterial(MaterialRes& _mr);
 
 	
-	std::shared_ptr<Material> GetMaterial(RES_ID _matId);
-	std::shared_ptr<const Material> GetMaterial(RES_ID _matId) const;
+	std::shared_ptr<MaterialRes> GetMaterial(RES_ID _matId);
+	std::shared_ptr<const MaterialRes> GetMaterial(RES_ID _matId) const;
 	std::shared_ptr<MeshRes> GetMesh(RES_ID _meshId);
 	std::shared_ptr<const MeshRes> GetMesh(RES_ID _meshId) const;
 

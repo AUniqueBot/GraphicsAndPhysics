@@ -6,15 +6,15 @@
 #include <optional>
 
 
-class BlinnPhongMaterial : public PhongMaterial {
+class BlinnPhongMaterialRes : public PhongMaterialRes {
 
 public:
 	Materials::ShadingModel GetShadingModel() const override;
-
-	INSPECTABLE_DECLAREPROPS(BlinnPhongMaterial);
+	RESOURCE_TYPENAMEOVERRIDE(Blinn);
+	INSPECTABLE_DECLAREPROPS(BlinnPhongMaterialRes);
 
 };
 
 
 
-using BlinnPhongMaterialHandle = ResourceHandleDerivedT<Material, BlinnPhongMaterial>;
+using BlinnPhongMaterialHandle = ResourceHandleDerivedT<MaterialRes, BlinnPhongMaterialRes>;

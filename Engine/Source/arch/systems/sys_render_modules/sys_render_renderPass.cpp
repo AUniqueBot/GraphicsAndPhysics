@@ -3,7 +3,7 @@
 
 void RenderPass::Render() {
 
-	static Material defaultPassMaterial;
+	static MaterialRes defaultPassMaterial;
 	static bool defaultMaterialInit{};
 	if (!defaultMaterialInit) {
 		// init here.
@@ -11,7 +11,7 @@ void RenderPass::Render() {
 		defaultMaterialInit = true;
 	}
 
-	Material* currentRunMaterial = m_passMaterial.get();
+	MaterialRes* currentRunMaterial = m_passMaterial.get();
 	if (currentRunMaterial == nullptr) currentRunMaterial = &defaultPassMaterial;
 	
 
@@ -32,11 +32,11 @@ const GLint& RenderPass::GetTexture() const {
 	return m_texture;
 }
 
-void RenderPass::SetMaterial(const std::shared_ptr<Material>& _material) {
+void RenderPass::SetMaterial(const std::shared_ptr<MaterialRes>& _material) {
 	m_passMaterial = _material;
 }
 
-const std::shared_ptr<Material>& RenderPass::GetMaterial() const {
+const std::shared_ptr<MaterialRes>& RenderPass::GetMaterial() const {
 	return m_passMaterial;
 }
 

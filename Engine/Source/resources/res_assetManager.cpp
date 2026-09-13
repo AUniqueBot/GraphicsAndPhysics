@@ -5,9 +5,9 @@
 
 void AssetManager::Init() {
 
-	RegisterManager<Shader, ShaderManager>();
-	RegisterManager<ShaderProgram, ShaderProgramManager>();
-	RegisterManager<Material, MaterialManager>();
+	RegisterManager<ShaderRes, ShaderManager>();
+	RegisterManager<ShaderProgramRes, ShaderProgramManager>();
+	RegisterManager<MaterialRes, MaterialManager>();
 	RegisterManager<TextureRes, TextureManager>();
 	RegisterManager<MeshRes, MeshManager>();
 
@@ -42,40 +42,40 @@ void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool 
 
 ShaderManager& AssetManager::GetShaderManager() { 
 	auto mgr = std::static_pointer_cast<ShaderManager>(
-		*m_managerList.at(Shader::GetResourceTypeID())
+		*m_managerList.at(ShaderRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 const ShaderManager& AssetManager::GetShaderManager() const { 
 	auto mgr = std::static_pointer_cast<ShaderManager>(
-		*m_managerList.at(Shader::GetResourceTypeID())
+		*m_managerList.at(ShaderRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 ShaderProgramManager& AssetManager::GetShaderProgramManager() {
 	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
-		*m_managerList.at(ShaderProgram::GetResourceTypeID())
+		*m_managerList.at(ShaderProgramRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 const ShaderProgramManager& AssetManager::GetShaderProgramManager() const {
 	auto mgr = std::static_pointer_cast<ShaderProgramManager>(
-		*m_managerList.at(ShaderProgram::GetResourceTypeID())
+		*m_managerList.at(ShaderProgramRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 
 MaterialManager& AssetManager::GetMaterialManager() { 
 	auto mgr = std::static_pointer_cast<MaterialManager>(
-		*m_managerList.at(Material::GetResourceTypeID())
+		*m_managerList.at(MaterialRes::GetResourceTypeID())
 	);
 	return *mgr;
 }
 const MaterialManager& AssetManager::GetMaterialManager() const { 
 	auto mgr = std::static_pointer_cast<MaterialManager>(
-		*m_managerList.at(Material::GetResourceTypeID())
+		*m_managerList.at(MaterialRes::GetResourceTypeID())
 	);
 	return *mgr;
 }

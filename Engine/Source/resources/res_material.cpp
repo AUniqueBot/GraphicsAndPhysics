@@ -89,35 +89,35 @@ MaterialValue GetDefaultValue(MaterialValueData::ValueType type) {
 
 
 
-void Material::Init() {
+void MaterialRes::Init() {
 	InitInternal();
 	InitUniformLocations();
 	m_initialized = true;
 }
 
-void Material::InitInternal() {
+void MaterialRes::InitInternal() {
 
 }
 
 
-void Material::SetShaderProgram(GLuint shaderProg){
+void MaterialRes::SetShaderProgram(GLuint shaderProg){
 	m_shader =shaderProg;
 }
 
-int Material::GetShaderProgram() const {
+int MaterialRes::GetShaderProgram() const {
 	return m_shader;
 }
 
-Materials::ShadingModel Material::GetShadingModel() const {
+Materials::ShadingModel MaterialRes::GetShadingModel() const {
 	return Materials::ShadingModel::NONE;
 }
 
-void Material::UseMaterial() {
+void MaterialRes::UseMaterial() {
 	glUseProgram(GetShaderProgram());
 }
 
 
-void Material::InitUniformLocations() {
+void MaterialRes::InitUniformLocations() {
 	if (!m_shader) return;
 	GLuint programId { m_shader };
 	GLint uniformCount{};
@@ -148,7 +148,7 @@ void Material::InitUniformLocations() {
 	}
 }
 
-void Material::SetUniform(std::string _uniformName, UniformData _data) const {
+void MaterialRes::SetUniform(std::string _uniformName, UniformData _data) const {
 	GLenum dataType{ _data.m_type };
 	GLint location{ _data.m_uniformLocation };
 
@@ -158,21 +158,21 @@ void Material::SetUniform(std::string _uniformName, UniformData _data) const {
 	}
 }
 
-void Material::ResolveUniformValues() {
+void MaterialRes::ResolveUniformValues() {
 	if (!m_uniformDataDirty) return;
 	m_uniformDataDirty = false;
 }
 
-bool Material::IsInitialised() const {
+bool MaterialRes::IsInitialised() const {
 	return m_initialized;
 }
 
-void Material::SetInitialised(bool _setting) {
+void MaterialRes::SetInitialised(bool _setting) {
 	m_initialized = _setting;
 }
 
 
-void Material::ApplyShadowMap(
+void MaterialRes::ApplyShadowMap(
 	const unsigned int& _dirShadowId,
 	const unsigned int& _spotShadowId,
 	const unsigned int& _pointShadowId
@@ -206,7 +206,7 @@ void Material::ApplyShadowMap(
 	}
 }
 
-void Material::ApplyUniforms() {
+void MaterialRes::ApplyUniforms() {
 	ResolveUniformValues();
 
 	unsigned textureUnitId = 0;
@@ -258,14 +258,14 @@ void Material::ApplyUniforms() {
 
 
 
-GLint Material::GetUniformLocation(const std::string& _uniformName) const {
+GLint MaterialRes::GetUniformLocation(const std::string& _uniformName) const {
 	GLint shaderId{ GetShaderProgram() };
 	if (!shaderId) return -1;
 	return glGetUniformLocation(shaderId, _uniformName.c_str());
 }
 
 
-void Material::SetUniformMat4f(std::string _uniformName, glm::mat4 _value) {
+void MaterialRes::SetUniformMat4f(std::string _uniformName, glm::mat4 _value) {
 	GLint shaderId{GetShaderProgram()};
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -280,7 +280,7 @@ void Material::SetUniformMat4f(std::string _uniformName, glm::mat4 _value) {
 	glProgramUniformMatrix4fv(shaderId, uniformLoc, 1, GL_FALSE, glm::value_ptr(_value));
 }
 
-void Material::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
+void MaterialRes::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -292,7 +292,7 @@ void Material::SetUniformVec3(std::string _uniformName, glm::vec3 _value) {
 	glProgramUniform3fv(shaderId, uniformLoc, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
+void MaterialRes::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -308,7 +308,7 @@ void Material::SetUniformVec2(std::string _uniformName, glm::vec2 _value) {
 
 }
 
-void Material::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
+void MaterialRes::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -323,7 +323,7 @@ void Material::SetUniformIVec3(std::string _uniformName, glm::ivec3 _value) {
 	glProgramUniform3iv(shaderId, uniformLoc, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
+void MaterialRes::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -340,7 +340,7 @@ void Material::SetUniformIVec2(std::string _uniformName, glm::ivec2 _value) {
 
 }
 
-void Material::SetUniformInt(std::string _uniformName, GLint _value) {
+void MaterialRes::SetUniformInt(std::string _uniformName, GLint _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -356,7 +356,7 @@ void Material::SetUniformInt(std::string _uniformName, GLint _value) {
 
 }
 
-void Material::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
+void MaterialRes::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -371,7 +371,7 @@ void Material::SetUniformUnsigned(std::string _uniformName, GLuint _value) {
 	glProgramUniform1ui(shaderId, uniformLoc, _value);
 }
 
-void Material::SetUniformFloat(std::string _uniformName, GLfloat _value) {
+void MaterialRes::SetUniformFloat(std::string _uniformName, GLfloat _value) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -386,7 +386,7 @@ void Material::SetUniformFloat(std::string _uniformName, GLfloat _value) {
 	glProgramUniform1f(shaderId, uniformLoc, _value);
 }
 
-void Material::SetUniformTextureUnit(std::string _uniformName, GLuint _textureHandle, unsigned _index) {
+void MaterialRes::SetUniformTextureUnit(std::string _uniformName, GLuint _textureHandle, unsigned _index) {
 	GLint shaderId{ GetShaderProgram() };
 	GLint uniformLoc = -1;
 	if (!m_uniformLocations.contains(_uniformName)) {
@@ -405,57 +405,57 @@ void Material::SetUniformTextureUnit(std::string _uniformName, GLuint _textureHa
 
 
 
-void Material::SetUniformMat4f(GLint _uniformLocation, glm::mat4 _value) const {
+void MaterialRes::SetUniformMat4f(GLint _uniformLocation, glm::mat4 _value) const {
 	GLint shaderId { GetShaderProgram() };
 	glProgramUniformMatrix4fv(shaderId, _uniformLocation, 1, GL_FALSE, glm::value_ptr(_value));
 }
 
-void Material::SetUniformVec4(GLint _uniformLocation, glm::vec4 _value) const {
+void MaterialRes::SetUniformVec4(GLint _uniformLocation, glm::vec4 _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform4fv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformVec3(GLint _uniformLocation, glm::vec3 _value) const {
+void MaterialRes::SetUniformVec3(GLint _uniformLocation, glm::vec3 _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform3fv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformVec2(GLint _uniformLocation, glm::vec2 _value) const  {
+void MaterialRes::SetUniformVec2(GLint _uniformLocation, glm::vec2 _value) const  {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform2fv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformIVec4(GLint _uniformLocation, glm::ivec4 _value) const {
+void MaterialRes::SetUniformIVec4(GLint _uniformLocation, glm::ivec4 _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform4iv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformIVec3(GLint _uniformLocation, glm::ivec3 _value) const {
+void MaterialRes::SetUniformIVec3(GLint _uniformLocation, glm::ivec3 _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform3iv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformIVec2(GLint _uniformLocation, glm::ivec2 _value) const {
+void MaterialRes::SetUniformIVec2(GLint _uniformLocation, glm::ivec2 _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform2iv(shaderId, _uniformLocation, 1, glm::value_ptr(_value));
 }
 
-void Material::SetUniformInt(GLint _uniformLocation, GLint _value) const {
+void MaterialRes::SetUniformInt(GLint _uniformLocation, GLint _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform1i(shaderId, _uniformLocation, _value);
 }
 
-void Material::SetUniformUnsigned(GLint _uniformLocation, GLuint _value) const {
+void MaterialRes::SetUniformUnsigned(GLint _uniformLocation, GLuint _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform1ui(shaderId, _uniformLocation, _value);
 }
 
-void Material::SetUniformFloat(GLint _uniformLocation, GLfloat _value) const {
+void MaterialRes::SetUniformFloat(GLint _uniformLocation, GLfloat _value) const {
 	GLint shaderId{ GetShaderProgram() };
 	glProgramUniform1f(shaderId, _uniformLocation, _value);
 }
 
-void Material::SetUniformTextureUnit(GLint _uniformLocation, GLuint _textureHandle, unsigned _index) const {
+void MaterialRes::SetUniformTextureUnit(GLint _uniformLocation, GLuint _textureHandle, unsigned _index) const {
 	GLint shaderId { GetShaderProgram() };
 	glBindTextureUnit(_index, _textureHandle);
 	glProgramUniform1i(shaderId, _uniformLocation, _index);
@@ -463,7 +463,7 @@ void Material::SetUniformTextureUnit(GLint _uniformLocation, GLuint _textureHand
 
 
 
-std::vector<PropertyMD::Property>& Material::GetProps() {
+std::vector<PropertyMD::Property>& MaterialRes::GetProps() {
 	using namespace PropertyMD;
 	static std::vector<PropertyMD::Property> props{
 

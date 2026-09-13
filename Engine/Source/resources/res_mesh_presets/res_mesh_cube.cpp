@@ -3,6 +3,7 @@
 CubeRes::CubeRes(CubeCreationProps _props) : 
 	m_dimensions{ _props.dimensions }, m_subdivisions{ _props.subdivisions }
 {
+
 	m_name = "Cube";
 }
 

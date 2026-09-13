@@ -5,13 +5,13 @@
 #include <arch/resources/res_shaderManager.h>
 #include <arch/core.h>
 
-void LambertMaterial::InitInternal() {
+void LambertMaterialRes::InitInternal() {
     // - setting up uniforms -------------
     InitUniformLocations();
     SetupTextures();
 }
 
-void LambertMaterial::ResolveUniformValues() {
+void LambertMaterialRes::ResolveUniformValues() {
     
     if (m_valuesDirty) {
         if (m_textureColor.HandleIsValid()) {
@@ -26,17 +26,17 @@ void LambertMaterial::ResolveUniformValues() {
     }
 }
 
-Materials::ShadingModel LambertMaterial::GetShadingModel() const {
+Materials::ShadingModel LambertMaterialRes::GetShadingModel() const {
     return Materials::ShadingModel::LAMBERT;
 }
 
 
-const glm::vec4& LambertMaterial::Color() const {
+const glm::vec4& LambertMaterialRes::Color() const {
     return m_color;
 }
 
 
-void LambertMaterial::Color(const glm::vec4& _newColor) {
+void LambertMaterialRes::Color(const glm::vec4& _newColor) {
     if (m_color == _newColor) return;
     m_color = _newColor;
     if (m_textureColor.HandleIsValid()) {
@@ -44,34 +44,34 @@ void LambertMaterial::Color(const glm::vec4& _newColor) {
     }
 }
 
-void LambertMaterial::Color(unsigned _newColor) {
+void LambertMaterialRes::Color(unsigned _newColor) {
     Color(Color::HexToVec4F(_newColor));
 }
 
-void LambertMaterial::AlbedoTexture(const Texture2DHandle& _texture) {
+void LambertMaterialRes::AlbedoTexture(const Texture2DHandle& _texture) {
     m_albedoColor = _texture;
 }
 
-const Texture2DHandle& LambertMaterial::AlbedoTexture() const {
+const Texture2DHandle& LambertMaterialRes::AlbedoTexture() const {
     return m_albedoColor;
     // TODO: insert return statement here
 }
 
-void LambertMaterial::UsesColor(bool _usesColor) {
+void LambertMaterialRes::UsesColor(bool _usesColor) {
     if (_usesColor == m_usesColor) return;
     m_usesColor = _usesColor;
     m_uniformDataDirty = true;
 }
 
-bool LambertMaterial::UsesColor() const {
+bool LambertMaterialRes::UsesColor() const {
     return m_usesColor;
 }
 
-GLuint LambertMaterial::GetColorTextureID() const {
+GLuint LambertMaterialRes::GetColorTextureID() const {
     return m_usesColor ? m_textureColor->GetTextureHandle() : m_reservedImageTexId;
 }
 
-void LambertMaterial::SetupTextures() {
+void LambertMaterialRes::SetupTextures() {
     Core& c = Core::GetInstance();
     TextureManager& texManager = c.GetAssetManager().GetTextureManager();
     GPUResourceManager& gpuMgr = c.GetGPUResourceManager();
@@ -89,13 +89,13 @@ void LambertMaterial::SetupTextures() {
 
 
 
-std::vector<PropertyMD::Property>& LambertMaterial::GetProps() {
+std::vector<PropertyMD::Property>& LambertMaterialRes::GetProps() {
     using namespace PropertyMD;
     static std::vector<Property> props{
-        PropertyMD::MakeProperty<LambertMaterial>(
+        PropertyMD::MakeProperty<LambertMaterialRes>(
             "Color", PropertyType::Color, PropertyMD::Shape::FixedArray, 4,
-            static_cast<const glm::vec4 & (LambertMaterial::*)() const>(&LambertMaterial::Color),
-            static_cast<void(LambertMaterial::*)(const glm::vec4&)>(&LambertMaterial::Color)
+            static_cast<const glm::vec4 & (LambertMaterialRes::*)() const>(&LambertMaterialRes::Color),
+            static_cast<void(LambertMaterialRes::*)(const glm::vec4&)>(&LambertMaterialRes::Color)
         ),
     };
     return props;

@@ -6,8 +6,10 @@
 
 
 
-class LambertMaterial : public Material {
+class LambertMaterialRes : public MaterialRes {
 
+public:
+	RESOURCE_TYPENAMEOVERRIDE(Lambert);
 public:
 
 	Materials::ShadingModel GetShadingModel() const override;
@@ -50,7 +52,7 @@ private:
 
 
 
-	INSPECTABLE_DECLAREPROPS(LambertMaterial);
+	INSPECTABLE_DECLAREPROPS(LambertMaterialRes);
 };
 
 struct LambertMaterialProps : public MaterialProps {
@@ -58,4 +60,4 @@ struct LambertMaterialProps : public MaterialProps {
 };
 
 
-using LambertMaterialHandle = ResourceHandleDerivedT<Material, LambertMaterial>;
+using LambertMaterialHandle = ResourceHandleDerivedT<MaterialRes, LambertMaterialRes>;

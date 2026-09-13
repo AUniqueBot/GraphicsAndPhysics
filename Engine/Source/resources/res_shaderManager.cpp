@@ -61,7 +61,7 @@ void ShaderManager::Init() {
 
 void ShaderManager::Cleanup() {
 	for (RES_ID resId : m_resourceIdPool) {
-		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(resId));
+		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(resId));
 		shader->Destroy();
 	}
 
@@ -74,7 +74,7 @@ ShaderHandle ShaderManager::CreateShader(
 	ShaderConstants::ShaderType _type, 
 	std::string _code
 ) {
-	std::shared_ptr<Shader> res = std::make_shared<Shader>();
+	std::shared_ptr<ShaderRes> res = std::make_shared<ShaderRes>();
 	res->ShaderType(_type);
 	res->SetShaderCode(_code);
 	res->Build();
@@ -108,7 +108,7 @@ ShaderHandle ShaderManager::LoadShader(
 ) {
 	std::string extension = _shaderPath.extension().string();
 	ShaderConstants::ShaderType type = GetShaderType(extension);
-	auto res = std::make_shared<Shader>();
+	auto res = std::make_shared<ShaderRes>();
 	std::string code = ShaderUtilFunctions::ParseShaderCode(_shaderPath.string());
 	res->ResourceID(_existingId);
 	res->SetShaderCode(code);
@@ -177,23 +177,23 @@ void ShaderProgramManager::Cleanup() {
 }
 
 ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShaderProgProps _props) {
-	std::shared_ptr<ShaderProgram> shaderPrg = std::make_shared<ShaderProgram>();
-	std::shared_ptr<Shader> vtxShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.vertexShader));
-	std::shared_ptr<Shader> fragShader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.fragShader));
+	std::shared_ptr<ShaderProgramRes> shaderPrg = std::make_shared<ShaderProgramRes>();
+	std::shared_ptr<ShaderRes> vtxShader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.vertexShader));
+	std::shared_ptr<ShaderRes> fragShader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.fragShader));
 	
 	shaderPrg->SetShader(*vtxShader);
 	shaderPrg->SetShader(*fragShader);
 
 	if (_props.geometryShader != 0) {
-		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.geometryShader));
+		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.geometryShader));
 		shaderPrg->SetShader(*shader);
 	}
 	if (_props.tesselationControlShader!= 0) {
-		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.tesselationControlShader));
+		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.tesselationControlShader));
 		shaderPrg->SetShader(*shader);
 	}
 	if (_props.tesselationEvaluationShader != 0) {
-		auto shader = std::static_pointer_cast<Shader>(m_resourceManager.GetResource(_props.tesselationEvaluationShader));
+		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.tesselationEvaluationShader));
 		shaderPrg->SetShader(*shader);
 	}
 	shaderPrg->Build();
@@ -215,10 +215,10 @@ void ShaderProgramManager::RemoveShaderProgram(RES_ID _toDelete) {
 	Remove(_toDelete);
 }
 
-std::shared_ptr<ShaderProgram> ShaderProgramManager::GetShaderProgram(std::string _alias) {
+std::shared_ptr<ShaderProgramRes> ShaderProgramManager::GetShaderProgram(std::string _alias) {
 	return GetShaderProgram(GetResIDFromAlias(_alias));
 }
 
-std::shared_ptr<ShaderProgram> ShaderProgramManager::GetShaderProgram(RES_ID _id) {
-	return std::static_pointer_cast<ShaderProgram>(m_resourceManager.GetResource(_id));
+std::shared_ptr<ShaderProgramRes> ShaderProgramManager::GetShaderProgram(RES_ID _id) {
+	return std::static_pointer_cast<ShaderProgramRes>(m_resourceManager.GetResource(_id));
 }

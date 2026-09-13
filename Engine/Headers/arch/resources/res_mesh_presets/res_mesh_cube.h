@@ -10,6 +10,8 @@ struct CubeCreationProps {
 class CubeRes : public MeshRes {
 private:
 public:
+	RESOURCE_TYPENAMEOVERRIDE(Cube);
+public:
 	CubeRes(CubeCreationProps _props = CubeCreationProps());
 	void Init() override;
 

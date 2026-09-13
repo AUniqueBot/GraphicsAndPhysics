@@ -5,13 +5,13 @@
 #include <arch/core.h>
 
 
-bool Scene::AddEntity(EntityID _id) {
+bool SceneRes::AddEntity(EntityID _id) {
 	if (_id == EntityConstants::C_ENTITYID_INVALID) return false;
 
 	return true;
 }
 
-EntityView Scene::Instantiate(RES_ID _prefab) {
+EntityView SceneRes::Instantiate(RES_ID _prefab) {
 	if (!m_registry) {
 		return EntityView(std::nullopt);
 	}
@@ -29,12 +29,12 @@ EntityView Scene::Instantiate(RES_ID _prefab) {
 	return entity;
 }
 
-bool Scene::Destroy(EntityView _entity, bool _recursive) {
+bool SceneRes::Destroy(EntityView _entity, bool _recursive) {
 	if (!_entity) return false;
 	return Destroy(_entity->GetID(), _recursive);
 }
 
-bool Scene::Destroy(EntityID _id, bool _recursive) {
+bool SceneRes::Destroy(EntityID _id, bool _recursive) {
 	// dfs removal
 	auto entitynode = m_sceneEntities.at(_id);
 	if (!entitynode) return false;
@@ -45,7 +45,7 @@ bool Scene::Destroy(EntityID _id, bool _recursive) {
 	return m_sceneEntities.remove(_id);
 }
 
-void Scene::Parent(EntityID _child, EntityID _parent) {
+void SceneRes::Parent(EntityID _child, EntityID _parent) {
 	if (_child == EntityConstants::C_ENTITYID_INVALID) {
 		LOG_ERROR("What are you trying to do?");
 		return;
@@ -91,7 +91,7 @@ void Scene::Parent(EntityID _child, EntityID _parent) {
 
 }
 
-bool Scene::DescendantOf(EntityID _toCheck, EntityID _parent) const {
+bool SceneRes::DescendantOf(EntityID _toCheck, EntityID _parent) const {
 	if (_parent == _toCheck) {
 		LOG_WARN("Parent is same as checked.");
 		return true;
@@ -110,29 +110,29 @@ bool Scene::DescendantOf(EntityID _toCheck, EntityID _parent) const {
 	return false;
 }
 
-EntityRegistry* Scene::GetRegistry() {
+EntityRegistry* SceneRes::GetRegistry() {
 	return m_registry;
 }
 
-const EntityRegistry* Scene::GetRegistry() const {
+const EntityRegistry* SceneRes::GetRegistry() const {
 	return m_registry;
 }
 
-void Scene::SetRegistry(EntityRegistry* _registry) {
+void SceneRes::SetRegistry(EntityRegistry* _registry) {
 	m_registry = _registry;
 }
 
 
 
-AssetManager* Scene::GetAssetManager() {
+AssetManager* SceneRes::GetAssetManager() {
 	return m_assetManager;
 }
 
-const AssetManager* Scene::GetAssetManager() const {
+const AssetManager* SceneRes::GetAssetManager() const {
 	return m_assetManager;
 }
 
-void Scene::SetAssetManager(AssetManager* _registry) {
+void SceneRes::SetAssetManager(AssetManager* _registry) {
 	m_assetManager = _registry;
 }
 
@@ -140,14 +140,14 @@ void Scene::SetAssetManager(AssetManager* _registry) {
 
 
 
-void Scene::SetSceneJSONData(
+void SceneRes::SetSceneJSONData(
 	const Serialization::JSONValue& _jsonData
 ) {
 	m_jsonData.GetDocument().CopyFrom(_jsonData, m_jsonData.GetAllocator());
 }
 
 
-void Scene::Load() {
+void SceneRes::Load() {
 	// structured data to form relations with.
 	struct EntityRelations {
 		EntityIDType originalId			{ EntityConstants::C_ENTITYID_INVALID };
@@ -226,12 +226,12 @@ void Scene::Load() {
 
 }
 
-std::shared_ptr<Scene> Scene::LoadScene(
+std::shared_ptr<SceneRes> SceneRes::LoadScene(
 	Serialization::JSONFile& _jsonData, 
 	EntityRegistry& _registry, 
 	AssetManager& _asMgr
 ) {
-	auto newScene = std::make_shared<Scene>();
+	auto newScene = std::make_shared<SceneRes>();
 	newScene->SetRegistry(&_registry);
 	newScene->SetAssetManager(&_asMgr);
 	newScene->SetSceneJSONData(_jsonData.GetDocument());
@@ -239,7 +239,7 @@ std::shared_ptr<Scene> Scene::LoadScene(
 }
 
 
-void Scene::Save() {
+void SceneRes::Save() {
 	// error handling
 	if (!m_registry) {
 		return;
@@ -292,7 +292,6 @@ void Scene::Save() {
 		}
 		entityData.AddMember("components", componentData, allocator);
 
-		;
 
 		entities.AddMember(
 			
@@ -311,21 +310,21 @@ void Scene::Save() {
 
 }
 
-Serialization::JSONValue Scene::Serialize(Serialization::JSONAllocator& _allocator, AssetManager*) {
+Serialization::JSONValue SceneRes::Serialize(Serialization::JSONAllocator& _allocator, AssetManager*) {
 	Serialization::JSONValue val;
 	val.CopyFrom(m_jsonData.GetDocument(), _allocator);
 	return val;
 }
 
-Serialization::JSONFile& Scene::GetJSONData() {
+Serialization::JSONFile& SceneRes::GetJSONData() {
 	return m_jsonData;
 }
 
-const Serialization::JSONFile& Scene::GetJSONData() const {
+const Serialization::JSONFile& SceneRes::GetJSONData() const {
 	return m_jsonData;
 }
 
-void Scene::ClearEntities() {
+void SceneRes::ClearEntities() {
 	m_sceneEntities.clear();
 	m_registry->ClearEntitiesAndComponentData();
 }

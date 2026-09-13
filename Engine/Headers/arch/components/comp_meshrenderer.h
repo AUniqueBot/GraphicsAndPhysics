@@ -47,7 +47,7 @@ public:
 	const MaterialHandle GetMaterial(int _index) const;
 
 
-	static Material& GetDefaultMaterial();
+	static MaterialRes& GetDefaultMaterial();
 
 	// - shadows ----------------------------------------------------------------------------------
 	const bool& CastShadows() const;

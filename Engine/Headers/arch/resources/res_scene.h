@@ -23,7 +23,10 @@ struct EntityNode {
 };
 
 
-class Scene : public Resource<Scene> {
+class SceneRes : public Resource<SceneRes> {
+
+public:
+	RESOURCE_TYPENAMEOVERRIDE(Scene);
 public:
 
 	bool AddEntity(EntityID _id);
@@ -55,7 +58,7 @@ public:
 public:
 	// - loading and saving -----------------------------
 	void Load();
-	static std::shared_ptr<Scene> LoadScene(
+	static std::shared_ptr<SceneRes> LoadScene(
 		Serialization::JSONFile& _jsonData, 
 		EntityRegistry& _registry,
 		AssetManager& _assetManager
@@ -82,4 +85,4 @@ private:
 };
 
 
-using SceneHandle = ResourceHandleT<Scene>;
+using SceneHandle = ResourceHandleT<SceneRes>;

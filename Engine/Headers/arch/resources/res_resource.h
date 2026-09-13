@@ -3,6 +3,7 @@
 #include <typeindex>
 #include <arch/common/inspectable.h>
 #include <arch/resources/res_resourceTypeMetadata.h>
+#include <nameof.hpp>
 //#include <arch/common/properties.h>
 /*
 	Goals -> management of resources
@@ -32,7 +33,7 @@ public:
 public:
 	BaseResource(RESTYPE_ID _type);
 	RESTYPE_ID ResourceType() const	{ return m_resType; }
-	virtual std::string ResourceTypeName() { return "RESOURCE"; };
+	inline virtual std::string ResourceTypeName() { return "RESOURCE"; };
 
 	std::string Name() const;
 	void Name(std::string _name);
@@ -76,6 +77,13 @@ private:
 
 };
 
+
+#ifndef RESOURCE_TYPENAMEOVERRIDE(T)
+#define RESOURCE_TYPENAMEOVERRIDE(T) \
+	public: \
+	inline std::string ResourceTypeName() override { return #T; }
+#endif
+
 // ----------------------------------------------------------------------------------
 // wrapper class for inheritance
 // ----------------------------------------------------------------------------------
@@ -109,4 +117,5 @@ public :
 
 template<typename T>
 concept ResourceType = std::derived_from<T, Resource<T>>;
+
 

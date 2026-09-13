@@ -9,6 +9,8 @@ struct SphereCreationProps {
 class SphereRes : public MeshRes {
 private:
 public:
+	RESOURCE_TYPENAMEOVERRIDE(Sphere);
+public:
 	SphereRes(SphereCreationProps _props = SphereCreationProps());
 	void Init() override;
 

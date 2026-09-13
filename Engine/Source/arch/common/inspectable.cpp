@@ -549,12 +549,11 @@ namespace {
         }
         else {
             Serialization::JSONValue resData = res->Serialize(_allocator, _asMgr);
-            const ResourceTypeMetadata& metadata = _rsm.GetResourceTypeMetadata(res->ResourceType());
-            metadata.GetName();
+            std::string resName = handle.GetBaseResource()->ResourceTypeName();
             val.SetObject();
             val.AddMember(
                 "Resource Type", 
-                Serialization::JSONValue().SetString(metadata.GetName().c_str(), _allocator),
+                Serialization::JSONValue().SetString(resName.c_str(), _allocator),
                 _allocator
             );
             val.AddMember("Props", resData, _allocator);

@@ -859,9 +859,9 @@ void RenderSystem::SetupShadowProgram() {
     std::string vertexShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/vtx_shadowPassVertex.vert");
     std::string fragmentShaderSource = "#version 460 core\n" + ShaderUtilFunctions::ParseShaderCode("./Assets/Shaders/frag_shadowPassFrag.frag");
 
-    ShaderProgram shadowShader  {};
-    Shader vertexShader         {};
-    Shader fragmentShader       {};
+    ShaderProgramRes shadowShader  {};
+    ShaderRes vertexShader         {};
+    ShaderRes fragmentShader       {};
     vertexShader.SetShaderCode(vertexShaderSource);
     fragmentShader.SetShaderCode(fragmentShaderSource);
     vertexShader.ShaderType(ShaderConstants::ShaderType::VERTEX);
@@ -939,12 +939,12 @@ void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
     for (MaterialHandle& matHandle : materialList) {
         auto matPtr = matHandle.Get();
         if (!matPtr) continue;
-        Material& mat = *matPtr;
+        MaterialRes& mat = *matPtr;
         ResolveMaterial(mat);
     }
 }
 
-void RenderSystem::ResolveMaterial(Material& _mat) {
+void RenderSystem::ResolveMaterial(MaterialRes& _mat) {
     ShaderProgramManager& spr { Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
     using namespace Materials;
     ShadingModel type{ _mat.GetShadingModel() };
@@ -996,25 +996,25 @@ void RenderSystem::ResolveMaterial(Material& _mat) {
 
 // ------------------------------------------------------------------------------------------
 
-std::shared_ptr<Material> RenderSystem::GetMaterial(RES_ID _matId) {
+std::shared_ptr<MaterialRes> RenderSystem::GetMaterial(RES_ID _matId) {
     MaterialManager& mmgr = Core::GetInstance().GetAssetManager().GetMaterialManager();
     if (!mmgr.Has(_matId)) {
         LOG_WARN("Provided mesh id is not a registered material.");
         return nullptr;
     }
     ResourceManager& rsmgr = Core::GetInstance().GetResourceManager();
-    auto ptr = static_pointer_cast<Material>(rsmgr.GetResource(_matId));
+    auto ptr = static_pointer_cast<MaterialRes>(rsmgr.GetResource(_matId));
     return ptr;
 }
 
-std::shared_ptr<const Material> RenderSystem::GetMaterial(RES_ID _matId) const {
+std::shared_ptr<const MaterialRes> RenderSystem::GetMaterial(RES_ID _matId) const {
     MaterialManager& mmgr = Core::GetInstance().GetAssetManager().GetMaterialManager();
     if (!mmgr.Has(_matId)) {
         LOG_WARN("Provided mesh id is not a registered material.");
         return nullptr;
     }
     ResourceManager& rsmgr = Core::GetInstance().GetResourceManager();
-    auto ptr = static_pointer_cast<Material>(rsmgr.GetResource(_matId));
+    auto ptr = static_pointer_cast<MaterialRes>(rsmgr.GetResource(_matId));
     return ptr;
 }
 

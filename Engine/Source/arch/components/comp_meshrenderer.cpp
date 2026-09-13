@@ -74,8 +74,8 @@ const MaterialHandle MeshRenderer::GetMaterial(int _index) const {
 
 
 
-Material& MeshRenderer::GetDefaultMaterial() {
-	static LambertMaterial m_defaultMaterial{};
+MaterialRes& MeshRenderer::GetDefaultMaterial() {
+	static LambertMaterialRes m_defaultMaterial{};
 	static bool defaultMatInit	{ false };
 	if (!defaultMatInit) {
 		m_defaultMaterial.Color(0xaaaaaaff);

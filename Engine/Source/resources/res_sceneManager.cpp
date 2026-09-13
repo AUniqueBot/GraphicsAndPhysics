@@ -23,7 +23,7 @@ void SceneManager::Load(std::filesystem::path _path) {
 
 void SceneManager::CreateScene() {
 	// makes a new scene and clears EVERYTHING.
-	auto scene = std::make_shared<Scene>();
+	auto scene = std::make_shared<SceneRes>();
 	scene->SetRegistry(&m_entityRegistry);
 	scene->SetAssetManager(&m_assetManager);
 	SceneHandle handle(m_resourceManager.AddRes(scene));
@@ -57,7 +57,7 @@ void SceneManager::ClearScene() {
 SceneHandle SceneManager::LoadScene(const std::filesystem::path& _path, RES_ID _existingId) {
 	Serialization::JSONFile json;
 	json.Parse(_path);
-	std::shared_ptr<Scene> scene = Scene::LoadScene(json, m_entityRegistry, m_assetManager);
+	std::shared_ptr<SceneRes> scene = SceneRes::LoadScene(json, m_entityRegistry, m_assetManager);
 	if (_existingId != ResourceConstants::C_RES_INVALID_ID) {
 		scene->ResourceID(_existingId);
 	}

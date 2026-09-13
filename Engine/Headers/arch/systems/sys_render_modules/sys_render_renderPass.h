@@ -13,13 +13,13 @@ public:
 	void SetTexture(GLint _texHandle);
 	const GLint& GetTexture() const;
 
-	void SetMaterial(const std::shared_ptr<Material>& material);
-	const std::shared_ptr<Material>& GetMaterial() const;
+	void SetMaterial(const std::shared_ptr<MaterialRes>& material);
+	const std::shared_ptr<MaterialRes>& GetMaterial() const;
 
 private:
 
 private:
 	GLint m_texture{};
-	std::shared_ptr<Material> m_passMaterial{};
+	std::shared_ptr<MaterialRes> m_passMaterial{};
 
 };

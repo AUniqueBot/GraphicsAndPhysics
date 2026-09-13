@@ -23,19 +23,19 @@ void ResourceManager::Init() {
 
 
 	RegisterResourceType<MeshRes>();
-	RegisterResourceType<Shader>();
-	RegisterResourceType<ShaderProgram>();
-	RegisterResourceType<Material>();
-	RegisterResourceType<Scene>();
+	RegisterResourceType<ShaderRes>();
+	RegisterResourceType<ShaderProgramRes>();
+	RegisterResourceType<MaterialRes>();
+	RegisterResourceType<SceneRes>();
 
 	
 	// registering the default file extensions
 	RegisterFileExtension(".stl", MeshRes::GetResourceTypeID());
 	RegisterFileExtension(".obj", MeshRes::GetResourceTypeID());
-	RegisterFileExtension(".frag", ShaderProgram::GetResourceTypeID());
-	RegisterFileExtension(".vert", ShaderProgram::GetResourceTypeID());
+	RegisterFileExtension(".frag", ShaderProgramRes::GetResourceTypeID());
+	RegisterFileExtension(".vert", ShaderProgramRes::GetResourceTypeID());
 
-	RegisterFileExtension(".material", Material::GetResourceTypeID());
+	RegisterFileExtension(".material", MaterialRes::GetResourceTypeID());
 	
 	LoadDefaultResources();
 

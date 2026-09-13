@@ -98,8 +98,8 @@ public:
 	void RemoveShaderProgram(RES_ID _toDelete);
 
 
-	std::shared_ptr<ShaderProgram> GetShaderProgram(std::string _alias);
-	std::shared_ptr<ShaderProgram> GetShaderProgram(RES_ID _id);
+	std::shared_ptr<ShaderProgramRes> GetShaderProgram(std::string _alias);
+	std::shared_ptr<ShaderProgramRes> GetShaderProgram(RES_ID _id);
 
 private:
 

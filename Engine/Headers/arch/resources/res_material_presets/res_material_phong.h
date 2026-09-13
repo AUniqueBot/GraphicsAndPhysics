@@ -7,8 +7,10 @@
 #include <optional>
 
 
-class PhongMaterial : public Material {
+class PhongMaterialRes : public MaterialRes {
 
+public:
+	RESOURCE_TYPENAMEOVERRIDE(Phong)
 public:
 
 	Materials::ShadingModel GetShadingModel() const override;
@@ -96,9 +98,9 @@ private:
 	
 
 
-	INSPECTABLE_DECLAREPROPS(PhongMaterial);
+	INSPECTABLE_DECLAREPROPS(PhongMaterialRes);
 
 };  
 
 
-using PhongMaterialHandle = ResourceHandleDerivedT<Material, PhongMaterial>;
+using PhongMaterialHandle = ResourceHandleDerivedT<MaterialRes, PhongMaterialRes>;

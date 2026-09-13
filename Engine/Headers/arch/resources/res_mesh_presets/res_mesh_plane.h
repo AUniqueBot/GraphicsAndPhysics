@@ -10,6 +10,8 @@ struct PlaneCreationProps {
 class PlaneRes : public MeshRes {
 private:
 public:
+	RESOURCE_TYPENAMEOVERRIDE(Plane);
+public:
 	PlaneRes(PlaneCreationProps _props = PlaneCreationProps());
 
 	void Init() override;

@@ -134,7 +134,7 @@ struct MaterialProps {
 
 class RenderSystem; // fwd decl. 
 // - class -----------------------------
-class Material : public Resource<Material> {
+class MaterialRes : public Resource<MaterialRes> {
 public:
 	using SHADERTYPE = ShaderConstants::ShaderType; // alias the name
 
@@ -151,10 +151,8 @@ public:
 		NEAREST
 	};
 
-
-
 public:
-	std::string ResourceTypeName() override { return "Material"; }
+	RESOURCE_TYPENAMEOVERRIDE(MaterialRes);
 public:
 
 	void Init();
@@ -226,9 +224,9 @@ protected:
 	bool m_uniformDataDirty						{ true }; // starts as true to initialize the values first.
 	bool m_valuesDirty							{ true };
 	
-	INSPECTABLE_DECLAREPROPS(Material);
+	INSPECTABLE_DECLAREPROPS(MaterialRes);
 };
 
 
 
-using MaterialHandle = ResourceHandleT<Material>;
+using MaterialHandle = ResourceHandleT<MaterialRes>;

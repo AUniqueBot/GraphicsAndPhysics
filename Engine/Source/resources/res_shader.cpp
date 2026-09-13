@@ -14,27 +14,27 @@ static std::string GetRawText(std::string _pathToFile) {
 	return toRet.str();
 }
 
-void Shader::ShaderType(const ShaderConstants::ShaderType& _type) {
+void ShaderRes::ShaderType(const ShaderConstants::ShaderType& _type) {
 	m_shaderType = _type;
 }
 
-const ShaderConstants::ShaderType& Shader::ShaderType() const {
+const ShaderConstants::ShaderType& ShaderRes::ShaderType() const {
 	return m_shaderType;
 }
 
-void Shader::SetShaderCode(const std::string& _shaderCode) {
+void ShaderRes::SetShaderCode(const std::string& _shaderCode) {
 	m_shaderCode = _shaderCode;
 }
 
-const std::string& Shader::GetShaderCode() const {
+const std::string& ShaderRes::GetShaderCode() const {
 	return m_shaderCode;
 }
 
-const GLuint& Shader::GetShaderID() const {
+const GLuint& ShaderRes::GetShaderID() const {
 	return m_shaderId;
 }
 
-void Shader::Build(bool _showDebugMessages) {
+void ShaderRes::Build(bool _showDebugMessages) {
 	if (m_shaderIsBuilt) {
 		Destroy();
 	}
@@ -102,7 +102,7 @@ void Shader::Build(bool _showDebugMessages) {
 	}
 }
 
-void Shader::Destroy() {
+void ShaderRes::Destroy() {
 	if (!m_shaderIsBuilt) return;
 	glDeleteShader(m_shaderId);
 	m_shaderId = ShaderConstants::C_INVALIDSHADERID;
@@ -111,7 +111,7 @@ void Shader::Destroy() {
 
 
 
-std::vector<PropertyMD::Property>& Shader::GetProps() {
+std::vector<PropertyMD::Property>& ShaderRes::GetProps() {
 	using namespace PropertyMD;
 	using namespace ShaderConstants;
 
@@ -119,10 +119,10 @@ std::vector<PropertyMD::Property>& Shader::GetProps() {
 
 
 	static std::vector<Property> props{
-		MakeEnumProperty<Shader>(
+		MakeEnumProperty<ShaderRes>(
 			"Shader Type",
-			&Shader::ShaderType,
-			&Shader::ShaderType,
+			&ShaderRes::ShaderType,
+			&ShaderRes::ShaderType,
 			std::vector<Option> {
 				Option{ "Vertex",					static_cast<int>(ShaderType::VERTEX) },
 				Option{ "Fragment",					static_cast<int>(ShaderType::FRAG) },
@@ -141,27 +141,27 @@ std::vector<PropertyMD::Property>& Shader::GetProps() {
 
 
 // - material side --------------------------------------------------------------------------------
-void ShaderProgram::Init() {
+void ShaderProgramRes::Init() {
 
 }
 
-void ShaderProgram::Load() {
+void ShaderProgramRes::Load() {
 	
 }
 
-void ShaderProgram::Unload() {
+void ShaderProgramRes::Unload() {
 
 }
 
-void ShaderProgram::SetShader(const Shader& _shader) {
+void ShaderProgramRes::SetShader(const ShaderRes& _shader) {
 	SetShader(_shader, _shader.ShaderType());
 }
 
-void ShaderProgram::SetShader(const Shader& _shader, const ShaderConstants::ShaderType& _type) {
+void ShaderProgramRes::SetShader(const ShaderRes& _shader, const ShaderConstants::ShaderType& _type) {
 	SetShader(_shader.GetShaderID(), _type);
 }
 
-void ShaderProgram::SetShader(const GLuint& _shaderId, const ShaderConstants::ShaderType& _type) {
+void ShaderProgramRes::SetShader(const GLuint& _shaderId, const ShaderConstants::ShaderType& _type) {
 	SparseSetView<GLuint> shaderId{ m_shaderIds.at(_type) };
 	if (shaderId) {
 		*shaderId = _shaderId;
@@ -171,7 +171,7 @@ void ShaderProgram::SetShader(const GLuint& _shaderId, const ShaderConstants::Sh
 	}
 }
 
-bool ShaderProgram::IsValid() const {
+bool ShaderProgramRes::IsValid() const {
 	bool isComputeShader = IsValidComputeShader();
 	if (isComputeShader) {
 		LOG_INFO("NOTE: Shader Program is a compute shader.");
@@ -180,11 +180,11 @@ bool ShaderProgram::IsValid() const {
 	return IsValidRenderShader();
 }
 
-bool ShaderProgram::IsValidComputeShader() const {
+bool ShaderProgramRes::IsValidComputeShader() const {
 	return (bool)m_shaderIds.at(ShaderConstants::ShaderType::COMPUTE);	
 }
 
-bool ShaderProgram::IsValidRenderShader() const {
+bool ShaderProgramRes::IsValidRenderShader() const {
 	bool hasFragShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::FRAG);
 	bool hasVertexShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::VERTEX);
 	if (!hasVertexShader || !hasFragShader) {
@@ -197,15 +197,15 @@ bool ShaderProgram::IsValidRenderShader() const {
 	return true;
 }
 
-void ShaderProgram::SetShaderProgramID(GLuint _id) {
+void ShaderProgramRes::SetShaderProgramID(GLuint _id) {
 	m_shaderProgramId = _id; 
 };
 
-int ShaderProgram::GetShaderProgramID() const { 
+int ShaderProgramRes::GetShaderProgramID() const { 
 	return m_shaderProgramId; 
 };
 
-void ShaderProgram::Build() {
+void ShaderProgramRes::Build() {
 	if (!IsValid()) {
 		LOG_ERROR("Invalid Shader Program Setup. Aborting...");
 		return;
@@ -239,12 +239,12 @@ void ShaderProgram::Build() {
 
 
 
-void ShaderProgram::Destroy(){
+void ShaderProgramRes::Destroy(){
 	glDeleteProgram(m_shaderProgramId);
 	m_shaderProgramId = 0;
 }
 
-std::vector<GLuint> ShaderProgram::GetShaderIDList() const {
+std::vector<GLuint> ShaderProgramRes::GetShaderIDList() const {
 	bool hasFragShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::FRAG);
 	bool hasVertexShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::VERTEX);
 	if (!hasVertexShader || !hasFragShader) {

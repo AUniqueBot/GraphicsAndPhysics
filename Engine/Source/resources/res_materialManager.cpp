@@ -48,7 +48,7 @@ GLuint MaterialManager::ResolveMaterial(std::string _materialID) const {
 }
 
 MaterialHandle MaterialManager::CreateGenericMaterial() {
-	std::shared_ptr<Material> matPtr { std::make_shared<Material>() };
+	std::shared_ptr<MaterialRes> matPtr { std::make_shared<MaterialRes>() };
 	MaterialHandle mat(RegisterResource(matPtr));
 	return mat;
 }
@@ -58,19 +58,19 @@ MaterialHandle MaterialManager::CreateUnlitMaterial() {
 }
 
 LambertMaterialHandle MaterialManager::CreateLambertMaterial() {
-	std::shared_ptr<LambertMaterial> mat { std::make_shared<LambertMaterial>() };
+	std::shared_ptr<LambertMaterialRes> mat { std::make_shared<LambertMaterialRes>() };
 	LambertMaterialHandle res (RegisterResource(mat));
 	return res;
 }
 
 PhongMaterialHandle MaterialManager::CreatePhongMaterial() {
-	std::shared_ptr<PhongMaterial> mat{ std::make_shared<PhongMaterial>() };
+	std::shared_ptr<PhongMaterialRes> mat{ std::make_shared<PhongMaterialRes>() };
 	PhongMaterialHandle res(RegisterResource(mat));
 	return res;
 }
 
 BlinnPhongMaterialHandle MaterialManager::CreateBlinnMaterial() {
-	std::shared_ptr<BlinnPhongMaterial> mat{ std::make_shared<BlinnPhongMaterial>() };
+	std::shared_ptr<BlinnPhongMaterialRes> mat{ std::make_shared<BlinnPhongMaterialRes>() };
 	BlinnPhongMaterialHandle handle(RegisterResource(mat));
 	return handle;
 }
@@ -84,7 +84,7 @@ MaterialHandle MaterialManager::LoadMaterial(
 	RES_ID _existingId
 ) {
 	const rapidjson::Value& shader = _materialData["shader_id"];
-	std::shared_ptr<Material> mat;
+	std::shared_ptr<MaterialRes> mat;
 	if (shader.IsString()) {
 		// shader uses an alias (human read), load that.
 		std::string alias = shader.GetString();
@@ -104,8 +104,8 @@ MaterialHandle MaterialManager::LoadMaterial(
 	else {
 		// get resource id.
 		RES_ID id = shader.GetInt();
-		std::shared_ptr<ShaderProgram> shaderProg = 
-			dynamic_pointer_cast<ShaderProgram>(m_resourceManager.GetResource(id));
+		std::shared_ptr<ShaderProgramRes> shaderProg = 
+			dynamic_pointer_cast<ShaderProgramRes>(m_resourceManager.GetResource(id));
 		if (shaderProg) {
 			mat->SetShaderProgram(shaderProg->GetShaderProgramID());
 		}
@@ -131,9 +131,9 @@ MaterialHandle MaterialManager::LoadMaterial(
 
 
 
-std::shared_ptr<LambertMaterial> MaterialManager::LoadLambertMaterial(const rapidjson::Value& _materialData) {
+std::shared_ptr<LambertMaterialRes> MaterialManager::LoadLambertMaterial(const rapidjson::Value& _materialData) {
 	using namespace MaterialLookupConstants;
-	auto mat = std::make_shared<LambertMaterial>();
+	auto mat = std::make_shared<LambertMaterialRes>();
 
 	if (_materialData.HasMember(C_MAT_U_ALBEDO_COL)) {
 		const auto& col = _materialData[C_MAT_U_ALBEDO_COL];
@@ -168,9 +168,9 @@ std::shared_ptr<LambertMaterial> MaterialManager::LoadLambertMaterial(const rapi
 	return mat;
 }
 
-std::shared_ptr<PhongMaterial> MaterialManager::LoadPhongMaterial(const rapidjson::Value& _materialData) {
+std::shared_ptr<PhongMaterialRes> MaterialManager::LoadPhongMaterial(const rapidjson::Value& _materialData) {
 	using namespace MaterialLookupConstants;
-	auto mat = std::make_shared<PhongMaterial>();
+	auto mat = std::make_shared<PhongMaterialRes>();
 
 	if (_materialData.HasMember(C_MAT_U_ALBEDO_COL)) {
 		const auto& col = _materialData[C_MAT_U_ALBEDO_COL];
@@ -241,9 +241,9 @@ std::shared_ptr<PhongMaterial> MaterialManager::LoadPhongMaterial(const rapidjso
 	return mat;
 }
 
-std::shared_ptr<BlinnPhongMaterial> MaterialManager::LoadBlinnMaterial(const rapidjson::Value& _materialData) {
+std::shared_ptr<BlinnPhongMaterialRes> MaterialManager::LoadBlinnMaterial(const rapidjson::Value& _materialData) {
 	using namespace MaterialLookupConstants;
-	auto mat = std::make_shared<BlinnPhongMaterial>();
+	auto mat = std::make_shared<BlinnPhongMaterialRes>();
 
 	if (_materialData.HasMember(C_MAT_U_ALBEDO_COL)) {
 		const auto& col = _materialData[C_MAT_U_ALBEDO_COL];
@@ -312,8 +312,8 @@ std::shared_ptr<BlinnPhongMaterial> MaterialManager::LoadBlinnMaterial(const rap
 	return mat;
 }
 
-std::shared_ptr<Material> MaterialManager::LoadGGXMaterial(const rapidjson::Value& _materialData) {
-	return std::shared_ptr<Material>();
+std::shared_ptr<MaterialRes> MaterialManager::LoadGGXMaterial(const rapidjson::Value& _materialData) {
+	return std::shared_ptr<MaterialRes>();
 }
 
 
@@ -321,7 +321,7 @@ std::shared_ptr<Material> MaterialManager::LoadGGXMaterial(const rapidjson::Valu
 
 
 
-bool MaterialManager::SaveMaterial(const std::shared_ptr<Material>& _material) {
+bool MaterialManager::SaveMaterial(const std::shared_ptr<MaterialRes>& _material) {
 	Materials::ShadingModel shadingModel = _material->GetShadingModel();
 
 	Serialization::JSONFile doc(Serialization::JSONFileType::Object);
@@ -339,7 +339,7 @@ bool MaterialManager::SaveMaterial(const std::shared_ptr<Material>& _material) {
 	switch (shadingModel) {
 	case Materials::ShadingModel::LAMBERT:
 
-		props = SaveLambertMaterial(static_pointer_cast<LambertMaterial>(_material), allocator);
+		props = SaveLambertMaterial(static_pointer_cast<LambertMaterialRes>(_material), allocator);
 		doc.AddMember("shader_id", 
 			rapidjson::Value().SetString(ShaderConstants::C_ID_LAMBERTSHADERPROG)
 		);
@@ -370,7 +370,7 @@ bool MaterialManager::SaveMaterial(const std::shared_ptr<Material>& _material) {
 
 
 rapidjson::Value MaterialManager::SaveLambertMaterial(
-	std::shared_ptr<LambertMaterial> _materialData,
+	std::shared_ptr<LambertMaterialRes> _materialData,
 	rapidjson::Document::AllocatorType& _alloc
 	) {
 	using namespace MaterialLookupConstants;
@@ -393,21 +393,21 @@ rapidjson::Value MaterialManager::SaveLambertMaterial(
 }
 
 rapidjson::Value MaterialManager::SavePhongMaterial(
-	std::shared_ptr<PhongMaterial> _materialData,
+	std::shared_ptr<PhongMaterialRes> _materialData,
 	rapidjson::Document::AllocatorType& _alloc
 ) {
 	return rapidjson::Value();
 }
 
 rapidjson::Value MaterialManager::SaveBlinnMaterial(
-	std::shared_ptr<BlinnPhongMaterial> _materialData,
+	std::shared_ptr<BlinnPhongMaterialRes> _materialData,
 	rapidjson::Document::AllocatorType& _alloc
 	) {
 	return rapidjson::Value();
 }
 
 rapidjson::Value MaterialManager::SaveGGXMaterial(
-	std::shared_ptr<Material> _materialData,
+	std::shared_ptr<MaterialRes> _materialData,
 	rapidjson::Document::AllocatorType& _alloc
 ) {
 	return rapidjson::Value();

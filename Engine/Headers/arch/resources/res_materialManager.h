@@ -34,29 +34,29 @@ public:
 		const rapidjson::Value& _materialData, 
 		RES_ID _existingId = ResourceConstants::C_RES_INVALID_ID
 	);
-	std::shared_ptr<LambertMaterial> LoadLambertMaterial(const rapidjson::Value& _materialData);
-	std::shared_ptr<PhongMaterial> LoadPhongMaterial(const rapidjson::Value& _materialData);
-	std::shared_ptr<BlinnPhongMaterial> LoadBlinnMaterial(const rapidjson::Value& _materialData);
-	std::shared_ptr<Material> LoadGGXMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<LambertMaterialRes> LoadLambertMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<PhongMaterialRes> LoadPhongMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<BlinnPhongMaterialRes> LoadBlinnMaterial(const rapidjson::Value& _materialData);
+	std::shared_ptr<MaterialRes> LoadGGXMaterial(const rapidjson::Value& _materialData);
 
 	bool SaveMaterial(
-		const std::shared_ptr<Material>& _material
+		const std::shared_ptr<MaterialRes>& _material
 	);
 	
 	rapidjson::Value SaveLambertMaterial(
-		std::shared_ptr<LambertMaterial> _materialData, 
+		std::shared_ptr<LambertMaterialRes> _materialData, 
 		rapidjson::Document::AllocatorType& _alloc
 		);
 	rapidjson::Value SavePhongMaterial(
-		std::shared_ptr<PhongMaterial> _materialData, 
+		std::shared_ptr<PhongMaterialRes> _materialData, 
 		rapidjson::Document::AllocatorType& _alloc
 		);
 	rapidjson::Value SaveBlinnMaterial(
-		std::shared_ptr<BlinnPhongMaterial> _materialData, 
+		std::shared_ptr<BlinnPhongMaterialRes> _materialData, 
 		rapidjson::Document::AllocatorType& _alloc
 		);
 	rapidjson::Value SaveGGXMaterial(
-		std::shared_ptr<Material> _materialData,
+		std::shared_ptr<MaterialRes> _materialData,
 		rapidjson::Document::AllocatorType& _alloc
 	);
 
