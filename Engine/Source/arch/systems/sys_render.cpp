@@ -210,6 +210,8 @@ void RenderSystem::PreUpdate() {
     TextureManager& texMgr = c.GetAssetManager().GetTextureManager();
     ComponentPool<MeshRenderer> mrPool = *er.GetComponentPool<MeshRenderer>();
     for (MeshRenderer& mr : mrPool) {
+        MeshHandle itr = mr.GetMesh();
+        if (!itr.HandleIsValid()) continue;
 
         std::shared_ptr<MeshRes> meshRes = mr.GetMesh().Get();
         if (!meshRes || !meshRes->InfoDirty())

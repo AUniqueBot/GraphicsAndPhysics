@@ -18,6 +18,34 @@ void MeshManager::Init() {
 	SetResourceAlias(plane.GetResourceID(), VertexAttributeConstants::C_DEFAULT_MESH_PLANE);
 	SetResourceAlias(sphere.GetResourceID(), VertexAttributeConstants::C_DEFAULT_MESH_SPHERE);
 	//SetResourceAlias(icosphere.GetResourceID(), MeshConstants::C_DEFAULT_MESH_ICOSPHERE);
+
+	// -------------------------------------------------------------------------------------------
+
+	RegisterTypenameToFunction(
+		"Cube",
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreateCubeMesh();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+	RegisterTypenameToFunction(
+		"Plane",
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreatePlaneMesh();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+	RegisterTypenameToFunction(
+		"Sphere",
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreateSphereMesh();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+
 }
 
 
@@ -53,7 +81,7 @@ SphereHandle MeshManager::CreateSphereMesh(SphereCreationProps _props) {
 MeshHandle MeshManager::CreateIcosphereMesh() {
 	std::shared_ptr<SphereRes> mesh = std::make_shared<SphereRes>();
 	mesh->Init();
-	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
+	ResourceIdentifier idr = m_resourceManager.AddRes(mesh);
 	MeshHandle handle(idr);
 	AddResourceToPool(handle);
 	return handle;
@@ -62,7 +90,7 @@ MeshHandle MeshManager::CreateIcosphereMesh() {
 PlaneHandle MeshManager::CreatePlaneMesh(PlaneCreationProps _props) {
 	std::shared_ptr<PlaneRes> mesh = std::make_shared<PlaneRes>(_props);
 	mesh->Init();
-	ResourceIdentifier idr = m_resourceManager.AddInternalResource(mesh);
+	ResourceIdentifier idr = m_resourceManager.AddRes(mesh);
 	PlaneHandle handle(RegisterResource(mesh));
 	AddResourceToPool(handle);
 	return handle;

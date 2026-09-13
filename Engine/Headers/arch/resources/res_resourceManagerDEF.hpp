@@ -4,8 +4,8 @@
 
 
 template<std::derived_from<BaseResource> T>
-inline ResourceIdentifier ResourceManager::AddInternalResource(std::shared_ptr<T> _resource) {
-	return AddResourceInternal(_resource, _resource->ResourceType());
+inline ResourceIdentifier ResourceManager::AddRes(std::shared_ptr<T> _resource) {
+	return AddResource(_resource, _resource->ResourceType());
 }
 
 template <std::derived_from<BaseResource> T>

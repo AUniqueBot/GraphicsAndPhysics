@@ -15,8 +15,8 @@ public:
 
 
 public:
-    virtual void Deserialize(const Serialization::JSONValue& _data, AssetManager& _asMgr);
-    virtual Serialization::JSONValue Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr);
+    virtual void Deserialize(const Serialization::JSONValue& _data, AssetManager* _asMgr);
+    virtual Serialization::JSONValue Serialize(Serialization::JSONAllocator& _allocator, AssetManager* _asMgr);
 };
 
 

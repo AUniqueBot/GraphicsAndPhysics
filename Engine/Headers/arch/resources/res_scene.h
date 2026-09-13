@@ -62,7 +62,7 @@ public:
 		);
 
 	void Save();
-	Serialization::JSONValue Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr) override;
+	Serialization::JSONValue Serialize(Serialization::JSONAllocator& _allocator, AssetManager*) override;
 	
 	Serialization::JSONFile& GetJSONData();
 	const Serialization::JSONFile& GetJSONData() const;

@@ -14,4 +14,6 @@ struct ResourceIdentifier {
 	std::shared_ptr<BaseResource> GetResource();
 
 	std::shared_ptr<const BaseResource> GetResource() const;
+
+	bool IsValid() const;
 };

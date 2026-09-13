@@ -25,7 +25,7 @@ public:
 	}
 	
 	void Init() override;
-	
+	void Load(std::filesystem::path _scenesPath);
 public:
 	void CreateScene();
 	void DeleteScene();

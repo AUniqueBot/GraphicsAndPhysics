@@ -4,7 +4,16 @@
 #include <functional>
 #include <memory>
 
+using GetterFunction = std::function<void(void*, void*&)>;
+using SetterFunction = std::function<void(void*, const void*)>;
 
+
+template<typename T>
+inline const T& GetValueFromGetter(GetterFunction _getter, void* _object) {
+	void* valPtr{};
+	_getter(_object, valPtr);
+	return *static_cast<T*>(valPtr);
+}
 
 
 namespace PropertyMD {
@@ -46,9 +55,9 @@ namespace PropertyMD {
 		Shape m_shape;
 		int m_componentCount;
 		bool m_draggable = false;
-		std::function<void(void*, void*)> m_get = nullptr;
+		std::function<void(void*, void*&)> m_get = nullptr;
 		std::function<void(void*, const void*)> m_set = nullptr;
-		uint32_t m_resourceType{};
+		uint32_t m_resourceType	{ 0 };
 
 
 		bool m_isEnum = false;
@@ -65,7 +74,7 @@ namespace PropertyMD {
 
 			std::function<void* (void*)> m_getObject = nullptr;
 
-			std::function<void(void*, void*)> m_add = nullptr;
+			std::function<void(void*, const void*)> m_add = nullptr;
 			std::function<void(void*, int)> m_remove = nullptr;
 
 			bool m_valid = false;
@@ -91,7 +100,7 @@ namespace PropertyMD {
 			PropertyType type,
 			Shape shape,
 			int count,
-			std::function<void(void*, void*)> get,
+			std::function<void(void*, void*&)> get,
 			std::function<void(void*, const void*)> set,
 			bool draggable = false
 		) : m_name(std::move(name))
@@ -127,9 +136,11 @@ namespace PropertyMD {
 			count,
 
 			// getter
-			[getter](void* obj, void* out) {
+			[getter](void* obj, void*& out) {
 				T* t = static_cast<T*>(obj);
-				*(ValueT*)out = std::invoke(getter, t);
+				ReturnT val = std::invoke(getter, t);
+				out = (void*)&val;
+
 			},
 
 			// setter
@@ -158,10 +169,10 @@ namespace PropertyMD {
 			1,
 
 			// GET
-			[getter](void* obj, void* out) {
+			[getter](void* obj, void*& out) {
 				T* t = static_cast<T*>(obj);
 				int value = static_cast<int>((t->*getter)());
-				*static_cast<int*>(out) = value;
+				out = (void*) & value;
 			},
 
 			// SET
@@ -242,9 +253,9 @@ namespace PropertyMD {
 			return ReflectElement<Element>::Get(list[index]);
 			};
 
-		ls.m_add = [listAdder](void* obj, void* element) {
+		ls.m_add = [listAdder](void* obj, const void* element) {
 			T* a = static_cast<T*>(obj);
-			Element* val = static_cast<Element*>(element);
+			const Element* val = static_cast<const Element*>(element);
 			listAdder(a, *val);
 			};
 		ls.m_remove = [listRemover](void* obj, int index) {

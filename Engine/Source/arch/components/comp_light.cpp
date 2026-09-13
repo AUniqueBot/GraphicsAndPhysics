@@ -13,7 +13,7 @@ void Light::Type(const LightType& _type) {
     m_lightDataMismatch = true;
 }
 
-float Light::Power() const {
+const float& Light::Power() const {
     return m_power;
 }
 
@@ -34,7 +34,7 @@ void Light::SetColor(const glm::vec3& _col) {
 
 
 
-bool Light::GetCastShadow() const { 
+const bool& Light::GetCastShadow() const { 
     return m_castShadow; 
 }
 void Light::SetCastShadow(bool _cast) {
@@ -136,7 +136,7 @@ std::vector<PropertyMD::Property>& Light::GetProps() {
     static std::vector<Property> props{
         PropertyMD::MakeProperty<Light>("Color", PropertyType::Color, Shape::FixedArray, 3, &Light::GetColor, &Light::SetColor),
         PropertyMD::MakeProperty<Light>("Power", PropertyType::Float, Shape::Scalar, 1,
-            static_cast<float (Light::*)() const>(&Light::Power),   // getter
+            static_cast<const float& (Light::*)() const>(&Light::Power),   // getter
             static_cast<void (Light::*)(float)>(&Light::Power),      // setter
             true
             ),

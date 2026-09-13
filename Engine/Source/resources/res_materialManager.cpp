@@ -11,6 +11,34 @@
 
 void MaterialManager::Init() {
 	RegisterFileExtension(".material");
+
+	// - 
+
+	RegisterTypenameToFunction(
+		"Blinn", 
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreateBlinnMaterial();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+	RegisterTypenameToFunction(
+		"Phong",
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreatePhongMaterial();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+	RegisterTypenameToFunction(
+		"Lambert",
+		[this](const Serialization::JSONValue& _val, ResourceHandle* _handle) {
+			ResourceHandle handle = CreateLambertMaterial();
+			handle.GetBaseResource()->Deserialize(_val, nullptr);
+			*_handle = handle;
+		}
+	);
+
 }
 
 GLuint MaterialManager::ResolveMaterial(std::string _materialID) const {
@@ -43,7 +71,7 @@ PhongMaterialHandle MaterialManager::CreatePhongMaterial() {
 
 BlinnPhongMaterialHandle MaterialManager::CreateBlinnMaterial() {
 	std::shared_ptr<BlinnPhongMaterial> mat{ std::make_shared<BlinnPhongMaterial>() };
-	BlinnPhongMaterialHandle handle(m_resourceManager.AddInternalResource(mat));
+	BlinnPhongMaterialHandle handle(RegisterResource(mat));
 	return handle;
 }
 
@@ -95,7 +123,7 @@ MaterialHandle MaterialManager::LoadMaterial(
 
 
 	mat->Name(_materialData["name"].GetString());
-	MaterialHandle handle(m_resourceManager.AddInternalResource(mat));
+	MaterialHandle handle(m_resourceManager.AddRes(mat));
 	AddResourceToPool(handle);
 	return handle;
 }

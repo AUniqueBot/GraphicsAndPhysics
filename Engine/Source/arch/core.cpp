@@ -33,20 +33,17 @@ void Core::Init() {
 	// test scene 1 - 4051038013427589782
 	// test scene 2 - 5576267115073075432
 	m_sceneManager.SetCurrentScene(5576267115073075432);
+	SceneHandle scene = m_sceneManager.GetCurrentScene();
 	m_sceneManager.LoadCurrentScene();
 	
 	// test out this stuff.	
-	Entity& obj1 = *(m_registry.Instantiate());
-
-
+	Entity& obj1 = *(scene->Instantiate());
 	obj1.Name("Mesh Object");
 	
 	obj1.AddComponent<MeshRenderer>();	// object
 	const auto& component = obj1.GetComponent<MeshRenderer>();
 	if (component) {
 		MeshHandle mesh = meshMgr.LoadMesh("./Assets/Models/sampleModel.obj");
-
-
 		// need to assign mesh to meshrender, not have it initialised with the meshrenderer.
 		component->SetMesh(mesh);
 		BlinnPhongMaterialHandle mat = matMgr.CreateBlinnMaterial();
@@ -162,6 +159,15 @@ void Core::CoreInit() {
 	m_resourceManager.Init(); 
 	m_assetManager.Init();
 	m_sceneManager.Init();
+
+	
+
+	// - loading of resources ----------------
+	std::filesystem::path assetsPath{"./Assets"};
+	m_assetManager.Load(assetsPath);
+	m_sceneManager.Load(assetsPath);
+
+
 }
 
 

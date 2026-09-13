@@ -644,5 +644,8 @@
     <ClInclude Include="Headers\arch\ecs\ecs_typeRegistry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\arch\resources\res_resourceTypeMetadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

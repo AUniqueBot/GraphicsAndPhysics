@@ -101,7 +101,7 @@ void ResourceManager::ScanResourcesInPath(std::filesystem::path _filePath, bool 
 }
 
 
-ResourceIdentifier ResourceManager::AddResourceInternal(
+ResourceIdentifier ResourceManager::AddResource(
 	std::shared_ptr<BaseResource> _resource, 
 	RESTYPE_ID _type
 ) {
@@ -154,10 +154,6 @@ void ResourceManager::RemoveResource(std::string _name) {
 	RemoveResource(res->ResourceID());
 }
 
-bool ResourceManager::RegisterResourceKey(RES_ID _resId, std::string _name) {
-	//
-	return false;
-}
 
 void ResourceManager::RemoveResource(RES_ID _id) {
 	// get the resource

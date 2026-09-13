@@ -30,7 +30,7 @@ void CubeRes::SetZDimensions(float _dims) {
 	UpdateVertexData();
 }
 
-void CubeRes::SetDimensions(glm::vec3 _dims) {
+void CubeRes::SetDimensions(const glm::vec3& _dims) {
 	if (m_dimensions == _dims) return;
 	m_dimensions = _dims;
 	UpdateVertexData();
@@ -212,4 +212,25 @@ void CubeRes::UpdateVertexData() {
 	submesh.SetData<glm::vec3>("position", vertexPositions.data(), vertexPositions.size());
 	submesh.SetData<glm::vec3>("normal", vertexNormals.data(), vertexPositions.size());
 	submesh.SetVertexIndices(indices.data(), indices.size());
+}
+
+
+std::vector<PropertyMD::Property>& CubeRes::GetProps() {
+	using namespace PropertyMD;
+
+	static PropertyList props{
+		MakeProperty<CubeRes>(
+			"Dimensions", PropertyType::Float, Shape::FixedArray, 3,
+			&CubeRes::GetDimensions,
+			&CubeRes::SetDimensions
+		),
+		MakeProperty<CubeRes>(
+			"Subdivisions", PropertyType::Int, Shape::FixedArray, 3,
+			&CubeRes::GetSubdivisions,
+			&CubeRes::SetSubdivisions
+		)
+	};
+
+
+	return props; 
 }

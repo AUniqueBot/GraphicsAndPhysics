@@ -14,7 +14,9 @@ enum class GPUUploadBehaviour {
 };
 
 
+
 class SpecializedResourceManager {
+	using SerializerFunction = std::function<void(const Serialization::JSONValue&, ResourceHandle*)>;
 public:
 	SpecializedResourceManager(
 		ResourceManager& _manager, 
@@ -47,8 +49,11 @@ public:
 
 	void UpdateResourceMetafile(const std::filesystem::path& _file);
 
-
 	const std::unordered_set<RES_ID>& GetResourcePool() const;
+
+public:
+	ResourceHandle CreateResource(const Serialization::JSONValue& _value);
+	void RegisterTypenameToFunction(std::string _name, SerializerFunction _function);
 protected:
 	void AddResourceToPool(ResourceHandle _handle);
 
@@ -69,7 +74,12 @@ protected:
 	GPUResourceManager& m_gpuResourceManager;
 	std::unordered_set<std::string> m_registeredExtensions;
 
-	
+
+	// generate some stuff idk
+	std::unordered_map<
+		std::string, 
+		SerializerFunction
+	> m_factoryFunctions;
 
 };
 

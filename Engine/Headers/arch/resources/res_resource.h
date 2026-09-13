@@ -2,6 +2,7 @@
 #include <pch.h>
 #include <typeindex>
 #include <arch/common/inspectable.h>
+#include <arch/resources/res_resourceTypeMetadata.h>
 //#include <arch/common/properties.h>
 /*
 	Goals -> management of resources
@@ -11,12 +12,11 @@
 
 
 using RES_ID = uint64_t;		// id of the resource (to be replaced with GUID one day)
-using RESTYPE_ID = uint32_t;	// id of the TYPE of resource
+
 
 
 namespace ResourceConstants {
 	inline constexpr const RES_ID	  C_RES_INVALID_ID		{ 0 };
-	inline constexpr const RESTYPE_ID C_RESTYPE_INVALID_ID	{ 0 };
 };
 
 
@@ -26,36 +26,7 @@ inline RES_ID GenerateResourceID() {
 }
 
 
-
-struct ResourceTypeMetadata {
-public:
-	using RESTYPE_INFO = std::type_index;
-public:
-	ResourceTypeMetadata(
-		std::string _typeName,
-		RESTYPE_ID _typeId,
-		std::type_index _typeInfo
-	) :
-		m_name				{ _typeName },
-		m_resourceTypeID	{ _typeId },
-		m_typeInfo			{ _typeInfo }
-
-	{
-
-	}
-
-	const std::string& GetName() const { return m_name; }
-	const RESTYPE_ID& GetResourceTypeID() const { return m_resourceTypeID; }
-	const RESTYPE_INFO& GetTypeInfo() const { return m_typeInfo; }
-
-private:
-	std::string m_name;
-	RESTYPE_ID m_resourceTypeID;
-	std::type_index m_typeInfo;
-};
-
 class BaseResource: public Inspectable {
-private:
 public:
 
 public:
@@ -82,16 +53,27 @@ public:
 
 	inline virtual void Destroy() {};
 
+
 protected:
 	friend class ResourceManager;
 	std::string m_name{};
 	std::filesystem::path m_pathToAsset	{}; // path to asset if any.
 
 private:
+	/*
+		Serialization rules:
+			if has alias - use alias
+			else if has path - use path (guid)
+			else use constructed
+	*/
+
+	//
 	RES_ID m_resourceId					{ ResourceConstants::C_RES_INVALID_ID };
-	RESTYPE_ID m_resType				{ 0 };	// 0 reserved as invalid.
+	RESTYPE_ID m_resType				{ ResourceConstants::C_RESTYPE_INVALID_ID };	// 0 reserved as invalid.
 	unsigned m_referenceCount			{};
 	bool m_isLoaded						{ false };
+	bool m_generated					{ true }; // unneeded if the resource id has an alias.
+
 };
 
 // ----------------------------------------------------------------------------------

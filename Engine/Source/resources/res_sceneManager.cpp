@@ -6,19 +6,18 @@
 
 void SceneManager::Init() {
 	RegisterFileExtension(".scene");
-	
+}
 
+
+void SceneManager::Load(std::filesystem::path _path) {
 	using namespace Serialization;
-	auto metadata = MetafileSerializer::ScanForMetafilesInPath("./Assets");
+	auto metadata = MetafileSerializer::ScanForMetafilesInPath(_path);
 	for (const MetafileData& metafile : metadata) {
 		if (AcceptsFileExtension(metafile.path.extension().string())) {
 			LoadResource(metafile);
 		}
 	}
-
-
 }
-
 
 
 
@@ -27,7 +26,7 @@ void SceneManager::CreateScene() {
 	auto scene = std::make_shared<Scene>();
 	scene->SetRegistry(&m_entityRegistry);
 	scene->SetAssetManager(&m_assetManager);
-	SceneHandle handle(m_resourceManager.AddInternalResource(scene));
+	SceneHandle handle(m_resourceManager.AddRes(scene));
 	AddResourceToPool(handle);
 	ClearScene();
 	// set this handle as the current scene
@@ -62,7 +61,7 @@ SceneHandle SceneManager::LoadScene(const std::filesystem::path& _path, RES_ID _
 	if (_existingId != ResourceConstants::C_RES_INVALID_ID) {
 		scene->ResourceID(_existingId);
 	}
-	SceneHandle handle(m_resourceManager.AddInternalResource(scene));
+	SceneHandle handle(m_resourceManager.AddRes(scene));
 	return handle;
 }
 

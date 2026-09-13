@@ -44,11 +44,7 @@ public:
 	void ScanResourcesInPath(std::filesystem::path _filePath, bool _recursive = true);
 	
 	template <std::derived_from<BaseResource> T>
-	ResourceIdentifier AddInternalResource(std::shared_ptr<T> _resource);
-
-
-	bool RegisterResourceKey(RES_ID _resId, std::string _name);
-	
+	ResourceIdentifier AddRes(std::shared_ptr<T> _resource);
 
 	void RemoveResource(RES_ID _id); 
 	void RemoveResource(std::string _name); 
@@ -105,7 +101,7 @@ public:
 private:
 
 
-	ResourceIdentifier AddResourceInternal(
+	ResourceIdentifier AddResource(
 		std::shared_ptr<BaseResource> _resource,
 		RESTYPE_ID _type
 	);

@@ -81,10 +81,9 @@ void LambertMaterial::SetupTextures() {
     m_textureColor = texManager.Create2DTexture(1, 1, props);
     auto resPtr = m_textureColor.Get();
     resPtr->SetGPUResourceHandle(gpuMgr.CreateTexture(*resPtr));
-    
-
-
     m_textureColor->SetPixelColor(m_color, 0, 0, 0);
+
+
 }
 
 

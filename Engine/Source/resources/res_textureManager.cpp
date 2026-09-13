@@ -85,7 +85,7 @@ Texture2DHandle TextureManager::LoadTexture(const std::filesystem::path& _path) 
 
 	// if successful add to storage
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
-	ResourceIdentifier id = m_resourceManager.AddInternalResource(texHandle);
+	ResourceIdentifier id = m_resourceManager.AddRes(texHandle);
 	Texture2DHandle handle(id);
 	AddResourceToPool(handle);
 	return handle;
@@ -97,7 +97,7 @@ Texture2DHandle TextureManager::LoadTexture(const std::filesystem::path& _path) 
 Texture2DHandle TextureManager::Create2DTexture(int _width, int _height, TextureProperties::TextureProps _props) {
 	std::shared_ptr<Texture2DRes> res = std::make_shared<Texture2DRes>();
 	res->SetDimensions(glm::ivec2{_width, _height});
-	ResourceIdentifier id = m_resourceManager.AddInternalResource(res);
+	ResourceIdentifier id = m_resourceManager.AddRes(res);
 	//LOG_INFO("Allocating 2D Texture of size: [" << _width << ", " << _height << "]");
 	Texture2DHandle handle(id);
 	AddResourceToPool(handle);
@@ -120,7 +120,7 @@ Texture2DArrayHandle TextureManager::Create2DArrayTexture(int _width, int _heigh
 	res->SetDimensions(glm::ivec2{ _width, _height });
 	res->SetLayers(_layers);
 	res->SetTextureProps(_props);
-	ResourceIdentifier id = m_resourceManager.AddInternalResource(res);
+	ResourceIdentifier id = m_resourceManager.AddRes(res);
 	//LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
 	Texture2DArrayHandle handle { id };
 	AddResourceToPool(handle); 
@@ -134,7 +134,7 @@ CubemapRes TextureManager::CreateCubemapTexture(int _dimensions, TextureProperti
 		_props
 	);// move dimensions 
 	std::shared_ptr<TextureRes> texHandle = std::make_shared<TextureRes>();
-	CubemapHandle handle(m_resourceManager.AddInternalResource(texHandle));
+	CubemapHandle handle(m_resourceManager.AddRes(texHandle));
 	//LOG_INFO("Allocating 2D Texture array of size: [" << _width << ", " << _height << "] with " << _layers << " layers.");
 	AddResourceToPool(handle);
 	return CubemapRes();

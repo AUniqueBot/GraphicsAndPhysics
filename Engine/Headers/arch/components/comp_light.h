@@ -145,7 +145,7 @@ public:
 	const LightType& Type() const;
 	void Type(const LightType& _type);
 	
-	float Power() const;
+	const float& Power() const;
 	void Power(float _value);
 
 	const glm::vec3& GetColor() const;
@@ -164,7 +164,7 @@ public:
 	) const;
 
 	// -- shadows ----------------------------------------   
-	bool GetCastShadow() const; 
+	const bool& GetCastShadow() const; 
 	void SetCastShadow(bool _cast);
 	
 	void InvalidateShadowMapID() const;

@@ -36,6 +36,7 @@ std::string ResourceHandle::GetName() const {
 }
 
 std::shared_ptr<BaseResource> ResourceHandle::GetBaseResource() {
+
 	return m_resourceIdentifier->GetResource();
 }
 

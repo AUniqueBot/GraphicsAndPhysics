@@ -21,8 +21,7 @@ void SpecializedResourceManager::Remove(RES_ID _id) {
 }
 std::unordered_set<RES_ID> SpecializedResourceManager::List() const {
 	return m_resourceIdPool;
-}
-;
+};
 
 void SpecializedResourceManager::SetResourceAlias(RES_ID _id, std::string _alias) {
 	if (_alias.empty()) {
@@ -122,6 +121,29 @@ const std::unordered_set<RES_ID>& SpecializedResourceManager::GetResourcePool() 
 	return m_resourceIdPool;
 }
 
+ResourceHandle SpecializedResourceManager::CreateResource(const Serialization::JSONValue& _value) {
+	if (_value.IsNull()) {
+		return ResourceHandle(std::nullopt);
+	}
+	// type
+	std::string resType = _value["Resource Type"].GetString();
+	if (m_factoryFunctions.find(resType) == m_factoryFunctions.end()) {
+		return ResourceHandle(std::nullopt);
+	}
+	SerializerFunction func = m_factoryFunctions.at(resType);
+	ResourceHandle handle;
+	func(_value["Props"], &handle);
+	return handle;
+}
+	
+
+void SpecializedResourceManager::RegisterTypenameToFunction(std::string _name, SerializerFunction _function) {
+	if (m_factoryFunctions.contains(_name)) {
+		// do something.
+	}
+	m_factoryFunctions[_name] = _function;
+}
+
 void SpecializedResourceManager::AddResourceToPool(ResourceHandle _handle) {
 	m_resourceIdPool.insert(_handle.GetResourceID());
 }
@@ -129,13 +151,12 @@ void SpecializedResourceManager::AddResourceToPool(ResourceHandle _handle) {
 void SpecializedResourceManager::GenerateResourceMetafile(const std::filesystem::path& _metapath) {
 	/*
 		typical metafile format
-
 		{
 			"version": int,
 			"guid": uint64
 		}
-		
 	*/
+		
 	
 	using namespace rapidjson;
 	std::ofstream ofs(_metapath);
@@ -172,7 +193,7 @@ void SpecializedResourceManager::LoadResource(const Serialization::MetafileData&
 }
 
 ResourceIdentifier SpecializedResourceManager::RegisterResource(std::shared_ptr<BaseResource> _res) {
-	ResourceIdentifier idr = m_resourceManager.AddInternalResource(_res);
+	ResourceIdentifier idr = m_resourceManager.AddRes(_res);
 	Add(idr.m_resourceId);
 	return idr;
 }

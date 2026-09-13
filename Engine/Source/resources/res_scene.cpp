@@ -311,7 +311,7 @@ void Scene::Save() {
 
 }
 
-Serialization::JSONValue Scene::Serialize(Serialization::JSONAllocator& _allocator, AssetManager& _asMgr) {
+Serialization::JSONValue Scene::Serialize(Serialization::JSONAllocator& _allocator, AssetManager*) {
 	Serialization::JSONValue val;
 	val.CopyFrom(m_jsonData.GetDocument(), _allocator);
 	return val;

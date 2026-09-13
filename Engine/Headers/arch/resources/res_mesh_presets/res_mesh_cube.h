@@ -18,7 +18,7 @@ public:
 	void SetXDimensions(float _dims);
 	void SetYDimensions(float _dims);
 	void SetZDimensions(float _dims);
-	void SetDimensions(glm::vec3 _dims);
+	void SetDimensions(const glm::vec3& _dims);
 
 	const float& GetXDimensions() const;
 	const float& GetYDimensions() const;
@@ -38,7 +38,7 @@ public:
 
 
 	// 
-
+	INSPECTABLE_DECLAREPROPS(CubeRes);
 protected:
 	void UpdateVertexData();
 

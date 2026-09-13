@@ -187,14 +187,14 @@ public:
 			AssetManager& _asMgr
 			) {
 				_entity.AddComponent<T>();
-				_entity.GetComponent<T>()->Deserialize(_data, _asMgr);
+				_entity.GetComponent<T>()->Deserialize(_data, &_asMgr);
 		};
 		SerializationFunction serializeFunction = [](
 			Entity& _entity,
 			Serialization::JSONAllocator& _allocator,
 			AssetManager& _asMgr
 			) -> Serialization::JSONValue {
-				return _entity.GetComponent<T>()->Serialize(_allocator, _asMgr);
+				return _entity.GetComponent<T>()->Serialize(_allocator, &_asMgr);
 		};
 
 		ComponentMetadata cmdata = ComponentMetadata(

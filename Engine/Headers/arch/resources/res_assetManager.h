@@ -19,17 +19,15 @@ public:
 		m_resourceManager	{ _mgr },
 		m_gpuResourceManager{ _gpuMgr }
 
-		//m_materialManager	{ _mgr, _gpuMgr }, 
-		//m_shaderManager		{ _mgr, _gpuMgr }, 
-		//m_textureManager	{ _mgr, _gpuMgr } ,
-		//m_shaderPrgManager	{ _mgr, _gpuMgr, m_shaderManager },
-		//m_meshManager		{ _mgr, _gpuMgr }
 	{}
 
 public:
 	void Init();
 	void Cleanup();
 	void ScanResourcesInPath(const std::filesystem::path& _path, bool _recursive = true);
+
+	void Load(std::filesystem::path _loadPath);
+
 
 public:
 	template <std::derived_from<BaseResource> ResType, std::derived_from<SpecializedResourceManager> ManagerType>
@@ -86,12 +84,6 @@ public:
 	void SaveMetafileData(const Serialization::MetafileData& _data);
 	void LoadResource(const Serialization::MetafileData& _data);
 
-private:
-	//ShaderManager m_shaderManager;
-	//ShaderProgramManager m_shaderPrgManager;
-	//MaterialManager m_materialManager;
-	//TextureManager m_textureManager;
-	//MeshManager m_meshManager;
 
 private:
 	// references to core managers.

@@ -12,8 +12,6 @@ void AssetManager::Init() {
 	RegisterManager<MeshRes, MeshManager>();
 
 	GetShaderProgramManager().InitShaderPrograms(GetShaderManager());
-
-	ScanResourcesInPath("./Assets");
 }
 
 void AssetManager::Cleanup() {
@@ -21,6 +19,11 @@ void AssetManager::Cleanup() {
 		manager->Cleanup();
 	}
 }
+
+void AssetManager::Load(std::filesystem::path _loadPath) {
+	ScanResourcesInPath("./Assets");
+}
+
 
 void AssetManager::ScanResourcesInPath(const std::filesystem::path& _path, bool _recursive) {
 	namespace fs = std::filesystem;

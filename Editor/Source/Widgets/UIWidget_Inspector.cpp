@@ -292,35 +292,34 @@ void UIWidget_Inspector::DrawPropertyElement(void* object, const PropertyMD::Pro
 
 
 void UIWidget_Inspector::DrawPropertyInt(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
 	switch (prop.m_componentCount) {
 
 	case 1: {
-		int val{};
-		prop.m_get(object, &val);
+		int val{ GetValueFromGetter<int>(getter, object) };
 		if (Raw::DrawPropertyInt(key, &val, 1, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 2: {
-		glm::ivec2 val{};
-		prop.m_get(object, &val);
+		glm::ivec2 val{ GetValueFromGetter<glm::ivec2>(getter, object) };
 		if (Raw::DrawPropertyInt(key, glm::value_ptr(val), 2, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 3: {
-		glm::ivec3 val{};
-		prop.m_get(object, &val);
+		glm::ivec3 val{ GetValueFromGetter<glm::ivec3>(getter, object) };
 		if (Raw::DrawPropertyInt(key, glm::value_ptr(val), 3, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 4: {
-		glm::ivec4 val{};
-		prop.m_get(object, &val);
+		glm::ivec4 val{ GetValueFromGetter<glm::ivec4>(getter, object) };
 		if (Raw::DrawPropertyInt(key, glm::value_ptr(val), 4, prop.m_draggable))
 			prop.m_set(object, &val);
 
@@ -331,35 +330,33 @@ void UIWidget_Inspector::DrawPropertyInt(void* object, const PropertyMD::Propert
 
 
 void UIWidget_Inspector::DrawPropertyFloat(void* object, const PropertyMD::Property& prop, const std::string& key) {
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
 	switch (prop.m_componentCount) {
 
 	case 1: {
-		float val{};
-		prop.m_get(object, &val);
+		float val{ GetValueFromGetter<float>(getter, object) };
 		if (Raw::DrawPropertyFloat(key, &val, 1, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 2: {
-		glm::vec2 val{};
-		prop.m_get(object, &val);
+		glm::vec2 val{ GetValueFromGetter<glm::vec2>(getter, object) };
 		if (Raw::DrawPropertyFloat(key, glm::value_ptr(val), 2, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 3: {
-		glm::vec3 val{};
-		prop.m_get(object, &val);
+		glm::vec3 val{ GetValueFromGetter<glm::vec3>(getter, object) };
 		if (Raw::DrawPropertyFloat(key, glm::value_ptr(val), 3, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
 	}
 
 	case 4: {
-		glm::vec4 val{};
-		prop.m_get(object, &val);
+		glm::vec4 val{ GetValueFromGetter<glm::vec4>(getter, object) };
 		if (Raw::DrawPropertyFloat(key, glm::value_ptr(val), 4, prop.m_draggable))
 			prop.m_set(object, &val);
 		break;
@@ -369,25 +366,27 @@ void UIWidget_Inspector::DrawPropertyFloat(void* object, const PropertyMD::Prope
 
 
 void UIWidget_Inspector::DrawPropertyDouble(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	double val{};
-	prop.m_get(object, &val);
 
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
+	double val{ GetValueFromGetter<double>(getter, object) };
 	if (Raw::DrawPropertyDouble(key, &val, 1, false))
 		prop.m_set(object, &val);
 }
 
 
 void UIWidget_Inspector::DrawPropertyColor(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	if (prop.m_componentCount == 3) {
-		glm::vec3 val{};
-		prop.m_get(object, &val);
 
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
+
+	if (prop.m_componentCount == 3) {
+		glm::vec3 val{ GetValueFromGetter<glm::vec3>(getter, object) };
 		if (Raw::DrawPropertyColor(key, glm::value_ptr(val), 3, false))
 			prop.m_set(object, &val);
 	}
 	else {
-		glm::vec4 val{};
-		prop.m_get(object, &val);
+		glm::vec4 val{ GetValueFromGetter<glm::vec4>(getter, object) };
 
 		if (Raw::DrawPropertyColor(key, glm::value_ptr(val), 4, false))
 			prop.m_set(object, &val);
@@ -396,16 +395,18 @@ void UIWidget_Inspector::DrawPropertyColor(void* object, const PropertyMD::Prope
 
 
 void UIWidget_Inspector::DrawPropertyBoolean(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	bool val{};
-	prop.m_get(object, &val);
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
+	bool val{ GetValueFromGetter<bool>(getter, object) };
 	if (Raw::DrawPropertyBoolean(key, &val, 1, false))
 		prop.m_set(object, &val);
 }
 
 
 void UIWidget_Inspector::DrawPropertyString(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	std::string val{};
-	prop.m_get(object, &val);
+	GetterFunction getter = prop.m_get;
+	SetterFunction setter = prop.m_set;
+	std::string val{ GetValueFromGetter<std::string>(getter, object) };
 
 	if (Raw::DrawPropertyString(key, &val, 1, false))
 		prop.m_set(object, &val);
@@ -413,8 +414,8 @@ void UIWidget_Inspector::DrawPropertyString(void* object, const PropertyMD::Prop
 
 
 void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	int val{};
-	prop.m_get(object, &val);
+	GetterFunction getter = prop.m_get;
+	int val{ GetValueFromGetter<int>(getter, object) };
 	const char* currentOption{};
 
 	// search id.
@@ -453,11 +454,12 @@ void UIWidget_Inspector::DrawPropertyResourceCombo(void* object, const PropertyM
 	const std::unordered_set<RES_ID>& resIdPool = manager->GetResourcePool();
 	ResourceManager& resMgr = ApplicationCore()->GetResourceManager();
 	
-	ResourceHandle currentResource{};
-	prop.m_get(object, &currentResource);
-	ResourceHandle selectedResource{currentResource};
+	GetterFunction getter = prop.m_get;
+	ResourceHandle handle{ GetValueFromGetter<ResourceHandle>(getter, object) };
+	ResourceHandle selectedResource { handle };
+	
 
-	std::shared_ptr<BaseResource> resPtr = currentResource.GetBaseResource();
+	std::shared_ptr<BaseResource> resPtr = handle.GetBaseResource();
 	std::string currentResName = resPtr ?  resPtr->Name() : "INVALID_ID";
 
 	if (ImGui::BeginCombo(prop.m_name.c_str(), currentResName.c_str())) {
@@ -471,7 +473,7 @@ void UIWidget_Inspector::DrawPropertyResourceCombo(void* object, const PropertyM
 		}
 		ImGui::EndCombo();
 	}
-	if (selectedResource != currentResource) {
+	if (selectedResource != handle) {
 		prop.m_set(object, &selectedResource);
 	}
 
@@ -487,8 +489,9 @@ void UIWidget_Inspector::DrawPropertyResourceHandle(
 ) {
 	if (!prop.m_get || !prop.m_set) return;
 
-	ResourceHandle handle;
-	prop.m_get(object, &handle);
+	GetterFunction getter = prop.m_get;
+	ResourceHandle handle{ GetValueFromGetter<ResourceHandle>(getter, object) };
+
 	if (!handle.HandleIsValid()) return;
 	std::shared_ptr<BaseResource> res = handle.GetBaseResource();
 	if (!res) return;
@@ -558,7 +561,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 				// if the object is the resource handle, you'll need the getters and setters
 
 				ResourceHandle* handle = (ResourceHandle*)currentElement;
-				if (!handle) break;
+				if (!handle || !handle->HandleIsValid()) break;
 				std::shared_ptr<BaseResource> res = handle->GetBaseResource();
 				for (auto& prop : res->GetProperties()) {
 					DrawPropertyElement((void*)res.get(), prop, prop.m_name);

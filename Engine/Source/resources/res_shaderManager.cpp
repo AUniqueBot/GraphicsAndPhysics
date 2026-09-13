@@ -51,6 +51,12 @@ void ShaderManager::Init() {
 	ShaderHandle blinnFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
 	SetResourceAlias(blinnFragShader.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
 	LOG_INFO("Initialised shader manager");
+
+
+
+	// - creation ---------------------------------------------------------------------------
+
+	
 }
 
 void ShaderManager::Cleanup() {
@@ -107,7 +113,7 @@ ShaderHandle ShaderManager::LoadShader(
 	res->ResourceID(_existingId);
 	res->SetShaderCode(code);
 	res->ShaderType(type);
-	ShaderHandle handle(m_resourceManager.AddInternalResource(res));
+	ShaderHandle handle(m_resourceManager.AddRes(res));
 	return handle;
 }
 
@@ -192,7 +198,7 @@ ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShader
 	}
 	shaderPrg->Build();
 
-	ShaderProgramHandle handle(m_resourceManager.AddInternalResource(shaderPrg));
+	ShaderProgramHandle handle(m_resourceManager.AddRes(shaderPrg));
 	Add(handle.GetResourceID());
 	return handle;
 }

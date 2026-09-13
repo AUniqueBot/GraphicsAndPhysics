@@ -10,9 +10,19 @@ bool ResourceIdentifier::operator==(const ResourceIdentifier& _resId) const {
 }
 
 std::shared_ptr<BaseResource> ResourceIdentifier::GetResource() {
+	if (!IsValid()) return nullptr;
 	return m_resourceManager->GetResource(m_resourceId);
 }
 
 std::shared_ptr<const BaseResource> ResourceIdentifier::GetResource() const {
+	if (!IsValid()) return nullptr;
 	return m_resourceManager->GetResource(m_resourceId);
+}
+
+bool ResourceIdentifier::IsValid() const {
+	return
+		m_resourceManager != nullptr &&
+		m_resourceId != ResourceConstants::C_RES_INVALID_ID &&
+		m_resourceTypeId != ResourceConstants::C_RESTYPE_INVALID_ID;
+
 }
