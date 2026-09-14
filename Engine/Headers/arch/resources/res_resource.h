@@ -78,7 +78,7 @@ private:
 };
 
 
-#ifndef RESOURCE_TYPENAMEOVERRIDE(T)
+#ifndef RESOURCE_TYPENAMEOVERRIDE
 #define RESOURCE_TYPENAMEOVERRIDE(T) \
 	public: \
 	inline std::string ResourceTypeName() override { return #T; }

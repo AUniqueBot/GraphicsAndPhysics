@@ -183,7 +183,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Headers\graphics\context\gfx_graphicsContext_opengl_4_6.h" />
     <ClCompile Include="Source\arch\common\inspectable.cpp" />
+    <ClCompile Include="Source\graphics\gfx_graphicsContext.cpp" />
     <ClCompile Include="Source\resources\res_sceneManager.cpp" />
     <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp" />
     <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h" />
@@ -374,6 +376,9 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\systems\sys_transform.h" />
     <ClInclude Include="Headers\graphics\gfx_dependencies.h" />
     <ClInclude Include="Headers\graphics\gfx_glfwCustomCallbackFunctions.h" />
+    <ClInclude Include="Headers\graphics\gfx_graphicsContext.h" />
+    <ClInclude Include="Headers\graphics\gfx_graphicsDevice.h" />
+    <ClInclude Include="Headers\graphics\gfx_graphicsInstance.h" />
     <ClInclude Include="Headers\graphics\gfx_uniformNamingDefines.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />

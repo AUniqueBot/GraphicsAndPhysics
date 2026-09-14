@@ -1,0 +1,122 @@
+{
+    "environment": {},
+    "entities": {
+        "1130204138": {
+            "name": "Default Sphere",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [
+                        0.0,
+                        0.0,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        -0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Rotation Order": "XYZ"
+                },
+                "MeshRenderer": {
+                    "Mesh": "C_DEFAULT_MESH_SPHERE",
+                    "Materials": null,
+                    "Cast Shadow": true
+                }
+            }
+        },
+        "1155733033": {
+            "name": "Directional Light",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [
+                        -2.599090576171875,
+                        1.3172225952148438,
+                        0.0
+                    ],
+                    "Rotation": [
+                        48.18655014038086,
+                        30.864341735839844,
+                        -0.00008708491077413782
+                    ],
+                    "Scale": [
+                        0.9999987483024597,
+                        0.9999994039535522,
+                        0.999999463558197
+                    ],
+                    "Quaternion": [
+                        0.39350512623786926,
+                        0.24291583895683289,
+                        0.10862648487091064,
+                        0.8799692392349243
+                    ],
+                    "Rotation Order": "XYZ"
+                },
+                "Light": {
+                    "Color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "Power": 1.0,
+                    "Casts Shadow": false,
+                    "Light Type": "Directional"
+                }
+            }
+        },
+        "1278447150": {
+            "name": "Ambient Light",
+            "parent": 0,
+            "components": {
+                "Transform": {
+                    "Position": [
+                        2.7571258544921875,
+                        -1.2477874755859375,
+                        0.0
+                    ],
+                    "Rotation": [
+                        -0.0,
+                        0.0,
+                        -0.0
+                    ],
+                    "Scale": [
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "Quaternion": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "Rotation Order": "XYZ"
+                },
+                "Light": {
+                    "Color": [
+                        0.729411780834198,
+                        0.8588235378265381,
+                        0.929411768913269,
+                        0.0
+                    ],
+                    "Power": 0.5099999904632568,
+                    "Casts Shadow": false,
+                    "Light Type": "Ambient"
+                }
+            }
+        }
+    }
+}
