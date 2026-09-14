@@ -5,7 +5,7 @@
 #include <arch/ecs/ecs_registry.h>
 #include <arch/resources/res_assetManager.h>
 #include <arch/resources/res_resourceManager.h>
-#include <arch/resources/res_gpu_resourceManager.h>
+#include <graphics/device/gfx_gpuresourcemanager.h>
 
 
 

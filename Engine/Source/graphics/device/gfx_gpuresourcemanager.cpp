@@ -1,4 +1,4 @@
-#include <arch/resources/res_gpu_resourceManager.h>
+#include <graphics/device/gfx_gpuresourcemanager.h>
 
 
 

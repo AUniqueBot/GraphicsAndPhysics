@@ -222,7 +222,7 @@
     <ClCompile Include="Source\graphics\resources\gfx_gpubuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp">
+    <ClCompile Include="Source\graphics\device\gfx_gpuresourcemanager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_mesh\res_submesh.cpp">
@@ -572,7 +572,7 @@
     <ClInclude Include="Headers\graphics\resources\gfx_gpuhandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h">
+    <ClInclude Include="Headers\graphics\device\gfx_gpuresourcemanager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\datatypes\type_trackedStorage.h">

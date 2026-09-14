@@ -192,7 +192,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Source\graphics\resources\gfx_gpumesh.cpp" />
     <ClCompile Include="Source\graphics\resources\gfx_gpusubmesh.cpp" />
     <ClCompile Include="Source\resources\res_sceneManager.cpp" />
-    <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp" />
+    <ClCompile Include="Source\graphics\device\gfx_gpuresourcemanager.cpp" />
     <ClCompile Include="Headers\arch\resources\res_materialManager.h" />
     <ClCompile Include="Headers\arch\resources\res_material_presets\res_materiallist.h" />
     <ClCompile Include="Headers\arch\resources\res_resourceHandle.h" />
@@ -310,7 +310,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
-    <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h" />
+    <ClInclude Include="Headers\graphics\device\gfx_gpuresourcemanager.h" />
     <ClInclude Include="Headers\graphics\resources\gfx_gpuhandle.h" />
     <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />

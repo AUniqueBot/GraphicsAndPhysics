@@ -11,7 +11,7 @@
 #include <arch/core/core_inputRouter.h>
 
 #include <arch/resources/res_resourceManager.h>
-#include <arch/resources/res_gpu_resourceManager.h>
+#include <graphics/device/gfx_gpuresourcemanager.h>
 #include <arch/resources/res_shaderManager.h>
 #include <arch/resources/res_assetManager.h>
 

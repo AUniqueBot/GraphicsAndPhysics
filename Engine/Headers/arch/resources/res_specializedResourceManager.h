@@ -2,7 +2,7 @@
 #include <pch.h>
 #include <unordered_set>
 #include <arch/resources/res_resourceManager.h>
-#include <arch/resources/res_gpu_resourceManager.h>
+#include <graphics/device/gfx_gpuresourcemanager.h>
 
 #include <serialization/serialize_metafile.h>
 #include <serialization/serialize_jsonfile.h>
