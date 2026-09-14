@@ -672,9 +672,9 @@ void RenderSystem::Render(const MeshRenderer& _mr) {
     if (!mesh) return;
     GPUResourceManager& gpuResMgr = c.GetGPUResourceManager();
     
-    SparseSetView<GPU_Mesh> gpuMesh = gpuResMgr.GetResource<GPU_Mesh>(mesh->GetGPUResourceHandle());
+    SparseSetView<GPUMesh> gpuMesh = gpuResMgr.GetResource<GPUMesh>(mesh->GetGPUResourceHandle());
     if (!gpuMesh) return;
-    for (const GPU_Submesh& submesh : gpuMesh->GetGPUSubmeshList()) {
+    for (const GPUSubmesh& submesh : gpuMesh->GetGPUSubmeshList()) {
         submesh.Bind();
         GLsizei idxCount { static_cast<GLsizei>(submesh.GetIndexBufferElementCount()) };
         glDrawElements(GL_TRIANGLES, idxCount, GL_UNSIGNED_INT, 0);

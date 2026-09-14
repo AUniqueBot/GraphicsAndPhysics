@@ -1,24 +1,24 @@
-#include <arch/resources/res_gpu_resources/res_gpu_vao.h>
+#include <graphics/resources/gfx_vao.h>
 
 
-void GPU_VertexArrayObject::Bind() const {
+void GPUVertexArrayObject::Bind() const {
 	glBindVertexArray(m_handle.Get());
 }
 
-void GPU_VertexArrayObject::Create() {
+void GPUVertexArrayObject::Create() {
 	if (!m_handle.IsValid()) {
 		glCreateVertexArrays(1, &m_handle.Get());
 	}
 }
 
-void GPU_VertexArrayObject::Destroy() {
+void GPUVertexArrayObject::Destroy() {
 	Clear();
 	if ((GLuint)m_handle) {
 		glDeleteVertexArrays(1, &m_handle.Get());
 	}
 }
 
-void GPU_VertexArrayObject::SetupAttributes(const VertexLayout& _layout) {
+void GPUVertexArrayObject::SetupAttributes(const VertexLayout& _layout) {
 	Clear();
 	for (const VertexAttributeDesc& attr : _layout.attributes) {
 		SetAttribute(attr.m_attributeSlot, attr.m_type, attr.m_featureCount, attr.m_normalized, attr.m_offset);
@@ -30,7 +30,7 @@ void GPU_VertexArrayObject::SetupAttributes(const VertexLayout& _layout) {
 }
 
 
-void GPU_VertexArrayObject::SetBinding(GLuint _attributeIndex, GLuint _bindingIndex) {
+void GPUVertexArrayObject::SetBinding(GLuint _attributeIndex, GLuint _bindingIndex) {
 	if (!m_usedAttributes.contains(_attributeIndex)) {
 		LOG_WARN("Set Attribute first");
 	}
@@ -38,7 +38,7 @@ void GPU_VertexArrayObject::SetBinding(GLuint _attributeIndex, GLuint _bindingIn
 	glVertexArrayAttribBinding((GLuint)m_handle, _attributeIndex, _bindingIndex);
 }
 
-void GPU_VertexArrayObject::SetAttribute(
+void GPUVertexArrayObject::SetAttribute(
 	GLuint _arrayIndex, 
 	GLenum  _type, 
 	int _componentCount, 
@@ -56,18 +56,18 @@ void GPU_VertexArrayObject::SetAttribute(
 	m_usedAttributes.insert(_arrayIndex);
 }
 
-void GPU_VertexArrayObject::EnableAttribute(GLuint _attributeIndex) {
+void GPUVertexArrayObject::EnableAttribute(GLuint _attributeIndex) {
 	GLuint vao = (GLuint)m_handle;
 	glEnableVertexArrayAttrib(vao, _attributeIndex);
 }
-void GPU_VertexArrayObject::DisableAttribute(GLuint _attributeIndex) {
+void GPUVertexArrayObject::DisableAttribute(GLuint _attributeIndex) {
 	GLuint vao = (GLuint)m_handle;
 	glDisableVertexArrayAttrib(vao, _attributeIndex);
 	glVertexAttrib4f(_attributeIndex, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 
-void GPU_VertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride) {
+void GPUVertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPUBuffer& _buffer, int _stride) {
 	if (m_usedBindings.contains(_bindingSlot)) {
 		LOG_WARN("Rebinding bind slot.");
 	}
@@ -77,18 +77,18 @@ void GPU_VertexArrayObject::AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& 
 	// SOA, We assume data is tightly packed.
 }
 
-int GPU_VertexArrayObject::AliasToBinding(std::string _alias) const {
+int GPUVertexArrayObject::AliasToBinding(std::string _alias) const {
 	auto itr = m_aliasToBindings.find(_alias);
 	return itr != m_aliasToBindings.end() ? 
 		static_cast<int>(itr->second) : -1;
 }
-int GPU_VertexArrayObject::AliasToAttribute(std::string _alias) const {
+int GPUVertexArrayObject::AliasToAttribute(std::string _alias) const {
 	auto itr = m_aliasToAttributes.find(_alias);
 	return itr != m_aliasToAttributes.end() ?
 		static_cast<int>(itr->second) : -1;
 }
 
-void GPU_VertexArrayObject::Clear() {
+void GPUVertexArrayObject::Clear() {
 	GLuint vao = (GLuint)m_handle;
 
 	for (GLuint bindIdx : m_usedBindings) {
@@ -103,7 +103,7 @@ void GPU_VertexArrayObject::Clear() {
 }
 
 
-void GPU_VertexArrayObject::UseVAO() {
+void GPUVertexArrayObject::UseVAO() {
 	glBindVertexArray((GLuint)m_handle);
 }
 

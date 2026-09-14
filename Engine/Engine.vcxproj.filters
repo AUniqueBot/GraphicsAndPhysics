@@ -198,9 +198,6 @@
     <ClCompile Include="Headers\arch\resources\res_materialManager.h">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_texture.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Source\resources\res_texture\res_texture_properties.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -222,28 +219,13 @@
     <ClCompile Include="Source\resources\res_resourceIdentifier.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_mesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_buffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_framebuffer.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Headers\arch\resources\res_gpu_resources\res_gpu_texture.h">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_vao.cpp">
+    <ClCompile Include="Source\graphics\resources\gfx_gpubuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_gpu_resourceManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_mesh\res_submesh.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Source\resources\res_gpu_resources\res_gpu_submesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Source\resources\res_texture\res_cubemap.cpp">
@@ -268,6 +250,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Headers\graphics\context\gfx_graphicsContext_opengl_4_6.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\context\gfx_graphicsContext_opengl_4_6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\resources\gfx_vao.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\resources\gfx_gputexture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\resources\gfx_gpumesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\resources\gfx_gpusubmesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -572,40 +569,19 @@
     <ClInclude Include="Headers\arch\resources\res_resourceIdentifier.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_buffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_vao.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_gpuhandle.h">
+    <ClInclude Include="Headers\graphics\resources\gfx_gpuhandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_gpu_resourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resource_list.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_mesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Headers\arch\datatypes\type_trackedStorage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_resourceHandle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_mesh\res_mesh_vertexAttributeTraits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_mesh\res_submesh.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_submesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_aabb.h">
@@ -615,12 +591,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\res_texture\res_imagedata.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_shadowmap.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Headers\arch\resources\res_gpu_resources\res_gpu_fbo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\arch\resources\guid.h">
@@ -660,6 +630,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\graphics\gfx_graphicsInstance.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_graphicsPipeline.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gpuresource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gpuresourceHandle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gpubuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gpusubmesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_vao.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gpumesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_resourcelist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_gputexture.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

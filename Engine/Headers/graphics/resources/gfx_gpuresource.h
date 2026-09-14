@@ -1,9 +1,9 @@
 #pragma once
 #include <pch.h>
-#include <arch/resources/res_gpu_resources/res_gpu_gpuhandle.h>
+#include <graphics/resources/gfx_gpuHandle.h>
 
 
-class GPU_Resource {
+class GPUResource {
 public:
 	virtual void Create() = 0;
 	virtual void Destroy() = 0;

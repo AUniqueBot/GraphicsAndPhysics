@@ -6,6 +6,7 @@
 #include <arch/resources/res_mesh_vertexLayout.h>
 #include <arch/resources/res_mesh/res_submesh.h>
 
+#include <graphics/resources/gfx_gpuresourceHandle.h>
 
 // not including the whole of assimp here.
 class MeshRes;

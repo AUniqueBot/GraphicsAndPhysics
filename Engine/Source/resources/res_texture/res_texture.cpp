@@ -1,7 +1,6 @@
 #include <pch.h>
 #include <stb_image.h>
 #include <arch/resources/res_texture/res_texture.h>
-#include <arch/resources/res_gpu_resources/res_gpu_texture.h>
 #include <arch/resources/res_textureManager.h>
 
 #include <arch/core.h>
@@ -94,7 +93,7 @@ void TextureRes::SetPixelColor(unsigned _col, int _x, int _y, int _z) {
 
 void TextureRes::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
 	if (!HasValidGPUResourceHandle()) return;
-	GPU_Texture& tex{ GetGPUTexture() };
+	GPUTexture& tex{ GetGPUTexture() };
 	glm::u8vec4 colData{};
 	colData.r = static_cast<unsigned char>(_col.r * 0xff);
 	colData.g = static_cast<unsigned char>(_col.g * 0xff);
@@ -104,27 +103,27 @@ void TextureRes::SetPixelColor(glm::vec4 _col, int _x, int _y, int _z) {
 }
 
  
-GPU_Texture& TextureRes::GetGPUTexture() {
+GPUTexture& TextureRes::GetGPUTexture() {
 	assert(HasValidGPUResourceHandle() && "No handle.");
 	GPUResourceManager& gpuMgr = Core::GetInstance().GetGPUResourceManager();
-	SparseSetView<GPU_Texture> texHandle = gpuMgr.GetResource<GPU_Texture>(m_gpuResHandle);
+	SparseSetView<GPUTexture> texHandle = gpuMgr.GetResource<GPUTexture>(m_gpuResHandle);
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
 }
 
-const GPU_Texture& TextureRes::GetGPUTexture() const {
+const GPUTexture& TextureRes::GetGPUTexture() const {
 	assert(HasValidGPUResourceHandle() && m_gpuResHandle.m_id != 0&& "No handle.");
 	GPUResourceManager& gpuMgr = Core::GetInstance().GetGPUResourceManager();
-	SparseSetView<GPU_Texture> texHandle = gpuMgr.GetResource<GPU_Texture>(m_gpuResHandle);
+	SparseSetView<GPUTexture> texHandle = gpuMgr.GetResource<GPUTexture>(m_gpuResHandle);
 	assert(texHandle && "No such texture exists.");
 	return *texHandle;
 }
 
 GLuint TextureRes::GetTextureHandle() const {
 	GPUResourceManager& gpuMgr = Core::GetInstance().GetGPUResourceManager();
-	SparseSetView<GPU_Texture> texHandle = gpuMgr.GetResource<GPU_Texture>(m_gpuResHandle);
+	SparseSetView<GPUTexture> texHandle = gpuMgr.GetResource<GPUTexture>(m_gpuResHandle);
 	if (!texHandle) return 0;
-	const GPU_Texture& tex { *texHandle };
+	const GPUTexture& tex { *texHandle };
 	return tex.GetTextureHandle();
 }
 

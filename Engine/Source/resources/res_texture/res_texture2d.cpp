@@ -15,7 +15,7 @@ void Texture2DRes::Load(std::filesystem::path _imgPath) {
 glm::ivec2 Texture2DRes::GetDimensions() const {
 	if (!m_gpuResHandle.IsValid()) 
 		return { m_dimensions.x, m_dimensions.y };	
-	const GPU_Texture& tex = GetGPUTexture();
+	const GPUTexture& tex = GetGPUTexture();
 	const glm::vec3 dims = tex.GetDimensions();
 	return { dims.x, dims.y };
 }

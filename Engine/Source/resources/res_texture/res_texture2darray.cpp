@@ -1,5 +1,5 @@
 #include <arch/resources/res_texture/res_texture2darray.h>
-#include <arch/resources/res_gpu_resources/res_gpu_texture.h>
+#include <graphics/resources/gfx_gputexture.h>
 
 
 Texture2DArrayRes::Texture2DArrayRes() {
@@ -8,7 +8,7 @@ Texture2DArrayRes::Texture2DArrayRes() {
 }
 
 glm::ivec2 Texture2DArrayRes::GetDimensions() const {
-	const GPU_Texture& tex = GetGPUTexture();
+	const GPUTexture& tex = GetGPUTexture();
 	glm::ivec3 dims = tex.GetDimensions();
 	return { dims.x, dims.y };
 }
@@ -17,7 +17,7 @@ void Texture2DArrayRes::SetDimensions(glm::ivec2 _dims) {
 	m_dimensions.x = _dims.x;
 	m_dimensions.y = _dims.y;
 	if (HasValidGPUResourceHandle()) {
-		GPU_Texture& tex = GetGPUTexture();
+		GPUTexture& tex = GetGPUTexture();
 		int layers = tex.GetDimensions().z;
 		tex.SetDimensions({_dims.x, _dims.y, layers});
 	}

@@ -1,6 +1,6 @@
 #pragma once
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resource_list.h>
+#include <graphics/resources/gfx_gpuresourceHandle.h>
+#include <graphics/resources/gfx_resourcelist.h>
 #include <arch/datatypes/type_trackedStorage.h>
 
 
@@ -40,32 +40,32 @@ public:
 
 	template<typename T>
 	SparseSetView<T> GetResource(const GPUResourceHandle& _id) {
-		if constexpr (std::is_same_v<T, GPU_Texture>) {
+		if constexpr (std::is_same_v<T, GPUTexture>) {
 			return GetResourceInternal(m_textureStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_Buffer>) {
+		else if constexpr (std::is_same_v<T, GPUBuffer>) {
 			return GetResourceInternal(m_bufferStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_VertexArrayObject>) {
+		else if constexpr (std::is_same_v<T, GPUVertexArrayObject>) {
 			return GetResourceInternal(m_vaoStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_Mesh>) {
+		else if constexpr (std::is_same_v<T, GPUMesh>) {
 			return GetResourceInternal(m_meshStorage, _id);
 		}
 	}
 
 	template<typename T>
 	SparseSetView<const T> GetResource(const GPUResourceHandle& _id) const {
-		if constexpr (std::is_same_v<T, GPU_Texture>) {
+		if constexpr (std::is_same_v<T, GPUTexture>) {
 			return GetResourceInternal(m_textureStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_Buffer>) {
+		else if constexpr (std::is_same_v<T, GPUBuffer>) {
 			return GetResourceInternal(m_bufferStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_VertexArrayObject>) {
+		else if constexpr (std::is_same_v<T, GPUVertexArrayObject>) {
 			return GetResourceInternal(m_vaoStorage, _id);
 		}
-		else if constexpr (std::is_same_v<T, GPU_Mesh>) {
+		else if constexpr (std::is_same_v<T, GPUMesh>) {
 			return GetResourceInternal(m_meshStorage, _id);
 		}
 	}
@@ -106,9 +106,9 @@ private:
 
 private:
 	// private functions
-	TrackedStorage<GPU_Mesh> m_meshStorage;
-	TrackedStorage<GPU_Buffer> m_bufferStorage;
-	TrackedStorage<GPU_Texture> m_textureStorage;
-	TrackedStorage<GPU_VertexArrayObject> m_vaoStorage;
+	TrackedStorage<GPUMesh> m_meshStorage;
+	TrackedStorage<GPUBuffer> m_bufferStorage;
+	TrackedStorage<GPUTexture> m_textureStorage;
+	TrackedStorage<GPUVertexArrayObject> m_vaoStorage;
 };
 

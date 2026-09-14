@@ -1,6 +1,4 @@
 #include <arch/resources/res_textureManager.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
-
 
 
 Texture2DHandle TextureManager::LoadTexture(const std::filesystem::path& _path) {
@@ -80,7 +78,7 @@ Texture2DHandle TextureManager::LoadTexture(const std::filesystem::path& _path) 
 		props
 
 	);
-	GPU_Texture& tex = *m_gpuResourceManager.GetResource<GPU_Texture>(gpuHandle);
+	GPUTexture& tex = *m_gpuResourceManager.GetResource<GPUTexture>(gpuHandle);
 	tex.Upload({ {uploadData} });// upload data here.
 
 	// if successful add to storage

@@ -1,5 +1,5 @@
 #include <arch/resources/res_texture/res_cubemap.h>
-#include <arch/resources/res_gpu_resources/res_gpu_texture.h>
+#include <graphics/resources/gfx_gputexture.h>
 
 CubemapRes::CubemapRes() {
 	m_imageData.clear();
@@ -8,14 +8,14 @@ CubemapRes::CubemapRes() {
 
 int CubemapRes::GetWidth() const {
 	m_dimensions.x;
-	const GPU_Texture& tex = GetGPUTexture();
+	const GPUTexture& tex = GetGPUTexture();
 	return tex.GetX();
 }
 
 void CubemapRes::SetWidth(int _width) {
 	if (_width == m_dimensions.x) return;
 
-	GPU_Texture& tex = GetGPUTexture();
+	GPUTexture& tex = GetGPUTexture();
 	m_dimensions.x = _width;
 	tex.SetX(_width);
 	 m_infoDirty = true;

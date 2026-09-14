@@ -3,7 +3,7 @@
 
 
 GPUResourceHandle GPUResourceManager::CreateGPUBuffer() {
-    GPU_Buffer buffer;
+    GPUBuffer buffer;
     GPURES_ID id { m_bufferStorage.AddResource(std::move(buffer)) };
     return { id, GPUDatatype::Buffer };
 }
@@ -13,7 +13,7 @@ GPUResourceHandle GPUResourceManager::CreateTexture(
     glm::ivec3 _dims,
     TextureProperties::TextureProps _props
 ) {
-    GPU_Texture tex(_type, _dims, _props);
+    GPUTexture tex(_type, _dims, _props);
     tex.Create();
     tex.Allocate();
     GPURES_ID id = m_textureStorage.AddResource(std::move(tex));
@@ -31,13 +31,13 @@ GPUResourceHandle GPUResourceManager::CreateTexture(const TextureRes& _res) {
 
 
 GPUResourceHandle GPUResourceManager::CreateVAO() {
-    GPU_VertexArrayObject vao;
+    GPUVertexArrayObject vao;
     GPURES_ID id = m_vaoStorage.AddResource(std::move(vao));
     return { id, GPUDatatype::VAO };
 }
 
 GPUResourceHandle GPUResourceManager::CreateMesh(MeshRes& _mesh) {
-    GPU_Mesh mesh;
+    GPUMesh mesh;
     mesh.Load(_mesh);
     GPURES_ID id = m_meshStorage.AddResource(std::move(mesh));
     return { id, GPUDatatype::Mesh };

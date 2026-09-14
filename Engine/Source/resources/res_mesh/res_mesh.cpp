@@ -5,6 +5,8 @@
 #include <assimp/postprocess.h>     // Post processing flags
 
 
+
+
 namespace {
 	std::vector<glm::uvec3> GetFaceIndices(const aiMesh& _mesh, bool _triangulated) {
 		std::vector<glm::uvec3> indices;

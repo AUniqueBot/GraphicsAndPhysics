@@ -1,7 +1,7 @@
 #pragma once
 #include <arch/resources/res_resource.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
+
 
 struct aiMesh;
 using AttributeData = std::unordered_map<std::string, std::unique_ptr<VertexAttributeDatabase>>;

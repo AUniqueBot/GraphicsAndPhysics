@@ -1,8 +1,8 @@
 #pragma once
-#include <arch/resources/res_gpu_resources/res_gpu_resource.h>
+#include <graphics/resources/gfx_gpuresource.h>
 
 
-class GPU_Buffer : public GPU_Resource {
+class GPUBuffer : public GPUResource {
 public:
 
 public:

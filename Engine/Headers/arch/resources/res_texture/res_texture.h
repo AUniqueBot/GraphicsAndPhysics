@@ -5,13 +5,15 @@
 
 #include <arch/resources/res_texture/res_imagedata.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resourceHandle.h>
+
+#include <graphics/resources/gfx_gpuresourceHandle.h>
+
 
 namespace TextureConstants {
 	inline constexpr const RES_ID C_INVALID_TEXTURE_ID = ResourceConstants::C_RES_INVALID_ID;
 };
 
-class GPU_Texture;
+class GPUTexture;
 
 class TextureRes : public Resource<TextureRes> {
 public:
@@ -65,8 +67,8 @@ public:
 
 protected:
 	// be careful when using this as this assumes it is valid.
-	GPU_Texture& GetGPUTexture();
-	const GPU_Texture& GetGPUTexture() const;
+	GPUTexture& GetGPUTexture();
+	const GPUTexture& GetGPUTexture() const;
 
 protected:
 	void FlagInfoClean();

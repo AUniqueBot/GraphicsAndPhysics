@@ -1,6 +1,7 @@
-#include <arch/resources/res_gpu_resources/res_gpu_submesh.h>
+#include <graphics/resources/gfx_gpusubmesh.h>
+#include <arch/resources/res_mesh/res_submesh.h>
 
-void GPU_Submesh::Load(const Submesh& _submesh) {
+void GPUSubmesh::Load(const Submesh& _submesh) {
 
 	LOG_INFO("Make sure you already set up the vertex array!");
 	// creation of the VAO; call VertexArrayObject::Create()
@@ -14,7 +15,7 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 	for (const auto& [attrName, attr] : attrs) {
 
 		// - create buffers ----
-		GPU_Buffer buffer;
+		GPUBuffer buffer;
 		buffer.Create();
 		buffer.Allocate(attr->DataSize(), GL_DYNAMIC_STORAGE_BIT);
 		buffer.Upload(attr->Data(), attr->DataSize());
@@ -26,7 +27,7 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 		EnableAttribute(AliasToAttribute(attrName));
 	}
 	// - set up ebo --------------------
-	GPU_Buffer ebo;
+	GPUBuffer ebo;
 	ebo.Create();
 	size_t eboSize = _submesh.GetVertexIndexSize();
 	ebo.Allocate(eboSize, GL_DYNAMIC_STORAGE_BIT);
@@ -34,24 +35,24 @@ void GPU_Submesh::Load(const Submesh& _submesh) {
 	AttachIndexBuffer(ebo, _submesh.GetVertexIndexCount() * glm::uvec3::length());
 }
 
-void GPU_Submesh::Update() {
+void GPUSubmesh::Update() {
 
 }
 
-void GPU_Submesh::Destroy() {
-	for (GPU_Buffer& buffer: m_vertexBuffers) {
+void GPUSubmesh::Destroy() {
+	for (GPUBuffer& buffer: m_vertexBuffers) {
 		buffer.Destroy();
 	}
 	m_vertexBuffers.clear();
 	m_indexBuffer.Destroy();
-	GPU_VertexArrayObject::Destroy();
+	GPUVertexArrayObject::Destroy();
 }
 
-size_t GPU_Submesh::GetIndexBufferElementCount() const {
+size_t GPUSubmesh::GetIndexBufferElementCount() const {
 	return m_indexBufferElementCount;
 }
 
-void GPU_Submesh::AttachIndexBuffer(const GPU_Buffer& _buffer, size_t _elementCount) {
+void GPUSubmesh::AttachIndexBuffer(const GPUBuffer& _buffer, size_t _elementCount) {
 	LOG_INFO("Using buffer [" << _buffer.GetHandle() << "] as an index buffer.");
 	glVertexArrayElementBuffer(m_handle.Get(), _buffer.GetHandle());
 	m_indexBuffer = _buffer;

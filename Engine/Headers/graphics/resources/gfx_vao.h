@@ -1,23 +1,21 @@
 #pragma once
 #include <pch.h>
 #include <unordered_set>
-#include <arch/resources/res_gpu_resources/res_gpu_resource.h>
-#include <arch/resources/res_gpu_resources/res_gpu_buffer.h>
+#include <graphics/resources/gfx_gpubuffer.h>
 #include <arch/resources/res_mesh_vertexLayout.h>
 
 namespace BindingConstants {
 	inline constexpr const GLuint C_BINDING_POSITION = 0;
 	inline constexpr const GLuint C_BINDING_NORMAL = 1;
 	inline constexpr const GLuint C_BINDING_UV = 2;
-
 }
 
 
 
-using BufferID = GLuint;
+using BufferID = uint32_t;
 
 // VAO
-class GPU_VertexArrayObject : public GPU_Resource {
+class GPUVertexArrayObject : public GPUResource {
 public:
 	enum Datatype {
 		INT,
@@ -38,7 +36,7 @@ public:
 	void EnableAttribute(GLuint _attributeIndex);
 	void DisableAttribute(GLuint _attributeIndex);
 
-	void AttachBuffer(GLuint _bindingSlot, const GPU_Buffer& _buffer, int _stride);
+	void AttachBuffer(GLuint _bindingSlot, const GPUBuffer& _buffer, int _stride);
 	int AliasToBinding(std::string _alias) const;
 	int AliasToAttribute(std::string _alias) const;
 	void Clear();

@@ -125,7 +125,7 @@ private:
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	ResourceManager m_resourceManager;
-	GPUResourceManager m_gpuResourceManager;
+	GPUResourceManager m_gpuResourceManager; // hey look you're here!
 	AssetManager m_assetManager				{ m_resourceManager, m_gpuResourceManager };
 	
 	// - save management ----------------------------

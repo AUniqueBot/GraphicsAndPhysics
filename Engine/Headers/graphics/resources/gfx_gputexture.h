@@ -1,24 +1,24 @@
 #pragma once
 #include <pch.h>
 #include <arch/resources/res_texture/res_texture.h>
-#include <arch/resources/res_gpu_resources/res_gpu_resource.h>
+#include <graphics/resources/gfx_gpuresource.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 
 // Internal GPU class for texture
 // handles raw allocation and upload logic
-class GPU_Texture : public GPU_Resource {
+class GPUTexture : public GPUResource {
 public:
-	GPU_Texture(
+	GPUTexture(
 		TextureProperties::TextureType _type,
 		glm::ivec3 _dims = glm::ivec3(1, 1, 1),
 		TextureProperties::TextureProps _props = TextureProperties::TextureProps{}
 	);
-	~GPU_Texture();
-	GPU_Texture(GPU_Texture&& _old) noexcept;
-	GPU_Texture& operator=(GPU_Texture&& _old) noexcept;
+	~GPUTexture();
+	GPUTexture(GPUTexture&& _old) noexcept;
+	GPUTexture& operator=(GPUTexture&& _old) noexcept;
 
-	GPU_Texture(GPU_Texture& _old) = delete;
-	GPU_Texture& operator=(GPU_Texture& _old) = delete;
+	GPUTexture(GPUTexture& _old) = delete;
+	GPUTexture& operator=(GPUTexture& _old) = delete;
 public:
 
 	void Load(const TextureRes& _tex);
