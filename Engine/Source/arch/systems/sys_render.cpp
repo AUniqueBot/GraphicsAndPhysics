@@ -254,8 +254,10 @@ void RenderSystem::Update() {
 
     const std::vector<Viewport::ViewportID>& vpRenderOrder	{ m_viewportManager.ViewportRenderOrderList() };
     auto& viewportMap					{ m_viewportManager.ViewportList() };
-
-
+    
+    SceneRes& scene = *Core::GetInstance().GetSceneManager().GetCurrentScene().Get();
+    PreparedSceneRenderData data = PrepareScene(scene);
+    
     // game render /
     for (const Viewport::ViewportID& id : vpRenderOrder) {
         Viewport& currentViewport	{ *viewportMap.at(id ) };
@@ -265,6 +267,11 @@ void RenderSystem::Update() {
 }
 
 
+/*
+    Render rework
+    - Render pass abstaction class.
+*/
+
 
 
 
@@ -272,10 +279,7 @@ void RenderSystem::Render(const Viewport& _viewport) {
     const glm::vec2 vpDims{ _viewport.ViewportDimensions() };
     if (!vpDims.x || !vpDims.y) return;
     BeginViewportPass(_viewport);
-
-    auto GetError = GraphicsDebug::GetError;
     EntityRegistry& registry = Core::GetInstance().GetRegistry();
-
     const std::vector<Light*> culledLights          { CullLights(_viewport, registry) };
     UpdateLightingData(culledLights, registry);
 
@@ -665,6 +669,48 @@ void RenderSystem::SpotLightShadowRenderPass(
 ) {
 
 }
+
+PreparedSceneRenderData RenderSystem::PrepareScene(const SceneRes& _sceneRes) {
+    PreparedSceneRenderData frameData;
+    Core& c = Core::GetInstance();
+    EntityRegistry& reg = c.GetRegistry();
+    for (const EntityNode& node : _sceneRes.GetEntities()) {
+        EntityView enttV = reg.GetEntity(node.m_entityId);
+        if (!enttV || !enttV->IsVisible()) continue;
+        Entity& entt = *enttV;
+
+
+
+        // - process to different types --------------------------------
+        ComponentView<Transform> trs = entt.GetComponent<Transform>();
+        if (!trs) continue;
+
+        ComponentView<MeshRenderer> mesh = entt.GetComponent<MeshRenderer>();
+        if (mesh) {
+            MeshRenderable renderableData{
+                .id = node.m_entityId,
+                .transform = trs,
+                .mesh = mesh
+            };
+            frameData.meshes.push_back(renderableData);
+            continue;
+        }
+
+        ComponentView<Light> light = entt.GetComponent<Light>();
+        if (light) {
+            // Test light culling here.
+
+            LightRenderable renderableData{
+                .id = node.m_entityId,
+                .transform = trs,
+                .light = light
+            };
+            frameData.lights.push_back(renderableData);
+        }
+    }
+    return frameData;
+}
+
 
 void RenderSystem::Render(const MeshRenderer& _mr) {
     Core& c = Core::GetInstance();

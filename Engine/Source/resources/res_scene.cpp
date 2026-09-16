@@ -45,6 +45,10 @@ bool SceneRes::Destroy(EntityID _id, bool _recursive) {
 	return m_sceneEntities.remove(_id);
 }
 
+const std::vector<EntityNode>& SceneRes::GetEntities() const {
+	return m_sceneEntities.data();
+}
+
 void SceneRes::Parent(EntityID _child, EntityID _parent) {
 	if (_child == EntityConstants::C_ENTITYID_INVALID) {
 		LOG_ERROR("What are you trying to do?");

@@ -185,8 +185,11 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClCompile Include="Headers\arch\common\properties.h" />
     <ClCompile Include="Headers\graphics\context\gfx_graphicsContext_opengl_4_6.h" />
     <ClCompile Include="Source\arch\common\inspectable.cpp" />
+    <ClCompile Include="Source\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.cpp" />
     <ClCompile Include="Source\graphics\context\gfx_graphicsContext_opengl_4_6.cpp" />
     <ClCompile Include="Source\graphics\gfx_graphicsContext.cpp" />
+    <ClCompile Include="Source\graphics\gfx_graphicsDevice.cpp" />
+    <ClCompile Include="Source\graphics\renderpass\gfx_renderpass_shadow.cpp" />
     <ClCompile Include="Source\graphics\resources\gfx_vao.cpp" />
     <ClCompile Include="Source\graphics\resources\gfx_gputexture.cpp" />
     <ClCompile Include="Source\graphics\resources\gfx_gpumesh.cpp" />
@@ -310,7 +313,11 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.h" />
     <ClInclude Include="Headers\graphics\device\gfx_gpuresourcemanager.h" />
+    <ClInclude Include="Headers\graphics\gfx_preparedscenedata.h" />
+    <ClInclude Include="Headers\graphics\gfx_renderpass.h" />
+    <ClInclude Include="Headers\graphics\renderpass\gfx_renderpass_shadow.h" />
     <ClInclude Include="Headers\graphics\resources\gfx_gpuhandle.h" />
     <ClInclude Include="Headers\arch\resources\res_material.h" />
     <ClInclude Include="Headers\arch\resources\res_material_presets\res_material_flat.h" />

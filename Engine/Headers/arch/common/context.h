@@ -16,5 +16,5 @@ struct ApplicationContext {
 
 
 	ResourceManager& m_resourceManager;
-	GPUResorceManager& m_gpuResourceManager;
+	GPUResourceManager& m_gpuResourceManager;
 };

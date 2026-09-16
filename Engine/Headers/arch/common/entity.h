@@ -52,7 +52,7 @@ public:
 
 protected:
 	friend class EntityRegistry;
-	std::set<unsigned> m_componentsAttached;
+	std::set<uint32_t> m_componentsAttached;
 
 
 private:

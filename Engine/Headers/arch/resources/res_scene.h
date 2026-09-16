@@ -34,6 +34,9 @@ public:
 	bool Destroy(EntityView _entity, bool _recursive = true);
 	bool Destroy(EntityID _id, bool _recursive = true);
 
+
+	const std::vector<EntityNode>& GetEntities() const;
+
 public:
 	// set to 0 to unparent.
 	void Parent(EntityID _child, EntityID _parent = EntityConstants::C_ENTITYID_INVALID);

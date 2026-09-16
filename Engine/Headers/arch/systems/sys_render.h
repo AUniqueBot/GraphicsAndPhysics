@@ -1,5 +1,8 @@
 #pragma once
 #include <pch.h>
+
+#include <graphics/gfx_renderpass.h>
+
 #include <arch/common/system.h>
 #include <arch/common/component.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
@@ -8,12 +11,15 @@
 #include <arch/systems/sys_render_modules/sys_render_compositor.h>
 #include <arch/systems/sys_render_modules/sys_render_uboManager.h>
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
-#include <arch/components/comp_light.h>
-#include <arch/components/comp_transform.h>
 
 
 
+// fwd decl.
+class SceneRes;
+struct PreparedSceneRenderData;
 
+
+// ---------------------------------------------------------
 constexpr unsigned C_MAX_LIGHT_COUNT_LOW	{ 20 };
 constexpr unsigned C_MAX_LIGHT_COUNT_MED	{ 40 };
 constexpr unsigned C_MAX_LIGHT_COUNT_HIGH	{ 60 };
@@ -36,6 +42,7 @@ struct alignas(sizeof(glm::vec4)) CommonUBOData {
 };
 
 
+
 class RenderSystem final : public System, public Singleton<RenderSystem> {
 public:
 	 
@@ -53,6 +60,11 @@ public:
 	void Cleanup()		override { m_directionalShadowMaps.Destroy(); LOG_INFO("Cleaning up shadow map");  };
 
 
+
+	//void Render(GraphicsInterface& _graphicsInterface);
+
+
+	// opengl stuff.
 	Viewport::RENDERMODE GetRenderMode() const;
 	void SetRenderMode(Viewport::RENDERMODE _renderMode);
 
@@ -104,6 +116,8 @@ private:
 		const ComponentPool<MeshRenderer>& _mrPool
 	);
 private: 
+
+	PreparedSceneRenderData PrepareScene(const SceneRes& _scene);
 
 
 

@@ -267,6 +267,15 @@
     <ClCompile Include="Source\graphics\resources\gfx_gpusubmesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Source\graphics\gfx_graphicsDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\renderpass\gfx_renderpass_shadow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Headers\arch\common\component.h">
@@ -657,6 +666,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Headers\graphics\resources\gfx_gputexture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\gfx_renderpass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\renderpass\gfx_renderpass_shadow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\graphics\gfx_preparedscenedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

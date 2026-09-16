@@ -6,7 +6,10 @@
 
 class GraphicsInterface {
 public:
-	GraphicsInterface();
+	//GraphicsInterface(
+	//	GraphicsDevice* _device = nullptr, 
+	//	GraphicsContext* _context
+	//);
 
 
 private:

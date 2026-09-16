@@ -11,7 +11,7 @@ enum class GPUDatatype {
 	IndexBuffer,
 	VAO,
 	FrameBuffer,
-	Mesh,
+	Mesh, // incorrect handling.
 	UNKNOWN
 };
 

@@ -10,5 +10,6 @@ public:
 	inline const GPUHandle& GetHandle() const { return m_handle; }
 protected:
 	GPUHandle m_handle;
+
 	bool m_isCreated	{};
 };

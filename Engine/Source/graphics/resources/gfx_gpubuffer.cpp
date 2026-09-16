@@ -16,7 +16,6 @@ void GPUBuffer::Destroy() {
 
 void GPUBuffer::Allocate(size_t _size, GLenum _usage) {
     glNamedBufferStorage((GLuint)m_handle, _size, nullptr, _usage);
-	//glNamedBufferData((GLuint)m_handle, _size, nullptr, _usage);
     m_size = _size;
 }
 
@@ -30,6 +29,14 @@ void GPUBuffer::SetSize(size_t _size) {
 
 size_t GPUBuffer::GetSize() const {
     return m_size;
+}
+
+void GPUBuffer::CreateImpl() {
+
+}
+
+void GPUBuffer::DestroyImpl() {
+    
 }
 
 

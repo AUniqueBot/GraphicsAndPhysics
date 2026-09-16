@@ -74,7 +74,7 @@ protected:
 	void FlagInfoClean();
 
 protected:
-	friend class GPUResorceManager;
+	friend class GPUResourceManager;
 	glm::ivec3 m_dimensions;
 	GPUResourceHandle m_gpuResHandle;
 	TextureProperties::TextureType m_textureType		{}; // static and cannot be changed after creation; per type.

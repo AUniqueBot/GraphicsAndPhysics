@@ -51,6 +51,7 @@ private:
 	void SetupInputManager();
 	void SetupGLFWWindow();
 
+	
 
 private:
 	UI_Core uiCore;

@@ -35,7 +35,7 @@ int main() {
 	ApplicationContextProps props = ApplicationContextProps::GenerateWindowConfig("./Config/applicationconfig.cfg");
 
 	ApplicationContext app(props);
-
+	
 	app.Init();
 	app.Update();
 	app.Cleanup();

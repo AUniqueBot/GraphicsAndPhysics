@@ -16,6 +16,7 @@
 #include <arch/resources/res_assetManager.h>
 
 #include <arch/resources/res_sceneManager.h>
+#include <graphics/gfx_graphicsInstance.h>
 
 
 class Core : public Singleton<Core> {
@@ -66,6 +67,9 @@ public:
 	void SetFixedDeltaTime(double _newDelta)		{ m_fixedDeltaTime = _newDelta; }
 
 
+	// - graphics -----------------------------------
+	GraphicsInterface m_graphicsInterface			{};
+
 
 	// - resources ----------------------------------
 	ResourceManager& GetResourceManager()			{ return m_resourceManager; };
@@ -76,7 +80,6 @@ public:
 
 	AssetManager& GetAssetManager()					{ return m_assetManager; }
 	const AssetManager& GetAssetManager() const		{ return m_assetManager; }
-
 
 	SceneManager& GetSceneManager()					{ return m_sceneManager; };
 	const SceneManager& GetSceneManager() const		{ return m_sceneManager; };
