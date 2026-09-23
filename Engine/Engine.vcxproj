@@ -313,6 +313,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsContext_opengl_4_6.h" />
     <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.h" />
     <ClInclude Include="Headers\graphics\device\gfx_gpuresourcemanager.h" />
     <ClInclude Include="Headers\graphics\gfx_preparedscenedata.h" />

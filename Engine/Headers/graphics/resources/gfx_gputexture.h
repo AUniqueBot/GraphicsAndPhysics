@@ -4,6 +4,21 @@
 #include <graphics/resources/gfx_gpuresource.h>
 #include <arch/resources/res_texture/res_texture_properties.h>
 
+
+
+struct GPUTextureDesc {
+
+	glm::ivec3 dimensions;
+	TextureProperties::TextureType textureType;
+	TextureProperties::TextureFormat format;
+	
+	uint32_t miplevels;
+	uint32_t arrayLevels;
+	
+	uint32_t samples; //msaa stuff apparently
+};
+
+
 // Internal GPU class for texture
 // handles raw allocation and upload logic
 class GPUTexture : public GPUResource {

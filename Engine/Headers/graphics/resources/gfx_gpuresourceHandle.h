@@ -13,7 +13,7 @@ enum class GPUDatatype {
 	FrameBuffer,
 	Mesh, // incorrect handling.
 	UNKNOWN
-};
+}; 
 
 struct GPUResourceHandle {
 	GPURES_ID m_id{ C_GPURES_INVALID_ID };
@@ -26,4 +26,5 @@ struct GPUResourceHandle {
 		m_type = GPUDatatype::UNKNOWN;
 	}
 };
+
 

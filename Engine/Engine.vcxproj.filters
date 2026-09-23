@@ -680,5 +680,8 @@
     <ClInclude Include="Headers\graphics\gfx_preparedscenedata.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsContext_opengl_4_6.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

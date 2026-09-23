@@ -18,6 +18,10 @@
 #include <arch/resources/res_sceneManager.h>
 #include <graphics/gfx_graphicsInstance.h>
 
+#include <graphics/api/opengl_4_6/gfx_graphicsDevice_opengl_4_6.h>
+#include <graphics/api/opengl_4_6/gfx_graphicsContext_opengl_4_6.h>
+
+
 
 class Core : public Singleton<Core> {
 	
@@ -67,8 +71,7 @@ public:
 	void SetFixedDeltaTime(double _newDelta)		{ m_fixedDeltaTime = _newDelta; }
 
 
-	// - graphics -----------------------------------
-	GraphicsInterface m_graphicsInterface			{};
+
 
 
 	// - resources ----------------------------------
@@ -122,13 +125,19 @@ private:
 	std::vector<System*> m_systemInstances;
 
 
+	// - graphics -----------------------------------
+	GraphicsInterface m_graphicsInterface{
+		.m_device = std::make_shared<OpenGL4_6_GraphicsDevice>().get(),
+		.m_context = std::make_shared<OpenGL4_6_GraphicsContext>().get()
+	};
+
 
 	// - modules ------------------------------------
 	InputSystem m_inputSystem;
 	InputRouter m_inputRouter;
 	EntityRegistry m_registry;
 	ResourceManager m_resourceManager;
-	GPUResourceManager m_gpuResourceManager; // hey look you're here!
+	GPUResourceManager m_gpuResourceManager; 
 	AssetManager m_assetManager				{ m_resourceManager, m_gpuResourceManager };
 	
 	// - save management ----------------------------

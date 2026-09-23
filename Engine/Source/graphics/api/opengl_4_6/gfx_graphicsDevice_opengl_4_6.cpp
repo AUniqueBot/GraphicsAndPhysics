@@ -1,24 +1,29 @@
 #include <graphics/api/opengl_4_6/gfx_graphicsDevice_opengl_4_6.h>
 
-GPUBuffer OpenGL4_6_GraphicsDevice::CreateGPUBuffer(const GPUBufferDesc& _desc) {
-	_desc.access;
-	_desc.size;
-	_desc.usage;
-	GLuint handleId{};
-	glCreateBuffers(1, &handleId);
-
-	GLenum storageFlags{};
-	if (((uint32_t)_desc.access & (uint32_t)BufferCPUAccess::Update) != false) {
-		storageFlags |= GL_DYNAMIC_STORAGE_BIT;
-	}
-
-	glNamedBufferStorage(handleId, _desc.size, nullptr, storageFlags);
-	GL_DYNAMIC_STORAGE_BIT;
-	
+GPUResourceHandle OpenGL4_6_GraphicsDevice::CreateGPUBufferImpl(
+	const GPUBufferDesc& _desc
+) {
 	GPUBuffer buffer;
-	buffer.SetSize(_desc.size);
+	GPURES_ID id { m_bufferStorage.AddResource(std::move(buffer)) };
 	
+	
+	return GPUResourceHandle {
+		.m_id = id,
+		.m_type = GPUDatatype::Buffer
+	};
 
-	
-	return buffer;
+}
+
+GPUResourceHandle OpenGL4_6_GraphicsDevice::CreateGPUTextureImpl(
+	const GPUTextureDesc& _desc
+) {
+	GPUTexture tex(_desc.textureType, _desc.dimensions);
+	tex.Create();
+	tex.Allocate();
+	GPURES_ID id = m_textureStorage.AddResource(std::move(tex));
+	return GPUResourceHandle{
+		.m_id = 0, 
+		.m_type = GPUDatatype::Texture
+	};
+
 }

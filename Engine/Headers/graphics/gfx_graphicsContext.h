@@ -58,4 +58,4 @@ protected:
 	virtual void DrawImpl(const GraphicsContextTypes::DrawArgs& _args) = 0;
 	virtual void DrawIndexedImpl(const GraphicsContextTypes::DrawIndexedArgs& _args) = 0;
 
-};
+}; 

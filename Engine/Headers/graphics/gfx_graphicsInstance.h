@@ -12,7 +12,7 @@ public:
 	//);
 
 
-private:
+
 	GraphicsDevice* m_device;
 	GraphicsContext* m_context;
 };
