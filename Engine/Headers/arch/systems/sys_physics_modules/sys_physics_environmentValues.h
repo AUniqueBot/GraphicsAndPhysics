@@ -4,7 +4,9 @@
 
 class PhysicsEnvironmentSetup {
 
-
+public:
+	const glm::vec3& Gravity() const;
+	void Gravity(const glm::vec3& _gravity) ;
 
 
 private:

@@ -44,6 +44,7 @@ void ApplicationContext::Update() {
 		c.PreUpdate();
 		glfwPollEvents();
 		c.Update();
+		c.FixedUpdate();
 		uic.Update();
 		glfwSwapBuffers(m_mainWindow);
 		c.PostUpdate();

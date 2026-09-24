@@ -183,8 +183,10 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Source\arch\systems\sys_physics_modules\sys_physics_environmentValues.cpp" />
     <ClCompile Include="Headers\graphics\context\gfx_graphicsContext_opengl_4_6.h" />
     <ClCompile Include="Source\arch\common\inspectable.cpp" />
+    <ClCompile Include="Source\arch\components\comp_rigidbody.cpp" />
     <ClCompile Include="Source\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.cpp" />
     <ClCompile Include="Source\graphics\context\gfx_graphicsContext_opengl_4_6.cpp" />
     <ClCompile Include="Source\graphics\gfx_graphicsContext.cpp" />
@@ -406,7 +408,6 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\util\util_math.h" />
     <ClInclude Include="Headers\util\util_print.h" />
     <ClInclude Include="Headers\util\util_serialisation.h" />
-    <ClInclude Include="Source\arch\components\comp_rigidbody.cpp" />
     <ClInclude Include="Source\util\util_color.hpp" />
   </ItemGroup>
   <ItemGroup>

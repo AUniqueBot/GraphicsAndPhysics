@@ -34,5 +34,5 @@ private:
 	glm::vec3 m_angularVelocity;
 	glm::vec3 m_angularAcceleration;
 
-
+	INSPECTABLE_DECLAREPROPS(RigidBody);
 };

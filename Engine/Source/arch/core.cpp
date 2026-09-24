@@ -73,6 +73,7 @@ void Core::Start() {
 }
 
 void Core::Run() {
+
 	PreUpdate();
 	glfwPollEvents();
 	Update();

@@ -48,6 +48,12 @@ void RigidBody::AngularAcceleration(const glm::vec3& _value) {
 	m_angularAcceleration = _value;
 }
 
+std::vector<PropertyMD::Property>& RigidBody::GetProps() {
+	static std::vector<PropertyMD::Property> props{
+		
+	};
 
+	return props;
+}
 
 
