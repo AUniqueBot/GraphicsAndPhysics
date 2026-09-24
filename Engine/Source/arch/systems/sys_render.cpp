@@ -545,7 +545,7 @@ void RenderSystem::LightingRenderPass(
 
          
         auto trs = e.GetComponent<Transform>();
-        const glm::mat4 objectTransformMatrix = trs->LocalTransformMtx();
+        const glm::mat4 objectTransformMatrix = trs->TransformMtx();
 
         RES_ID meshId = mr->GetMesh().GetResourceID();
         if (meshId == ResourceConstants::C_RES_INVALID_ID) continue;

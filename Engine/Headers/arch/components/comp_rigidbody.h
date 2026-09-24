@@ -7,7 +7,7 @@ public:
 	
 
 	const float& Mass() const;
-	void Mass(float _value);
+	void Mass(const float& _value);
 
 	const glm::vec3& LinearVelocity() const;
 	void LinearVelocity(const glm::vec3& _value);
@@ -23,16 +23,20 @@ public:
 	const glm::vec3& AngularAcceleration() const;
 	void AngularAcceleration(const glm::vec3& _value);
 
-
+	const bool& Gravity() const;
+	void Gravity(const bool& _value);
 
 private:
 
-	float m_mass;
-	glm::vec3 m_linearVelocity;
-	glm::vec3 m_linearAcceleration;
+	float m_mass							{ 1.0f };
+	glm::vec3 m_linearVelocity				{ 0.f, 0.f, 0.f };
+	glm::vec3 m_linearAcceleration			{ 0.f, 0.f, 0.f };
 
-	glm::vec3 m_angularVelocity;
-	glm::vec3 m_angularAcceleration;
+	glm::vec3 m_angularVelocity				{ 0.f, 0.f, 0.f };
+	glm::vec3 m_angularAcceleration			{ 0.f, 0.f, 0.f };
+
+
+	bool m_gravity							{ false };
 
 	INSPECTABLE_DECLAREPROPS(RigidBody);
 };

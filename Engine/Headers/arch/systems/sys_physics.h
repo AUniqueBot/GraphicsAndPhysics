@@ -33,6 +33,8 @@ public:
 
 
 private:
+
+	// structs for preparation.
 	struct RBData {
 		EntityID id;
 		Transform& trs;
@@ -40,17 +42,18 @@ private:
 		// ComponentView<Collider> col;
 	};
 
-	struct PreparedScene {
+	struct PhysicsScene {
 		std::vector<RBData> rbEntityList;
 		std::vector<RBData> collideEntityList;
+		double dt;
 	};
 
 
 private:
-	PreparedScene PrepareScene();
-	void EnvironmentPass(double _dt, PreparedScene& _scene);
-	void RigidbodyPass(double _dt, PreparedScene& _scene);
-	void CollisionPass(double _dt, PreparedScene& _scene);
+	void PrepareScene(PhysicsScene& _out);
+	void EnvironmentPass(PhysicsScene& _scene);
+	void RigidbodyPass(PhysicsScene& _scene);
+	void CollisionPass(PhysicsScene& _scene);
 	void BroadPhaseCollisionPass(double _dt);
 	// examples to go through
 	// 

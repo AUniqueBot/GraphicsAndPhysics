@@ -102,17 +102,14 @@ void Core::Update() {
 
 void Core::FixedUpdate() {
 
-	static double currentDelta = 0;
-	currentDelta += DeltaTime();
+	static double accumulator = 0;
+	accumulator += DeltaTime();
 
-	if (currentDelta < m_fixedDeltaTime) return;
-	int updateCount	{ static_cast<int>(currentDelta/m_fixedDeltaTime) };
-
-
-	for (int i{}; i < updateCount; ++i) {
+	while (accumulator >= m_fixedDeltaTime) {
 		for (auto s : m_systemInstances) {
 			s->FixedUpdate();
 		}
+		accumulator -= m_fixedDeltaTime;
 	}
 }
 

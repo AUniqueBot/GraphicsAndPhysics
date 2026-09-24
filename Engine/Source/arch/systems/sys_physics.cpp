@@ -53,10 +53,11 @@ void PhysicsSystem::Update() {
 
 void PhysicsSystem::FixedUpdate() {
 
-	double dt = Core::GetInstance().FixedDeltaTime();
-	PreparedScene scene = PrepareScene();
-	EnvironmentPass(dt, scene);
-	RigidbodyPass(dt, scene);
+
+	PhysicsScene scene{};
+	PrepareScene(scene);
+	EnvironmentPass(scene);
+	RigidbodyPass(scene);
 	// per collider collisions
 }
 
@@ -69,15 +70,22 @@ const PhysicsEnvironmentSetup& PhysicsSystem::PhysicsEnvironment() const {
 }
 
 
-PhysicsSystem::PreparedScene PhysicsSystem::PrepareScene() {
-	
-	PreparedScene scene;
+void PhysicsSystem::PrepareScene(PhysicsScene& _out) {
+
 	EntityRegistry& er = Core::GetInstance().GetRegistry();
-	ComponentPool<RigidBody> rbPool = *er.GetComponentPool<RigidBody>();
+	_out.dt = Core::GetInstance().FixedDeltaTime();
 	
+	
+	auto rbPoolView = er.GetComponentPool<RigidBody>();
+
+	if (!rbPoolView) return;
+
+	auto& rbPool = *rbPoolView;
+	
+	if (rbPool.size() == 0) return;
 
 	// rb pass here.
-	scene.rbEntityList.reserve(rbPool.size());
+	_out.rbEntityList.reserve(rbPool.size());
 	for (RigidBody& rb : rbPool) {
 		EntityID id = rb.GetEntityID();
 		ComponentView<Transform> trsView = er.GetEntity(id)->GetComponent<Transform>();
@@ -87,29 +95,29 @@ PhysicsSystem::PreparedScene PhysicsSystem::PrepareScene() {
 				.trs = *trsView,
 				.rb = ComponentView<RigidBody>(rb)
 			};
-			scene.rbEntityList.emplace_back(data);
+			_out.rbEntityList.emplace_back(data);
 		}
 	}
 
 	// collider pass here.
-	
+	_out.rbEntityList.shrink_to_fit();
+	_out.collideEntityList.shrink_to_fit();
 
-	scene.rbEntityList.shrink_to_fit();
-	scene.collideEntityList.shrink_to_fit();
-
-	return scene;
 }
 
-void PhysicsSystem::EnvironmentPass(double _dt, PreparedScene& _scene) {
+void PhysicsSystem::EnvironmentPass(PhysicsScene& _scene) {
 
 	auto& rbList = _scene.rbEntityList;
+	if (rbList.empty()) return;
 
 	glm::vec3 gravity = m_physicsEnv.Gravity();
-	gravity *= _dt;
+	gravity *= _scene.dt;
 	
 	auto parallelFunction = [gravity](RBData& _data) {
 		auto& [id, trs, rb] = _data;
-		rb->LinearAcceleration(rb->LinearAcceleration() + gravity);
+		if (rb->Gravity()) {
+			rb->LinearVelocity(rb->LinearVelocity() + gravity);
+		}
 	};
 
 
@@ -121,18 +129,21 @@ void PhysicsSystem::EnvironmentPass(double _dt, PreparedScene& _scene) {
 	
 }
 
-void PhysicsSystem::RigidbodyPass(double _dt, PreparedScene& _scene) {
-	
+void PhysicsSystem::RigidbodyPass(PhysicsScene& _scene) {
 	auto& rbList = _scene.rbEntityList;
-
-	auto parallelFunction = [_dt](RBData& _data) {
+	if (rbList.empty()) return;
+	
+	float dt = static_cast<float>(_scene.dt);
+	auto parallelFunction = [dt](RBData& _data) {
 		auto& [id, trs, rb] = _data; // destructuring.
-		float dt = static_cast<float>(_dt);
+
 		// half implicit euler.
 		rb->LinearVelocity(rb->LinearVelocity() + rb->LinearAcceleration() * dt);
 		trs.Position(trs.Position() + rb->LinearVelocity() * dt);
 	};
 
+
+	
 
 	std::for_each(
 		rbList.begin(), 

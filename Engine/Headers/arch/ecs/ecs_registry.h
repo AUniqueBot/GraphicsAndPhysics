@@ -23,7 +23,8 @@ class EntityID;
 using DeserializationFunction = std::function<void(Entity&, const Serialization::JSONValue&, AssetManager&)>;
 using SerializationFunction = std::function<Serialization::JSONValue (Entity&, Serialization::JSONAllocator&, AssetManager&)>;
 
-
+using CompTypeID = std::type_index;
+using CompID = uint32_t;
 
 // component pool class
 // ------------------------------------------------------------------------------------
@@ -99,13 +100,12 @@ public:
 // metadata component info class.
 struct ComponentMetadata {
 public:
-	using CompType = std::type_index;
-	using CompTypeID = uint32_t;
+
 public:
 	ComponentMetadata(
 		std::string _name,
-		CompType _compId,
-		CompTypeID _id,
+		CompTypeID _compId,
+		CompID _id,
 		std::function<void()> _registerFunction,
 		DeserializationFunction _deserializationFunction,
 		SerializationFunction _serializationFunction
@@ -119,8 +119,8 @@ public:
 	{}
 
 	const std::string& GetComponentName() const				{ return m_componentName; }
-	const CompType& GetComponentType() const				{ return m_componentType; };
-	const CompTypeID& GetComponentTypeID() const			{ return m_componentTypeID; };
+	const CompTypeID& GetComponentType() const				{ return m_componentType; };
+	const CompID& GetComponentTypeID() const			{ return m_componentTypeID; };
 
 
 	std::function<void()> GetComponentRegisterFunction()	{ return m_registerFunction; }
@@ -128,8 +128,8 @@ public:
 	DeserializationFunction GetDeserializeFunction()		{ return m_deserializationFunction; };
 	SerializationFunction GetSerializeFunction()			{ return m_serializationFunction; };
 private:
-	CompTypeID	m_componentTypeID;
-	CompType	m_componentType;
+	CompID	m_componentTypeID;
+	CompTypeID	m_componentType;
 	std::string m_componentName;
 	//std::shared_ptr<IComponentPool> m_componentPool;
 	std::function<void()> m_registerFunction;
@@ -160,8 +160,7 @@ class EntityRegistry {
 	friend class Entity;
 	friend class EntityID;
 
-	using CompTypeID = std::type_index;
-	using CompID = uint32_t;
+
 
 public:
 
@@ -179,7 +178,7 @@ public:
 		CompTypeID componentId		{ typeid(T) };
 		std::string componentName	{ Reflection::TypeName<T>() };
 
-		ComponentMetadata::CompTypeID id = ++s_componentIdxId;
+		CompID id = ++s_componentIdxId;
 		std::shared_ptr<IComponentPool> pool = std::make_shared<ComponentPool<T>>();
 		std::function<void()> registerFunction = T::Register;
 		DeserializationFunction deserializeFunction = [](
@@ -206,7 +205,7 @@ public:
 		);
 			
 		// setup to lookup and metadata.
-		m_componentIDLookup.add(typeid(T), id);
+		m_componentIDLookup.add(componentId, id);
 		m_componentNameIDMap.add(std::move(CompID(id)), componentName);
 		m_componentData.insert({ componentId, ComponentPackedData{ cmdata, pool } });
 
@@ -298,14 +297,39 @@ public:
 	void ClearEntitiesAndComponentData();
 
 	template <std::derived_from<Component> Comp>
-	inline ComponentPackedData& GetComponentData() { return m_componentData.at(Comp::GetComponentID()); }
-	inline ComponentPackedData& GetComponentData(CompTypeID _id) { return m_componentData.at(_id); }
-	inline const ComponentPackedData& GetComponentData(CompTypeID _id) const { return m_componentData.at(_id); }
+	inline ComponentPackedData& GetComponentData() { 
+		return m_componentData.at(Comp::GetComponentID()); 
+	}
 
-	SparseSetView<CompTypeID> GetCompTypeID(std::string _name) { return m_componentIDLookup.at(*m_componentNameIDMap.at(_name)); }
+	inline const std::unordered_map<CompTypeID, ComponentPackedData>& GetAllComponentData() { 
+		return m_componentData; 
+	}
+	inline ComponentPackedData& GetComponentData(CompTypeID _id) { 
+		return m_componentData.at(_id); 
+	}
+	inline const ComponentPackedData& GetComponentData(CompTypeID _id) const { 
+		return m_componentData.at(_id); 
+	}
+	SparseSetView<CompTypeID> GetCompTypeID(std::string _name) { 
+		return m_componentIDLookup.at(*m_componentNameIDMap.at(_name)); 
+	}
+
+
+public:
+	std::shared_ptr<IComponentPool> GetComponentPool(CompID _compId);
+	const std::shared_ptr<IComponentPool> GetComponentPool(CompID _compId) const;
+	std::shared_ptr<IComponentPool> GetComponentPool(CompTypeID _compId);
+	const std::shared_ptr<IComponentPool> GetComponentPool(CompTypeID _compId) const;
+
+
+	bool AddComponent(EntityID _entityId, CompID _compId);
+	bool RemoveComponent(EntityID _entityId, CompID _compId);
+	bool AddComponent(EntityID _entityId, CompTypeID _compId);
+	bool RemoveComponent(EntityID _entityId, CompTypeID _compId);
+
+
 
 private:
-
 	void ClearAllData();
 	// map would be a better idea
 	SparseSet<EntityID, Entity> m_entityList;

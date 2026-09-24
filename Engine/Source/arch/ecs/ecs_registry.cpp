@@ -98,7 +98,7 @@ void EntityRegistry::Destroy(Entity _remove) {
 	for (unsigned _id : _remove.GetAttachedComponents()) {
 		SparseSetView compTypeIDView = m_componentIDLookup.at(_id);
 		if (!compTypeIDView) continue;
-		const EntityRegistry::CompTypeID& compTypeID = *compTypeIDView;
+		const CompTypeID& compTypeID = *compTypeIDView;
 		m_componentData.at(compTypeID).m_componentPool->Remove(_remove.GetID());
 	}
 	m_entityList.remove(_remove.GetID());
@@ -196,6 +196,75 @@ void EntityRegistry::ClearEntitiesAndComponentData() {
 	m_entityList.clear();
 	m_selectedEntitiesList.clear();
 }
+
+
+std::shared_ptr<IComponentPool> EntityRegistry::GetComponentPool(CompID _compId) {
+	return GetComponentPool(*m_componentIDLookup.at(_compId));
+}
+const std::shared_ptr<IComponentPool> EntityRegistry::GetComponentPool(CompID _compId) const {
+	return GetComponentPool(*m_componentIDLookup.at(_compId));
+}
+std::shared_ptr<IComponentPool> EntityRegistry::GetComponentPool(CompTypeID _compId) {
+
+	return m_componentData.at(_compId).m_componentPool;
+}
+const std::shared_ptr<IComponentPool> EntityRegistry::GetComponentPool(CompTypeID _compId) const {
+	return m_componentData.at(_compId).m_componentPool;
+
+}
+
+
+bool EntityRegistry::AddComponent(EntityID _entityId, CompID _compId) {
+	SparseSetView<CompTypeID> compTypeId = m_componentIDLookup.at(_compId);
+	if (!compTypeId) {
+		LOG_ERROR("Component does not exist");
+		return false;
+	}
+	return AddComponent(_entityId, *compTypeId);
+}
+bool EntityRegistry::RemoveComponent(EntityID _entityId, CompID _compId) {
+	SparseSetView<CompTypeID> compTypeId = m_componentIDLookup.at(_compId);
+	if (!compTypeId) {
+		LOG_ERROR("Component does not exist");
+		return false;
+	}
+	return RemoveComponent(_entityId, *compTypeId);
+}
+
+bool EntityRegistry::AddComponent(EntityID _entityId, CompTypeID _compId) {
+	auto& compData = m_componentData.at(_compId);
+	auto enttV = m_entityList.at(_entityId);
+	if (!enttV) {
+		LOG_ERROR("Entity ID Specified does not exist. [" << _entityId << "]");
+		return false;
+	}
+	Entity& entity = *enttV;
+	bool res = compData.m_componentPool->Add(_entityId);
+	if (res) {
+		CompID compId = compData.m_componentMetadata.GetComponentTypeID();
+		entity.m_componentsAttached.insert(compId);
+	}
+	return res;
+}
+
+bool EntityRegistry::RemoveComponent(EntityID _entityId, CompTypeID _compId) {
+	auto enttV = m_entityList.at(_entityId);
+	if (!enttV) {
+		LOG_ERROR("Entity ID Specified does not exist. [" << _entityId << "]");
+		return false;
+	}
+	Entity& entity = *enttV;
+	auto& compData = m_componentData.at(_compId);
+	bool res = compData.m_componentPool->Remove(_entityId);
+	if (res) {	
+		CompID compId = compData.m_componentMetadata.GetComponentTypeID();
+		entity.m_componentsAttached.erase(compId);
+	}
+	return res;
+}
+
+
+
 
 
 void EntityRegistry::ClearAllData() {

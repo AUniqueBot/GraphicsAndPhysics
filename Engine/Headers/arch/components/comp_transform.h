@@ -34,20 +34,23 @@ public:
 	void End() override;
 
 	// - transform attributes -----------------
-	void Position(glm::vec3 _pos)					{ m_pos = _pos; };
-	const glm::vec3& Position() const				{ return m_pos; };
+	void Position(glm::vec3 _pos);
+	const glm::vec3& Position() const;
 
-	void Rotation(glm::quat _rot)					{ m_rot = glm::normalize(_rot); };
-	const glm::quat& Rotation() const				{ return m_rot; };
+	void Rotation(glm::quat _rot);
+	const glm::quat& Rotation() const;
 	
 	void RotationEuler(glm::vec3);
 	const glm::vec3& RotationEuler() const;
 
-	void RotationOrder(const RotationOrder_& _rotOrder)	{ m_rotOrder = _rotOrder; }
-	const RotationOrder_& RotationOrder() const		{ return m_rotOrder; }
+	void RotationOrder(const RotationOrder_& _rotOrder);
+	const RotationOrder_& RotationOrder() const;
 
-	void Scale(glm::vec3 _scale)					{ m_scl = _scale; };
-	const glm::vec3& Scale() const					{ return m_scl; };
+	void NormalizeRotation();
+
+
+	void Scale(glm::vec3 _scale);
+	const glm::vec3& Scale() const;
 
 	
 	// - orientation vectors ------------------
@@ -58,8 +61,8 @@ public:
 	void Up(glm::vec3 _newUp);
 
 	// - transform matrix ----------------------
-	glm::mat4 LocalTransformMtx() const;
-	glm::mat4 WorldTransformMtx() const;
+	glm::mat4 TransformMtx();
+	glm::mat4 WorldTransformMtx(); // 
 	void LocalTransformMtx(glm::mat4 _newMtx);
 	void WorldTransformMtx(glm::mat4 _newMtx);
 
@@ -84,10 +87,10 @@ private:
 	glm::quat m_rot					{ 1.0f, 0.0f, 0.0f, 0.0f };
 	glm::vec3 m_scl					{ 1.0f, 1.0f, 1.0f };
 
-	glm::mat4 m_transformMtx		{ 1.f };
+	glm::mat4 m_transformMtx{ 1.f };
 
 	RotationOrder_ m_rotOrder		{ RotationOrder_::XYZ };
-
+	bool m_mtxDirty					{ true };
 	INSPECTABLE_DECLAREPROPS(Transform);
 
 };

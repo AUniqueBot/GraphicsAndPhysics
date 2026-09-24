@@ -185,6 +185,29 @@ void UIWidget_Inspector::DrawEntity() {
 		}
 
 	}
+
+
+	
+	ImGui::Spacing();
+	ImVec2 buttonSize(200.0f, 20.0f);
+	float x = (ImGui::GetContentRegionAvail().x - buttonSize.x) * 0.5f;
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + x);
+	if (ImGui::Button("Add Component", buttonSize)) {
+		ImGui::OpenPopup("Add Component##List");
+	}
+	if (ImGui::BeginPopup("Add Component##List")) {
+		auto& compData = er.GetAllComponentData();
+		for (auto& [key, val] : compData) {
+			const std::string& compName = val.m_componentMetadata.GetComponentName();
+			if (ImGui::Selectable(compName.c_str())) {
+				// add the component directly to the thing.
+				CompID compId = val.m_componentMetadata.GetComponentTypeID();
+				er.AddComponent(selectedID, compId);
+			}
+
+		}
+		ImGui::EndPopup();
+	}
 }
 
 void UIWidget_Inspector::DrawResource() {

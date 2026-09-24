@@ -40,60 +40,13 @@ SparseSetView<const ComponentPool<T>> EntityRegistry::GetComponentPool() const {
 
 template<std::derived_from<Component> T>
 bool EntityRegistry::AddComponent(EntityID _addTo) {
-	auto val = GetComponentPool<T>();
-	if (!val) {
-		std::stringstream ss;
-		ss << "Component type: \"" << typeid(T).name() << "\" undefined.\n";
-		LOG_WARN(ss.str());
-		return false;
-	}
-
-	bool res = val->Add(_addTo);
-	if (res) {
-		const ComponentPackedData& cmpdata	{ m_componentData.at(typeid(T)) };
-		const ComponentMetadata& cmdata		{ cmpdata.m_componentMetadata };
-		Entity& entity = *GetEntity(_addTo);
-		ComponentMetadata::CompTypeID cmpId = cmdata.GetComponentTypeID();
-
-		if (entity.m_componentsAttached.contains(cmpId)) {
-			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");
-			return false;
-		}
-		// MUST CHECK IF ENTITY ALREADY HAS A COMPONENT.
-		
-
-		entity.m_componentsAttached.insert(cmpId);
-	}
-
-	return res;
+	return AddComponent(_addTo, typeid(T));
 }
 
 
 template<std::derived_from<Component> T>
 bool EntityRegistry::RemoveComponent(EntityID _removeFrom) {
-	auto val = GetComponentPool<T>();
-	if (!val.has_value()) {
-		std::stringstream ss;
-		ss << "Component type: \"" << typeid(T).name() << "\" undefined.\n";
-		LOG_WARN(ss.str());
-		return false;
-	}
-	ComponentPool<T>& compPool = val.value().get();
-	bool res = compPool.Remove(_removeFrom);
-	if (res) {
-		const ComponentPackedData& cmpdata{ m_componentData.at(typeid(T)) };
-		const ComponentMetadata& cmdata{ cmpdata.m_componentMetadata };
-		Entity& entity = *GetEntity(_removeFrom);
-		ComponentMetadata::CompTypeID cmpId = cmdata.GetComponentTypeID();
-
-		if (!entity.m_componentsAttached.contains(cmpId)) {
-			LOG_INFO("Attempting to add an existing component: <" << typeid(T).name() << "> to current entity");
-			return false;
-		}
-
-		entity.m_componentsAttached.erase(cmdata.GetComponentTypeID());
-	}
-	return res;
+	return RemoveComponent(_removeFrom, typeid(T));
 }
 
 template<std::derived_from<Component> T>
