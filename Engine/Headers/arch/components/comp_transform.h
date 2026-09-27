@@ -61,13 +61,13 @@ public:
 	void Up(glm::vec3 _newUp);
 
 	// - transform matrix ----------------------
-	glm::mat4 TransformMtx();
-	glm::mat4 WorldTransformMtx(); // 
+	glm::mat4 TransformMtx() const;
+	glm::mat4 WorldTransformMtx() const; // 
 	void LocalTransformMtx(glm::mat4 _newMtx);
 	void WorldTransformMtx(glm::mat4 _newMtx);
 
 
-
+	void UpdateTransformMtx();
 
 
 	static void Register() { LOG_INFO("Register Override"); }

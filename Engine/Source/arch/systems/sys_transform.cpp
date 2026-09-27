@@ -18,4 +18,10 @@ void TransformSystem::Update() {
 	EntityRegistry& registry = Core::GetInstance().GetRegistry();
 	auto data = registry.GetComponentPool<Transform>();
 	auto& compPool = *(data);
+
+	for (Transform& trs : compPool) {
+		trs.UpdateTransformMtx();
+	}
+
+
 }

@@ -173,6 +173,7 @@ void Core::CoreInit() {
 void Core::RegisterComponents() {
 	m_registry.RegisterComponent<Transform>();
 	m_registry.RegisterComponent<RigidBody>();
+	m_registry.RegisterComponent<Collider>();
 	m_registry.RegisterComponent<Camera>();
 	m_registry.RegisterComponent<MeshRenderer>();
 	m_registry.RegisterComponent<Light>();

@@ -5,6 +5,8 @@
 
 #include <arch/components/comp_rigidbody.h>
 #include <arch/components/comp_transform.h>
+#include <arch/components/comp_collider.h>
+#include <arch/components/comp_collider/comp_collider_collisions.h>
 
 
 
@@ -35,16 +37,24 @@ public:
 private:
 
 	// structs for preparation.
-	struct RBData {
+	struct PhysicsObjectData {
 		EntityID id;
 		Transform& trs;
 		ComponentView<RigidBody> rb;
-		// ComponentView<Collider> col;
+		ComponentView<Collider> col;
+	};
+
+	struct CollisionData {
+		std::pair<PhysicsObjectData, PhysicsObjectData> pair;
+		std::vector<CollisionInfo> collisioninfo;
 	};
 
 	struct PhysicsScene {
-		std::vector<RBData> rbEntityList;
-		std::vector<RBData> collideEntityList;
+		std::vector<PhysicsObjectData> rbEntityList;
+		std::vector<PhysicsObjectData> collideEntityList;
+		std::vector<std::pair<PhysicsObjectData, PhysicsObjectData>> collisionPairs;
+		std::vector<CollisionData> collisionData;
+
 		double dt;
 	};
 
@@ -53,11 +63,15 @@ private:
 	void PrepareScene(PhysicsScene& _out);
 	void EnvironmentPass(PhysicsScene& _scene);
 	void RigidbodyPass(PhysicsScene& _scene);
-	void CollisionPass(PhysicsScene& _scene);
-	void BroadPhaseCollisionPass(double _dt);
+
 	// examples to go through
-	// 
-	void NarrowPhaseCollisionPass(); // need the atlas
+
+	void BroadPhaseCollisionPass(PhysicsScene& _scene);
+	void NarrowPhaseCollisionPass(PhysicsScene& _scene); // need the atlas
 private:
 	PhysicsEnvironmentSetup m_physicsEnv;
+
+	static CollisionTestFunctionDB s_collisionFunctionDb;
 };
+
+// return a group of pairs

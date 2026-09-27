@@ -130,19 +130,23 @@ glm::vec3 Transform::Up() const {
 	return m_rot * glm::vec3(0, 1, 0);
 }
 
-glm::mat4 Transform::TransformMtx() {
+glm::mat4 Transform::TransformMtx() const {
+
+	return m_transformMtx;
+}
+glm::mat4 Transform::WorldTransformMtx() const {
+	return TransformMtx();
+}
+
+void Transform::UpdateTransformMtx() {
 	if (m_mtxDirty) {
-		glm::mat4 pos	{ glm::translate(glm::mat4(1.0f), m_pos) };
-		glm::mat4 rot	{ glm::mat4_cast(glm::normalize(m_rot)) };
-		glm::mat4 scl	{ glm::scale(glm::mat4(1.0f), m_scl) };
+		glm::mat4 pos{ glm::translate(glm::mat4(1.0f), m_pos) };
+		glm::mat4 rot{ glm::mat4_cast(glm::normalize(m_rot)) };
+		glm::mat4 scl{ glm::scale(glm::mat4(1.0f), m_scl) };
 
 		m_transformMtx = pos * rot * scl;
 		m_mtxDirty = false;
 	}
-	return m_transformMtx;
-}
-glm::mat4 Transform::WorldTransformMtx() {
-	return TransformMtx();
 }
 
 

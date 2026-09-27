@@ -183,6 +183,11 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Headers\arch\common\properties.h" />
+    <ClCompile Include="Source\arch\components\comp_collider.cpp" />
+    <ClCompile Include="Source\arch\components\comp_collider\comp_collider_aabb.cpp" />
+    <ClCompile Include="Source\arch\components\comp_collider\comp_collider_collisions.cpp" />
+    <ClCompile Include="Source\arch\components\comp_collider\comp_collider_shape.cpp" />
+    <ClCompile Include="Source\arch\components\comp_collider\comp_collider_sphere.cpp" />
     <ClCompile Include="Source\arch\systems\sys_physics_modules\sys_physics_environmentValues.cpp" />
     <ClCompile Include="Headers\graphics\context\gfx_graphicsContext_opengl_4_6.h" />
     <ClCompile Include="Source\arch\common\inspectable.cpp" />
@@ -283,6 +288,8 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\common\inspectable.h" />
     <ClInclude Include="Headers\arch\common\singleton.h" />
     <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_aabb.h" />
+    <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_collisions.h" />
+    <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_shape.h" />
     <ClInclude Include="Headers\arch\components\comp_collider\comp_collider_sphere.h" />
     <ClInclude Include="Headers\arch\core\core_enginecontext.h" />
     <ClInclude Include="Headers\arch\core\core_gamestatemanager.h" />
@@ -315,6 +322,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\arch\resources\guid.h" />
     <ClInclude Include="Headers\arch\resources\res_assetManager.h" />
     <ClInclude Include="Headers\arch\resources\res_audiobank.h" />
+    <ClInclude Include="Headers\arch\resources\res_physicsMaterial.h" />
     <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsContext_opengl_4_6.h" />
     <ClInclude Include="Headers\graphics\api\opengl_4_6\gfx_graphicsDevice_opengl_4_6.h" />
     <ClInclude Include="Headers\graphics\device\gfx_gpuresourcemanager.h" />
