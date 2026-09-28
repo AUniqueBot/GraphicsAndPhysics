@@ -91,6 +91,17 @@ namespace Raw {
 		return ImGui::Checkbox(_label.c_str(), static_cast<bool*>(_value));
 	}
 
+	//static bool DrawPropertyPointer(const std::string& _label, void* _value, int, bool) {
+	//	if (!_prop.m_get || !_prop.m_set) return;
+
+	//	GetterFunction getter = _prop.m_get;
+	//	Inspectable* handle{ GetValueFromGetter<Inspectable*>(getter, object) };
+	//	if (handle == nullptr) return;
+
+	//	for (auto& prop : handle->GetProperties()) {
+	//		DrawPropertyElement((void*)handle, prop, prop.m_name);
+	//	}
+	//}
 
 	static bool DrawPropertyString(const std::string& _label, void* _value, int, bool) {
 		return ImGui::InputText(_label.c_str(), static_cast<std::string*>(_value));
@@ -504,6 +515,20 @@ void UIWidget_Inspector::DrawPropertyResourceCombo(void* object, const PropertyM
 
 }
 
+void UIWidget_Inspector::DrawPropertyPointer(void* object, const PropertyMD::Property& _prop, const std::string& _key) {
+	if (!_prop.m_get || !_prop.m_set) return;
+
+	GetterFunction getter = _prop.m_get;
+	Inspectable* handle{ GetValueFromGetter<Inspectable*>(getter, object) };
+	if (handle == nullptr) return;
+
+	for (auto& prop : handle->GetProperties()) {
+		DrawPropertyElement((void*)handle, prop, prop.m_name);
+	}
+
+
+}
+
 void UIWidget_Inspector::DrawPropertyResourceHandle(
 	void* object,
 	const PropertyMD::Property& prop,
@@ -553,7 +578,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 		for (size_t i{}; i < size; ++i) {
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
-			ImGui::Text("%i", size);
+			ImGui::Text("%i", i);
 			ImGui::TableSetColumnIndex(1);
 
 			void* currentElement = list.m_get(object, static_cast<int>(i));
@@ -579,6 +604,18 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 				DrawPropertyObject(currentElement, prop, prop.m_name);
 				break;	
 			}
+			case PropertyMD::PropertyType::Pointer: {
+				Inspectable* handle{ static_cast<Inspectable*>(currentElement) };
+				if (handle == nullptr) return;
+				std::string suffix = elementName;
+				for (auto& prop : handle->GetProperties()) {
+					DrawPropertyElement((void*)handle, prop, prop.m_name + suffix);
+				}
+
+
+				break;
+			}
+
 			case PropertyMD::PropertyType::ResourceHandle: {
 
 				// if the object is the resource handle, you'll need the getters and setters
@@ -599,6 +636,28 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 			
 		}
 		ImGui::EndTable();
+	}
+	
+	if (ls.m_add && ls.m_constructors.size()) {
+		if (ImGui::Button("Add##List")) {
+			if (ls.m_constructors.size() == 1) {
+				// single element addition
+				ls.m_add(object, ls.m_constructors[0].second());
+			}
+			else {
+				// do a context menu
+				ImGui::OpenPopup("##ListItems");
+			}
+		}
+
+		if (ImGui::BeginPopup("##ListItems")) {
+			for (auto& [label, fn] : ls.m_constructors) {
+				if (ImGui::Selectable(label.c_str())) {
+					ls.m_add(object, fn());
+				}
+			}
+			ImGui::EndPopup();
+		}
 	}
 
 }

@@ -258,6 +258,7 @@ namespace {
             // ??
             break;
         }
+        // set pointer (how?)
         case PropertyType::ResourceHandle:
             SetResource(setter, _object, _value, _asMgr, _props.resourceType);
 

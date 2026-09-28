@@ -3,6 +3,7 @@
 #include <string>
 #include <functional>
 #include <memory>
+#include <any>
 
 using GetterFunction = std::function<void(void*, void*&)>;
 using SetterFunction = std::function<void(void*, const void*)>;
@@ -74,14 +75,13 @@ namespace PropertyMD {
 
 			std::function<void* (void*)> m_getObject = nullptr;
 
-			std::function<void(void*, const void*)> m_add = nullptr;
+			std::function<void(void*, const std::any&)> m_add = nullptr;
 			std::function<void(void*, int)> m_remove = nullptr;
+			std::vector<std::pair<std::string, std::function<std::any()>>> m_constructors{};
 
 			bool m_valid = false;
-
-			//
-			PropertyType m_type		{};
-			int m_componentCount {};
+			PropertyType m_type			{};
+			int m_componentCount		{};
 		} m_list;
 
 		struct Map {
@@ -222,6 +222,7 @@ namespace PropertyMD {
 		std::function<std::vector<Element>& (T*)> listAccessor,
 		std::function<void(T*, Element)> listAdder = nullptr,
 		std::function<void(T*, int)> listRemover = nullptr,
+		std::vector<std::pair<std::string, std::function<Element()>>> constructors = {},
 		int _componentCount = 1
 	) {
 		Property prop(
@@ -253,16 +254,29 @@ namespace PropertyMD {
 			return ReflectElement<Element>::Get(list[index]);
 			};
 
-		ls.m_add = [listAdder](void* obj, const void* element) {
-			T* a = static_cast<T*>(obj);
-			const Element* val = static_cast<const Element*>(element);
-			listAdder(a, *val);
-			};
-		ls.m_remove = [listRemover](void* obj, int index) {
-			T* a = static_cast<T*>(obj);
-			listRemover(a, index);
-			};
+		if (listAdder) {
+			ls.m_add = [listAdder](void* obj, const std::any& element) {
+				T* a = static_cast<T*>(obj);
+				const Element& val = std::any_cast<const Element&>(element);
+				listAdder(a, val);
+				};
+		}
+		if (listRemover) {
+			ls.m_remove = [listRemover](void* obj, int index) {
+				T* a = static_cast<T*>(obj);
+				listRemover(a, index);
+				};
+		}
 
+		if (constructors.size()) {
+			std::vector<std::pair<std::string, std::function<std::any()>>> ctors;
+			ctors.reserve(constructors.size());
+			for (auto& [label, fn] : constructors) {
+				std::function<std::any()> ctor = [fn]() { return std::any(fn()); };
+				ctors.emplace_back(label, ctor);
+			}
+			ls.m_constructors = std::move(ctors);
+		}
 
 		return prop;
 	}

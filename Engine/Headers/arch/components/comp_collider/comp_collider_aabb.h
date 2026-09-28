@@ -6,7 +6,9 @@
 
 
 class AABBShape : public ColliderShape {
+
 public:
+	AABBShape(glm::fvec3 _dimensions = glm::fvec3(1.f, 1.f, 1.f)) : m_dimensions(_dimensions) {}
 	ColliderShapeConstants::Type ColliderType() const override;
 public:
 	void Dimensions(const glm::vec3& _dimensions);

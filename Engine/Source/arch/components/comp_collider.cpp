@@ -1,5 +1,6 @@
 #include <arch/components/comp_collider.h>
-
+#include <arch/components/comp_collider/comp_collider_aabb.h>
+#include <arch/components/comp_collider/comp_collider_sphere.h>
 
 void Collider::Init(){
 
@@ -56,7 +57,7 @@ std::vector<PropertyMD::Property>& Collider::GetProps() {
 	using ColliderList = std::vector<std::shared_ptr<ColliderShape>>;
 
 
-	static std::vector<Property> props{
+	static std::vector<Property> props {
 		MakeEnumProperty<Collider, MT>(
 			"Motion Type",
 			static_cast<const MT & (Collider::*)()const>(&Collider::MotionType),
@@ -72,7 +73,11 @@ std::vector<PropertyMD::Property>& Collider::GetProps() {
 			PropertyType::Pointer,
 			static_cast<ColliderList&(Collider::*)()>(&Collider::GetColliderList),
 			&Collider::AddCollider,
-			&Collider::RemoveCollider
+			&Collider::RemoveCollider,
+			{
+				{ "AABB", []() { return static_pointer_cast<ColliderShape>(std::make_shared<AABBShape>()); }},
+				{ "Sphere", []() { return static_pointer_cast<ColliderShape>(std::make_shared<SphereShape>()); }},
+			}
 		)
 	};
 	

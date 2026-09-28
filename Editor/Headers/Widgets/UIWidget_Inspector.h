@@ -41,7 +41,7 @@ private:
 
     void DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string& key);
 
-    
+    void DrawPropertyPointer(void* object, const PropertyMD::Property& _prop, const std::string& _key);
     void DrawPropertyResourceHandle(void* object, const PropertyMD::Property& prop, const std::string& key, bool _drawCombo);
     void DrawPropertyResourceCombo(void* object, const PropertyMD::Property& prop, const std::string& key);
     

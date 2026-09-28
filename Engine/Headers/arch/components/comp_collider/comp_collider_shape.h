@@ -21,6 +21,8 @@ public:
 	void Offset(const glm::vec3& _offset);
 	
 private:
-	glm::vec3 m_offset;
+	glm::vec3 m_offset{};
+
+	INSPECTABLE_DECLAREPROPS(ColliderShape);
 };
 

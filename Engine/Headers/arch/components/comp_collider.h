@@ -29,7 +29,7 @@ public:
 	
 
 private:
-	ColliderConstants::MotionType m_motionType;
+	ColliderConstants::MotionType m_motionType		{ ColliderConstants::MotionType::Static };
 
 	
 	std::vector<std::shared_ptr<ColliderShape>> m_collisionShapes;
