@@ -18,5 +18,8 @@ public:
 
 private:
 	glm::fvec3 m_dimensions;
+
+public:
+	INSPECTABLE_DECLAREPROPS(AABBShape);
 };
 

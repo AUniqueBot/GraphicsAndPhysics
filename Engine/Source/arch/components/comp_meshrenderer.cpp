@@ -34,18 +34,18 @@ const MeshHandle& MeshRenderer::GetMesh() const {
 }
 
 
-std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() { 
+std::vector<ResourceHandle>& MeshRenderer::GetMaterialList() {
 	return m_materials; 
 }
-const std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() const { 
+const std::vector<ResourceHandle>& MeshRenderer::GetMaterialList() const {
 	return m_materials; 
 }
 
-void MeshRenderer::AddMaterial(MaterialHandle _material) {
+void MeshRenderer::AddMaterial(ResourceHandle _material) {
 	m_materials.push_back(_material);
 }
 
-void MeshRenderer::RemoveMaterial(MaterialHandle _material) {
+void MeshRenderer::RemoveMaterial(ResourceHandle _material) {
 	const auto& itr{ std::find(m_materials.begin(), m_materials.end(), _material) };
 	if (itr == m_materials.end()) return;
 	std::rotate(itr, itr + 1, m_materials.end());
@@ -53,7 +53,7 @@ void MeshRenderer::RemoveMaterial(MaterialHandle _material) {
 }
 
 void MeshRenderer::RemoveMaterial(int _index) {
-	if (_index < m_materials.size()) {
+	if (_index >= m_materials.size()) {
 		return;
 	}
 	auto itr = m_materials.begin() + _index;
@@ -116,7 +116,8 @@ void MeshRenderer::StaticShadows(const bool& _setting) {
 
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
-	using MaterialList = std::vector<MaterialHandle>;
+	using MaterialList = std::vector<ResourceHandle>;
+
 
 	static std::vector<PropertyMD::Property> props{
 		MakeResourceProperty<MeshRenderer>(
@@ -125,11 +126,12 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 			static_cast<const MeshHandle & (MeshRenderer::*)()const>(&MeshRenderer::GetMesh),
 			&MeshRenderer::SetMesh
 		),
-		MakeListProperty<MeshRenderer, MaterialHandle>(
+		MakeListProperty<MeshRenderer, ResourceHandle>(
 			"Materials",
 			PropertyType::ResourceHandle,
+			MaterialRes::GetResourceTypeID(),
 			static_cast<MaterialList&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-			static_cast<void(MeshRenderer::*)(MaterialHandle)>(&MeshRenderer::AddMaterial),
+			static_cast<void(MeshRenderer::*)(ResourceHandle)>(&MeshRenderer::AddMaterial),
 			static_cast<void(MeshRenderer::*)(int)>(&MeshRenderer::RemoveMaterial)
 		),
 		MakeProperty<MeshRenderer>(

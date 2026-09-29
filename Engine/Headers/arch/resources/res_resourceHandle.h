@@ -17,7 +17,7 @@ struct ResourceHandle {
 	const ResourceIdentifier& GetResourceIdentifier() const;
 
 	void SetName(const std::string& _name);
-	inline std::string GetName() const;
+	std::string GetName() const;
 
 	std::shared_ptr<BaseResource> GetBaseResource();
 	std::shared_ptr<const BaseResource> GetBaseResource() const;

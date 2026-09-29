@@ -40,9 +40,24 @@ void BaseResource::ResourcePath(std::filesystem::path _path) {
 	m_pathToAsset = _path;
 	
 }
-std::string BaseResource::Name() const {
+const std::string& BaseResource::Name() const {
 	return m_name;
 }
-void BaseResource::Name(std::string _name) {
+void BaseResource::Name(const std::string& _name) {
 	m_name = _name;
+}
+
+std::vector<PropertyMD::Property>& BaseResource::GetProps() {
+	using namespace PropertyMD;
+	static std::vector<Property> props{
+		MakeProperty<BaseResource>(
+			"Name",
+			PropertyType::String,
+			Shape::Scalar,
+			1,
+			static_cast<const std::string & (BaseResource::*)()const>(&BaseResource::Name),
+			static_cast<void(BaseResource::*)(const std::string&)>(&BaseResource::Name)
+		)
+	};
+	return props;
 }

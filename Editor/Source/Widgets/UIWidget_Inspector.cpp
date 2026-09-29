@@ -448,25 +448,29 @@ void UIWidget_Inspector::DrawPropertyString(void* object, const PropertyMD::Prop
 
 
 void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Property& prop, const std::string& key) {
-	GetterFunction getter = prop.m_get;
-	int val{ GetValueFromGetter<int>(getter, object) };
-	const char* currentOption{};
-
+ 	GetterFunction getter = prop.m_get;
+	void* valPtr{ };
+	getter(object, valPtr);
+	int val = *(int*)valPtr;
+	const char* currentOption{"INVALID"};
+	int newVal = val;
 	// search id.
 	for (const PropertyMD::Option& option : prop.m_options) {
 		if (val == option.value) {
 			currentOption = option.label;
+			break;
 		}
 	}
 	if (ImGui::BeginCombo(key.c_str(), currentOption)) {
 		for (const PropertyMD::Option& option: prop.m_options) {
 			if (ImGui::Selectable(option.label, val == option.value)) {
-				prop.m_set(object, &option.value);
+				prop.m_set(object, &newVal);
 			}
 		}
 
 		ImGui::EndCombo();
 	}
+
 }
 
 void UIWidget_Inspector::DrawPropertyObject(void* object, const PropertyMD::Property& prop, const std::string&) {
@@ -567,20 +571,25 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 	std::string name = prop.m_name + "#Table";
 	
 	
-	if (ImGui::BeginTable(name.c_str(), 2, flags)) {
+	if (ImGui::BeginTable(name.c_str(), 3, flags)) {
 		auto& list = prop.m_list;
 		size_t size = static_cast<size_t>(list.m_size(object));
 		
 		ImGui::TableSetupColumn("##Index", ImGuiTableColumnFlags_WidthFixed, 40.0f);
-		ImGui::TableSetupColumn("Element", ImGuiTableColumnFlags_WidthStretch);
+		ImGui::TableSetupColumn("Element", ImGuiTableColumnFlags_WidthStretch, 50.f);
+		ImGui::TableSetupColumn("##Util", ImGuiTableColumnFlags_WidthStretch, 10.f);
 		ImGui::TableHeadersRow();
-
+		
+		
+		size_t deleted = 0;
 		for (size_t i{}; i < size; ++i) {
+			ImGui::PushID(i);
+			
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
 			ImGui::Text("%i", i);
 			ImGui::TableSetColumnIndex(1);
-
+			
 			void* currentElement = list.m_get(object, static_cast<int>(i));
 			std::string elementName = "##" + prop.m_name + std::to_string(i);
 			// draw your element here.
@@ -633,12 +642,67 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 			default:
 				break;
 			}
-			
+
+
+			ImGui::TableSetColumnIndex(2);
+			std::string del = "Delete";
+			del += elementName;
+			if (ls.m_remove && ImGui::Button(del.c_str())) {
+				// offset 1.
+				deleted = i + 1;
+			}
+			ImGui::PopID();
+		}
+
+
+		if (deleted != 0) {
+			ls.m_remove(object, deleted - 1);			
+			deleted = 0;
 		}
 		ImGui::EndTable();
 	}
 	
-	if (ls.m_add && ls.m_constructors.size()) {
+	if (!ls.m_add) return; 
+
+	if (ls.m_type == PropertyMD::PropertyType::ResourceHandle) {
+		// use a combo
+		/*
+			[RES NAME][add]
+		*/
+
+		auto managerView = ApplicationCore()->GetAssetManager().GetManager(prop.m_resourceType);
+		if (!managerView) {
+			return;
+		}
+		SpecializedManager manager = *managerView;
+		const std::unordered_set<RES_ID>& resIdPool = manager->GetResourcePool();
+		ResourceManager& resMgr = ApplicationCore()->GetResourceManager();
+
+		// current resource.
+		static ResourceHandle selectedResource{ std::nullopt };
+		std::string currentResName = selectedResource.HandleIsValid() ? 
+			selectedResource.GetName() : 
+			"INVALID_ID";
+		if (ImGui::BeginCombo(prop.m_name.c_str(), currentResName.c_str())) {
+			for (const RES_ID& resid : resIdPool) {
+				std::string name = resMgr.GetResource(resid)->Name();
+				ImGui::PushID(resid);
+				if (ImGui::Selectable(name.c_str())) {
+					selectedResource = ResourceHandle(resMgr.GetResourceIdentifier(resid));
+				}
+				ImGui::PopID();
+			}
+			ImGui::EndCombo();
+		}
+
+
+		ImGui::SameLine();
+		if (ImGui::Button("Add##List")) {
+			ls.m_add(object, std::any(selectedResource));
+		}
+
+	}
+	else if (ls.m_constructors.size()) {
 		if (ImGui::Button("Add##List")) {
 			if (ls.m_constructors.size() == 1) {
 				// single element addition
@@ -659,6 +723,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 			ImGui::EndPopup();
 		}
 	}
+	
 
 }
 

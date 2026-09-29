@@ -70,7 +70,7 @@ std::vector<PropertyMD::Property>& Collider::GetProps() {
 		),
 		MakeListProperty<Collider, std::shared_ptr<ColliderShape>>(
 			"Collider Shapes",
-			PropertyType::Pointer,
+			PropertyType::Pointer, 0,
 			static_cast<ColliderList&(Collider::*)()>(&Collider::GetColliderList),
 			&Collider::AddCollider,
 			&Collider::RemoveCollider,

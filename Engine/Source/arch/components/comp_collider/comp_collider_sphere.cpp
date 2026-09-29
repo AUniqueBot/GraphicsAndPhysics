@@ -16,7 +16,7 @@ void SphereShape::Radius(const float& _radius) {
 std::vector<PropertyMD::Property>& SphereShape::GetProps() {
 	using namespace PropertyMD;
 	static std::vector<Property> props = []{
-		auto& base = ColliderShape::GetProps();
+		std::vector<Property> base = ColliderShape::GetProps();
 		base.emplace_back(
 			MakeProperty<SphereShape>(
 				"Radius",

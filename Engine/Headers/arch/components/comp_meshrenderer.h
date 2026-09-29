@@ -36,11 +36,11 @@ public:
 		@brief
 			gets material list
 	*/
-	std::vector<MaterialHandle>& GetMaterialList();
-	const std::vector<MaterialHandle>& GetMaterialList() const;
+	std::vector<ResourceHandle>& GetMaterialList();
+	const std::vector<ResourceHandle>& GetMaterialList() const;
 
-	void AddMaterial(MaterialHandle _material);
-	void RemoveMaterial(MaterialHandle _material);
+	void AddMaterial(ResourceHandle _material);
+	void RemoveMaterial(ResourceHandle _material);
 	void RemoveMaterial(int _material);
 	
 	MaterialHandle GetMaterial(int _index);
@@ -69,7 +69,7 @@ private:
 	
 	
 	MeshHandle m_mesh									{ std::nullopt };
-	std::vector<MaterialHandle> m_materials; // change to material handle.
+	std::vector<ResourceHandle> m_materials; // change to material handle.
 	
 
 	bool m_castShadows									{ true };

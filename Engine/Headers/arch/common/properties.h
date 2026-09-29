@@ -215,10 +215,12 @@ namespace PropertyMD {
 		}
 	};
 
+
 	template<typename T, typename Element>
 	Property MakeListProperty(
 		const char* name,
 		PropertyType _elementType,
+		uint32_t _resourceType,
 		std::function<std::vector<Element>& (T*)> listAccessor,
 		std::function<void(T*, Element)> listAdder = nullptr,
 		std::function<void(T*, int)> listRemover = nullptr,
@@ -235,6 +237,7 @@ namespace PropertyMD {
 		);
 		Property::List& ls{prop.m_list};
 		ls.m_type = _elementType;
+		prop.m_resourceType = _resourceType;
 		ls.m_componentCount = _componentCount;
 
 		ls.m_valid = true;

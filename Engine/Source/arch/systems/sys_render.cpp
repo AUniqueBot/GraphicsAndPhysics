@@ -976,13 +976,14 @@ void RenderSystem::UnbindShadowShader() {
 
 void RenderSystem::ResolveMeshRendererMaterials(MeshRenderer& _mr) {
     if (!_mr.GetMesh().HandleIsValid()) return; // no point resolving something can't be seen
-    std::vector<MaterialHandle>& materialList = _mr.GetMaterialList();
+    std::vector<ResourceHandle>& materialList = _mr.GetMaterialList();
     if (materialList.empty()) {
         ResolveMaterial(MeshRenderer::GetDefaultMaterial());
         return;
     }
 
-    for (MaterialHandle& matHandle : materialList) {
+    for (ResourceHandle& handle : materialList) {
+        MaterialHandle matHandle(handle);
         auto matPtr = matHandle.Get();
         if (!matPtr) continue;
         MaterialRes& mat = *matPtr;

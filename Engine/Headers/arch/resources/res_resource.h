@@ -35,8 +35,8 @@ public:
 	RESTYPE_ID ResourceType() const	{ return m_resType; }
 	inline virtual std::string ResourceTypeName() { return "RESOURCE"; };
 
-	std::string Name() const;
-	void Name(std::string _name);
+	const std::string& Name() const;
+	void Name(const std::string& _name);
 
 
 	virtual void LoadAsset();
@@ -53,7 +53,7 @@ public:
 
 
 	inline virtual void Destroy() {};
-
+	static std::vector<PropertyMD::Property>& GetProps();
 
 protected:
 	friend class ResourceManager;
