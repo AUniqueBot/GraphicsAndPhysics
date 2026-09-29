@@ -503,7 +503,7 @@ void UIWidget_Inspector::DrawPropertyResourceCombo(void* object, const PropertyM
 	if (ImGui::BeginCombo(prop.m_name.c_str(), currentResName.c_str())) {
 		for (const RES_ID& resid : resIdPool) {
 			std::string name = resMgr.GetResource(resid)->Name();
-			ImGui::PushID(resid);
+			ImGui::PushID((int)resid);
 			if (ImGui::Selectable(name.c_str())) {
 				selectedResource = ResourceHandle(resMgr.GetResourceIdentifier(resid));
 			}
@@ -583,7 +583,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 		
 		size_t deleted = 0;
 		for (size_t i{}; i < size; ++i) {
-			ImGui::PushID(i);
+			ImGui::PushID((int)i);
 			
 			ImGui::TableNextRow();
 			ImGui::TableSetColumnIndex(0);
@@ -656,7 +656,7 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 
 
 		if (deleted != 0) {
-			ls.m_remove(object, deleted - 1);			
+			ls.m_remove(object, (int)(deleted - 1));			
 			deleted = 0;
 		}
 		ImGui::EndTable();
@@ -697,9 +697,11 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 
 
 		ImGui::SameLine();
+		ImGui::BeginDisabled(!selectedResource.HandleIsValid());
 		if (ImGui::Button("Add##List")) {
 			ls.m_add(object, std::any(selectedResource));
 		}
+		ImGui::EndDisabled();
 
 	}
 	else if (ls.m_constructors.size()) {

@@ -34,18 +34,18 @@ const MeshHandle& MeshRenderer::GetMesh() const {
 }
 
 
-std::vector<ResourceHandle>& MeshRenderer::GetMaterialList() {
+std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() {
 	return m_materials; 
 }
-const std::vector<ResourceHandle>& MeshRenderer::GetMaterialList() const {
+const std::vector<MaterialHandle>& MeshRenderer::GetMaterialList() const {
 	return m_materials; 
 }
 
-void MeshRenderer::AddMaterial(ResourceHandle _material) {
+void MeshRenderer::AddMaterial(MaterialHandle _material) {
 	m_materials.push_back(_material);
 }
 
-void MeshRenderer::RemoveMaterial(ResourceHandle _material) {
+void MeshRenderer::RemoveMaterial(MaterialHandle _material) {
 	const auto& itr{ std::find(m_materials.begin(), m_materials.end(), _material) };
 	if (itr == m_materials.end()) return;
 	std::rotate(itr, itr + 1, m_materials.end());
@@ -116,7 +116,7 @@ void MeshRenderer::StaticShadows(const bool& _setting) {
 
 std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 	using namespace PropertyMD;
-	using MaterialList = std::vector<ResourceHandle>;
+	using MaterialList = std::vector<MaterialHandle>;
 
 
 	static std::vector<PropertyMD::Property> props{
@@ -126,12 +126,11 @@ std::vector<PropertyMD::Property>& MeshRenderer::GetProps() {
 			static_cast<const MeshHandle & (MeshRenderer::*)()const>(&MeshRenderer::GetMesh),
 			&MeshRenderer::SetMesh
 		),
-		MakeListProperty<MeshRenderer, ResourceHandle>(
+		MakeListResourceProperty<MeshRenderer, ResourceHandle, MaterialHandle>(
 			"Materials",
-			PropertyType::ResourceHandle,
 			MaterialRes::GetResourceTypeID(),
 			static_cast<MaterialList&(MeshRenderer::*)()>(&MeshRenderer::GetMaterialList),
-			static_cast<void(MeshRenderer::*)(ResourceHandle)>(&MeshRenderer::AddMaterial),
+			static_cast<void(MeshRenderer::*)(MaterialHandle)>(&MeshRenderer::AddMaterial),
 			static_cast<void(MeshRenderer::*)(int)>(&MeshRenderer::RemoveMaterial)
 		),
 		MakeProperty<MeshRenderer>(

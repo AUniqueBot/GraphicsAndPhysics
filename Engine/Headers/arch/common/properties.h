@@ -60,7 +60,6 @@ namespace PropertyMD {
 		std::function<void(void*, const void*)> m_set = nullptr;
 		uint32_t m_resourceType	{ 0 };
 
-
 		bool m_isEnum = false;
 		std::vector<Option> m_options;
 
@@ -283,6 +282,65 @@ namespace PropertyMD {
 
 		return prop;
 	}
+
+	template<typename T, typename ResourceHandle, typename DerivedResourceHandle>
+	Property MakeListResourceProperty(
+		const char* name,
+		uint32_t _resourceType,
+		std::function<std::vector<DerivedResourceHandle>& (T*)> listAccessor,
+		std::function<void(T*, DerivedResourceHandle)> listAdder = nullptr,
+		std::function<void(T*, int)> listRemover = nullptr
+	) {
+		Property prop(
+			name,
+			PropertyType::Object,          // or Element type if you want stricter typing
+			Shape::DynamicList,
+			1,
+			nullptr,
+			nullptr
+		);
+		Property::List& ls{ prop.m_list };
+		ls.m_type = PropertyType::ResourceHandle;
+		prop.m_resourceType = _resourceType;
+		ls.m_componentCount = 1;
+
+		ls.m_valid = true;
+		ls.m_listAccessor = [listAccessor](void* obj) {
+			T* t = static_cast<T*>(obj);
+			auto& list = std::invoke(listAccessor, t);
+			return &list;
+			};
+		ls.m_size = [listAccessor](void* obj) -> int {
+			T* t = static_cast<T*>(obj);
+			return (int)std::invoke(listAccessor, t).size();
+			};
+
+		ls.m_get = [listAccessor](void* obj, int index) -> void* {
+			T* t = static_cast<T*>(obj);
+			auto& list = std::invoke(listAccessor, t);
+			return ReflectElement<DerivedResourceHandle>::Get(list[index]);
+			};
+
+		if (listAdder) {
+			ls.m_add = [listAdder](void* obj, const std::any& element) {
+				T* a = static_cast<T*>(obj);
+				listAdder(a, DerivedResourceHandle(
+					std::any_cast<ResourceHandle>(element)
+				)
+				);
+				};
+		}
+		if (listRemover) {
+			ls.m_remove = [listRemover](void* obj, int index) {
+				T* a = static_cast<T*>(obj);
+				listRemover(a, index);
+				};
+		}
+
+
+		return prop;
+	}
+
 
 
 
