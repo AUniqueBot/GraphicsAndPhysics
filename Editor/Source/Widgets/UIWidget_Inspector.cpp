@@ -663,7 +663,8 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 	}
 	
 	if (!ls.m_add) return; 
-
+	std::string addLabel = "Add##List";
+	addLabel += key;
 	if (ls.m_type == PropertyMD::PropertyType::ResourceHandle) {
 		// use a combo
 		/*
@@ -698,14 +699,18 @@ void UIWidget_Inspector::DrawPropertiesDynamicList(void* object, const PropertyM
 
 		ImGui::SameLine();
 		ImGui::BeginDisabled(!selectedResource.HandleIsValid());
-		if (ImGui::Button("Add##List")) {
+
+
+		if (ImGui::Button(addLabel.c_str())) {
 			ls.m_add(object, std::any(selectedResource));
 		}
 		ImGui::EndDisabled();
 
 	}
 	else if (ls.m_constructors.size()) {
-		if (ImGui::Button("Add##List")) {
+
+
+		if (ImGui::Button(addLabel.c_str())) {
 			if (ls.m_constructors.size() == 1) {
 				// single element addition
 				ls.m_add(object, ls.m_constructors[0].second());

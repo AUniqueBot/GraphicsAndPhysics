@@ -5,5 +5,10 @@ Materials::ShadingModel BlinnPhongMaterialRes::GetShadingModel() const {
 }
 
 std::vector<PropertyMD::Property>& BlinnPhongMaterialRes::GetProps() {
-    return PhongMaterialRes::GetProps();
+    using namespace PropertyMD;
+    static std::vector<Property> props = [] {
+        std::vector<Property> props = PhongMaterialRes::GetProps();
+        return props;
+    }();
+    return props;
 }

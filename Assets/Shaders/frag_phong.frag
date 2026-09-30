@@ -336,7 +336,7 @@ void main() {
                 VERTEXOUTPUT.frag_normal
                 );
             vec3 specL = LightCol * CalculateSpecularHighlight(
-                LightDir, 
+                currentLight.direction_roll.xyz, 
                 VERTEXOUTPUT.frag_viewPosition, 
                 VERTEXOUTPUT.frag_position, 
                 VERTEXOUTPUT.frag_normal, 
