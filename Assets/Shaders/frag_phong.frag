@@ -238,27 +238,31 @@ float CalculatePointShadow(
     vec2 framebufferSize,
     float bias
 ) {
+    /*
+        texture is a 6 * 1 framebuffer
+        
+        [][][][][][]
+        
+        
+    */
     vec3 dirVec = fragPosition - lightPosition;
     // get greatest magnitude.
     // [0|1], [2|3], [4|5]
     // -x, +x, -y, +y, -z, +z
     vec3 dirAbs = abs(dirVec);
-    float largest = max(dirAbs.x, max(dirAbs.y, dirAbs.z));
-    vec3 s = sign(dirVec);
-    int side = 
-        largest == dirAbs.x ? 0 : 
-        largest == dirAbs.y ? 1 : 
-        2; 
-    float incr = s[side];
-    side *= 2;
-    if (incr == 1) ++side;
-
-    vec2 texelSize = 1 / framebufferSize;
-    vec2 tileSize = framebufferSize.yy;   // y is never extended.
-    float xoffset = (side * tileSize.x) / framebufferSize.x;
+    int axis =
+        dirAbs.x >= dirAbs.y && dirAbs.x >= dirAbs.z ? 0 :
+        dirAbs.y >= dirAbs.x && dirAbs.y >= dirAbs.z ? 1 :
+        2;
+    int side = axis * 2 + (dirVec[axis] > 0.0 ? 1 : 0);
 
     // min = vec2(xoffset, 0);
     // max = vec2(xoffset + framebufferSize.y, framebufferSize.y);
+
+    vec2 texelSize = 1.0 / framebufferSize;
+    vec2 tileSize = framebufferSize.yy;   // y is never extended.
+    float xoffset = (side * tileSize.x);
+    int shadowId = int(shadowData.lightTypeShadowId.y);
 
     mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
     vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
@@ -269,16 +273,15 @@ float CalculatePointShadow(
     if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
     if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
 
-    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize;
+    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize; // 0 - 1
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
-    int shadowId = int(shadowData.lightTypeShadowId.y);
 
     float shadowLowest = PCF_PoissonDisk(
         coords,
         texelSize,
         shadowId,
-        4,
+        0.0,
         fragClipSpace.z,
         bias,
         u_pointLightShadowMap
@@ -286,6 +289,7 @@ float CalculatePointShadow(
 
     return shadowLowest;
 }
+
 
 
 
@@ -362,20 +366,13 @@ void main() {
     LightingResult result = LightingResult(vec3(0), vec3(0), vec3(0));
     for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
         LightData currentLight = LIGHTPARAMS.m_lightData[i];
+        int ShadowID = int(currentLight.attenuation_id.z);
         int lightid = int(currentLight.attenuation_id.z);
         int LightType = int(currentLight.position_type.w);
         vec3 LightDir = normalize(VERTEXOUTPUT.frag_position - currentLight.position_type.xyz);
         vec3 LightCol = currentLight.color_power.rgb;
         
-        if (LightType == LIGHT_POINT) {    
-            ShadowData currentShadow = SHADOWPARAMS.pointShadowData[lightid];        
-            float sValue = CalculatePointShadow(
-                currentShadow,
-                VERTEXOUTPUT.frag_position,
-                currentLight.position_type.xyz,
-                SHADOWPARAMS.directionalAtlasResAndTexelSize.xy,
-                0.01
-            );
+        if (LightType == LIGHT_POINT) { 
             vec3 diffL = CalculatePointLighting(
                 currentLight, 
                 VERTEXOUTPUT.frag_position, 
@@ -389,9 +386,21 @@ void main() {
                 VERTEXOUTPUT.frag_normal, 
                 int(gloss.r * u_exponent) , 1.0
                 );
+            if (ShadowID != -1) {
+                ShadowData currentShadow = SHADOWPARAMS.pointShadowData[ShadowID];
+                float sValue = CalculatePointShadow(
+                    currentShadow,
+                    VERTEXOUTPUT.frag_position,
+                    currentLight.position_type.xyz,
+                    SHADOWPARAMS.pointAtlasResAndTexelSize.xy,
+                    0.01
+                );
+                diffL *= sValue;
+                specL *= sValue;
+            }
 
-            result.diffuse += diffL * sValue;
-            result.specular += specL * sValue;
+            result.diffuse += diffL;
+            result.specular += specL;
         }
         else if (LightType == LIGHT_DIRECTIONAL) {
             ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[lightid];

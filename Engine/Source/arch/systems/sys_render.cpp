@@ -657,11 +657,11 @@ void RenderSystem::RenderShadowsPointLight(
     glm::vec3 position = _light.transform->Position();
     std::array<glm::mat4, 6> directions = {
         glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, 1, 0)), // -X
-        glm::lookAt(position, position + glm::vec3(1, 0, 0),  glm::vec3(0, 1, 0)), // +X
-        glm::lookAt(position, position + glm::vec3(0,-1, 0),  glm::vec3(0, 0, -1)), // -Y
-        glm::lookAt(position, position + glm::vec3(0, 1, 0),  glm::vec3(0, 0,  1)), // +Y
-        glm::lookAt(position, position + glm::vec3(0, 0,-1),  glm::vec3(0, 1, 0)), // -Z
-        glm::lookAt(position, position + glm::vec3(0, 0, 1),  glm::vec3(0, 1, 0))  // +Z
+        glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, 1, 0)), // +X
+        glm::lookAt(position, position + glm::vec3(0, -1, 0), glm::vec3(0, 0, 1)), // -Y
+        glm::lookAt(position, position + glm::vec3(0,  1, 0), glm::vec3(0, 0, -1)), // +Y
+        glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, 1, 0)), // -Z
+        glm::lookAt(position, position + glm::vec3(0, 0,  1), glm::vec3(0, 1, 0))  // +Z
     };
     glm::mat4 lightProj = glm::perspective(glm::radians(90.f), 1.f, 0.01f, 100.f);
 
@@ -672,13 +672,13 @@ void RenderSystem::RenderShadowsPointLight(
 
         // - setting shadow data -------------------------------------------------------
         
-        sdData.SetAtlasSize(glm::vec2(tileSizeDims * 6, tileSizeDims), side);
+        sdData.SetAtlasSize(glm::vec2(tileSizeDims, tileSizeDims), side);
         sdData.SetMatrix(lightSpaceMtx, side);
 
         int offset = side * tileSizeDims;
         glViewport(offset, 0, tileSizeDims, tileSizeDims);
         glScissor(offset, 0, tileSizeDims, tileSizeDims); 
-
+        
         for (const MeshRenderable& renderable : renderables) {
             const Entity& meshEntity = renderable.entity;
             const MeshRenderer& mr = *renderable.mesh;
@@ -867,8 +867,8 @@ void RenderSystem::SetupShadowProgram() {
 }
 
 void RenderSystem::SetupShadowBuffers() {
-    const unsigned SHADOW_DIR_WH        { 4096 };
-    const unsigned SHADOW_SPOT_WH       { 4096 };
+    const unsigned SHADOW_DIR_WH        { 2048 };
+    const unsigned SHADOW_SPOT_WH       { 2048 };
     const unsigned SHADOW_POINT_WH      { 512 };
      
     Core& c = Core::GetInstance();
@@ -919,10 +919,12 @@ void RenderSystem::PassLightingMatrices(glm::mat4 _meshMatrix, glm::mat4 _lightM
 void RenderSystem::BindShadowShader() {
     glUseProgram(m_shadowPrg); 
     glEnable(GL_DEPTH_TEST);
+    //glEnable(GL_SCISSOR_TEST);
     glDepthFunc(GL_LESS);
 }
 
 void RenderSystem::UnbindShadowShader() {
+    //glDisable(GL_SCISSOR_TEST);
     glUseProgram(0);
 }
 

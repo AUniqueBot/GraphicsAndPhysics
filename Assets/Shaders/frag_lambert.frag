@@ -242,22 +242,18 @@ float CalculatePointShadow(
     // [0|1], [2|3], [4|5]
     // -x, +x, -y, +y, -z, +z
     vec3 dirAbs = abs(dirVec);
-    float largest = max(dirAbs.x, max(dirAbs.y, dirAbs.z));
-    vec3 s = sign(dirVec);
-    int side = 
-        largest == dirAbs.x ? 0 : 
-        largest == dirAbs.y ? 1 : 
-        2; 
-    float incr = s[side];
-    side *= 2;
-    if (incr > 0) ++side;
+    int axis =
+        dirAbs.x >= dirAbs.y && dirAbs.x >= dirAbs.z ? 0 :
+        dirAbs.y >= dirAbs.x && dirAbs.y >= dirAbs.z ? 1 :
+        2;
+    int side = axis * 2 + (dirVec[axis] > 0.0 ? 1 : 0);
 
     // min = vec2(xoffset, 0);
     // max = vec2(xoffset + framebufferSize.y, framebufferSize.y);
 
-    vec2 texelSize = 1 / framebufferSize;
+    vec2 texelSize = 1.0 / framebufferSize;
     vec2 tileSize = framebufferSize.yy;   // y is never extended.
-    float xoffset = (side * tileSize.x) / framebufferSize.x;
+    float xoffset = (side * tileSize.x);
     int shadowId = int(shadowData.lightTypeShadowId.y);
 
     mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
@@ -277,7 +273,7 @@ float CalculatePointShadow(
         coords,
         texelSize,
         shadowId,
-        16 ,
+        0.0,
         fragClipSpace.z,
         bias,
         u_pointLightShadowMap
@@ -379,7 +375,6 @@ void main() {
 
         
         if (LightType == LIGHT_POINT) {
-
             vec3 diffL = CalculatePointLighting(
                 currentLight, 
                 VERTEXOUTPUT.frag_position, 
@@ -392,7 +387,7 @@ void main() {
                     currentShadow,
                     VERTEXOUTPUT.frag_position,
                     currentLight.position_type.xyz,
-                    SHADOWPARAMS.directionalAtlasResAndTexelSize.xy,
+                    SHADOWPARAMS.pointAtlasResAndTexelSize.xy,
                     0.01
                 );
                 diffL *= sValue;

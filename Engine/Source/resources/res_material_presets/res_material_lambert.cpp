@@ -23,7 +23,7 @@ void LambertMaterialRes::ResolveUniformValues() {
     if (m_uniformDataDirty) {
         m_uniformDataDirty = false;
         m_materialValues[ShaderUniformConstants::U_ALBEDO]->SetValue(GetColorTextureID());
-    }
+    } 
 }
 
 Materials::ShadingModel LambertMaterialRes::GetShadingModel() const {
