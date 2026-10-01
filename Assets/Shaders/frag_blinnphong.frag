@@ -392,7 +392,7 @@ void main() {
                     VERTEXOUTPUT.frag_position,
                     currentLight.position_type.xyz,
                     SHADOWPARAMS.pointAtlasResAndTexelSize.xy,
-                    0.01
+                    0.0001
                 );
                 diffL *= sValue;
                 specL *= sValue;

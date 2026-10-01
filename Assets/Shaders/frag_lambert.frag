@@ -261,13 +261,12 @@ float CalculatePointShadow(
     vec3 fragClipSpace = fragLightSpace.xyz / fragLightSpace.w;
     fragClipSpace = fragClipSpace * 0.5 + 0.5;
 
-    if (fragClipSpace.x < 0.0 || fragClipSpace.x > 1.0) return 1.0;
-    if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
-    if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
-
     vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize; // 0 - 1
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
+
+
+
 
     float shadowLowest = PCF_PoissonDisk(
         coords,
@@ -388,7 +387,7 @@ void main() {
                     VERTEXOUTPUT.frag_position,
                     currentLight.position_type.xyz,
                     SHADOWPARAMS.pointAtlasResAndTexelSize.xy,
-                    0.01
+                    0.0001
                 );
                 diffL *= sValue;
             }

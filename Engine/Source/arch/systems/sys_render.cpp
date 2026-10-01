@@ -681,8 +681,8 @@ void RenderSystem::RenderShadowsPointLight(
         
         for (const MeshRenderable& renderable : renderables) {
             const Entity& meshEntity = renderable.entity;
-            const MeshRenderer& mr = *renderable.mesh;
-            if (!meshEntity.Active() || !meshEntity.IsVisible() || !mr.CastShadows()) continue;
+            const MeshRenderer& mr = *renderable.mesh; 
+            if (!meshEntity.Active() || !meshEntity.IsVisible() || !mr.CastShadows()) continue; 
 
             // do something.
             const ComponentView<Transform>& trsMesh = renderable.transform;
@@ -691,7 +691,7 @@ void RenderSystem::RenderShadowsPointLight(
             FillObjectUBO(meshEntity, *trsMesh);
             Render(mr);
         }
-
+         
     }
 }
 
