@@ -6,9 +6,9 @@
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
-#define MAX_LIGHT_COUNT 10
+#define MAX_LIGHT_COUNT 50
 
-#define MAX_DIRECTIONAL_SHADOW_COUNT 10
+#define MAX_DIRECTIONAL_SHADOW_COUNT 2
 #define MAX_POINT_SHADOW_COUNT 20
 #define MAX_SPOT_SHADOW_COUNT 20
 
@@ -26,8 +26,8 @@ in VertexOutput {
 uniform sampler2D u_albedo;
 
 uniform sampler2DArrayShadow u_directionalShadowMap;
-uniform sampler2DArray u_spotLightShadowMap;
-uniform samplerCubeArray u_pointLightShadowMap;
+uniform sampler2DArrayShadow u_pointLightShadowMap;
+uniform sampler2DArrayShadow u_spotLightShadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
@@ -230,6 +230,13 @@ float CalculatePointShadow(
     vec2 framebufferSize,
     float bias
 ) {
+    /*
+        texture is a 6 * 1 framebuffer
+        
+        [][][][][][]
+        
+        
+    */
     vec3 dirVec = fragPosition - lightPosition;
     // get greatest magnitude.
     // [0|1], [2|3], [4|5]
@@ -245,9 +252,13 @@ float CalculatePointShadow(
     side *= 2;
     if (incr > 0) ++side;
 
+    // min = vec2(xoffset, 0);
+    // max = vec2(xoffset + framebufferSize.y, framebufferSize.y);
+
     vec2 texelSize = 1 / framebufferSize;
     vec2 tileSize = framebufferSize.yy;   // y is never extended.
     float xoffset = (side * tileSize.x) / framebufferSize.x;
+    int shadowId = int(shadowData.lightTypeShadowId.y);
 
     mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
     vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
@@ -258,19 +269,18 @@ float CalculatePointShadow(
     if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
     if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
 
-    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize;
+    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize; // 0 - 1
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
-    int shadowId = int(shadowData.lightTypeShadowId.y);
 
     float shadowLowest = PCF_PoissonDisk(
         coords,
         texelSize,
         shadowId,
-        4,
+        16 ,
         fragClipSpace.z,
         bias,
-        u_directionalShadowMap
+        u_pointLightShadowMap
     );
 
     return shadowLowest;
@@ -385,6 +395,7 @@ void main() {
                     SHADOWPARAMS.directionalAtlasResAndTexelSize.xy,
                     0.01
                 );
+                diffL *= sValue;
             }
             result.diffuse += diffL;
 

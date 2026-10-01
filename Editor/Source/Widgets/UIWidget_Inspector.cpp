@@ -467,7 +467,7 @@ void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Pro
 				newVal = option.value;
 			}
 		}
-		if (val != newVal) {
+		if (val != newVal) { 
 			prop.m_set(object, &newVal);
 		}
 		ImGui::EndCombo();

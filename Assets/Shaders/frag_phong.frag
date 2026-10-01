@@ -6,9 +6,9 @@
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
-#define MAX_LIGHT_COUNT 10
+#define MAX_LIGHT_COUNT 50
 
-#define MAX_DIRECTIONAL_SHADOW_COUNT 10
+#define MAX_DIRECTIONAL_SHADOW_COUNT 2
 #define MAX_POINT_SHADOW_COUNT 20
 #define MAX_SPOT_SHADOW_COUNT 20
 
@@ -29,8 +29,8 @@ uniform sampler2D u_gloss;
 uniform int u_exponent;
 
 uniform sampler2DArrayShadow u_directionalShadowMap;
+uniform sampler2DArrayShadow u_pointLightShadowMap;
 uniform sampler2DArrayShadow u_spotLightShadowMap;
-uniform samplerCubeArrayShadow u_pointLightShadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
@@ -251,11 +251,14 @@ float CalculatePointShadow(
         2; 
     float incr = s[side];
     side *= 2;
-    if (incr > 0) ++side;
+    if (incr == 1) ++side;
 
     vec2 texelSize = 1 / framebufferSize;
     vec2 tileSize = framebufferSize.yy;   // y is never extended.
     float xoffset = (side * tileSize.x) / framebufferSize.x;
+
+    // min = vec2(xoffset, 0);
+    // max = vec2(xoffset + framebufferSize.y, framebufferSize.y);
 
     mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
     vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
@@ -278,7 +281,7 @@ float CalculatePointShadow(
         4,
         fragClipSpace.z,
         bias,
-        u_directionalShadowMap
+        u_pointLightShadowMap
     );
 
     return shadowLowest;

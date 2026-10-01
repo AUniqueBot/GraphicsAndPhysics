@@ -6,13 +6,13 @@
 
 namespace LightConstants {
 
-	constexpr const int C_MAX_DIRECTIONAL_SHADOWS	{ 10 };
+	constexpr const int C_MAX_DIRECTIONAL_SHADOWS	{ 2 };
 	constexpr const int C_MAX_POINT_SHADOWS			{ 20 };
 	constexpr const int C_MAX_SPOT_SHADOWS			{ 20 };
 
-	constexpr const int C_MAX_LIGHTS				{ 10 };
+	constexpr const int C_MAX_LIGHTS				{ 50 };
 
-	constexpr const int C_SHADOWMAP_COUNT{ 6 }; // you need 6 (!) for cube maps.
+	constexpr const int C_SHADOWMAP_COMPONENT_COUNT	{ 6 }; // you need 6 (!) for cube maps.
 };
 
 
@@ -59,8 +59,8 @@ struct alignas(sizeof(glm::vec4)) LightData {
 
 struct alignas(sizeof(glm::vec4)) ShadowData {
 
-	glm::mat4 m_lightMatrix[LightConstants::C_SHADOWMAP_COUNT]			{};	//
-	glm::vec4 m_atlasOffsetSize[LightConstants::C_SHADOWMAP_COUNT]		{}; // position and size of the tile.
+	glm::mat4 m_lightMatrix[LightConstants::C_SHADOWMAP_COMPONENT_COUNT]			{};	//
+	glm::vec4 m_atlasOffsetSize[LightConstants::C_SHADOWMAP_COMPONENT_COUNT]		{}; // position and size of the tile.
 	glm::vec4 m_lightTypeShadowId										{}; // id is layer of arrayid.
 
 
@@ -80,39 +80,39 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 	}
 
 	void SetMatrix(glm::mat4 _matrix, int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		m_lightMatrix[_idx] = _matrix;
 	}
 	glm::mat4& GetMatrix(int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		return m_lightMatrix[_idx];
 	}
 	const glm::mat4& GetMatrix(int _idx) const {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		return m_lightMatrix[_idx];
 	}
 
 	void SetAtlasOffset(const glm::vec2& _offset, int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		m_atlasOffsetSize[_idx].x = _offset.x;
 		m_atlasOffsetSize[_idx].y = _offset.y;
 	}
 
 	glm::vec2 GetAtlasOffset(int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		return glm::vec2 { 
 			m_atlasOffsetSize[_idx].x,
 			m_atlasOffsetSize[_idx].y
 		};
 	}
 	void SetAtlasSize(const glm::vec2& _tileSize, int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		m_atlasOffsetSize[_idx].z = _tileSize.x;
 		m_atlasOffsetSize[_idx].w = _tileSize.y;
 	}
 
 	glm::vec2 GetAtlasSize(int _idx) {
-		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COMPONENT_COUNT && _idx > -1);
 		return glm::vec2{
 			m_atlasOffsetSize[_idx].z,
 			m_atlasOffsetSize[_idx].w

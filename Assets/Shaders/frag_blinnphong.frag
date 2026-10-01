@@ -6,9 +6,9 @@
 #define LIGHT_DIRECTIONAL 2.0
 #define LIGHT_AMBIENT 3.0
 
-#define MAX_LIGHT_COUNT 10
+#define MAX_LIGHT_COUNT 50
 
-#define MAX_DIRECTIONAL_SHADOW_COUNT 10
+#define MAX_DIRECTIONAL_SHADOW_COUNT 2
 #define MAX_POINT_SHADOW_COUNT 20
 #define MAX_SPOT_SHADOW_COUNT 20
 
@@ -29,8 +29,8 @@ uniform sampler2D u_gloss;
 uniform int u_exponent;
 
 uniform sampler2DArrayShadow u_directionalShadowMap;
+uniform sampler2DArrayShadow u_pointLightShadowMap;
 uniform sampler2DArrayShadow u_spotLightShadowMap;
-uniform samplerCubeArrayShadow u_pointLightShadowMap;
 uniform float u_deltaTime;
 uniform uint u_objectId;
 
@@ -278,7 +278,7 @@ float CalculatePointShadow(
         4,
         fragClipSpace.z,
         bias,
-        u_directionalShadowMap
+        u_pointLightShadowMap
     );
 
     return shadowLowest;
@@ -405,7 +405,7 @@ void main() {
                 );
 
             if (ShadowID != -1) {
-                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[int(currentLight.attenuation_id.z)];
+                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[lightid];
                 float sValue = CalculateDirectionalShadow(
                     currentShadow, 
                     VERTEXOUTPUT.frag_position, 

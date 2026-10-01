@@ -383,18 +383,33 @@ void RenderSystem::FillLightBufferUBO(const SceneRenderData& _scene) {
 }
 
 void RenderSystem::FillShadowMapUBO(const SceneRenderData& _scene) {
-    auto lightList = _scene.lights;
-    int shadowCount{ std::min(
-        LightConstants::C_MAX_DIRECTIONAL_SHADOWS,
-        static_cast<int>(lightList.size()) 
-    ) };
-    // - directional light data -----------------------------------------------------
-    for (int i{}; i < shadowCount; ++i) {
+    const std::vector<LightRenderable>& lightList = _scene.lights;
+
+    int dIndex = 0;
+    int pIndex = 0;
+    for (int i{}; i < lightList.size(); ++i) {
         Light& light = *lightList[i].light;
-        if (light.Type() == LightType::DIRECTIONAL) {
-            m_smData.m_directionalShadowData[i] = light.GetShadowData();
+        ShadowData& sd = light.GetShadowData();
+        switch (light.Type()) {
+        case LightType::DIRECTIONAL: {
+            if (dIndex < LightConstants::C_MAX_DIRECTIONAL_SHADOWS) {
+                m_smData.m_directionalShadowData[dIndex] = sd;
+                ++dIndex;
+            }
+            break;
+        }
+        case LightType::POINT: {
+            if (pIndex < LightConstants::C_MAX_POINT_SHADOWS) {
+                m_smData.m_pointShadowData[pIndex] = sd;
+                ++pIndex;
+            }
+            break;
+        }
         }
     }
+
+
+    // - directional light data -----------------------------------------------------
     glm::vec2 dirLightFBSize{ static_cast<glm::vec2>(m_directionalShadowMaps.GetFramebufferSize()) };
     m_smData.m_directionalAtlasResAndTexelSize = glm::vec4(
         dirLightFBSize.x,
@@ -403,7 +418,16 @@ void RenderSystem::FillShadowMapUBO(const SceneRenderData& _scene) {
         1.0f / dirLightFBSize.y
     );
     m_smData.m_directionalCount = m_directionalShadowMaps.GetShadowMapUsageCount();
+
     // - point light data -----------------------------------------------------------
+    glm::vec2 pointLightFBSize{ static_cast<glm::vec2>(m_pointLightShadowMaps.GetFramebufferSize()) };
+    m_smData.m_pointAtlasResAndTexelSize = glm::vec4(
+        pointLightFBSize.x,
+        pointLightFBSize.y,
+        1.0f / pointLightFBSize.x,
+        1.0f / pointLightFBSize.y
+    );
+    m_smData.m_pointCount = m_pointLightShadowMaps.GetShadowMapUsageCount();
 
 
     UBO& shadowUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW);
@@ -632,19 +656,19 @@ void RenderSystem::RenderShadowsPointLight(
 
     glm::vec3 position = _light.transform->Position();
     std::array<glm::mat4, 6> directions = {
-        glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)), // -X
-        glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)), // +X
-        glm::lookAt(position, position + glm::vec3(0,-1, 0), glm::vec3(0, 0,-1)), // -Y
-        glm::lookAt(position, position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)), // +Y
-        glm::lookAt(position, position + glm::vec3(0, 0,-1), glm::vec3(0, -1, 0)), // -Z
-        glm::lookAt(position, position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0))  // +Z
+        glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, 1, 0)), // -X
+        glm::lookAt(position, position + glm::vec3(1, 0, 0),  glm::vec3(0, 1, 0)), // +X
+        glm::lookAt(position, position + glm::vec3(0,-1, 0),  glm::vec3(0, 0, -1)), // -Y
+        glm::lookAt(position, position + glm::vec3(0, 1, 0),  glm::vec3(0, 0,  1)), // +Y
+        glm::lookAt(position, position + glm::vec3(0, 0,-1),  glm::vec3(0, 1, 0)), // -Z
+        glm::lookAt(position, position + glm::vec3(0, 0, 1),  glm::vec3(0, 1, 0))  // +Z
     };
+    glm::mat4 lightProj = glm::perspective(glm::radians(90.f), 1.f, 0.01f, 100.f);
 
     int tileSizeDims = m_pointLightShadowMaps.GetBaseTileSize().x;
     for (unsigned side{}; side < 6; ++side) {
         // in order: -x, +x, -y, +y, -z, +z
-        glm::mat4 lightProj = glm::perspective(glm::radians(90.f), 1.f, 0.01f, 100.f);
-        glm::mat4 lightSpaceMtx{ lightProj * directions[side] };
+        glm::mat4 lightSpaceMtx = lightProj * directions[side];
 
         // - setting shadow data -------------------------------------------------------
         
@@ -653,7 +677,7 @@ void RenderSystem::RenderShadowsPointLight(
 
         int offset = side * tileSizeDims;
         glViewport(offset, 0, tileSizeDims, tileSizeDims);
-        glScissor(offset, 0, tileSizeDims, tileSizeDims);
+        glScissor(offset, 0, tileSizeDims, tileSizeDims); 
 
         for (const MeshRenderable& renderable : renderables) {
             const Entity& meshEntity = renderable.entity;
@@ -864,18 +888,20 @@ void RenderSystem::SetupShadowBuffers() {
     std::shared_ptr<Texture2DArrayRes> ptr = nullptr;
 
 
-    dims = { SHADOW_DIR_WH, SHADOW_DIR_WH, m_directionalShadowMaps.GetLayers() };
-    Texture2DArrayHandle dirTex = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    dims = { SHADOW_DIR_WH, SHADOW_DIR_WH, LightConstants::C_MAX_DIRECTIONAL_SHADOWS };
     m_directionalShadowMaps.SetBaseTileSize({SHADOW_DIR_WH, SHADOW_DIR_WH});
+    m_directionalShadowMaps.SetLayers(dims.z);
+    Texture2DArrayHandle dirTex = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
     ptr = dirTex.Get();
     ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_directionalShadowMaps.SetTexture(dirTex);
     m_directionalShadowMaps.BuildShadowMap(); 
 
 
-    dims = { SHADOW_POINT_WH * 6, SHADOW_POINT_WH, m_pointLightShadowMaps.GetLayers() };
-    Texture2DArrayHandle pointTex = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
+    dims = { SHADOW_POINT_WH * 6, SHADOW_POINT_WH, LightConstants::C_MAX_POINT_SHADOWS };
     m_pointLightShadowMaps.SetBaseTileSize({ SHADOW_POINT_WH, SHADOW_POINT_WH });
+    m_pointLightShadowMaps.SetLayers(dims.z);
+    Texture2DArrayHandle pointTex = texManager.Create2DArrayTexture(dims.x, dims.y, dims.z, props);
     ptr = pointTex.Get();
     ptr->SetGPUResourceHandle(gpuMgr.CreateTexture(*ptr));
     m_pointLightShadowMaps.SetTexture(pointTex);
@@ -963,7 +989,11 @@ void RenderSystem::ResolveMaterial(MaterialRes& _mat) {
     _mat.UseMaterial();
     _mat.ApplyUniforms();
     // - setup shadow maps ----------------------------
-    _mat.ApplyShadowMap(m_directionalShadowMaps.GetTextureID(), 0, 0);
+    _mat.ApplyShadowMap(
+        m_directionalShadowMaps.GetTextureID(), 
+        m_spotLightShadowMaps.GetTextureID(),
+        m_pointLightShadowMaps.GetTextureID()
+    );
     
 
 }
