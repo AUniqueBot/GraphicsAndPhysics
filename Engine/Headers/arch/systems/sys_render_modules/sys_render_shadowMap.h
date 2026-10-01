@@ -56,13 +56,14 @@ public:
 
 	// - ubo data ------------------
 	int GetShadowMapUsageCount() const;
+	glm::vec3 GetDimensions() const;
 private:
-
+	
 private:
 	glm::ivec2 m_framebufferSize			{ 2048, 2048 };
 	glm::ivec2 m_baseTileSize				{ 1024, 1024 };	// 2048, 1024, 512, 256
 	unsigned m_layers						{ 8 };
-	unsigned m_fbo							{ 0 }; 
+	uint32_t m_fbo							{ 0 }; 
 	unsigned m_levels						{ 4 };
 	bool m_isBuilt							{ false };
 	mutable unsigned m_currentBoundLayer	{ 0 };

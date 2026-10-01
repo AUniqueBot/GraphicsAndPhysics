@@ -4,7 +4,20 @@
 #include <arch/components/comp_meshrenderer.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
 
-enum LightType {
+namespace LightConstants {
+
+	constexpr const int C_MAX_DIRECTIONAL_SHADOWS	{ 10 };
+	constexpr const int C_MAX_POINT_SHADOWS			{ 20 };
+	constexpr const int C_MAX_SPOT_SHADOWS			{ 20 };
+
+	constexpr const int C_MAX_LIGHTS				{ 10 };
+
+	constexpr const int C_SHADOWMAP_COUNT{ 6 }; // you need 6 (!) for cube maps.
+};
+
+
+
+enum LightType : int32_t {
 	POINT = 0,
 	SPOT = 1,
 	DIRECTIONAL = 2,
@@ -16,7 +29,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_position_type		{};	// x,y,z - position,  w - type
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
-	glm::vec4 m_attenuation_id		{ 0, 0, -1, 0 };	// x,y - attenuation, z,w - padding
+	glm::vec4 m_attenuation_id		{ 0, 0, -1, 0 };	// x,y - attenuation, z,w - padding 
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
@@ -43,12 +56,12 @@ struct alignas(sizeof(glm::vec4)) LightData {
 
 
 
-constexpr int C_SHADOWMAP_COUNT { 6 }; // you need 6 (!) for cube maps.
+
 struct alignas(sizeof(glm::vec4)) ShadowData {
 
-	glm::mat4 m_lightMatrix[C_SHADOWMAP_COUNT]			{};	//
-	glm::vec4 m_atlasOffsetSize[C_SHADOWMAP_COUNT]		{}; // position and size of the tile.
-	glm::vec4 m_lightTypeShadowId						{}; // id is layer of arrayid.
+	glm::mat4 m_lightMatrix[LightConstants::C_SHADOWMAP_COUNT]			{};	//
+	glm::vec4 m_atlasOffsetSize[LightConstants::C_SHADOWMAP_COUNT]		{}; // position and size of the tile.
+	glm::vec4 m_lightTypeShadowId										{}; // id is layer of arrayid.
 
 
 	// get light type and shadow id.
@@ -67,39 +80,39 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 	}
 
 	void SetMatrix(glm::mat4 _matrix, int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		m_lightMatrix[_idx] = _matrix;
 	}
 	glm::mat4& GetMatrix(int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		return m_lightMatrix[_idx];
 	}
 	const glm::mat4& GetMatrix(int _idx) const {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		return m_lightMatrix[_idx];
 	}
 
 	void SetAtlasOffset(const glm::vec2& _offset, int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		m_atlasOffsetSize[_idx].x = _offset.x;
 		m_atlasOffsetSize[_idx].y = _offset.y;
 	}
 
 	glm::vec2 GetAtlasOffset(int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		return glm::vec2 { 
 			m_atlasOffsetSize[_idx].x,
 			m_atlasOffsetSize[_idx].y
 		};
 	}
 	void SetAtlasSize(const glm::vec2& _tileSize, int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		m_atlasOffsetSize[_idx].z = _tileSize.x;
 		m_atlasOffsetSize[_idx].w = _tileSize.y;
 	}
 
 	glm::vec2 GetAtlasSize(int _idx) {
-		assert(_idx < C_SHADOWMAP_COUNT && _idx > -1);
+		assert(_idx < LightConstants::C_SHADOWMAP_COUNT && _idx > -1);
 		return glm::vec2{
 			m_atlasOffsetSize[_idx].z,
 			m_atlasOffsetSize[_idx].w
@@ -108,22 +121,23 @@ struct alignas(sizeof(glm::vec4)) ShadowData {
 };
 
 
-constexpr unsigned C_MAX_LIGHTS			{ 10 };
+
 struct alignas(sizeof(glm::vec4)) LightUBOData {
-	LightData m_lightData[C_MAX_LIGHTS];
+	LightData m_lightData[LightConstants::C_MAX_LIGHTS];
 	int m_count{}; 
 };
 
 
-constexpr int C_MAX_SHADOWS				{ 10 };
+
 struct alignas(sizeof(glm::vec4)) ShadowMapUBOData {
-	ShadowData m_shadowData[C_MAX_SHADOWS];
+	ShadowData m_directionalShadowData[LightConstants::C_MAX_DIRECTIONAL_SHADOWS]; // to change to
+	ShadowData m_pointShadowData[LightConstants::C_MAX_POINT_SHADOWS];
+	ShadowData m_spotShadowData[LightConstants::C_MAX_SPOT_SHADOWS];
 
 	glm::vec4 m_directionalAtlasResAndTexelSize;
 	glm::vec4 m_spotAtlasResAndTexelSize;
 	glm::vec4 m_pointAtlasResAndTexelSize;
 	
-
 	int m_directionalCount;
 	int m_pointCount;
 	int m_spotCount;

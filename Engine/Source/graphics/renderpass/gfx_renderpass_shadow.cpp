@@ -3,7 +3,7 @@
 
 void ShadowPass::Execute(
 	GraphicsContext& _context, 
-	const PreparedSceneRenderData& _currentScene
+	const SceneRenderData& _currentScene
 ) {
 
 	for (const LightRenderable& data: _currentScene.lights) {

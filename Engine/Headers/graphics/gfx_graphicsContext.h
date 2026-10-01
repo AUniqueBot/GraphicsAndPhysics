@@ -4,7 +4,36 @@
 
 namespace GraphicsContextTypes {
 	using BindSlot = int32_t;
+	
 
+	enum class VertexFormat : uint32_t {
+		Float1,
+		Float2,
+		Float3
+	};
+
+
+	struct VertexAttribute {
+		uint32_t location;
+		VertexFormat format;
+		uint32_t offset;
+		uint32_t binding;
+	};
+
+	struct VertexBinding {
+		uint32_t binding;
+		uint32_t stride;
+	};
+
+	struct VertexLayoutDesc {
+		std::vector<VertexAttribute> attributes;
+		std::vector<VertexBinding> bindings;
+	};
+	struct VertexInput {
+		uint32_t bufferHandle; // makes no sense.
+		uint32_t indexHandle;
+		VertexLayoutDesc vertexLayout;
+	};
 
 
 
@@ -20,7 +49,6 @@ namespace GraphicsContextTypes {
 		uint32_t indexCount;
 		uint32_t instanceStart;
 		uint32_t instanceCount;
-
 	};
 
 
@@ -36,6 +64,9 @@ public:
 	void BindResource();
 	void BindPipeline();
 	void BindRenderTarget();//??
+
+	void BindVertexInput();
+	void CreateVertexLayout();
 
 	void UpdateBuffer(GPUBuffer& _toFill, void* _data, size_t _size);
 

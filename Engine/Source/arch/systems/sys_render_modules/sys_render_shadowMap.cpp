@@ -238,5 +238,12 @@ int ShadowMap::GetShadowMapUsageCount() const {
 }
 
 
-
+glm::vec3 ShadowMap::GetDimensions() const {
+	return 
+		glm::vec3(
+			m_framebufferSize.x,
+			m_framebufferSize.y,
+			m_layers
+		);
+}
 

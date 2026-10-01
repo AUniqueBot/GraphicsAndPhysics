@@ -397,6 +397,7 @@ FOR /R "$(SolutionDir)Extern\lib" %%f IN (*.dll) DO copy "%%f" "$(TargetDir)"</C
     <ClInclude Include="Headers\graphics\resources\gfx_vao.h" />
     <ClInclude Include="Headers\graphics\resources\gfx_gpumesh.h" />
     <ClInclude Include="Headers\graphics\resources\gfx_gputexture.h" />
+    <ClInclude Include="Headers\graphics\resources\gfx_vertexlayout.h" />
     <ClInclude Include="Headers\input\input_processInput.h" />
     <ClInclude Include="Headers\pch.h" />
     <ClInclude Include="Headers\serialization\serialize_assetserializer.h" />

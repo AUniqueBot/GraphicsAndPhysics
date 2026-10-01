@@ -19,16 +19,18 @@ concept RenderPass = requires(T & pass) {
 // struct
 struct MeshRenderable {
 	EntityID id;
+	Entity& entity;
 	ComponentView<Transform> transform;
 	ComponentView<MeshRenderer> mesh;
 };
 
 struct LightRenderable {
 	EntityID id;
+	Entity& entity;
 	ComponentView<Transform> transform;
 	ComponentView<Light> light;
 };
-struct PreparedSceneRenderData {
+struct SceneRenderData {
 	std::vector<MeshRenderable> meshes;
 	std::vector<LightRenderable> lights;
 };

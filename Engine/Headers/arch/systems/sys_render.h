@@ -16,7 +16,7 @@
 
 // fwd decl.
 class SceneRes;
-struct PreparedSceneRenderData;
+struct SceneRenderData;
 
 
 // ---------------------------------------------------------
@@ -76,55 +76,52 @@ public:
 	
 private: 
 	
+
 	void ClearBuffers(const Viewport& _viewport);
 	void UseViewport(const Viewport& _viewport);
 	void UnbindViewport(const Viewport& _viewport);
-
 
 	void BeginViewportPass(const Viewport& _viewport);
 	void EndViewportPass(const Viewport& _viewport);
 	void SetupRenderSettings(const Viewport& _viewport);
 
+	void Render(SceneRenderData& _scene, const Viewport& _vp);
+	void BackgroundRenderPass(SceneRenderData& _scene, const Viewport& _vp);
+	void ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp);
+	void LightingRenderPass(SceneRenderData& _scene, const Viewport& _vp);
 
-	void ShadowRenderPass(
-		const Viewport& _viewport,
-		const EntityRegistry& _er
+	void RenderShadowsDirectionalLight(
+		const Viewport& _vp,
+		const LightRenderable& _light,
+		const SceneRenderData& _scene
 	);
-	void LightingRenderPass(
-		const Viewport& _viewport,
-		const EntityRegistry& _er
+
+	void RenderShadowsPointLight(
+		const Viewport& _vp,
+		const LightRenderable& _light,
+		const SceneRenderData& _scene
 	);
+
+	void RenderShadowsSpotLight(
+		const Viewport& _vp,
+		const LightRenderable& _light,
+		const SceneRenderData& _scene
+	);
+
+
+	// - fill data -
+	void UpdateLightingData(const SceneRenderData& _scene);
+	void FillLightBufferUBO(const SceneRenderData& _scene);
+	void FillShadowMapUBO(const SceneRenderData& _scene);
+
 private: 
-	void DirectionalLightShadowRenderPass(
-		const Viewport& _viewport,
-		const EntityRegistry& _er,
-		const Light& _light,
-		const ComponentPool<MeshRenderer>& _mrPool
-	);
 
-	void PointLightShadowRenderPass(
-		const Viewport& _viewport,
-		const EntityRegistry& _er,
-		const Light& _light,
-		const ComponentPool<MeshRenderer>& _mrPool
-	);
-
-	void SpotLightShadowRenderPass(
-		const Viewport& _viewport,
-		const EntityRegistry& _er,
-		const Light& _light,
-		const ComponentPool<MeshRenderer>& _mrPool
-	);
-private: 
-
-	PreparedSceneRenderData PrepareScene(const SceneRes& _scene);
+	SceneRenderData PrepareScene(const SceneRes& _scene);
 
 
 
 public:
 	// ubo
-	void FillLightBufferUBO(const std::vector<LightData>& _culledLightList);
-	void FillShadowMapUBO(const std::vector<ShadowData>& _culledLightList);
 	void FillCommonUBO(
 		const glm::mat4& _cameraMatrix,
 		const glm::mat4& _projectionMatrix,
@@ -157,16 +154,9 @@ public:
 
 
 private:
-	void UploadMesh(const MeshRes& _mesh);
-
-private:
 	/*!
 		@brief checks which lights to calculate from.
 	*/
-	const std::vector<Light*> CullLights(const Viewport& _viewport, EntityRegistry& _er);
-	void UpdateLightingData(const std::vector<Light*> lightList, const EntityRegistry& er);
-	std::vector<LightData> GetLightData(const std::vector<Light*>& lightList) const;
-	std::vector<ShadowData> GetShadowData(const std::vector<Light*>& lightList) const;
 
 
 	bool LightCollisionTest(const Light& _lightComponent, const Viewport& _viewport) const;

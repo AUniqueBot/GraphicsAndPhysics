@@ -710,5 +710,8 @@
     <ClInclude Include="Headers\arch\resources\res_physicsMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\graphics\resources\gfx_vertexlayout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

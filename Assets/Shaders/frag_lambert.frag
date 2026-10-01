@@ -7,7 +7,11 @@
 #define LIGHT_AMBIENT 3.0
 
 #define MAX_LIGHT_COUNT 10
-#define MAX_SHADOW_COUNT 10
+
+#define MAX_DIRECTIONAL_SHADOW_COUNT 10
+#define MAX_POINT_SHADOW_COUNT 20
+#define MAX_SPOT_SHADOW_COUNT 20
+
 #define SHADOW_MAP_MATRIX_COUNT 6
 
 
@@ -65,8 +69,11 @@ struct ShadowData {
     vec4 lightTypeShadowId;
 };
 layout (std140, binding=3) uniform ShadowMapUBO {
-    ShadowData shadowData[MAX_SHADOW_COUNT];
-	vec4 directionalAtlasResAndTexelSize;
+    ShadowData directionalShadowData[MAX_DIRECTIONAL_SHADOW_COUNT];
+    ShadowData pointShadowData[MAX_POINT_SHADOW_COUNT];
+    ShadowData spotShadowData[MAX_SPOT_SHADOW_COUNT];
+    
+    vec4 directionalAtlasResAndTexelSize;
 	vec4 spotAtlasResAndTexelSize;
 	vec4 pointAtlasResAndTexelSize;
     int directionalShadowCount;
@@ -221,7 +228,7 @@ float CalculateDirectionalShadow(
 float CalculateShadow() {
     float shadowLowest = 1.0;
     for (int i= 0; i < SHADOWPARAMS.directionalShadowCount; ++i) {
-        ShadowData currentShadowData = SHADOWPARAMS.shadowData[i]; 
+        ShadowData currentShadowData = SHADOWPARAMS.directionalShadowData[i]; 
         int lightType = int(currentShadowData.lightTypeShadowId.x);
         if (LIGHT_DIRECTIONAL == lightType) {
             shadowLowest = min(
@@ -357,7 +364,7 @@ void main() {
 
 
             if (ShadowID != -1) {
-                ShadowData currentShadow = SHADOWPARAMS.shadowData[int(currentLight.attenuation_id.z)];
+                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[int(currentLight.attenuation_id.z)];
                 float sValue = CalculateDirectionalShadow(
                     currentShadow, 
                     VERTEXOUTPUT.frag_position, 

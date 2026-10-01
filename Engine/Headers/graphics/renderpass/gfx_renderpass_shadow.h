@@ -13,7 +13,7 @@ class ShadowPass {
 public:
 	void Execute(
 		GraphicsContext& _context, 
-		const PreparedSceneRenderData& _currentScene
+		const SceneRenderData& _currentScene
 	);
 
 };
