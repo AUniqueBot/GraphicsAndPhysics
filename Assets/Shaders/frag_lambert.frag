@@ -223,36 +223,57 @@ float CalculateDirectionalShadow(
     return shadowLowest;
 }
 
+float CalculatePointShadow(
+    ShadowData shadowData,
+    vec3 fragPosition,
+    vec3 lightPosition,
+    vec2 framebufferSize,
+    float bias
+) {
+    vec3 dirVec = fragPosition - lightPosition;
+    // get greatest magnitude.
+    // [0|1], [2|3], [4|5]
+    // -x, +x, -y, +y, -z, +z
+    vec3 dirAbs = abs(dirVec);
+    float largest = max(dirAbs.x, max(dirAbs.y, dirAbs.z));
+    vec3 s = sign(dirVec);
+    int side = 
+        largest == dirAbs.x ? 0 : 
+        largest == dirAbs.y ? 1 : 
+        2; 
+    float incr = s[side];
+    side *= 2;
+    if (incr > 0) ++side;
 
+    vec2 texelSize = 1 / framebufferSize;
+    vec2 tileSize = framebufferSize.yy;   // y is never extended.
+    float xoffset = (side * tileSize.x) / framebufferSize.x;
 
-float CalculateShadow() {
-    float shadowLowest = 1.0;
-    for (int i= 0; i < SHADOWPARAMS.directionalShadowCount; ++i) {
-        ShadowData currentShadowData = SHADOWPARAMS.directionalShadowData[i]; 
-        int lightType = int(currentShadowData.lightTypeShadowId.x);
-        if (LIGHT_DIRECTIONAL == lightType) {
-            shadowLowest = min(
-                CalculateDirectionalShadow(
-                currentShadowData, 
-                VERTEXOUTPUT.frag_position, 
-                VERTEXOUTPUT.frag_viewPosition, 
-                SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
-                0.01
-                ), shadowLowest
-                );
-            // sample the texture.
-        }
-        else if (LIGHT_POINT == lightType) {
+    mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
+    vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
+    vec3 fragClipSpace = fragLightSpace.xyz / fragLightSpace.w;
+    fragClipSpace = fragClipSpace * 0.5 + 0.5;
 
-        }
-        else if (LIGHT_SPOT == lightType) {
+    if (fragClipSpace.x < 0.0 || fragClipSpace.x > 1.0) return 1.0;
+    if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
+    if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
 
-        }
+    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize;
+    vec2 tileSpaceNormalized = tileSize / framebufferSize;
+    vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
+    int shadowId = int(shadowData.lightTypeShadowId.y);
 
-    }
+    float shadowLowest = PCF_PoissonDisk(
+        coords,
+        texelSize,
+        shadowId,
+        4,
+        fragClipSpace.z,
+        bias,
+        u_directionalShadowMap
+    );
 
     return shadowLowest;
-
 }
 
 
@@ -348,11 +369,23 @@ void main() {
 
         
         if (LightType == LIGHT_POINT) {
+
             vec3 diffL = CalculatePointLighting(
                 currentLight, 
                 VERTEXOUTPUT.frag_position, 
                 VERTEXOUTPUT.frag_normal
                 );
+            
+            if (ShadowID != -1) {
+                ShadowData currentShadow = SHADOWPARAMS.pointShadowData[ShadowID];
+                float sValue = CalculatePointShadow(
+                    currentShadow,
+                    VERTEXOUTPUT.frag_position,
+                    currentLight.position_type.xyz,
+                    SHADOWPARAMS.directionalAtlasResAndTexelSize.xy,
+                    0.01
+                );
+            }
             result.diffuse += diffL;
 
         }
@@ -364,7 +397,7 @@ void main() {
 
 
             if (ShadowID != -1) {
-                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[int(currentLight.attenuation_id.z)];
+                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[ShadowID];
                 float sValue = CalculateDirectionalShadow(
                     currentShadow, 
                     VERTEXOUTPUT.frag_position, 

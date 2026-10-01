@@ -607,7 +607,7 @@ void RenderSystem::RenderShadowsDirectionalLight(
             if (!meshEntity.Active()|| !meshEntity.IsVisible() || !mr.CastShadows()) continue;
 
             // do something.
-            auto& trsMesh = renderable.transform;
+            const ComponentView<Transform>& trsMesh = renderable.transform;
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             FillObjectUBO(meshEntity, *trsMesh);
@@ -661,7 +661,7 @@ void RenderSystem::RenderShadowsPointLight(
             if (!meshEntity.Active() || !meshEntity.IsVisible() || !mr.CastShadows()) continue;
 
             // do something.
-            auto& trsMesh = renderable.transform;
+            const ComponentView<Transform>& trsMesh = renderable.transform;
             const glm::mat4 objectTransformMatrix = trsMesh->WorldTransformMtx();
             PassLightingMatrices(objectTransformMatrix, lightSpaceMtx);
             FillObjectUBO(meshEntity, *trsMesh);

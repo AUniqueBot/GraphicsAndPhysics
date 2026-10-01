@@ -464,10 +464,12 @@ void UIWidget_Inspector::DrawPropertyOptions(void* object, const PropertyMD::Pro
 	if (ImGui::BeginCombo(key.c_str(), currentOption)) {
 		for (const PropertyMD::Option& option: prop.m_options) {
 			if (ImGui::Selectable(option.label, val == option.value)) {
-				prop.m_set(object, &newVal);
+				newVal = option.value;
 			}
 		}
-
+		if (val != newVal) {
+			prop.m_set(object, &newVal);
+		}
 		ImGui::EndCombo();
 	}
 
