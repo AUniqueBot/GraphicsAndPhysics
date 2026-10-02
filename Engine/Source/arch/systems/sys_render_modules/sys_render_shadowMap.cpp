@@ -168,7 +168,7 @@ void ShadowMap::Bind() const {
 	glReadBuffer(GL_NONE);
 }
 
-void ShadowMap::SetBoundLayer(unsigned _layer) const {
+void ShadowMap::SetBoundLayer(int _layer) const {
 	assert(_layer < m_layers);
 	if (m_currentBoundLayer == _layer) return;
 	m_currentBoundLayer = _layer;
@@ -222,11 +222,11 @@ bool ShadowMap::HasFreeLayers() const {
 }
 
 unsigned ShadowMap::GetLODLevels() const {
-	return m_levels;
+	return m_miplevels;
 }
 
 void ShadowMap::SetLODLevels(unsigned _levels) {
-	m_levels = _levels;
+	m_miplevels = _levels;
 }
 
 void ShadowMap::SetTexture(const Texture2DArrayHandle& _info) {

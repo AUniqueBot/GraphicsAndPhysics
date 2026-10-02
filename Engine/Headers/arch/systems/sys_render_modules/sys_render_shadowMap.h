@@ -31,7 +31,7 @@ public:
 
 
 	void Bind() const;
-	void SetBoundLayer(unsigned _layer) const;
+	void SetBoundLayer(int _layer) const;
 	static void Unbind();
 
 
@@ -62,12 +62,12 @@ private:
 private:
 	glm::ivec2 m_framebufferSize			{ 2048, 2048 };
 	glm::ivec2 m_baseTileSize				{ 1024, 1024 };	// 2048, 1024, 512, 256
-	unsigned m_layers						{ 8 };
+	int m_layers							{ 8 };
 	uint32_t m_fbo							{ 0 }; 
-	unsigned m_levels						{ 4 };
+	int m_miplevels					{ 4 };
 	bool m_isBuilt							{ false };
-	mutable unsigned m_currentBoundLayer	{ 0 };
-	unsigned m_currentLayerCount			{ 0 }; 
+	mutable int m_currentBoundLayer			{ 0 };
+	int m_currentLayerCount			{ 0 }; 
 	std::vector<int> m_freeLayers			{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.

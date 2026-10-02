@@ -657,7 +657,7 @@ namespace {
         for (size_t i{}; i < listSize; ++i) {
 
             GetterFunction getter = [i, indexedGetter](void* _object, void*& _value) {
-                _value = indexedGetter(_object, i);
+                _value = indexedGetter(_object, static_cast<int>(i));
             };
             props.getter = getter;
             Serialization::JSONValue jsonData = CreateValue(props, _object, _allocator, _asMgr);

@@ -544,7 +544,6 @@ void RenderSystem::ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp
         currentShadowMap->Bind();
 
         for (const LightRenderable& light : lightBuckets[i]) {
-            glClear(GL_DEPTH_BUFFER_BIT);
             Light& currentLight = *light.light;
 
             // reclaim old if type dirty
@@ -575,6 +574,7 @@ void RenderSystem::ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp
 
             if (!currentLight.GetCastShadow() || !currentLight.ShadowMapIDIsValid()) continue;
             currentShadowMap->SetBoundLayer(currentLight.GetShadowMapID());
+            glClear(GL_DEPTH_BUFFER_BIT);
             shadowPassFunction(_vp, light, _scene);
             
         }
@@ -619,7 +619,6 @@ void RenderSystem::RenderShadowsDirectionalLight(
 ) {
     const auto& renderables = _scene.meshes;
     const Light& light = *_light.light;
-    if (!light.GetCastShadow()) return;
     ShadowData& sdData = const_cast<ShadowData&>(light.GetShadowData());
 
     // convert light to matrix.
@@ -686,9 +685,6 @@ void RenderSystem::RenderShadowsPointLight(
 ) {
     const std::vector<MeshRenderable>& renderables = _scene.meshes;
     const Light& light = *_light.light;
-
-
-    if (!light.GetCastShadow()) return;
     ShadowData& sdData = const_cast<ShadowData&>(light.GetShadowData());
 
     // convert light to matrix.
