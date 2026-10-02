@@ -1,5 +1,5 @@
 #include <arch/systems/sys_render_modules/sys_render_shadowMap.h>
-
+#include <arch/components/comp_light.h>
 
 
 
@@ -169,11 +169,11 @@ void ShadowMap::Bind() const {
 }
 
 void ShadowMap::SetBoundLayer(unsigned _layer) const {
-	GLuint shadowTexture = m_textureHandle->GetTextureHandle();
 	assert(_layer < m_layers);
 	if (m_currentBoundLayer == _layer) return;
 	m_currentBoundLayer = _layer;
-	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, shadowTexture, 0, _layer);
+	GLuint shadowTexture = m_textureHandle->GetTextureHandle();
+	glNamedFramebufferTextureLayer(m_fbo, GL_DEPTH_ATTACHMENT, shadowTexture, 0, m_currentBoundLayer);
 }
 
 
@@ -191,14 +191,14 @@ unsigned ShadowMap::GetTextureID() const {
 		TextureConstants::C_INVALID_TEXTURE_ID;
 }
 
-bool ShadowMap::ValidateID(unsigned _id) const {
+bool ShadowMap::ValidateID(int _id) const {
 	return _id < m_layers;
 }
 
 
-unsigned ShadowMap::GenerateLayerID() {
+int ShadowMap::GenerateLayerID() {
 	if (m_freeLayers.size() > 0) {
-		unsigned freeId = m_freeLayers.back();
+		int freeId = m_freeLayers.back();
 		m_freeLayers.pop_back();
 		++m_shadowUsageCount;
 		return freeId;
@@ -208,10 +208,10 @@ unsigned ShadowMap::GenerateLayerID() {
 		return m_currentLayerCount++;
 	};
 	LOG_WARN("No free slots available; assigning invalid ID (max unsigned value)");
-	return std::numeric_limits<unsigned>::max();
+	return LightConstants::C_INVALID_SHADOW_ID;
 }
 
-void ShadowMap::ReclaimID(unsigned _id) {
+void ShadowMap::ReclaimID(int _id) {
 	if (!ValidateID(_id)) return;
 	--m_shadowUsageCount;
 	m_freeLayers.push_back(_id);

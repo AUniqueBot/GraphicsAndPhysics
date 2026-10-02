@@ -139,7 +139,9 @@ float PCF_Grid(
 
 
 float PCF_PoissonDisk(
-    vec2 position, 
+    vec2 position,
+    vec2 minBound,
+    vec2 maxBound,
     vec2 texelSize,
     int layerid,
     float filterRadius,
@@ -152,7 +154,7 @@ float PCF_PoissonDisk(
     float cosAngle = cos(angle);
     float sinAngle = sin(angle);
     
-    
+    float testedDepth = currentDepth - bias;
     for (int i = 0; i < 16; ++i) {
         vec2 rotatedDisk = poissonDisk[i];
 
@@ -160,10 +162,12 @@ float PCF_PoissonDisk(
             rotatedDisk.x * cosAngle - rotatedDisk.y * sinAngle,
             rotatedDisk.x * sinAngle + rotatedDisk.y * cosAngle
         );
-
+        // to worry about - Texel Size & size of thing.
         vec2 sampledPosition = poissonDisk[i] * texelSize * filterRadius;
-        float closestDepth = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
-        accShadowVal += (currentDepth - bias > closestDepth) ? 0.0 : 1.0;
+        sampledPosition += position;
+        sampledPosition = clamp(sampledPosition, minBound, maxBound);
+        float shadow = texture(shadowMap, vec4(sampledPosition, layerid, testedDepth));
+        accShadowVal += shadow;
     }
 
     return accShadowVal / 16.0;
@@ -208,19 +212,23 @@ float CalculateDirectionalShadow(
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
 
-    // poisson disk sampling.
+    // bounds
+    vec2 minBound = tileOffset;
+    vec2 maxBound = tileOffset + tileSize;
+
     // reference texel size
     vec2 texelSize = 1.0 / framebufferSize;
     // texel size needs to account of the level.
     float texelScale = tileSize.x / framebufferSize.x;  // we are assuming the tile size scale is constant!
     texelSize *= texelScale;
 
-    
     shadowLowest = PCF_PoissonDisk(
         coords,
+        minBound,
+        maxBound,
         texelSize,
         shadowId,
-        4,
+        16,
         fragClipSpace.z,
         bias,
         u_directionalShadowMap
@@ -246,6 +254,7 @@ float CalculatePointShadow(
         
     */
     vec3 dirVec = fragPosition - lightPosition;
+    float dist = length(dirVec);
     // get greatest magnitude.
     // [0|1], [2|3], [4|5]
     // -x, +x, -y, +y, -z, +z
@@ -256,8 +265,6 @@ float CalculatePointShadow(
         2;
     int side = axis * 2 + (dirVec[axis] > 0.0 ? 1 : 0);
 
-    // min = vec2(xoffset, 0);
-    // max = vec2(xoffset + framebufferSize.y, framebufferSize.y);
 
     vec2 texelSize = 1.0 / framebufferSize;
     vec2 tileSize = framebufferSize.yy;   // y is never extended.
@@ -269,19 +276,21 @@ float CalculatePointShadow(
     vec3 fragClipSpace = fragLightSpace.xyz / fragLightSpace.w;
     fragClipSpace = fragClipSpace * 0.5 + 0.5;
 
-    if (fragClipSpace.x < 0.0 || fragClipSpace.x > 1.0) return 1.0;
-    if (fragClipSpace.y < 0.0 || fragClipSpace.y > 1.0) return 1.0;
-    if (fragClipSpace.z < 0.0 || fragClipSpace.z > 1.0) return 1.0;
 
     vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize; // 0 - 1
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
+    vec2 minBound = tileMinNormalized;
+    vec2 maxBound = vec2(xoffset + framebufferSize.y, framebufferSize.y) / framebufferSize;
+
 
     float shadowLowest = PCF_PoissonDisk(
         coords,
+        minBound,
+        maxBound,
         texelSize,
         shadowId,
-        0.0,
+        16.0,
         fragClipSpace.z,
         bias,
         u_pointLightShadowMap
@@ -358,6 +367,8 @@ void main() {
     vec4 spec = texture(u_specular, VERTEXOUTPUT.frag_uv);
     vec4 gloss = texture(u_gloss, VERTEXOUTPUT.frag_uv);
 
+    float minBias = 0.00001;
+    float slopeBias = 0.0001;
 
     // for each light accumulate
     LightingResult result = LightingResult(vec3(0), vec3(0), vec3(0));
@@ -385,14 +396,24 @@ void main() {
                 int(gloss.r * u_exponent) , 1.0
                 );
 
-            if (ShadowID != -1) {
+            if (ShadowID < SHADOWPARAMS.pointShadowCount) {
                 ShadowData currentShadow = SHADOWPARAMS.pointShadowData[ShadowID];
+                vec3 fragtolightN = normalize(currentLight.position_type.xyz - VERTEXOUTPUT.frag_position);
+                float ndotl = max(
+                    dot(VERTEXOUTPUT.frag_normal, fragtolightN),
+                    0.0
+                );
+
+                float bias = max(
+                    minBias,
+                    slopeBias * (1.0 - ndotl)
+                );
                 float sValue = CalculatePointShadow(
                     currentShadow,
                     VERTEXOUTPUT.frag_position,
                     currentLight.position_type.xyz,
                     SHADOWPARAMS.pointAtlasResAndTexelSize.xy,
-                    0.0001
+                    bias
                 );
                 diffL *= sValue;
                 specL *= sValue;
@@ -414,14 +435,14 @@ void main() {
                 int(gloss.r * u_exponent) , 1.0
                 );
 
-            if (ShadowID != -1) {
-                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[lightid];
+            if (ShadowID < SHADOWPARAMS.directionalShadowCount) {
+                ShadowData currentShadow = SHADOWPARAMS.directionalShadowData[ShadowID];
                 float sValue = CalculateDirectionalShadow(
                     currentShadow, 
                     VERTEXOUTPUT.frag_position, 
                     VERTEXOUTPUT.frag_viewPosition, 
                     SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
-                    0.01
+                    0.001
                     );
                 diffL *= sValue;
                 specL *= sValue;

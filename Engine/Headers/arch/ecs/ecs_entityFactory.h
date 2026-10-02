@@ -25,19 +25,19 @@ public:
     EntityView CreatePointLight(
         const glm::vec3& pos = glm::vec3(), 
         const float& _intensity = 1.f, 
-        const glm::vec4& _col = glm::vec4()
+        const glm::vec4& _col = glm::vec4(1.f, 1.f, 1.f, 1.f)
     );
 
     EntityView CreateAmbientLight(
         const glm::vec3& pos = glm::vec3(),
         const float& _intensity = 1.f,
-        const glm::vec4& _col = glm::vec4()
+        const glm::vec4& _col = glm::vec4(1.f, 1.f, 1.f, 1.f)
     );
 
     EntityView CreateDirectionalLight(
         const glm::vec3& pos = glm::vec3(),
         const float& _intensity = 1.f,
-        const glm::vec4& _col = glm::vec4()
+        const glm::vec4& _col = glm::vec4(1.f, 1.f, 1.f, 1.f)
     );
 
 

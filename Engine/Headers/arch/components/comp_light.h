@@ -11,7 +11,7 @@ namespace LightConstants {
 	constexpr const int C_MAX_SPOT_SHADOWS			{ 20 };
 
 	constexpr const int C_MAX_LIGHTS				{ 50 };
-
+	constexpr const int C_INVALID_SHADOW_ID			{ std::numeric_limits<int>::max() };
 	constexpr const int C_SHADOWMAP_COMPONENT_COUNT	{ 6 }; // you need 6 (!) for cube maps.
 };
 
@@ -29,7 +29,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	glm::vec4 m_position_type		{};	// x,y,z - position,  w - type
 	glm::vec4 m_direction			{};	// x,y,z - direction, w - roll
 	glm::vec4 m_color_power			{};	// x,y,z - color,	  w - power
-	glm::vec4 m_attenuation_id		{ 0, 0, -1, 0 };	// x,y - attenuation, z,w - padding 
+	glm::vec4 m_attenuation_id		{ 0, 0, LightConstants::C_INVALID_SHADOW_ID, 0 };	// x,y - attenuation, z - shadow id, w - padding 
 
 	void SetPosition(const glm::vec3& pos) { 
 		m_position_type = glm::vec4(pos, m_position_type.w); 
@@ -45,9 +45,7 @@ struct alignas(sizeof(glm::vec4)) LightData {
 	void SetPower(float power) { m_color_power.w = power; }
 
 	void SetAttenuation(const glm::vec2& att) { m_attenuation_id.x = att.x; m_attenuation_id.y = att.y; }
-	void SetShadowID(int _id) {
-		m_attenuation_id.z = static_cast<float>(_id);
-	}
+	void SetShadowID(int _id) { m_attenuation_id.z = static_cast<float>(_id); }
 		
 };
 
@@ -158,7 +156,12 @@ public:
 
 	const LightType& Type() const;
 	void Type(const LightType& _type);
-	
+
+	const LightType& PreviousType() const;
+	bool TypeWasChanged() const;
+	void UpdateLastType();
+
+
 	const float& Power() const;
 	void Power(float _value);
 
@@ -182,8 +185,9 @@ public:
 	void SetCastShadow(bool _cast);
 	
 	void InvalidateShadowMapID() const;
-	void SetShadowMapID(unsigned _id) const;
-	unsigned GetShadowMapID() const;
+	void SetShadowMapID(int _id) const;
+	int GetShadowMapID() const;
+	bool ShadowMapIDIsValid() const;
 	
 
 	bool CastShadowDirty() const;
@@ -225,7 +229,8 @@ private:
 	// shadows
 	mutable bool m_castShadow						{ false };
 	mutable bool m_castShadowDirty					{ false };
-	mutable unsigned m_shadowMapID					{ std::numeric_limits<unsigned>::max() };
+	mutable LightType m_previousType				{ m_lightType };
+	mutable int m_shadowMapID						{ LightConstants::C_INVALID_SHADOW_ID };
 
 
 	// all this would provide a struct of data to be sent for rendering.

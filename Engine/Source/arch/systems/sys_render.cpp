@@ -138,30 +138,23 @@ void SetupGLDebug() {
 // - helper -----------------
 
 static void AssignLightShadowID(const Light& _light, ShadowMap& _shadowmap) {
-    // generate light data.
-    if (_light.CastShadowDirty()) {
-        bool wantsShadowId{ _light.GetCastShadow() };
-        if (!wantsShadowId) {
-            _shadowmap.ReclaimID(_light.GetShadowMapID());
-            _light.InvalidateShadowMapID();
-            LOG_INFO("clearing light id.");
-        }
-        else {
-            if (!_shadowmap.HasFreeLayers()) {
-                LOG_INFO("No free slots for shadow map. Waiting for next update.");
-                // early exit, cannot update the var.
-                return;
-            }
-            LOG_INFO("Assigning new id to light.");
-            _light.SetShadowMapID(_shadowmap.GenerateLayerID());
-        }
-        _light.CleanCastShadow();
+
+    if (!_shadowmap.HasFreeLayers()) {
+        LOG_INFO("No free slots for shadow map. Waiting for next update.");
+        // early exit, cannot update the var.
+        return;
     }
-    if (!_light.GetCastShadow()) return; // ignore anything not asking for it.
-    unsigned shadowMapID{ _light.GetShadowMapID() };
-    if (!_shadowmap.ValidateID(shadowMapID)) return;
-    _shadowmap.SetBoundLayer(shadowMapID);
+    LOG_INFO("Assigning new id to light.");
+    _light.SetShadowMapID(_shadowmap.GenerateLayerID());
 }
+
+static void ReclaimLightShadowID(const Light& _light, ShadowMap& _shadowmap) {
+    _shadowmap.ReclaimID(_light.GetShadowMapID());
+    _light.InvalidateShadowMapID();
+    LOG_INFO("clearing light id.");
+}
+
+
 
 
 // ---------------------------------------------------------------------------------------------
@@ -387,21 +380,35 @@ void RenderSystem::FillShadowMapUBO(const SceneRenderData& _scene) {
 
     int dIndex = 0;
     int pIndex = 0;
+    int sIndex = 0;
+
     for (int i{}; i < lightList.size(); ++i) {
         Light& light = *lightList[i].light;
+
+        if (!light.GetCastShadow() || !light.ShadowMapIDIsValid()) continue;
+
+        unsigned id = light.GetShadowMapID();
         ShadowData& sd = light.GetShadowData();
+
         switch (light.Type()) {
         case LightType::DIRECTIONAL: {
             if (dIndex < LightConstants::C_MAX_DIRECTIONAL_SHADOWS) {
-                m_smData.m_directionalShadowData[dIndex] = sd;
+                m_smData.m_directionalShadowData[id] = sd;
                 ++dIndex;
             }
             break;
         }
         case LightType::POINT: {
             if (pIndex < LightConstants::C_MAX_POINT_SHADOWS) {
-                m_smData.m_pointShadowData[pIndex] = sd;
+                m_smData.m_pointShadowData[id] = sd;
                 ++pIndex;
+            }
+            break;
+        }
+        case LightType::SPOT: {
+            if (sIndex < LightConstants::C_MAX_SPOT_SHADOWS) {
+                m_smData.m_spotShadowData[id] = sd;
+                ++sIndex;
             }
             break;
         }
@@ -417,7 +424,7 @@ void RenderSystem::FillShadowMapUBO(const SceneRenderData& _scene) {
         1.0f / dirLightFBSize.x,
         1.0f / dirLightFBSize.y
     );
-    m_smData.m_directionalCount = m_directionalShadowMaps.GetShadowMapUsageCount();
+    m_smData.m_directionalCount = dIndex;
 
     // - point light data -----------------------------------------------------------
     glm::vec2 pointLightFBSize{ static_cast<glm::vec2>(m_pointLightShadowMaps.GetFramebufferSize()) };
@@ -427,7 +434,7 @@ void RenderSystem::FillShadowMapUBO(const SceneRenderData& _scene) {
         1.0f / pointLightFBSize.x,
         1.0f / pointLightFBSize.y
     );
-    m_smData.m_pointCount = m_pointLightShadowMaps.GetShadowMapUsageCount();
+    m_smData.m_pointCount = pIndex;
 
 
     UBO& shadowUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_SHADOW);
@@ -535,9 +542,41 @@ void RenderSystem::ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp
         if (!currentShadowMap || !currentShadowMap->IsBuilt() || !shadowPassFunction) continue;
 
         currentShadowMap->Bind();
+
         for (const LightRenderable& light : lightBuckets[i]) {
             glClear(GL_DEPTH_BUFFER_BIT);
+            Light& currentLight = *light.light;
+
+            // reclaim old if type dirty
+            if (currentLight.TypeWasChanged()) {
+                if (
+                    currentLight.ShadowMapIDIsValid() && 
+                    currentLight.PreviousType() != LightType::AMBIENT
+                    ) {
+                    LightType type = currentLight.PreviousType();
+                    ShadowMap* previousShadowMap =
+                        type == LightType::DIRECTIONAL ? &m_directionalShadowMaps :
+                        type == LightType::POINT ? &m_pointLightShadowMaps :
+                        &m_spotLightShadowMaps;
+                    ReclaimLightShadowID(currentLight, *previousShadowMap);
+                }
+                currentLight.UpdateLastType();
+            }
+
+            if (currentLight.CastShadowDirty()) {
+                if (currentLight.GetCastShadow()) {
+                    AssignLightShadowID(currentLight, *currentShadowMap);
+                }
+                else {
+                    ReclaimLightShadowID(currentLight, *currentShadowMap);
+                }
+                currentLight.CleanCastShadow();
+            }
+
+            if (!currentLight.GetCastShadow() || !currentLight.ShadowMapIDIsValid()) continue;
+            currentShadowMap->SetBoundLayer(currentLight.GetShadowMapID());
             shadowPassFunction(_vp, light, _scene);
+            
         }
     }
     ShadowMap::Unbind();
@@ -545,8 +584,9 @@ void RenderSystem::ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp
 }
 
 void RenderSystem::LightingRenderPass(SceneRenderData& _scene, const Viewport& _vp) {
-
-    _vp.GetRenderTarget()->Bind();
+    auto vp = _vp.GetRenderTarget();
+    if (!vp) return;
+    vp->Bind();
     // - prereqs --------------------------------------------
     const glm::mat4& _cameraMatrix{ glm::inverse(_vp.CameraMatrix()) };
     const glm::mat4& _projectionMatrix{ _vp.ProjectionMatrix() };;
@@ -571,7 +611,7 @@ void RenderSystem::LightingRenderPass(SceneRenderData& _scene, const Viewport& _
 
     glBindVertexArray(0);
 }
-
+ 
 void RenderSystem::RenderShadowsDirectionalLight(
     const Viewport& _vp, 
     const LightRenderable& _light, 
@@ -579,13 +619,12 @@ void RenderSystem::RenderShadowsDirectionalLight(
 ) {
     const auto& renderables = _scene.meshes;
     const Light& light = *_light.light;
-    AssignLightShadowID(light, m_directionalShadowMaps);
     if (!light.GetCastShadow()) return;
     ShadowData& sdData = const_cast<ShadowData&>(light.GetShadowData());
 
     // convert light to matrix.
     
-    glm::vec3 lightDir{ glm::normalize(_light.transform->Forward()) };
+    glm::vec3 lightDir{ glm::normalize(_light.transform->Forward()) }; 
     const glm::vec3& camPos{ _vp.Position() };
     glm::vec3 lightPos = camPos - lightDir * 20.0f;
     glm::mat4 lightView = glm::lookAt(
@@ -648,7 +687,7 @@ void RenderSystem::RenderShadowsPointLight(
     const std::vector<MeshRenderable>& renderables = _scene.meshes;
     const Light& light = *_light.light;
 
-    AssignLightShadowID(light, m_pointLightShadowMaps);
+
     if (!light.GetCastShadow()) return;
     ShadowData& sdData = const_cast<ShadowData&>(light.GetShadowData());
 
@@ -741,9 +780,6 @@ SceneRenderData RenderSystem::PrepareScene(const SceneRes& _sceneRes) {
     }
     return frameData;
 }
-
-
-
 
 void RenderSystem::Render(const MeshRenderer& _mr) {
     Core& c = Core::GetInstance();

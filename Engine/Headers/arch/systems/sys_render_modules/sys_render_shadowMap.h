@@ -39,9 +39,9 @@ public:
 	unsigned GetTextureID() const;
 	 
 
-	bool ValidateID(unsigned _id) const;
-	unsigned GenerateLayerID();
-	void ReclaimID(unsigned _id);
+	bool ValidateID(int _id) const;
+	int GenerateLayerID();
+	void ReclaimID(int _id);
 	bool HasFreeLayers() const;
 
 	unsigned GetLODLevels() const;
@@ -68,7 +68,7 @@ private:
 	bool m_isBuilt							{ false };
 	mutable unsigned m_currentBoundLayer	{ 0 };
 	unsigned m_currentLayerCount			{ 0 }; 
-	std::vector<unsigned> m_freeLayers		{ };
+	std::vector<int> m_freeLayers			{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.
 	Texture2DArrayHandle m_textureHandle	{ std::nullopt }; // needs a proper constructor.

@@ -11,6 +11,19 @@ void Light::Type(const LightType& _type) {
     }
     m_lightType = _type;
     m_lightDataMismatch = true;
+    m_castShadowDirty = true;
+}
+
+const LightType& Light::PreviousType() const {
+    return m_previousType;
+}
+
+bool Light::TypeWasChanged() const {
+    return m_previousType != m_lightType;
+}
+
+void Light::UpdateLastType() {
+    m_previousType = m_lightType;
 }
 
 const float& Light::Power() const {
@@ -47,18 +60,22 @@ void Light::SetCastShadow(bool _cast) {
 }
  
 void Light::InvalidateShadowMapID() const {
-    m_shadowMapID = std::numeric_limits<unsigned>::max();
+    m_shadowMapID = LightConstants::C_INVALID_SHADOW_ID;
     m_lightDataMismatch = true;  
 }
 
-void Light::SetShadowMapID(unsigned _id) const {
+void Light::SetShadowMapID(int _id) const {
     if (_id == m_shadowMapID) return;
     m_shadowMapID = _id;
     m_lightDataMismatch = true;
 } 
 
-unsigned Light::GetShadowMapID() const {
+int Light::GetShadowMapID() const {
     return m_shadowMapID; 
+}
+
+bool Light::ShadowMapIDIsValid() const {
+    return m_shadowMapID != std::numeric_limits<unsigned>::max();
 }
 
 bool Light::CastShadowDirty() const {
@@ -125,6 +142,9 @@ void Light::UpdateLightData() const {
 }
 
 void Light::UpdateShadowData() const {
+    if (m_lightType != m_previousType) {
+        m_previousType = m_lightType;
+    }
     m_shadowDataMismatch = false;
 }
     
