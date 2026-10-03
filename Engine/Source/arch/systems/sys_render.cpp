@@ -189,6 +189,9 @@ void RenderSystem::Init() {
     // TODO -> use the texture manager to create shadow maps.
     SetupShadowProgram();
     SetupShadowBuffers();
+
+    // for screen passes.
+    m_emptyVao = Core::GetInstance().GetGPUResourceManager().CreateVAO();
 }
  
 void RenderSystem::PreUpdate() {
@@ -468,10 +471,31 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
 
     LightingRenderPass(_scene, _vp);
     EndViewportPass(_vp);
-}
+} 
 
 void RenderSystem::BackgroundRenderPass(SceneRenderData& _scene, const Viewport& _vp) {
+
+
+
+    ShaderProgramManager& spr{ Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
     
+    RES_ID id = spr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENFLATCOLORSHADERPROG);
+    const auto& prg = spr.GetShaderProgram(id);
+    if (!prg) {
+        return;
+    }
+    
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindVertexArray(m_emptyVao.m_id);
+    glUseProgram(prg->GetShaderProgramID());
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+    
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+   
 }
 
 void RenderSystem::ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp) {

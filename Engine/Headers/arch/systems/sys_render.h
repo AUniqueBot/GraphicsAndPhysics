@@ -214,6 +214,8 @@ private:
 	CommonUBOData m_commonUboData	{};
 	ObjectUBOData m_objectUboData	{};
 
+
+	GPUResourceHandle m_emptyVao	{};
 };
 
 

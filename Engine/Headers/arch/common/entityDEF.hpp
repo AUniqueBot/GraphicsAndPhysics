@@ -7,10 +7,10 @@ void Entity::AddComponent() {
 	bool res = m_registry->AddComponent<T>(m_id);
 	std::stringstream ss;
 	ss << "Adding Component <" << Reflection::TypeName<T>() << ">: " << (res ? "Pass" : "FAIL") << std::endl;
-	if (res) {
-		LOG_INFO(ss.str());
-	}
-	else {
+	//if (res) {
+	//	LOG_INFO(ss.str());
+	//}
+	if (!res) {
 		LOG_ERROR(ss.str());
 	}
 
@@ -18,10 +18,9 @@ void Entity::AddComponent() {
 	auto compPool = m_registry->GetComponentPool<T>();
 
 	if (compPool) {
-		ss.clear();
-		ss << "current count: " << compPool->size() << std::endl;
-
-		LOG_INFO(ss.str());
+		//ss.clear();
+		//ss << "current count: " << compPool->size() << std::endl;
+		//LOG_INFO(ss.str());
 
 		compPool->Get(m_id)->Init();
 	}
@@ -36,20 +35,19 @@ void Entity::RemoveComponent() {
 
 	std::stringstream ss;
 	ss << "Removing Component <" << Reflection::TypeName<T>() << ">: " << (res ? "Pass" : "FAIL") << std::endl;
-	if (res) {
-		LOG_INFO(ss.str());
-	}
-	else {
+	//if (res) {
+	//	LOG_INFO(ss.str());
+	//}
+	if (!res) {
 		LOG_ERROR(ss.str());
 	}
 
 	auto compPool = m_registry->GetComponentPool<T>();
 
 	if (compPool != std::nullopt) {
-		ss.clear();
-		ss << "current count: " << compPool.value().get().size() << std::endl;
-		
-		LOG_INFO(ss.str());
+		//ss.clear();
+		//ss << "current count: " << compPool.value().get().size() << std::endl;
+		//LOG_INFO(ss.str());
 		
 		compPool.get().Get(m_id)->End();
 	}

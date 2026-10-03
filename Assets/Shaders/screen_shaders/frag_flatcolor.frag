@@ -1,4 +1,12 @@
 #version 460 core
+in VertexOutput {
+    vec3 frag_position;
+    vec3 frag_normal;
+    vec2 frag_uv;
+	vec3 frag_viewPosition;
+} VERTEXOUTPUT;
+
+
 
 layout (std140, binding=0) uniform CommonUBO {
 	mat4 cameraMatrix;			// 16
@@ -11,7 +19,21 @@ layout (std140, binding=0) uniform CommonUBO {
 	float deltaTime;
 } COMMONPARAMS;
 
+layout (location = 0) out vec4 out_color;
+layout (location = 1) out uint out_objectId;
+layout (location = 2) out vec4 out_litShadow;
 
 void main() {
-    gl_FragColor = vec4(1.0, 0.0, 0.75, 1.0);
+    
+    vec3 rayDirection = normalize(
+        COMMONPARAMS.cameraForward
+    );
+
+    float t = rayDirection.y * 0.5 + 0.5;
+
+    out_color = mix(
+        vec4(0.1922, 0.1922, 0.1922, 1.0),
+        vec4(0.5765, 0.7451, 1.0, 1.0),
+        t
+    );
 }

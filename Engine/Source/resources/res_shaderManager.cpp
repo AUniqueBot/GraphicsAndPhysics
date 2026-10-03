@@ -22,13 +22,18 @@ void ShaderManager::Init() {
 	ShaderHandle vtxShader = CreateShader(ShaderConstants::ShaderType::VERTEX, shaderSrc);
 	SetResourceAlias(vtxShader.GetResourceID(), ShaderConstants::C_ID_VERTEXSHADER);
 
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_SCREENTRIANGLESHADERPATH);
+	ShaderHandle vtxScreenShader = CreateShader(ShaderConstants::ShaderType::VERTEX, shaderSrc);
+	SetResourceAlias(vtxScreenShader.GetResourceID(), ShaderConstants::C_ID_SCREENTRIANGLESHADER);
+
+
 	// - error frag ------------------------------------------------------------------------
 
 	shaderSrc =
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_ERRORFRAGSHADERPATH);
 	ShaderHandle errFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
 	SetResourceAlias(errFragShader.GetResourceID(), ShaderConstants::C_ID_ERRORFRAGSHADER);
-
 
 	
 	// - lambert frag ----------------------------------------------------------------------
@@ -50,13 +55,21 @@ void ShaderManager::Init() {
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_BLINNPHONGFRAGSHADERPATH);
 	ShaderHandle blinnFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
 	SetResourceAlias(blinnFragShader.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
-	LOG_INFO("Initialised shader manager");
+
+	// - screen flat ------------------------------------------------------------------------
+	shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_SCREENFRAGSHADERPATH);
+	ShaderHandle screenFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(screenFragShader.GetResourceID(), ShaderConstants::C_ID_SCREENFLAT_SHADER);
+
+
 
 
 
 	// - creation ---------------------------------------------------------------------------
 
 	
+	LOG_INFO("Initialised shader manager");
 }
 
 void ShaderManager::Cleanup() {
@@ -153,16 +166,19 @@ void ShaderProgramManager::Init() {
 void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	// get shader resource ids.
 	RES_ID vtxShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_VERTEXSHADER);
+	RES_ID vtxScreenShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENTRIANGLESHADER);
 	RES_ID lambertFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_LAMBERTFRAGSHADER);
 	RES_ID phongFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_PHONGFRAGSHADER);
 	RES_ID blinnFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
 	RES_ID errorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
+	RES_ID screenFlatColorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENFLAT_SHADER);
 
 	// generate programs
 	ShaderProgramHandle lambert = CreateRenderShaderProgram({ vtxShaderRID, lambertFragShaderRID });
 	ShaderProgramHandle phong = CreateRenderShaderProgram({ vtxShaderRID, phongFragShaderRID });
 	ShaderProgramHandle blinn = CreateRenderShaderProgram({ vtxShaderRID, blinnFragShaderRID });
 	ShaderProgramHandle error = CreateRenderShaderProgram({ vtxShaderRID, errorFragShaderRID });
+	ShaderProgramHandle screenflat = CreateRenderShaderProgram({ vtxScreenShaderRID , screenFlatColorFragShaderRID });
 
 
 	// setup aliases.
@@ -170,6 +186,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	SetResourceAlias(phong.GetResourceID(), ShaderConstants::C_ID_PHONGSHADERPROG);
 	SetResourceAlias(blinn.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
 	SetResourceAlias(error.GetResourceID(), ShaderConstants::C_ID_ERRORSHADERPROG);
+	SetResourceAlias(screenflat.GetResourceID(), ShaderConstants::C_ID_SCREENFLATCOLORSHADERPROG);
 }
 
 void ShaderProgramManager::Cleanup() {

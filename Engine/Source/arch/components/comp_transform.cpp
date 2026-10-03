@@ -7,16 +7,16 @@
 #include <algorithm>
 
 Transform::Transform() {
-	LOG_INFO("Adding Transform Component");
+	//LOG_INFO("Adding Transform Component");
 }
 
 void Transform::Init() {
-	LOG_INFO("Init Transform Component");
+	//LOG_INFO("Init Transform Component");
 	m_scl = glm::vec3(1.f);
 }
 
 void Transform::End() {
-	LOG_INFO("End Transform Component");
+	//LOG_INFO("End Transform Component");
 }
 
 
