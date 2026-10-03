@@ -205,7 +205,7 @@ ShaderProgramHandle ShaderProgramManager::CreateRenderShaderProgram(RenderShader
 		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.geometryShader));
 		shaderPrg->SetShader(*shader);
 	}
-	if (_props.tesselationControlShader!= 0) {
+	if (_props.tesselationControlShader != 0) {
 		auto shader = std::static_pointer_cast<ShaderRes>(m_resourceManager.GetResource(_props.tesselationControlShader));
 		shaderPrg->SetShader(*shader);
 	}

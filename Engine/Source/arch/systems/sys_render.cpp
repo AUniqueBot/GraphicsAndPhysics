@@ -320,15 +320,21 @@ void RenderSystem::FillCommonUBO(
     const glm::mat4& _cameraMatrix, 
     const glm::mat4& _projectionMatrix, 
     const glm::vec3& _cameraPosition, 
-    const glm::vec3& _cameraForward, 
+    const glm::vec3& _cameraForward,
+    const glm::vec3& _cameraUp,
+    const float& _vfov,
+    const float& _aspect,
     const GLfloat& _deltaTime
 ) {
-    UBO& commonUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_COMMON);
+    UBO& commonUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_COMMON); 
     m_commonUboData.m_cameraMatrix = _cameraMatrix;
     m_commonUboData.m_projectionMatrix = _projectionMatrix;
     m_commonUboData.m_cameraPosition = _cameraPosition;
     m_commonUboData.m_cameraForward = _cameraForward;
     m_commonUboData.m_deltaTime = _deltaTime;
+    m_commonUboData.m_cameraVFov = _vfov; 
+    m_commonUboData.m_aspectRatio = _aspect;
+    m_commonUboData.m_cameraUp = _cameraUp;
     //commonUBO.BindBuffer();
     commonUBO.FillBufferData(&m_commonUboData);
 }
@@ -347,7 +353,7 @@ void RenderSystem::UnbindViewport(const Viewport& _viewport) {
         _viewport.GetRenderTarget()->Unbind();
     }
 }
-
+ 
 void RenderSystem::UpdateLightingData(const SceneRenderData& _scene) {
     for (const LightRenderable& renderable: _scene.lights) {
         Light& light = const_cast<Light&>(*renderable.light);
@@ -455,6 +461,9 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
         _vp.ProjectionMatrix(),
         _vp.Position(),
         _vp.Forward(),
+        _vp.Up(),
+        _vp.FieldOfView(),
+        _vp.AspectRatio(),
         static_cast<GLfloat>(Clock::DeltaTime())
     );
     UpdateLightingData(_scene);

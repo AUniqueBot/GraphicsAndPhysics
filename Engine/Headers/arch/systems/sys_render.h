@@ -33,10 +33,13 @@ constexpr unsigned CURRENT_MAX_LIGHT_COUNT	{ 20 };
 struct alignas(sizeof(glm::vec4)) CommonUBOData {
 	glm::mat4 m_cameraMatrix;			// 16
 	glm::mat4 m_projectionMatrix;		// 32
+
 	glm::vec3 m_cameraPosition;			
-	GLint _pad1;
+	GLfloat m_aspectRatio;
+	
 	glm::vec3 m_cameraForward;
-	GLint _pad2;
+	GLfloat m_cameraVFov;
+	
 	glm::vec3 m_cameraUp;
 	GLfloat m_deltaTime;
 };
@@ -127,6 +130,9 @@ public:
 		const glm::mat4& _projectionMatrix,
 		const glm::vec3& _cameraPosition,
 		const glm::vec3& _cameraForward,
+		const glm::vec3& _cameraUp,
+		const float& _vfov,
+		const float& _aspect,
 		const GLfloat& _deltaTime
 	);
 

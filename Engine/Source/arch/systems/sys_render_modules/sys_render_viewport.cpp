@@ -323,6 +323,11 @@ glm::vec3 Viewport::Forward() const {
 	return m_rotation * glm::vec3(0, 0, 1);
 }
 
+glm::vec3 Viewport::Up() const {
+	return m_rotation * glm::vec3(0, 1, 0);
+}
+
+
 // - camera projection ------------------------------------------------
 
 void Viewport::FieldOfView(float _verticalFovDeg) {

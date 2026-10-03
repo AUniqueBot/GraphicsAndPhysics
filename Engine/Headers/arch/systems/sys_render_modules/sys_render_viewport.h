@@ -47,6 +47,7 @@ public:
 	glm::vec3 RotationEuler() const;
 
 	glm::vec3 Forward() const;
+	glm::vec3 Up() const;
 
 
 	// - camera projection ----------------------------
