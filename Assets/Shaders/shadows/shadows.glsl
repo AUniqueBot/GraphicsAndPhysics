@@ -57,7 +57,9 @@ float PCF_Grid(
 
 
 float PCF_PoissonDisk(
-    vec2 position, 
+    vec2 position,
+    vec2 minBound,
+    vec2 maxBound,
     vec2 texelSize,
     int layerid,
     float filterRadius,
@@ -70,7 +72,7 @@ float PCF_PoissonDisk(
     float cosAngle = cos(angle);
     float sinAngle = sin(angle);
     
-    
+    float testedDepth = currentDepth - bias;
     for (int i = 0; i < 16; ++i) {
         vec2 rotatedDisk = poissonDisk[i];
 
@@ -78,9 +80,11 @@ float PCF_PoissonDisk(
             rotatedDisk.x * cosAngle - rotatedDisk.y * sinAngle,
             rotatedDisk.x * sinAngle + rotatedDisk.y * cosAngle
         );
-
+        // to worry about - Texel Size & size of thing.
         vec2 sampledPosition = poissonDisk[i] * texelSize * filterRadius;
-        float shadow = texture(shadowMap, vec4(sampledPosition + position, layerid, currentDepth - bias));
+        sampledPosition += position;
+        sampledPosition = clamp(sampledPosition, minBound, maxBound);
+        float shadow = texture(shadowMap, vec4(sampledPosition, layerid, testedDepth));
         accShadowVal += shadow;
     }
 
@@ -122,13 +126,23 @@ float CalculateDirectionalShadow(
     vec2 tileSpaceNormalized = tileSize / framebufferSize;
     vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
 
+    // bounds
+    vec2 minBound = tileOffset;
+    vec2 maxBound = tileOffset + tileSize;
+
+    // reference texel size
     vec2 texelSize = 1.0 / framebufferSize;
+    // texel size needs to account of the level.
+    float texelScale = tileSize.x / framebufferSize.x;  // we are assuming the tile size scale is constant!
+    texelSize *= texelScale;
 
     shadowLowest = PCF_PoissonDisk(
         coords,
+        minBound,
+        maxBound,
         texelSize,
         shadowId,
-        16,
+        4.0,
         fragClipSpace.z,
         bias,
         u_directionalShadowMap
@@ -136,6 +150,66 @@ float CalculateDirectionalShadow(
 
     // get distance away from camera
     // return vec3(coords, 0.0).x;
+    return shadowLowest;
+}
+
+float CalculatePointShadow(
+    ShadowData shadowData,
+    vec3 fragPosition,
+    vec3 lightPosition,
+    vec2 framebufferSize,
+    float bias
+) {
+    /*
+        texture is a 6 * 1 framebuffer
+        
+        [][][][][][]
+        
+        
+    */
+    vec3 dirVec = fragPosition - lightPosition;
+    float dist = length(dirVec);
+    // get greatest magnitude.
+    // [0|1], [2|3], [4|5]
+    // -x, +x, -y, +y, -z, +z
+    vec3 dirAbs = abs(dirVec);
+    int axis =
+        dirAbs.x >= dirAbs.y && dirAbs.x >= dirAbs.z ? 0 :
+        dirAbs.y >= dirAbs.x && dirAbs.y >= dirAbs.z ? 1 :
+        2;
+    int side = axis * 2 + (dirVec[axis] > 0.0 ? 1 : 0);
+
+
+    vec2 texelSize = 1.0 / framebufferSize;
+    vec2 tileSize = framebufferSize.yy;   // y is never extended.
+    float xoffset = (side * tileSize.x);
+    int shadowId = int(shadowData.lightTypeShadowId.y);
+
+    mat4 lightSpaceMatrix = shadowData.lightMatrix[side];
+    vec4 fragLightSpace = lightSpaceMatrix * vec4(fragPosition, 1.0);
+    vec3 fragClipSpace = fragLightSpace.xyz / fragLightSpace.w;
+    fragClipSpace = fragClipSpace * 0.5 + 0.5;
+
+
+    vec2 tileMinNormalized = vec2(xoffset, 0.0) / framebufferSize; // 0 - 1
+    vec2 tileSpaceNormalized = tileSize / framebufferSize;
+    vec2 coords = tileMinNormalized + tileSpaceNormalized * fragClipSpace.xy;
+    vec2 minBound = tileMinNormalized;
+    vec2 maxBound = vec2(xoffset + framebufferSize.y, framebufferSize.y) / framebufferSize;
+
+
+    float shadowLowest = PCF_PoissonDisk(
+        coords,
+        minBound,
+        maxBound,
+        texelSize,
+        shadowId,
+        4.0,
+        fragClipSpace.z,
+        bias,
+        u_pointLightShadowMap
+    );
+
     return shadowLowest;
 }
 

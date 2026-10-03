@@ -1,4 +1,12 @@
-// #version 460 core // hide on thing idk
+#version 460 core // hide on thing idk
+
+
+out VertexOutput {
+    vec3 frag_position;
+    vec3 frag_normal;
+    vec2 frag_uv;
+	vec3 frag_viewPosition;
+} VERTEXOUTPUT;
 
 out vec2 v_uv;
 const vec2 vertices[3] = vec2[](

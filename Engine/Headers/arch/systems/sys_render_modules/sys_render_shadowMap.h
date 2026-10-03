@@ -62,19 +62,19 @@ private:
 private:
 	glm::ivec2 m_framebufferSize			{ 2048, 2048 };
 	glm::ivec2 m_baseTileSize				{ 1024, 1024 };	// 2048, 1024, 512, 256
-	int m_layers							{ 8 };
+	int m_layers							{ 8 }; 
 	uint32_t m_fbo							{ 0 }; 
-	int m_miplevels					{ 4 };
+	int m_miplevels							{ 4 };
 	bool m_isBuilt							{ false };
 	mutable int m_currentBoundLayer			{ 0 };
-	int m_currentLayerCount			{ 0 }; 
+	int m_currentLayerCount					{ 0 }; 
 	std::vector<int> m_freeLayers			{ };
 	
 	// reference to texture in tex manager; to be created when render system is init.
 	Texture2DArrayHandle m_textureHandle	{ std::nullopt }; // needs a proper constructor.
-	bool m_initialized						{ false };
+	bool m_initialized						{ false }; 
 
 	int m_shadowUsageCount					{ 0 }; //
 
 	// texture layout for shadows is a 3x2.
-};
+}; 

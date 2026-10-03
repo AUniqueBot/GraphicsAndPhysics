@@ -230,7 +230,7 @@ float CalculateDirectionalShadow(
         maxBound,
         texelSize,
         shadowId,
-        16,
+        4.0,
         fragClipSpace.z,
         bias,
         u_directionalShadowMap
@@ -292,7 +292,7 @@ float CalculatePointShadow(
         maxBound,
         texelSize,
         shadowId,
-        16.0,
+        4.0,
         fragClipSpace.z,
         bias,
         u_pointLightShadowMap
@@ -444,7 +444,7 @@ void main() {
                     VERTEXOUTPUT.frag_position, 
                     VERTEXOUTPUT.frag_viewPosition, 
                     SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
-                    0.001
+                    0.01
                     );
                 diffL *= sValue;
                 specL *= sValue;

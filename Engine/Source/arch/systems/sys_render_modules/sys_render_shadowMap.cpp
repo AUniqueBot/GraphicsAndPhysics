@@ -6,11 +6,6 @@
 void ShadowMap::SetFramebufferSize(glm::ivec2 _res) {
 	if (_res != m_framebufferSize) {
 		m_framebufferSize = _res;
-
-		if (m_isBuilt && m_textureHandle.HandleIsValid()) {
-			Destroy();
-			BuildShadowMap();
-		}
 	}
 	
 }
@@ -31,8 +26,6 @@ const glm::ivec2& ShadowMap::GetBaseTileSize() const {
 void ShadowMap::SetLayers(unsigned _layers) {
 	if (_layers == m_layers) return;
 	m_layers = _layers;
-	Destroy();
-	BuildShadowMap();
 }
 
 unsigned ShadowMap::GetLayers() const {

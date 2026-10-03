@@ -228,7 +228,7 @@ float CalculateDirectionalShadow(
         maxBound,
         texelSize,
         shadowId,
-        16,
+        4.0,
         fragClipSpace.z,
         bias,
         u_directionalShadowMap
@@ -290,7 +290,7 @@ float CalculatePointShadow(
         maxBound,
         texelSize,
         shadowId,
-        16.0,
+        4.0,
         fragClipSpace.z,
         bias,
         u_pointLightShadowMap
@@ -374,7 +374,6 @@ void main() {
     LightingResult result = LightingResult(vec3(0), vec3(0), vec3(0));
     for (int i = 0; i < LIGHTPARAMS.m_lightCount; ++i) {
         LightData currentLight = LIGHTPARAMS.m_lightData[i];
-        int lightid = int(currentLight.attenuation_id.z);
         int ShadowID = int(currentLight.attenuation_id.z);
         int LightType = int(currentLight.position_type.w);
         vec3 LightDir = normalize(VERTEXOUTPUT.frag_position - currentLight.position_type.xyz);
@@ -442,7 +441,7 @@ void main() {
                     VERTEXOUTPUT.frag_position, 
                     VERTEXOUTPUT.frag_viewPosition, 
                     SHADOWPARAMS.directionalAtlasResAndTexelSize.xy, 
-                    0.001
+                    0.01
                     );
                 diffL *= sValue;
                 specL *= sValue;
