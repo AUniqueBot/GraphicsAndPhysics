@@ -37,7 +37,7 @@ uniform uint u_objectId;
     
 layout (location = 0) out vec4 out_color;
 layout (location = 1) out uint out_objectId;
-layout (location = 2) out vec4 out_litShadow;
+
 
 
 // ------------------------------------------------------------------------------------

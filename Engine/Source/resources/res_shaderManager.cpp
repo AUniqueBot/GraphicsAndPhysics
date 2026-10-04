@@ -60,7 +60,7 @@ void ShaderManager::Init() {
 	shaderSrc =
 		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_SCREENFRAGSHADERPATH);
 	ShaderHandle screenFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
-	SetResourceAlias(screenFragShader.GetResourceID(), ShaderConstants::C_ID_SCREENFLAT_SHADER);
+	SetResourceAlias(screenFragShader.GetResourceID(), ShaderConstants::C_ID_SCREENGRADIENT_SHADER);
 
 
 
@@ -171,14 +171,14 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	RES_ID phongFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_PHONGFRAGSHADER);
 	RES_ID blinnFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
 	RES_ID errorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
-	RES_ID screenFlatColorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENFLAT_SHADER);
+	RES_ID screenGradientColorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENGRADIENT_SHADER);
 
 	// generate programs
 	ShaderProgramHandle lambert = CreateRenderShaderProgram({ vtxShaderRID, lambertFragShaderRID });
 	ShaderProgramHandle phong = CreateRenderShaderProgram({ vtxShaderRID, phongFragShaderRID });
 	ShaderProgramHandle blinn = CreateRenderShaderProgram({ vtxShaderRID, blinnFragShaderRID });
 	ShaderProgramHandle error = CreateRenderShaderProgram({ vtxShaderRID, errorFragShaderRID });
-	ShaderProgramHandle screenflat = CreateRenderShaderProgram({ vtxScreenShaderRID , screenFlatColorFragShaderRID });
+	ShaderProgramHandle screenflat = CreateRenderShaderProgram({ vtxScreenShaderRID , screenGradientColorFragShaderRID });
 
 
 	// setup aliases.
@@ -186,7 +186,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	SetResourceAlias(phong.GetResourceID(), ShaderConstants::C_ID_PHONGSHADERPROG);
 	SetResourceAlias(blinn.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
 	SetResourceAlias(error.GetResourceID(), ShaderConstants::C_ID_ERRORSHADERPROG);
-	SetResourceAlias(screenflat.GetResourceID(), ShaderConstants::C_ID_SCREENFLATCOLORSHADERPROG);
+	SetResourceAlias(screenflat.GetResourceID(), ShaderConstants::C_ID_SCREENGRADIENTSHADERPROG);
 }
 
 void ShaderProgramManager::Cleanup() {

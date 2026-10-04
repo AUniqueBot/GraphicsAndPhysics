@@ -488,7 +488,7 @@ void RenderSystem::BackgroundRenderPass(SceneRenderData& _scene, const Viewport&
 
     ShaderProgramManager& spr{ Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
     
-    RES_ID id = spr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENFLATCOLORSHADERPROG);
+    RES_ID id = spr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENGRADIENTSHADERPROG);
     const auto& prg = spr.GetShaderProgram(id);
     if (!prg) {
         return;

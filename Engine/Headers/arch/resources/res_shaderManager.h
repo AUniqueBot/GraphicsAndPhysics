@@ -14,7 +14,7 @@ namespace ShaderConstants {
 	inline constexpr const char C_PATH_BLINNPHONGFRAGSHADERPATH[]	{ "./Assets/Shaders/frag_blinnphong.frag" };
 	inline constexpr const char C_PATH_ERRORFRAGSHADERPATH[]		{ "./Assets/Shaders/frag_error.frag" };
 
-	inline constexpr const char C_PATH_SCREENFRAGSHADERPATH[]		{ "./Assets/Shaders/screen_shaders/frag_flatcolor.frag" };
+	inline constexpr const char C_PATH_SCREENFRAGSHADERPATH[]		{ "./Assets/Shaders/screen_shaders/frag_skyboxGradient.frag" };
 	// - shader identifiers ---------------------------------------------------
 	inline constexpr const char C_ID_VERTEXSHADER[]					{ "C_VERTEX_SHADER" };
 	inline constexpr const char C_ID_SCREENTRIANGLESHADER[]			{ "C_SCREENTRIANGLE_SHADER" };
@@ -24,14 +24,14 @@ namespace ShaderConstants {
 	inline constexpr const char C_ID_BLINNPHONGFRAGSHADER[]			{ "C_BLINNPHONGFRAG_SHADER" };
 	inline constexpr const char C_ID_ERRORFRAGSHADER[]				{ "C_ERRORFRAG_SHADER" };
 	
-	inline constexpr const char C_ID_SCREENFLAT_SHADER[]			{ "C_SCREEN_FLATCOLOR" };
+	inline constexpr const char C_ID_SCREENGRADIENT_SHADER[]		{ "C_SCREEN_GRADIENTCOLOR" };
 	
 	// - shader Program -------------------------------------------------------
 	inline constexpr const char C_ID_LAMBERTSHADERPROG[]			{ "BRDF_LAMBERT" };
 	inline constexpr const char C_ID_PHONGSHADERPROG[]				{ "BRDF_PHONG" };
 	inline constexpr const char C_ID_BLINNPHONGSHADERPROG[]			{ "BRDF_BLINNPHONG" };
 	inline constexpr const char C_ID_ERRORSHADERPROG[]				{ "ERRORSHADER" };
-	inline constexpr const char C_ID_SCREENFLATCOLORSHADERPROG[]	{ "SCREEN_FLATCOLOR" };
+	inline constexpr const char C_ID_SCREENGRADIENTSHADERPROG[]		{ "SCREEN_GRADIENTCOLOR" };
 
 }
 
@@ -39,7 +39,7 @@ namespace MaterialConstants {
 	inline constexpr const char C_ID_LAMBERTSHADERPROG[]			{ "BRDF_LAMBERT" };
 	inline constexpr const char C_ID_PHONGSHADERPROG[]				{ "BRDF_PHONG" };
 	inline constexpr const char C_ID_BLINNPHONGSHADERPROG[]			{ "BRDF_BLINNPHONG" };
-	inline constexpr const char C_ID_SCREENFLATCOLORSHADERPROG[]	{ "SCREEN_FLATCOLOR" };
+	inline constexpr const char C_ID_SCREENGRADIENTCOLORSHADERPROG[]{ "SCREEN_GRADIENTCOLOR" };
 	inline constexpr const char C_ID_ERRORSHADERPROG[]				{ "ERRORSHADER" };
 }
 

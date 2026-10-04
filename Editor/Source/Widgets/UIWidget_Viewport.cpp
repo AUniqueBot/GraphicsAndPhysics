@@ -37,6 +37,8 @@ void UIWidget_Viewport::Draw() {
 		LOG_WARN("Render Target has no color attachments");
 		return;
 	}
+
+	// we don't want this (!)
 	const unsigned col = rt.GetColorAttachmentTextureID(0);
 	assert(glIsTexture(col));
 	ImGui::Image(

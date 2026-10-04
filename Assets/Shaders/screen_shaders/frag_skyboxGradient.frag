@@ -21,7 +21,7 @@ layout (std140, binding=0) uniform CommonUBO {
 
 layout (location = 0) out vec4 out_color;
 layout (location = 1) out uint out_objectId;
-layout (location = 2) out vec4 out_litShadow;
+// layout (location = 2) out vec4 out_litShadow;
 
 void main() {
     vec2 ndc = VERTEXOUTPUT.frag_uv * 2.0 - 1.0;
@@ -50,5 +50,5 @@ void main() {
     
     out_color = vec4(finalColor, 1.0);
     out_objectId = 0U; // Clean output for standard pass requirements
-    out_litShadow = vec4(0.0);
+    // out_litShadow = vec4(0.0);
 }

@@ -120,8 +120,17 @@ void RenderTarget::AddInitialColorAttachments() {
 		GL_NONE,
 		true
 	};
-	ColorAttachment outShadowRT{
-		"out_litShadow",
+	//ColorAttachment outShadowRT{
+	//	"out_litShadow",
+	//	ColorChannelLayout::RGBA,
+	//	ScalarType::UINT,
+	//	TextureFilter::LINEAR,
+	//	GL_NONE,
+	//	true
+	//};
+
+	ColorAttachment pingpong {
+		"out_color2",
 		ColorChannelLayout::RGBA,
 		ScalarType::UINT,
 		TextureFilter::LINEAR,
@@ -129,9 +138,10 @@ void RenderTarget::AddInitialColorAttachments() {
 		true
 	};
 
+
 	// must be added in sequence.
 	AddColorAttachment(outColor);
-	AddColorAttachment(outShadowRT);
+	//AddColorAttachment(outShadowRT);
 	AddColorAttachment(outObjectId);
 	
 	
