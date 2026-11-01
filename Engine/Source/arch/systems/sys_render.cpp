@@ -165,17 +165,7 @@ void RenderSystem::Init() {
     glEnable(GL_DEPTH_TEST);
     // - init viewport manager ------------------
 
-    Viewport::ViewportID vpId	{ m_viewportManager.CreateViewport() };
-    Viewport& viewport			{ *m_viewportManager.GetViewport(vpId)	};
-    RenderTargetManager::RenderTargetID rtId{ m_renderTargetManager.AddRenderTarget("Viewport",
-        viewport.ViewportDimensions()
-        ) };
-    RenderTarget& renderTarget  { *m_renderTargetManager.GetRenderTarget(rtId) };
-    std::shared_ptr<RenderTarget> rt{ std::make_shared<RenderTarget>(renderTarget) };
-    rt->AddInitialColorAttachments();
-    rt->Build();
-    viewport.SetRenderTarget(rt);
-
+    m_viewportManager.CreateViewport();
 
     SetupGLDebug();
     m_uboManager.Init();
@@ -256,7 +246,7 @@ void RenderSystem::Update() {
     
     // game render /
     for (const Viewport::ViewportID& id : vpRenderOrder) {
-        Viewport& currentViewport	{ *viewportMap.at(id ) };
+        Viewport& currentViewport	{ *viewportMap.at(id) };
         currentViewport.Update();
         Render(sceneRender, currentViewport); // replace with a single viewport.
     }
@@ -643,6 +633,40 @@ void RenderSystem::LightingRenderPass(SceneRenderData& _scene, const Viewport& _
     }
 
     glBindVertexArray(0);
+}
+
+void RenderSystem::GridOverlayPass(const Viewport& _vp) {
+    auto vp = _vp.GetRenderTarget();
+    if (!vp) return;
+    vp->Bind();
+
+    
+    ShaderProgramManager& spr{ Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
+    // needs 2 viewports. does a viewport 
+    RES_ID id = spr.GetResIDFromAlias(ShaderConstants::C_ID_GRIDOVERLAYPROG);
+    const auto& prg = spr.GetShaderProgram(id);
+    if (!prg) {
+        return;
+    }
+
+    glBindVertexArray(m_emptyVao.m_id);
+    glUseProgram(prg->GetShaderProgramID());
+
+
+
+    // bind textures here.
+    GLuint col = vp->GetColorAttachmentTextureID(0);
+    GLuint depth = vp->GetDepthAttachmentTextureID();
+    glBindTextureUnit(0, col);
+    glBindTextureUnit(1, depth);
+
+
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
 }
  
 void RenderSystem::RenderShadowsDirectionalLight(

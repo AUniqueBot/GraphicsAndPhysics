@@ -1,11 +1,11 @@
 #pragma once
 #include <pch.h>
 #include <arch/systems/sys_render_modules/sys_render_viewportManager.h>
+#include <arch/systems/sys_render_modules/sys_render_renderTargetManager.h>
 
 
 
-
-Viewport::ViewportID ViewportManager::CreateViewport() {
+Viewport::ViewportID ViewportManager::CreateViewportInternal() {
 	Viewport::ViewportID id	{ m_nextId };
 	std::shared_ptr<Viewport> newVP			{ std::make_shared<Viewport>(id) };
 	++m_nextId;
@@ -16,6 +16,50 @@ Viewport::ViewportID ViewportManager::CreateViewport() {
 
 	return id;
 }
+
+
+ViewportManager::ViewportManager(RenderTargetManager& _rtm) : m_renderTargetManager{ _rtm }
+{
+}
+
+Viewport::ViewportID ViewportManager::CreateViewport() {
+	RenderTargetManager& rtm = m_renderTargetManager;
+
+	Viewport::ViewportID vpId	{ CreateViewportInternal() };
+	Viewport& viewport			{ *GetViewport(vpId) };
+	std::string viewportName = "ViewportRT" + vpId;
+
+
+	RenderTargetManager::RenderTargetID rtId1 { 
+		rtm.AddRenderTarget(
+			viewport.ViewportDimensions(),
+			viewportName + "_p1"
+		) 
+	};
+
+	RenderTargetManager::RenderTargetID rtId2 {
+	rtm.AddRenderTarget(
+		viewport.ViewportDimensions(),
+		viewportName + "_p2"
+	)
+	};
+
+
+	RenderTarget& renderTarget1			{ *rtm.GetRenderTarget(rtId1) };
+	std::shared_ptr<RenderTarget> rt1	{ std::make_shared<RenderTarget>(renderTarget1) };
+	rt1->AddInitialColorAttachments();
+	rt1->Build();
+
+	RenderTarget& renderTarget2{ *rtm.GetRenderTarget(rtId2) };
+	std::shared_ptr<RenderTarget> rt2{ std::make_shared<RenderTarget>(renderTarget2) };
+	rt2->AddInitialColorAttachments();
+	rt2->Build();
+
+	viewport.SetPingPongRT(rt1, rt2);
+	return vpId;
+}
+
+
 
 std::shared_ptr<Viewport> ViewportManager::GetViewport(Viewport::ViewportID _id) {
 	return 
@@ -32,11 +76,13 @@ void ViewportManager::RemoveViewport(Viewport::ViewportID _id) {
 	);
 }
 
-std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportManager::ViewportList() {
+std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>>& 
+	ViewportManager::ViewportList() {
 	return m_viewports;
 }
 
-const std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportManager::ViewportList() const {
+const std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>>& 
+	ViewportManager::ViewportList() const {
 	return m_viewports;
 }
 

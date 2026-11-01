@@ -75,7 +75,6 @@ public:
 	void SetFaceRenderedDirection(Viewport::FACETORENDER _setting);
 
 	// run the logic to render one of the cameras.
-	void Render(const Viewport& _viewport);
 	
 private: 
 	
@@ -92,6 +91,8 @@ private:
 	void BackgroundRenderPass(SceneRenderData& _scene, const Viewport& _vp);
 	void ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp);
 	void LightingRenderPass(SceneRenderData& _scene, const Viewport& _vp);
+	void GridOverlayPass(const Viewport& _vp);
+
 
 	void RenderShadowsDirectionalLight(
 		const Viewport& _vp,
@@ -199,7 +200,7 @@ private:
 	GLint m_shadowLightLoc					{};
 
 	RenderTargetManager m_renderTargetManager;
-	ViewportManager m_viewportManager;
+	ViewportManager m_viewportManager	{ m_renderTargetManager };
 	Compositor m_compositor;
 	UBOManager m_uboManager;
 

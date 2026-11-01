@@ -42,7 +42,7 @@ void GPUVertexArrayObject::SetAttribute(
 	GLuint _arrayIndex, 
 	GLenum  _type, 
 	int _componentCount, 
-	bool _normalized, 
+	bool _normalized,  
 	int _offset
 ) {
 

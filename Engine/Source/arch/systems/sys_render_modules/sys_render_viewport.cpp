@@ -9,7 +9,7 @@ Viewport::Viewport(ViewportID _generatedId) :
 	m_vpId{ _generatedId }, 
 	m_projectionDirty{ true }, 
 	m_transformDirty{ true }, 
-	m_renderTarget{} {
+	m_renderTarget1{} {
 }
 
 void Viewport::Init() {
@@ -269,16 +269,36 @@ Viewport::ViewportID Viewport::ID() const {
 }
 
 std::shared_ptr<RenderTarget> Viewport::GetRenderTarget() {
-	return m_renderTarget;
+	return m_pingpong == 1 ? m_renderTarget1 : m_renderTarget2;
 }
 
 std::shared_ptr<const RenderTarget> Viewport::GetRenderTarget() const {
-	return m_renderTarget;
+	return m_pingpong == 1 ? m_renderTarget1 : m_renderTarget2;
 }
 
-void Viewport::SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget) {
-	m_renderTarget = _renderTarget;
+void Viewport::SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget, int _target) {
+	switch (_target) {
+	case 1: 
+		m_renderTarget1 = _renderTarget;
+		break;
+	case 2:
+		m_renderTarget2 = _renderTarget;
+		break;
+	}
 }
+
+void Viewport::SetPingPongRT(
+	std::shared_ptr<RenderTarget> _renderTarget1, 
+	std::shared_ptr<RenderTarget> _renderTarget2
+) {
+	m_renderTarget1 = _renderTarget1;
+	m_renderTarget2 = _renderTarget2;
+}
+
+void Viewport::Swap() {
+	m_pingpong = m_pingpong == 1 ? 2 : 1;
+}
+
 
 
 
@@ -385,8 +405,8 @@ const float& Viewport::AspectRatio() const {
 // - dynamic hidden functions ------------------------------------------
 
 void Viewport::Resize() {
-	if (!m_renderTarget) return;
-	RenderTarget& rt = *m_renderTarget;
+	if (!m_renderTarget1) return;
+	RenderTarget& rt = *m_renderTarget1;
 	rt.Resolution(m_viewportDimensions);
 }
 

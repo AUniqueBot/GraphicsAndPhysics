@@ -15,6 +15,7 @@ namespace ShaderConstants {
 	inline constexpr const char C_PATH_ERRORFRAGSHADERPATH[]		{ "./Assets/Shaders/frag_error.frag" };
 
 	inline constexpr const char C_PATH_SCREENFRAGSHADERPATH[]		{ "./Assets/Shaders/screen_shaders/frag_skyboxGradient.frag" };
+	inline constexpr const char C_PATH_GRIDOVERLAYFRAGSHADERPATH[]	{ "./Assets/Shaders/screen_shaders/frag_gridoverlay.frag" };
 	// - shader identifiers ---------------------------------------------------
 	inline constexpr const char C_ID_VERTEXSHADER[]					{ "C_VERTEX_SHADER" };
 	inline constexpr const char C_ID_SCREENTRIANGLESHADER[]			{ "C_SCREENTRIANGLE_SHADER" };
@@ -25,6 +26,7 @@ namespace ShaderConstants {
 	inline constexpr const char C_ID_ERRORFRAGSHADER[]				{ "C_ERRORFRAG_SHADER" };
 	
 	inline constexpr const char C_ID_SCREENGRADIENT_SHADER[]		{ "C_SCREEN_GRADIENTCOLOR" };
+	inline constexpr const char C_ID_GRIDOVERLAY_SHADER[]			{ "C_SCREEN_GRIDOVERLAY" };
 	
 	// - shader Program -------------------------------------------------------
 	inline constexpr const char C_ID_LAMBERTSHADERPROG[]			{ "BRDF_LAMBERT" };
@@ -32,6 +34,7 @@ namespace ShaderConstants {
 	inline constexpr const char C_ID_BLINNPHONGSHADERPROG[]			{ "BRDF_BLINNPHONG" };
 	inline constexpr const char C_ID_ERRORSHADERPROG[]				{ "ERRORSHADER" };
 	inline constexpr const char C_ID_SCREENGRADIENTSHADERPROG[]		{ "SCREEN_GRADIENTCOLOR" };
+	inline constexpr const char C_ID_GRIDOVERLAYPROG[]				{ "SCREEN_GRIDOVERLAY" };
 
 }
 
@@ -40,6 +43,8 @@ namespace MaterialConstants {
 	inline constexpr const char C_ID_PHONGSHADERPROG[]				{ "BRDF_PHONG" };
 	inline constexpr const char C_ID_BLINNPHONGSHADERPROG[]			{ "BRDF_BLINNPHONG" };
 	inline constexpr const char C_ID_SCREENGRADIENTCOLORSHADERPROG[]{ "SCREEN_GRADIENTCOLOR" };
+	
+	inline constexpr const char C_ID_GRIDOVERLAYSHADERPROG[]		{ "SCREEN_GRIDOVERLAY" };
 	inline constexpr const char C_ID_ERRORSHADERPROG[]				{ "ERRORSHADER" };
 }
 

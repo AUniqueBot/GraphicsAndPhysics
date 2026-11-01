@@ -63,6 +63,11 @@ void ShaderManager::Init() {
 	SetResourceAlias(screenFragShader.GetResourceID(), ShaderConstants::C_ID_SCREENGRADIENT_SHADER);
 
 
+	shaderSrc = 
+		shaderSrc =
+		ShaderUtilFunctions::ParseShaderCode(ShaderConstants::C_PATH_GRIDOVERLAYFRAGSHADERPATH);
+	ShaderHandle gridFragShader = CreateShader(ShaderConstants::ShaderType::FRAG, shaderSrc);
+	SetResourceAlias(gridFragShader.GetResourceID(), ShaderConstants::C_ID_GRIDOVERLAY_SHADER);
 
 
 
@@ -172,6 +177,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	RES_ID blinnFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_BLINNPHONGFRAGSHADER);
 	RES_ID errorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_ERRORFRAGSHADER);
 	RES_ID screenGradientColorFragShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENGRADIENT_SHADER);
+	RES_ID screenGridOverlayShaderRID = _shaderMgr.GetResIDFromAlias(ShaderConstants::C_ID_GRIDOVERLAY_SHADER);
 
 	// generate programs
 	ShaderProgramHandle lambert = CreateRenderShaderProgram({ vtxShaderRID, lambertFragShaderRID });
@@ -179,6 +185,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	ShaderProgramHandle blinn = CreateRenderShaderProgram({ vtxShaderRID, blinnFragShaderRID });
 	ShaderProgramHandle error = CreateRenderShaderProgram({ vtxShaderRID, errorFragShaderRID });
 	ShaderProgramHandle screenflat = CreateRenderShaderProgram({ vtxScreenShaderRID , screenGradientColorFragShaderRID });
+	ShaderProgramHandle gridoverlay = CreateRenderShaderProgram({ vtxScreenShaderRID , screenGridOverlayShaderRID });
 
 
 	// setup aliases.
@@ -187,6 +194,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	SetResourceAlias(blinn.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
 	SetResourceAlias(error.GetResourceID(), ShaderConstants::C_ID_ERRORSHADERPROG);
 	SetResourceAlias(screenflat.GetResourceID(), ShaderConstants::C_ID_SCREENGRADIENTSHADERPROG);
+	SetResourceAlias(gridoverlay.GetResourceID(), ShaderConstants::C_ID_GRIDOVERLAY_SHADER);
 }
 
 void ShaderProgramManager::Cleanup() {

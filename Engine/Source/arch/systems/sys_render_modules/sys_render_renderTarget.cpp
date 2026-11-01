@@ -105,7 +105,7 @@ void RenderTarget::AddInitialColorAttachments() {
 	ColorAttachment outColor{
 		"out_color",
 		ColorChannelLayout::RGBA,
-		ScalarType::UINT,
+		ScalarType::FLOAT, // upgrade to float for - PBR, HDR.
 		TextureFilter::LINEAR,
 		GL_NONE,
 		true
@@ -129,20 +129,13 @@ void RenderTarget::AddInitialColorAttachments() {
 	//	true
 	//};
 
-	ColorAttachment pingpong {
-		"out_color2",
-		ColorChannelLayout::RGBA,
-		ScalarType::UINT,
-		TextureFilter::LINEAR,
-		GL_NONE,
-		true
-	};
+	ColorAttachment pingpong = outColor;
 
 
 	// must be added in sequence.
-	AddColorAttachment(outColor);
-	//AddColorAttachment(outShadowRT);
 	AddColorAttachment(outObjectId);
+	AddColorAttachment(outColor);
+	AddColorAttachment(pingpong);
 	
 	
 	LOG_INFO(m_colorAttachments.size());
@@ -390,6 +383,16 @@ bool RenderTarget::VerifyFBOCompleteness() const {
 		LOG_ERROR("Framebuffer incomplete generation");
 	}
 	return framebufferComplete;
+}
+
+void RenderTarget::TogglePingPong() {
+	m_currentPingPongColorAttachmentID =
+		m_currentPingPongColorAttachmentID == 1u ?
+		2u : 1u;
+}
+
+GLuint RenderTarget::GetPingPongTexture() const {
+	return GetColorAttachmentTextureID(m_currentPingPongColorAttachmentID);
 }
 
 

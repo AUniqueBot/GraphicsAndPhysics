@@ -6,13 +6,20 @@ RenderTargetManager::~RenderTargetManager() {
 	}
 }
 
-RenderTargetManager::RenderTargetID RenderTargetManager::AddRenderTarget(std::string _name, glm::ivec2 _dimensions) {
+RenderTargetManager::RenderTargetID RenderTargetManager::AddRenderTarget(
+	glm::ivec2 _dimensions,
+	std::string _name
+) {
 	bool existingFreeID	{ m_freeRenderTargetID.size() > 0 };
 	const unsigned id = existingFreeID  ?
 		m_freeRenderTargetID.back() : m_renderTargetIdGenerator++;
 	if (existingFreeID) m_freeRenderTargetID.pop_back();
 	std::shared_ptr<RenderTarget> renderTarget = std::make_shared<RenderTarget>();
 	renderTarget->Resolution(_dimensions);
+
+	if (!_name.empty()) {
+		renderTarget->Name(_name);
+	}
 	//renderTarget->Create_DEC(_dimensions); // to be deprecated.
 	m_renderTargetMap.emplace(id, renderTarget);
 	return id;

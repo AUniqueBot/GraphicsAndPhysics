@@ -35,8 +35,8 @@ uniform float u_deltaTime;
 uniform uint u_objectId;
 
     
-layout (location = 0) out vec4 out_color;
-layout (location = 1) out uint out_objectId;
+layout (location = 0) out uint out_objectId;
+layout (location = 1) out vec4 out_color;
 
 
 

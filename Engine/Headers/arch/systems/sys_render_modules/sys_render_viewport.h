@@ -91,7 +91,19 @@ public:
 	// - render target handling -----------------------
 	std::shared_ptr<RenderTarget> GetRenderTarget();
 	std::shared_ptr<const RenderTarget> GetRenderTarget() const;
-	void SetRenderTarget(std::shared_ptr<RenderTarget> _renderTarget);
+	void SetRenderTarget(
+		std::shared_ptr<RenderTarget> _renderTarget,
+		int _target
+	);
+
+
+
+	void SetPingPongRT(
+		std::shared_ptr<RenderTarget> _renderTarget1,
+		std::shared_ptr<RenderTarget> _renderTarget2
+	);
+	void Swap();
+
 
 private:
 	void UpdateAttributes();
@@ -109,7 +121,10 @@ private:
 
 	ViewportID m_vpId;
 	// - render target ----------------------------------
-	std::shared_ptr<RenderTarget> m_renderTarget;
+	std::shared_ptr<RenderTarget> m_renderTarget1;
+	std::shared_ptr<RenderTarget> m_renderTarget2;
+	int m_pingpong					{ 1 };
+
 
 private:
 

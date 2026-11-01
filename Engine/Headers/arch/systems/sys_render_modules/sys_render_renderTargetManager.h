@@ -14,7 +14,7 @@ public:
 	RenderTargetManager() = default;
 	~RenderTargetManager();
 
-	RenderTargetID AddRenderTarget(std::string _name, glm::ivec2 _dimensions);
+	RenderTargetID AddRenderTarget(glm::ivec2 _dimensions, std::string _name = "Render Target");
 	std::shared_ptr<RenderTarget> GetRenderTarget(RenderTargetID _id);
 	void RemoveRenderTarget(RenderTargetID _rtId);
 

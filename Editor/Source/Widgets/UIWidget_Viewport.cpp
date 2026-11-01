@@ -39,7 +39,7 @@ void UIWidget_Viewport::Draw() {
 	}
 
 	// we don't want this (!)
-	const unsigned col = rt.GetColorAttachmentTextureID(0);
+	const unsigned col = rt.GetColorAttachmentTextureID(C_RENDER_MATERIAL);
 	assert(glIsTexture(col));
 	ImGui::Image(
 		(void*)(intptr_t)col, 

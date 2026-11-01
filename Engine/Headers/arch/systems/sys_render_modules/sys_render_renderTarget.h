@@ -15,8 +15,8 @@
 
 
 
-inline constexpr unsigned C_RENDER_MATERIAL	{ 0 };
-inline constexpr unsigned C_RENDER_OBJECTID	{ 1 };
+inline constexpr unsigned C_RENDER_OBJECTID	{ 0 };
+inline constexpr unsigned C_RENDER_MATERIAL	{ 1 }; // 1 or 2 depending if ping or pong has latest.
 
 
 class RenderTarget	 {
@@ -71,7 +71,7 @@ public:
 
 	unsigned PickPixel(
 		glm::vec2 _vec, 
-		unsigned _colorAttachment = C_RENDER_MATERIAL,
+		unsigned _colorAttachment,
 		glm::vec2 _readResolution = glm::vec2(1, 1)
 	) const;
 
@@ -80,6 +80,9 @@ public:
 	bool VerifyFBOCompleteness() const;
 
 
+	// - test ----------------------------------
+	void TogglePingPong();
+	GLuint GetPingPongTexture() const;
 
 private:
 	void Resize(glm::ivec2 _newDimensions);
@@ -92,7 +95,7 @@ private:
 	std::vector<unsigned> m_fboColor								{};	// color attachments
 	std::vector<ColorAttachment> m_colorAttachments					{};
 	unsigned m_currentColorAttachmentCounter						{};
-
+	unsigned m_currentPingPongColorAttachmentID						{ 1u };
 
 	// specific color attachments that must always be there.
 	DepthAttachment m_depthAttachment;	

@@ -3,17 +3,23 @@
 #include <arch/systems/sys_render_modules/sys_render_viewport.h>
 
 
+// fwd decl.
+class RenderTargetManager; 
+class RenderTarget;
+
 
 class ViewportManager {
 
+public:
+	ViewportManager(RenderTargetManager& _rtm);
 public:
 	Viewport::ViewportID CreateViewport();
 	std::shared_ptr<Viewport> GetViewport(Viewport::ViewportID _id);
 	
 	void RemoveViewport(Viewport::ViewportID _id);
 
-	std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList();
-	const std::map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList() const;
+	std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList();
+	const std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>>& ViewportList() const;
 
 
 
@@ -23,17 +29,21 @@ public:
 	const std::vector<Viewport::ViewportID>& ViewportRenderOrderList() const;
 
 private:
+	Viewport::ViewportID CreateViewportInternal();
 
 	void SortRenderOrder();
 
 private:
+	RenderTargetManager& m_renderTargetManager;
+
+
+private:
+
 	bool m_orderDirty								{ true };
 
 	glm::vec2 m_sensitivity							{ 1, 1 };
 
 	Viewport::ViewportID m_nextId					{ 1 };
-	std::map<Viewport::ViewportID, std::shared_ptr<Viewport>> m_viewports;
+	std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>> m_viewports;
 	std::vector<Viewport::ViewportID> m_viewportIndexRenderOrder;
-
-
 };
