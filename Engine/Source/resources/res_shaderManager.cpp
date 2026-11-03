@@ -194,7 +194,7 @@ void ShaderProgramManager::InitShaderPrograms(ShaderManager& _shaderMgr) {
 	SetResourceAlias(blinn.GetResourceID(), ShaderConstants::C_ID_BLINNPHONGSHADERPROG);
 	SetResourceAlias(error.GetResourceID(), ShaderConstants::C_ID_ERRORSHADERPROG);
 	SetResourceAlias(screenflat.GetResourceID(), ShaderConstants::C_ID_SCREENGRADIENTSHADERPROG);
-	SetResourceAlias(gridoverlay.GetResourceID(), ShaderConstants::C_ID_GRIDOVERLAY_SHADER);
+	SetResourceAlias(gridoverlay.GetResourceID(), ShaderConstants::C_ID_GRIDOVERLAYPROG);
 }
 
 void ShaderProgramManager::Cleanup() {

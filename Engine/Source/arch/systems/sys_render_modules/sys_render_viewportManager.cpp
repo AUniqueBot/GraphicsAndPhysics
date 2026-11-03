@@ -48,11 +48,13 @@ Viewport::ViewportID ViewportManager::CreateViewport() {
 	RenderTarget& renderTarget1			{ *rtm.GetRenderTarget(rtId1) };
 	std::shared_ptr<RenderTarget> rt1	{ std::make_shared<RenderTarget>(renderTarget1) };
 	rt1->AddInitialColorAttachments();
+	rt1->SetupDepthAttachment();
 	rt1->Build();
 
 	RenderTarget& renderTarget2{ *rtm.GetRenderTarget(rtId2) };
 	std::shared_ptr<RenderTarget> rt2{ std::make_shared<RenderTarget>(renderTarget2) };
 	rt2->AddInitialColorAttachments();
+	rt2->SetupDepthAttachment();
 	rt2->Build();
 
 	viewport.SetPingPongRT(rt1, rt2);

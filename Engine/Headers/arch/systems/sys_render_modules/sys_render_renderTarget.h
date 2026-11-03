@@ -53,6 +53,7 @@ public:
 	
 
 	void AddInitialColorAttachments();
+	void SetupDepthAttachment(); // basic depth attachment;
 	bool AddColorAttachment(ColorAttachment _colAttachment);
 	bool SetDepthAttachment(DepthAttachment _depthAttachment);
 	size_t GetColorAttachmentCount() const { return m_colorAttachments.size(); }
@@ -99,7 +100,6 @@ private:
 
 	// specific color attachments that must always be there.
 	DepthAttachment m_depthAttachment;	
-	unsigned m_fboDepth												{}; // depth attachment
 
 	bool m_isValid													{};
 

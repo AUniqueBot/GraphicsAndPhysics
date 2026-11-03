@@ -91,19 +91,22 @@ public:
 	// - render target handling -----------------------
 	std::shared_ptr<RenderTarget> GetRenderTarget();
 	std::shared_ptr<const RenderTarget> GetRenderTarget() const;
+
+
+	std::shared_ptr<const RenderTarget> GetPingRenderTarget() const;
+	std::shared_ptr<const RenderTarget> GetPongRenderTarget() const;
+	
 	void SetRenderTarget(
 		std::shared_ptr<RenderTarget> _renderTarget,
 		int _target
 	);
 
-
-
 	void SetPingPongRT(
 		std::shared_ptr<RenderTarget> _renderTarget1,
 		std::shared_ptr<RenderTarget> _renderTarget2
 	);
-	void Swap();
-
+	void Swap() const;
+	int CurrentSwapBuffer() const;
 
 private:
 	void UpdateAttributes();
@@ -123,7 +126,7 @@ private:
 	// - render target ----------------------------------
 	std::shared_ptr<RenderTarget> m_renderTarget1;
 	std::shared_ptr<RenderTarget> m_renderTarget2;
-	int m_pingpong					{ 1 };
+	mutable int m_pingpong					{ 1 };
 
 
 private:

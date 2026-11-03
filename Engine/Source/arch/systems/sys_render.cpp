@@ -307,7 +307,7 @@ void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
 }
 
 void RenderSystem::FillCommonUBO( 
-    const glm::mat4& _cameraMatrix, 
+    const glm::mat4& _viewMatrix, 
     const glm::mat4& _projectionMatrix, 
     const glm::vec3& _cameraPosition, 
     const glm::vec3& _cameraForward,
@@ -317,7 +317,7 @@ void RenderSystem::FillCommonUBO(
     const GLfloat& _deltaTime
 ) {
     UBO& commonUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_COMMON); 
-    m_commonUboData.m_cameraMatrix = _cameraMatrix;
+    m_commonUboData.m_cameraMatrix = _viewMatrix;
     m_commonUboData.m_projectionMatrix = _projectionMatrix;
     m_commonUboData.m_cameraPosition = _cameraPosition;
     m_commonUboData.m_cameraForward = _cameraForward;
@@ -467,8 +467,10 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
 
     FillLightBufferUBO(_scene);
     FillShadowMapUBO(_scene);
-
     LightingRenderPass(_scene, _vp);
+
+    GridOverlayPass(_vp);
+
     EndViewportPass(_vp);
 } 
 
@@ -638,35 +640,40 @@ void RenderSystem::LightingRenderPass(SceneRenderData& _scene, const Viewport& _
 void RenderSystem::GridOverlayPass(const Viewport& _vp) {
     auto vp = _vp.GetRenderTarget();
     if (!vp) return;
-    vp->Bind();
 
-    
-    ShaderProgramManager& spr{ Core::GetInstance().GetAssetManager().GetShaderProgramManager() };
-    // needs 2 viewports. does a viewport 
+    ShaderProgramManager& spr = Core::GetInstance().GetAssetManager().GetShaderProgramManager();
     RES_ID id = spr.GetResIDFromAlias(ShaderConstants::C_ID_GRIDOVERLAYPROG);
     const auto& prg = spr.GetShaderProgram(id);
     if (!prg) {
         return;
     }
 
-    glBindVertexArray(m_emptyVao.m_id);
-    glUseProgram(prg->GetShaderProgramID());
+    // 
+    auto ping = _vp.GetRenderTarget();
+    GLuint col = ping->GetColorAttachmentTextureID(C_RENDER_MATERIAL);
+    GLuint depth = ping->GetDepthAttachmentTextureID();
+    GLuint objId = ping->GetColorAttachmentTextureID(C_RENDER_OBJECTID);
+    
+    // swap to new buffer.
 
-
-
-    // bind textures here.
-    GLuint col = vp->GetColorAttachmentTextureID(0);
-    GLuint depth = vp->GetDepthAttachmentTextureID();
+    // submitting uniforms.    
     glBindTextureUnit(0, col);
     glBindTextureUnit(1, depth);
+    glBindTextureUnit(2, objId);
 
+    // rendering
+    _vp.Swap(); 
+    _vp.GetRenderTarget()->Bind(); 
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(m_emptyVao.m_id);
+    glUseProgram(prg->GetShaderProgramID()); 
+    glDrawArrays(GL_TRIANGLES, 0, 3); 
     glBindVertexArray(0);
 
     glDepthMask(GL_TRUE);
-    glEnable(GL_DEPTH_TEST);
-
+    glEnable(GL_DEPTH_TEST); 
 }
  
 void RenderSystem::RenderShadowsDirectionalLight(

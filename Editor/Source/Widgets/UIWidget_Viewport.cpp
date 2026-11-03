@@ -42,7 +42,7 @@ void UIWidget_Viewport::Draw() {
 	const unsigned col = rt.GetColorAttachmentTextureID(C_RENDER_MATERIAL);
 	assert(glIsTexture(col));
 	ImGui::Image(
-		(void*)(intptr_t)col, 
+		(void*)(intptr_t)col,
 		sizeIm, 
 		// image is flipped
 		ImVec2(0, 1), // top-left in texture
@@ -50,16 +50,16 @@ void UIWidget_Viewport::Draw() {
 	);
 
 	m_imgMin = ImGui::GetItemRectMin();
-	m_imgMax = ImGui::GetItemRectMax();
+	m_imgMax = ImGui::GetItemRectMax(); 
 
-	RenderGizmo();
-	RenderLightHelpers();
-	if (BeginDragDropTarget()) {
+	RenderGizmo(); 
+	RenderLightHelpers(); 
+	if (BeginDragDropTarget()) {  
 		EndDragDropTarget();
-	}
+	} 
 
 }
-
+   
 void UIWidget_Viewport::Exit() {
 }
 
@@ -71,12 +71,12 @@ void UIWidget_Viewport::ResizeCallback() const {
 	static ImVec2 lastSize{};
 	ImVec2 currentSize = ImGui::GetContentRegionAvail();
 	if (!currentSize.x || !currentSize.y) return;// resize to dims 0 willl result in an empty buffer.
-
+	 
 	if (currentSize.x != lastSize.x || currentSize.y != lastSize.y) {
 		vp.ViewportDimensions({ currentSize.x, currentSize.y });
 		vp.AspectRatio(currentSize.x / currentSize.y);
 		lastSize = currentSize;
-	}
+	} 
 
 }
 
@@ -89,7 +89,7 @@ void UIWidget_Viewport::RenderGizmo() const {
 	// Get the size of the child window
 	ImVec2 viewportMin{ ImGui::GetItemRectMin() };
 	ImVec2 viewportMax{ ImGui::GetItemRectMax() };
-
+	 
 
 	ImVec2 panelSize{
 		(viewportMax.x - viewportMin.x),

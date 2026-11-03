@@ -47,3 +47,4 @@ private:
 	std::unordered_map<Viewport::ViewportID, std::shared_ptr<Viewport>> m_viewports;
 	std::vector<Viewport::ViewportID> m_viewportIndexRenderOrder;
 };
+	

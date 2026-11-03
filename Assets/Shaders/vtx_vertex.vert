@@ -6,7 +6,7 @@ layout (location = 1) in vec3 a_normal;
 layout (location = 2) in vec2 a_uv;
 
 layout (std140, binding=0) uniform CommonUBO {
-	mat4 cameraMatrix;			// 16
+	mat4 viewMatrix;			// 16
 	mat4 projectionMatrix;		// 32
 	vec3 cameraPosition;			
 	float aspectRatio;
@@ -32,7 +32,7 @@ out VertexOutput {
 
 void main(){
     vec4 worldPos = OBJECTPARAMS.objectMatrix * vec4(a_position, 1.0);
-	vec4 viewPos = COMMONPARAMS.cameraMatrix * worldPos;
+	vec4 viewPos = COMMONPARAMS.viewMatrix * worldPos;
     gl_Position = COMMONPARAMS.projectionMatrix * viewPos;
 
     mat3 normalMatrix = transpose(inverse(mat3(OBJECTPARAMS.objectMatrix)));

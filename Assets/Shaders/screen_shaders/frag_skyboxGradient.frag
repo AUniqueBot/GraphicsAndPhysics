@@ -11,7 +11,7 @@ in VertexOutput {
 
 
 layout (std140, binding=0) uniform CommonUBO {
-	mat4 cameraMatrix;			// 16
+	mat4 viewMatrix;			// 16
 	mat4 projectionMatrix;		// 32
 	vec3 cameraPosition;			
 	float aspectRatio;
@@ -20,11 +20,6 @@ layout (std140, binding=0) uniform CommonUBO {
 	vec3 cameraUp;
 	float deltaTime;
 } COMMONPARAMS;
-
-// don't worry about 
-
-uniform sampler2D u_color;
-uniform sampler2D u_depth;
 
 
 layout (location = 0) out vec4 out_color;
@@ -47,15 +42,15 @@ Ray generateray() {
     vec3 viewRay = vec3(
         ndc.x * halfWidth,
         ndc.y * halfHeight,
-        1.0
+        -1.0
     );
-    vec3 rayDirection = normalize(
-        mat3(COMMONPARAMS.cameraMatrix) * viewRay
-    );
+
+    mat3 viewToWorldRotation = transpose(mat3(COMMONPARAMS.viewMatrix));
+    vec3 rayDirection = normalize(viewToWorldRotation * viewRay);
 
     Ray ray = Ray(
         rayDirection,
-        VERTEXOUTPUT.frag_viewPosition
+        COMMONPARAMS.cameraPosition
     );
 
 

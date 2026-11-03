@@ -30,8 +30,8 @@ void RenderTarget::Resize(glm::ivec2 _newDimensions) {
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, nullptr);
 	}
 
-	if (m_fboDepth) {
-		glBindTexture(GL_TEXTURE_2D, m_fboDepth);
+	if (m_depthAttachment.m_textureId) {
+		glBindTexture(GL_TEXTURE_2D, m_depthAttachment.m_textureId);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
 	}
 	 
@@ -96,12 +96,12 @@ unsigned RenderTarget::GetColorAttachmentTextureID(unsigned _index) const {
 }
 
 unsigned RenderTarget::GetDepthAttachmentTextureID() const {
-	return m_fboDepth;
+	return m_depthAttachment.m_textureId;
 }
 
 
 void RenderTarget::AddInitialColorAttachments() {
-	// 01
+	// 00
 	ColorAttachment outColor{
 		"out_color",
 		ColorChannelLayout::RGBA,
@@ -111,7 +111,7 @@ void RenderTarget::AddInitialColorAttachments() {
 		true
 	};
 
-	// 02 
+	// 01
 	ColorAttachment outObjectId{
 		"out_objectId",
 		ColorChannelLayout::RED,
@@ -135,10 +135,23 @@ void RenderTarget::AddInitialColorAttachments() {
 	// must be added in sequence.
 	AddColorAttachment(outObjectId);
 	AddColorAttachment(outColor);
-	AddColorAttachment(pingpong);
+	//AddColorAttachment(pingpong);
 	
 	
 	LOG_INFO(m_colorAttachments.size());
+}
+
+void RenderTarget::SetupDepthAttachment() {
+	// set up depth attachment 24
+	DepthAttachment depth{
+		"depthBuffer",
+		DepthChannelLayout::DEPTH_STENCIL,
+		ScalarType::UINT,
+		TextureFilter::LINEAR,
+		GL_WRAP_BORDER,
+		true
+	}; 
+	SetDepthAttachment(depth);
 }
 
 bool RenderTarget::AddColorAttachment(ColorAttachment _colAttachment) {
@@ -235,8 +248,21 @@ bool RenderTarget::Build() {
 			const GLFormat& data = C_DEPTH_FORMAT_LOOKUPTABLE.at(key); 
 			glGenTextures(1, &m_depthAttachment.m_textureId);
 			glBindTexture(GL_TEXTURE_2D, m_depthAttachment.m_textureId);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+
 			glTexImage2D(GL_TEXTURE_2D, 0, data.internalFormat, width, height, 0, data.format, data.scalarType, nullptr);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, depthAttachmentType, GL_TEXTURE_2D, m_depthAttachment.m_textureId, 0);
+			glFramebufferTexture2D(
+				GL_FRAMEBUFFER, 
+				depthAttachmentType, 
+				GL_TEXTURE_2D, 
+				m_depthAttachment.m_textureId, 
+				0
+			);
 		}
 	}
 	else {
