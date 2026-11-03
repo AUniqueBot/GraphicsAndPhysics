@@ -415,6 +415,14 @@ const float& Viewport::AspectRatio() const {
 }
 
 
+void Viewport::Gamma(float _gamma) {
+	if (m_gamma == _gamma) return;
+	m_gamma = _gamma;
+}
+const float& Viewport::Gamma() const {
+	return m_gamma;
+}
+
 
 // - dynamic hidden functions ------------------------------------------
 

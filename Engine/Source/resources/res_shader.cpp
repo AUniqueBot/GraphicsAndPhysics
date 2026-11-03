@@ -244,6 +244,10 @@ void ShaderProgramRes::Destroy(){
 	m_shaderProgramId = 0;
 }
 
+GLint ShaderProgramRes::GetUniformLocation(const std::string& _uniformName) const {
+	return glGetUniformLocation(m_shaderProgramId, _uniformName.c_str());
+}
+
 std::vector<GLuint> ShaderProgramRes::GetShaderIDList() const {
 	bool hasFragShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::FRAG);
 	bool hasVertexShader = (bool)m_shaderIds.at(ShaderConstants::ShaderType::VERTEX);

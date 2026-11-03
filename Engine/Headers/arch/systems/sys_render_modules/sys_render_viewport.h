@@ -63,6 +63,10 @@ public:
 	void AspectRatio(float _aspectRatio);
 	const float& AspectRatio() const;
 
+
+	void Gamma(float _gamma);
+	const float& Gamma() const;
+
 	// - matrix ---------------------------------------
 	const glm::mat4& CameraMatrix() const;
 	const glm::mat4& ProjectionMatrix() const;
@@ -147,15 +151,17 @@ private:
 	float m_farClip					{ 1000.0f };
 
 	float m_aspectRatio				{ 16.f/9.f };
-	
+
+
 	bool m_isOrthographic			{ false };
 	float m_verticalFOV				{ 60.0f };
 	float m_orthoScale				{ 1.0f };
 
-
 	bool m_projectionDirty			{ true };
 	glm::mat4 m_projectionMatrix	{ 1.f };
 
+
+	float m_gamma					{ 2.2f };
 	FACETORENDER m_faceToRender		{ FRONTANDBACK };
 	RENDERMODE	m_renderMode		{ FILL };
 };

@@ -471,6 +471,9 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
 
     GridOverlayPass(_vp);
 
+
+    GammaCorrectionPass(_vp);
+
     EndViewportPass(_vp);
 } 
 
@@ -657,9 +660,9 @@ void RenderSystem::GridOverlayPass(const Viewport& _vp) {
     // swap to new buffer.
 
     // submitting uniforms.    
-    glBindTextureUnit(0, col);
-    glBindTextureUnit(1, depth);
-    glBindTextureUnit(2, objId);
+    glBindTextureUnit(0, objId);
+    glBindTextureUnit(1, col);
+    glBindTextureUnit(2, depth);
 
     // rendering
     _vp.Swap(); 
@@ -676,6 +679,85 @@ void RenderSystem::GridOverlayPass(const Viewport& _vp) {
     glEnable(GL_DEPTH_TEST); 
 }
  
+void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
+    
+    // i'm getting tired of making
+    static GLint gammaCorrectionPrg = 0;
+    static GLint gammaCorrectionValueLoc = -1;
+    if (!gammaCorrectionPrg) {
+        Core& c = Core::GetInstance();
+
+        ShaderManager& shr = c.GetAssetManager().GetShaderManager();
+        ShaderProgramManager& spr = c.GetAssetManager().GetShaderProgramManager();
+        
+        std::string gammaCorrectionCode = R"(
+            #version 460 core
+
+            in VertexOutput {
+                vec3 frag_position;
+                vec3 frag_normal;
+                vec2 frag_uv;
+                vec3 frag_viewPosition;
+            } VERTEXOUTPUT;
+
+            layout(location = 0) uniform usampler2D u_objId;
+            layout(location = 1) uniform sampler2D u_color;
+            uniform float u_gamma;
+
+            layout(location = 0) out uint out_objectId;
+            layout(location = 1) out vec4 out_color;
+
+            void main() {
+                vec2 uv = VERTEXOUTPUT.frag_uv;
+
+                vec4 col = texture(u_color, uv);
+
+                out_objectId = texture(u_objId, uv).r;
+
+                out_color = vec4(
+                    pow(col.rgb, vec3(1.0 / u_gamma)),
+                    col.a
+                );
+            }
+        )";
+        
+        // create program
+        RES_ID gcFragShader = shr.CreateShader(ShaderConstants::ShaderType::FRAG, gammaCorrectionCode).GetResourceID();
+        RES_ID trisResID = shr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENTRIANGLESHADER);
+        
+        ShaderProgramHandle gammaCorrector = spr.CreateRenderShaderProgram({trisResID, gcFragShader });
+        // find location of uniform
+        gammaCorrectionPrg = gammaCorrector->GetShaderProgramID();
+        gammaCorrectionValueLoc = glGetUniformLocation(gammaCorrectionPrg, "u_gamma");
+    }
+
+    // ping to pong.
+
+    _vp.Swap();
+    auto rtFrom = _vp.GetPongRenderTarget();
+    auto rtTo = _vp.GetPingRenderTarget();
+    GLuint col = rtFrom->GetColorAttachmentTextureID(C_RENDER_MATERIAL);
+    GLuint id = rtFrom->GetColorAttachmentTextureID(C_RENDER_OBJECTID);
+
+    // bind uniforms.
+    glBindTextureUnit(0, col);
+    glBindTextureUnit(1, id);
+    glProgramUniform1f(gammaCorrectionPrg, gammaCorrectionValueLoc, _vp.Gamma());
+    rtTo->Bind();
+
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindVertexArray(m_emptyVao.m_id);
+    glUseProgram(gammaCorrectionPrg);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glBindVertexArray(0);
+
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+}
+
 void RenderSystem::RenderShadowsDirectionalLight(
     const Viewport& _vp, 
     const LightRenderable& _light, 
@@ -863,6 +945,17 @@ void RenderSystem::DebugRenderPass(const unsigned& textureId) {
     glBindTexture(GL_TEXTURE_2D_ARRAY, textureId);
     glUniform1i(glGetUniformLocation(m_planeShader, "u_texture"), 0);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+
+void RenderSystem::Gamma(const float& _gamma) {
+    if (m_gamma == _gamma) {
+        return;
+    }
+    m_gamma = _gamma;
+}
+
+const float& RenderSystem::Gamma() const {
+    return m_gamma;
 }
 
 // ------------------------------------------------------------------------------------

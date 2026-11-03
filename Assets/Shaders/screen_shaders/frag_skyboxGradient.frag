@@ -22,6 +22,12 @@ layout (std140, binding=0) uniform CommonUBO {
 } COMMONPARAMS;
 
 
+// skybox gradient UBO
+
+layout (std140, binding=1) uniform SkyboxUBO {
+    vec3 sunDirection;
+} SKYBOXPARAMS;
+
 layout (location = 0) out vec4 out_color;
 
 
@@ -44,7 +50,7 @@ Ray generateray() {
         ndc.y * halfHeight,
         -1.0
     );
-
+    SKYBOXPARAMS;
     mat3 viewToWorldRotation = transpose(mat3(COMMONPARAMS.viewMatrix));
     vec3 rayDirection = normalize(viewToWorldRotation * viewRay);
 

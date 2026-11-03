@@ -23,20 +23,43 @@ void UIWidget_Viewport::Draw() {
 	Viewport & vp = *m_viewportPointer.get();
 	if (!vp.GetRenderTarget()) return;
 	RenderTarget& rt = *vp.GetRenderTarget();
-
-	ResizeCallback();
-	if (!rt.VerifyFBOCompleteness()) return;
-		
-
-	// unlike the other widgets, clicking here is allowed.
-	const glm::ivec2& sizeGL = vp.ViewportDimensions();
-	ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
-	if (!sizeIm.x || !sizeIm.y || !rt.VerifyFBOCompleteness()) return;
-
+	if (!rt.VerifyFBOCompleteness()) return;		
 	if (rt.GetColorAttachmentCount() == 0) {
 		LOG_WARN("Render Target has no color attachments");
 		return;
 	}
+
+
+	// top bar
+	PushItemWidth(85.0f);
+	float value = vp.Gamma();
+	if (DragFloat("Gamma", &value, 0.01f, 0.1f, 4.0f, "%.2f")) {
+		vp.Gamma(value);
+	}
+	SameLine();
+	value = vp.NearClip();
+	if (DragFloat("Near", &value, 0.01f, 0.001f, vp.FarClip() - 0.001f, "%.3f")) {
+		vp.NearClip(value);
+	}
+
+	SameLine();
+	value = vp.FarClip();
+	if (DragFloat("Far", &value, 1.0f, vp.NearClip() + 0.001f, 100000.0f, "%.1f")) {
+		vp.FarClip(value);
+	}
+
+	SameLine();
+	value = vp.FieldOfView();
+	if (DragFloat("VFOV", &value, 0.5f, 1.0f, 179.0f, "%.1f")) {
+		vp.FieldOfView(value);
+	}
+	PopItemWidth();
+
+	ResizeCallback();
+	// unlike the other widgets, clicking here is allowed.
+	const glm::ivec2& sizeGL = vp.ViewportDimensions();
+	ImVec2 sizeIm = { static_cast<float>(sizeGL.x), static_cast<float>(sizeGL.y) };
+	if (!sizeIm.x || !sizeIm.y) return;
 
 	// we don't want this (!)
 	const unsigned col = rt.GetColorAttachmentTextureID(C_RENDER_MATERIAL);

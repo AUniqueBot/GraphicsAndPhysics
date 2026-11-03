@@ -62,7 +62,7 @@ public:
 	void Stop()			override { LOG_INFO("Stop"); };
 	void Cleanup()		override { m_directionalShadowMaps.Destroy(); LOG_INFO("Cleaning up shadow map");  };
 
-
+	
 
 	//void Render(GraphicsInterface& _graphicsInterface);
 
@@ -88,10 +88,20 @@ private:
 	void SetupRenderSettings(const Viewport& _viewport);
 
 	void Render(SceneRenderData& _scene, const Viewport& _vp);
+	
+	// pre pass
 	void BackgroundRenderPass(SceneRenderData& _scene, const Viewport& _vp);
+	
+	// passes
 	void ShadowRenderPass(SceneRenderData& _scene, const Viewport& _vp);
 	void LightingRenderPass(SceneRenderData& _scene, const Viewport& _vp);
+	
+	// post processing
 	void GridOverlayPass(const Viewport& _vp);
+	void GammaCorrectionPass(const Viewport& _vp);
+
+
+
 
 
 	void RenderShadowsDirectionalLight(
@@ -148,6 +158,11 @@ public:
 	void DebugRenderPass(const unsigned& );
 
 public:
+	void Gamma(const float& _gamma);
+	const float& Gamma() const;
+
+
+public:
 
 
 	ViewportManager& GetViewportManager();
@@ -189,6 +204,9 @@ private:
 
 private:
 	const unsigned m_maxLightCount			{ C_MAX_LIGHT_COUNT_LOW };
+	float m_gamma							{ 2.2f };
+
+private:
 	
 	// shadow handling.
 

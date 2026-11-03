@@ -103,6 +103,8 @@ public:
 	void Build();
 	void Destroy() override;
 
+
+	GLint GetUniformLocation(const std::string& _uniformName) const;
 private:
 
 	std::vector<GLuint> GetShaderIDList() const;
