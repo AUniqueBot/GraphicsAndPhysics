@@ -6,13 +6,15 @@ layout (location = 1) in vec3 a_normal;
 layout (location = 2) in vec2 a_uv;
 
 layout (std140, binding=0) uniform CommonUBO {
-	mat4 viewMatrix;			// 16
+	mat4 viewMatrix;			// 16  inversed.
 	mat4 projectionMatrix;		// 32
 	vec3 cameraPosition;			
 	float aspectRatio;
 	vec3 cameraForward;
 	float cameraVFov;
 	vec3 cameraUp;
+    // float nearClip;
+    // float farClip;
 	float deltaTime;
 } COMMONPARAMS;
 

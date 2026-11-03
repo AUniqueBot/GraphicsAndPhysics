@@ -314,6 +314,8 @@ void RenderSystem::FillCommonUBO(
     const glm::vec3& _cameraUp,
     const float& _vfov,
     const float& _aspect,
+    //const float& _nearClip,
+    //const float& _farClip,
     const GLfloat& _deltaTime
 ) {
     UBO& commonUBO = *m_uboManager.GetUBO(DefaultUBOs::DEFAULTBUFFER_COMMON); 
@@ -323,9 +325,10 @@ void RenderSystem::FillCommonUBO(
     m_commonUboData.m_cameraForward = _cameraForward;
     m_commonUboData.m_deltaTime = _deltaTime;
     m_commonUboData.m_cameraVFov = _vfov; 
-    m_commonUboData.m_aspectRatio = _aspect;
+    m_commonUboData.m_aspectRatio = _aspect; 
     m_commonUboData.m_cameraUp = _cameraUp;
-    //commonUBO.BindBuffer();
+    //m_commonUboData.m_nearClip = _nearClip;
+    //m_commonUboData.m_farClip = _farClip;
     commonUBO.FillBufferData(&m_commonUboData);
 }
 
@@ -334,7 +337,6 @@ void RenderSystem::FillObjectUBO(const Entity& entity, const Transform& _trs) {
     m_objectUboData.m_objectMatrix = _trs.WorldTransformMtx();
     m_objectUboData.m_position = _trs.Position();
     m_objectUboData.m_objectId = static_cast<GLuint>(entity.GetID().GetID());
-    //objectUBO.BindBuffer();
     objectUBO.FillBufferData(&m_objectUboData);
 }
 
@@ -454,6 +456,8 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
         _vp.Up(),
         _vp.FieldOfView(),
         _vp.AspectRatio(),
+        //_vp.NearClip(),
+        //_vp.FarClip(),
         static_cast<GLfloat>(Clock::DeltaTime())
     );
     UpdateLightingData(_scene);
@@ -470,9 +474,9 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
     LightingRenderPass(_scene, _vp);
 
     GridOverlayPass(_vp);
-
-
     GammaCorrectionPass(_vp);
+
+
 
     EndViewportPass(_vp);
 } 
@@ -700,18 +704,16 @@ void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
                 vec3 frag_viewPosition;
             } VERTEXOUTPUT;
 
-            layout(location = 0) uniform usampler2D u_objId;
-            layout(location = 1) uniform sampler2D u_color;
+            layout (binding=0) uniform usampler2D u_objId;
+            layout (binding=1) uniform sampler2D u_color;
             uniform float u_gamma;
 
-            layout(location = 0) out uint out_objectId;
-            layout(location = 1) out vec4 out_color;
+            layout (location = 0) out uint out_objectId;
+            layout (location = 1) out vec4 out_color;
 
             void main() {
                 vec2 uv = VERTEXOUTPUT.frag_uv;
-
                 vec4 col = texture(u_color, uv);
-
                 out_objectId = texture(u_objId, uv).r;
 
                 out_color = vec4(
@@ -740,8 +742,8 @@ void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
     GLuint id = rtFrom->GetColorAttachmentTextureID(C_RENDER_OBJECTID);
 
     // bind uniforms.
-    glBindTextureUnit(0, col);
-    glBindTextureUnit(1, id);
+    glBindTextureUnit(0, id);
+    glBindTextureUnit(1, col);
     glProgramUniform1f(gammaCorrectionPrg, gammaCorrectionValueLoc, _vp.Gamma());
     rtTo->Bind();
 

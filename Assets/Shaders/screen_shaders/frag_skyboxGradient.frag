@@ -11,13 +11,15 @@ in VertexOutput {
 
 
 layout (std140, binding=0) uniform CommonUBO {
-	mat4 viewMatrix;			// 16
+	mat4 viewMatrix;			// 16  inversed.
 	mat4 projectionMatrix;		// 32
 	vec3 cameraPosition;			
 	float aspectRatio;
 	vec3 cameraForward;
 	float cameraVFov;
 	vec3 cameraUp;
+    // float nearClip;
+    // float farClip;
 	float deltaTime;
 } COMMONPARAMS;
 
@@ -68,13 +70,13 @@ Ray generateray() {
 void main() {
 
 
-    //
+    // 
     Ray ray = generateray();
     float gradientFactor = ray.direction.y * 0.5 + 0.5;
 
     vec3 finalColor = mix(
-        vec3(0.2549, 0.251, 0.251),
-        vec3(0.6627, 0.8196, 1.0),
+        vec3(0.0549, 0.0549, 0.0549),
+        vec3(0.4706, 0.7176, 1.0),
         gradientFactor
     );
 

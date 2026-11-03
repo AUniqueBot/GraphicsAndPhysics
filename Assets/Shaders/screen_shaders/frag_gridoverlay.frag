@@ -17,6 +17,8 @@ layout (std140, binding=0) uniform CommonUBO {
 	vec3 cameraForward;
 	float cameraVFov;
 	vec3 cameraUp;
+    // float nearClip;
+    // float farClip;
 	float deltaTime;
 } COMMONPARAMS;
 
@@ -25,8 +27,8 @@ layout (binding=0) uniform usampler2D u_objId;
 layout (binding=1) uniform sampler2D u_color;
 layout (binding=2) uniform sampler2D u_depth;
 
-layout (location = 1) out vec4 out_color;
 layout (location = 0) out uint out_objectId;
+layout (location = 1) out vec4 out_color;
 
 struct Ray {
     vec3 direction;

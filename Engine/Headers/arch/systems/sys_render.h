@@ -41,7 +41,12 @@ struct alignas(sizeof(glm::vec4)) CommonUBOData {
 	GLfloat m_cameraVFov;
 	
 	glm::vec3 m_cameraUp;
+	
+	//GLfloat m_nearClip; 
+	//GLfloat m_farClip;
+	
 	GLfloat m_deltaTime;
+
 };
 
 
