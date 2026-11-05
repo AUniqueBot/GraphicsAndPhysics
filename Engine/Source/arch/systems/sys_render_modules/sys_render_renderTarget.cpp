@@ -104,7 +104,7 @@ void RenderTarget::AddInitialColorAttachments() {
 	// 00
 	ColorAttachment outColor{
 		"out_color",
-		ColorChannelLayout::RGBA,
+		ColorChannelLayout::RGBA, // linear space
 		ScalarType::FLOAT, // upgrade to float for - PBR, HDR.
 		TextureFilter::LINEAR,
 		GL_NONE,

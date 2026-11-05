@@ -4,6 +4,42 @@
 #include <arch/components/comp_light.h>
 #include <glm/gtx/matrix_decompose.hpp>
 
+namespace {
+
+	void DrawTopBar(Viewport& _vp) {
+		using namespace ImGui;
+		// top bar
+		PushItemWidth(85.0f);
+		float value = _vp.Gamma();
+		if (DragFloat("Gamma", &value, 0.01f, 0.1f, 4.0f, "%.2f")) {
+			_vp.Gamma(value);
+		}
+		SameLine();
+		value = _vp.NearClip();
+		if (DragFloat("Near", &value, 0.01f, 0.001f, _vp.FarClip() - 0.001f, "%.3f")) {
+			_vp.NearClip(value);
+		}
+
+		SameLine();
+		value = _vp.FarClip();
+		if (DragFloat("Far", &value, 1.0f, _vp.NearClip() + 0.001f, 100000.0f, "%.1f")) {
+			_vp.FarClip(value);
+		}
+
+		SameLine();
+		value = _vp.FieldOfView();
+		if (DragFloat("VFOV", &value, 0.5f, 1.0f, 179.0f, "%.1f")) {
+			_vp.FieldOfView(value);
+		}
+
+		SameLine();
+		if (Checkbox("Post Processing", &_vp.enablePostProcessing));
+
+		PopItemWidth();
+
+	}
+}
+
 
 UIWidget_Viewport::UIWidget_Viewport(std::string _widgetName, std::shared_ptr<Viewport> _target)
 	: UIWidget(_widgetName), m_viewportPointer{_target} {
@@ -21,40 +57,16 @@ void UIWidget_Viewport::Draw() {
 	// aliases and early exits.
 	if (!m_viewportPointer) return;
 	Viewport & vp = *m_viewportPointer.get();
-	if (!vp.GetRenderTarget()) return;
-	RenderTarget& rt = *vp.GetRenderTarget();
+	auto mainRt = vp.GetRenderTarget();
+
+	if (!mainRt) return;
+	RenderTarget& rt = *mainRt;
 	if (!rt.VerifyFBOCompleteness()) return;		
 	if (rt.GetColorAttachmentCount() == 0) {
 		LOG_WARN("Render Target has no color attachments");
 		return;
 	}
-
-
-	// top bar
-	PushItemWidth(85.0f);
-	float value = vp.Gamma();
-	if (DragFloat("Gamma", &value, 0.01f, 0.1f, 4.0f, "%.2f")) {
-		vp.Gamma(value);
-	}
-	SameLine();
-	value = vp.NearClip();
-	if (DragFloat("Near", &value, 0.01f, 0.001f, vp.FarClip() - 0.001f, "%.3f")) {
-		vp.NearClip(value);
-	}
-
-	SameLine();
-	value = vp.FarClip();
-	if (DragFloat("Far", &value, 1.0f, vp.NearClip() + 0.001f, 100000.0f, "%.1f")) {
-		vp.FarClip(value);
-	}
-
-	SameLine();
-	value = vp.FieldOfView();
-	if (DragFloat("VFOV", &value, 0.5f, 1.0f, 179.0f, "%.1f")) {
-		vp.FieldOfView(value);
-	}
-	PopItemWidth();
-
+	DrawTopBar(vp);
 	ResizeCallback();
 	// unlike the other widgets, clicking here is allowed.
 	const glm::ivec2& sizeGL = vp.ViewportDimensions();
@@ -62,7 +74,7 @@ void UIWidget_Viewport::Draw() {
 	if (!sizeIm.x || !sizeIm.y) return;
 
 	// we don't want this (!)
-	const unsigned col = rt.GetColorAttachmentTextureID(C_RENDER_MATERIAL);
+	const unsigned col = rt.GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
 	assert(glIsTexture(col));
 	ImGui::Image(
 		(void*)(intptr_t)col,
@@ -317,7 +329,9 @@ void UIWidget_Viewport::PickObjectFromScreen() {
 
 
 	if (ImGui::IsMouseClicked(0)) {
-		EntityID pickedId = vp.GetRenderTarget()->PickPixel(pixel, C_RENDER_OBJECTID);
+
+		const auto& mainRt = vp.GetRenderTarget(ViewportConstants::C_ID_MAINBUFFER);
+		EntityID pickedId = mainRt->PickPixel(pixel, ViewportConstants::C_RENDER_OBJECTID);
 		LOG_INFO("Picked ID: " << pickedId);
 		EntityRegistry& registry = ApplicationCore()->GetRegistry();
 		EntityView entity = registry.GetEntity(pickedId);

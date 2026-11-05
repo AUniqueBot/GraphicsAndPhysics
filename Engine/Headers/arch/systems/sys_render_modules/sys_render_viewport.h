@@ -1,6 +1,19 @@
 #pragma once
 #include <pch.h>
 #include <arch/systems/sys_render_modules/sys_render_renderTarget.h>
+#include <arch/components/comp_camera.h>
+#include <arch/common/entity.h>
+
+class RenderTargetManager;
+
+
+namespace ViewportConstants {
+	inline constexpr int C_ID_MAINBUFFER				{ 1 };
+	inline constexpr unsigned C_RENDER_OBJECTID			{ 0u };
+	inline constexpr unsigned C_RENDER_MATERIAL			{ 1u }; // 1 or 2 depending if ping or pong has latest.
+};
+
+
 class Viewport {
 public:
 	enum FACETORENDER {
@@ -14,6 +27,8 @@ public:
 		LINE = GL_LINE,
 		FILL = GL_FILL
 	};
+
+
 
 public:
 	using ViewportID = uint32_t;
@@ -50,6 +65,10 @@ public:
 	glm::vec3 Up() const;
 
 
+	Camera& CameraData();
+	const Camera& CameraData() const;
+
+
 	// - camera projection ----------------------------
 	void FieldOfView(float _verticalFovDeg);
 	const float& FieldOfView() const;
@@ -68,6 +87,7 @@ public:
 	const float& Gamma() const;
 
 	// - matrix ---------------------------------------
+
 	const glm::mat4& CameraMatrix() const;
 	const glm::mat4& ProjectionMatrix() const;
 	
@@ -96,10 +116,14 @@ public:
 	std::shared_ptr<RenderTarget> GetRenderTarget();
 	std::shared_ptr<const RenderTarget> GetRenderTarget() const;
 
+	std::shared_ptr<RenderTarget> GetRenderTarget(int _idx);
+	std::shared_ptr<const RenderTarget> GetRenderTarget(int _idx) const;
+
 
 	std::shared_ptr<const RenderTarget> GetPingRenderTarget() const;
 	std::shared_ptr<const RenderTarget> GetPongRenderTarget() const;
 	
+
 	void SetRenderTarget(
 		std::shared_ptr<RenderTarget> _renderTarget,
 		int _target
@@ -111,13 +135,19 @@ public:
 	);
 	void Swap() const;
 	int CurrentSwapBuffer() const;
+	void CurrentSwapBuffer(int _swapBuffer) const;
 
+
+
+	bool enablePostProcessing = false;
 private:
 	void UpdateAttributes();
 
 	// - dynamic hidden functions ---------------------
 	void Resize(); // dynamic resize function 
 	void Move();  // dynamic move function.
+
+	
 
 private:
 	// - viewport window settings ---------------------
@@ -131,6 +161,8 @@ private:
 	std::shared_ptr<RenderTarget> m_renderTarget1;
 	std::shared_ptr<RenderTarget> m_renderTarget2;
 	mutable int m_pingpong					{ 1 };
+
+	//std::shared_ptr<RenderTarget> m_temporalBuffer;
 
 
 private:
@@ -162,6 +194,14 @@ private:
 
 
 	float m_gamma					{ 2.2f };
+
+
+private:
+	Camera m_cameraSettings;
+	EntityView m_currentCamera		{ std::nullopt };
+
+private:
+
 	FACETORENDER m_faceToRender		{ FRONTANDBACK };
 	RENDERMODE	m_renderMode		{ FILL };
 };

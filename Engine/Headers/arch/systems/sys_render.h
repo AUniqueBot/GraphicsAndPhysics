@@ -103,6 +103,9 @@ private:
 	
 	// post processing
 	void GridOverlayPass(const Viewport& _vp);
+
+	// color correction passes
+	void ToneMappingPass(const Viewport& _vp);
 	void GammaCorrectionPass(const Viewport& _vp);
 
 
@@ -159,13 +162,6 @@ public:
 
 
 	void Render(const MeshRenderer& _mr);
-
-	void DebugRenderPass(const unsigned& );
-
-public:
-	void Gamma(const float& _gamma);
-	const float& Gamma() const;
-
 
 public:
 

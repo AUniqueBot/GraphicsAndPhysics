@@ -254,23 +254,51 @@ void RenderSystem::Update() {
 
 
 void RenderSystem::ClearBuffers(const Viewport& _vp) {
-    GLuint clearFlags { GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
-    glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
-    glClearDepth(1.0f);
-    glClear(clearFlags);
+    // when moving to RHI, these must be abstracted
+
+    //// clearcolor(flags) cleardepth()
+    //GLuint clearFlags { GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT };
+    //glClearColor(0.39f, 0.58f, 0.93f, 1.0f);
+    //glClearDepth(1.0f);
+    //glClear(clearFlags);
 
 
 
-    // clear object id.
-    GLuint clearValue = EntityConstants::C_ENTITYID_INVALID;
-    glClearBufferuiv(
-        GL_COLOR,
-        C_RENDER_OBJECTID,
-        &clearValue
-    );
+    //// clear object id.
+    //GLuint clearValue = EntityConstants::C_ENTITYID_INVALID;
+    //glClearBufferuiv(
+    //    GL_COLOR,
+    //    ViewportConstants::C_RENDER_OBJECTID,
+    //    &clearValue
+    //);
+
+    for (int i = 0; i < 2; ++i) {
+        int currentRTId = i + 1;
+        auto rt = _vp.GetRenderTarget(currentRTId);
+        int fboId = rt->FBO();
+        // DSA equivalent for glClear (OpenGL 4.5+)
+        // Clear color attachment 0 (assuming your main color is at index 0)
+        GLfloat clearColor[] = { 0.39f, 0.58f, 0.93f, 1.0f };
+        glClearNamedFramebufferfv(fboId, GL_COLOR, 0, clearColor);
+
+        // Clear depth and stencil simultaneously
+        GLfloat clearDepth = 1.0f;
+        GLint clearStencil = 0;
+        glClearNamedFramebufferfi(fboId, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
+
+        // DSA equivalent for your Object ID buffer clear
+        GLuint invalidEntityId = EntityConstants::C_ENTITYID_INVALID;
+        glClearNamedFramebufferuiv(
+            fboId,
+            GL_COLOR,
+            ViewportConstants::C_RENDER_OBJECTID,
+            &invalidEntityId
+        );
+    }
 }
 
 void RenderSystem::UseViewport(const Viewport& _viewport) {
+    _viewport.CurrentSwapBuffer(1);
     std::shared_ptr<const RenderTarget> rtPtr{ _viewport.GetRenderTarget() };
     if (!rtPtr) return;
       
@@ -281,11 +309,35 @@ void RenderSystem::UseViewport(const Viewport& _viewport) {
 }
 
 void RenderSystem::BeginViewportPass(const Viewport& _viewport) {
-    UseViewport(_viewport);
     ClearBuffers(_viewport);
+    UseViewport(_viewport);   
 }
 
 void RenderSystem::EndViewportPass(const Viewport& _viewport) {
+
+    //// blit final result color to buffer 2
+    //if (_viewport.CurrentSwapBuffer() != ViewportConstants::C_ID_MAINBUFFER) {
+    //    // final result shenanigans.
+
+    //    const auto& src = _viewport.GetPingRenderTarget();
+    //    const auto& dst = _viewport.GetPongRenderTarget();
+    //    glm::ivec2 dims = _viewport.ViewportDimensions();
+    //    GLint srcTexId = src->GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
+    //    GLint dstTexId = dst->GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
+
+    //    // copy to main buffer 
+    //    glCopyImageSubData(
+    //        srcTexId, GL_TEXTURE_2D, 0, 
+    //        0, 0, 0,
+    //        dstTexId, GL_TEXTURE_2D, 0, 
+    //        0, 0, 0,
+    //        dims.x, dims.y, 1
+    //    );
+    //    glMemoryBarrier(GL_FRAMEBUFFER_BARRIER_BIT | GL_TEXTURE_FETCH_BARRIER_BIT);
+
+    //    // store to temporal buffer.
+
+    //}
     UnbindViewport(_viewport);
 }
 
@@ -300,7 +352,7 @@ void RenderSystem::SetupRenderSettings(const Viewport& _viewport) {
     GLuint clearValue = EntityConstants::C_ENTITYID_INVALID;
     glClearBufferuiv(
         GL_COLOR,
-        C_RENDER_OBJECTID,
+        ViewportConstants::C_RENDER_OBJECTID,
         &clearValue
     );
 
@@ -463,7 +515,7 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
     UpdateLightingData(_scene);
 
 
-    // rendering passes.
+    // rendering passes. 
     BeginViewportPass(_vp);
     BackgroundRenderPass(_scene, _vp);
 
@@ -473,8 +525,13 @@ void RenderSystem::Render(SceneRenderData& _scene, const Viewport& _vp) {
     FillShadowMapUBO(_scene);
     LightingRenderPass(_scene, _vp);
 
-    GridOverlayPass(_vp);
-    GammaCorrectionPass(_vp);
+    // post processing stuff
+    // depth testing is DISABLED
+    if (_vp.enablePostProcessing) {
+        GridOverlayPass(_vp); // b
+        ToneMappingPass(_vp); // a
+        GammaCorrectionPass(_vp); // b
+    }
 
 
 
@@ -657,16 +714,14 @@ void RenderSystem::GridOverlayPass(const Viewport& _vp) {
 
     // 
     auto ping = _vp.GetRenderTarget();
-    GLuint col = ping->GetColorAttachmentTextureID(C_RENDER_MATERIAL);
+    GLuint col = ping->GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
     GLuint depth = ping->GetDepthAttachmentTextureID();
-    GLuint objId = ping->GetColorAttachmentTextureID(C_RENDER_OBJECTID);
     
     // swap to new buffer.
 
     // submitting uniforms.    
-    glBindTextureUnit(0, objId);
-    glBindTextureUnit(1, col);
-    glBindTextureUnit(2, depth);
+    glBindTextureUnit(0, col);
+    glBindTextureUnit(1, depth);
 
     // rendering
     _vp.Swap(); 
@@ -677,18 +732,135 @@ void RenderSystem::GridOverlayPass(const Viewport& _vp) {
     glBindVertexArray(m_emptyVao.m_id);
     glUseProgram(prg->GetShaderProgramID()); 
     glDrawArrays(GL_TRIANGLES, 0, 3); 
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
     glBindVertexArray(0);
 
     glDepthMask(GL_TRUE);
     glEnable(GL_DEPTH_TEST); 
 }
  
+void RenderSystem::ToneMappingPass(const Viewport& _vp) {
+    static GLint toneMappingPrg = 0;
+    static GLint toneMappingTypeLoc = -1;
+    static GLint toneMappingExposureLoc = -1;
+    static bool toneMappingPassBuilt = false;
+
+
+    if (!toneMappingPassBuilt) {
+        Core& c = Core::GetInstance();
+
+        ShaderManager& shr = c.GetAssetManager().GetShaderManager();
+        ShaderProgramManager& spr = c.GetAssetManager().GetShaderProgramManager();
+        std::string srcCode = R"(
+            #version 460 core
+
+            in VertexOutput {
+                vec3 frag_position;
+                vec3 frag_normal;
+                vec2 frag_uv;
+                vec3 frag_viewPosition;
+            } VERTEXOUTPUT;
+
+            layout (binding = 0) uniform sampler2D u_color;
+            uniform float u_exposure;
+            uniform uint u_toneMappingMode;
+            
+            layout (location = 1) out vec4 out_color;
+            
+            #define MODE_LINEAR 0
+            #define MODE_REINHARD 1
+            #define MODE_ACES 2
+
+            vec3 reinhard_luminance(vec3 col) {
+                // Standard weights to calculate perceived human brightness (luminance)
+                float luma = dot(col, vec3(0.2126, 0.7152, 0.0722));
+    
+                // Tone map the luminance alone
+                float mappedLuma = luma / (1.0 + luma);
+    
+                // Scale the original color by the change in luminance
+                return col * (mappedLuma / luma);
+            }
+
+    
+            vec3 acesFilmic(vec3 x) {
+                float a = 2.51;
+                float b = 0.03;
+                float c = 2.43;
+                float d = 0.59;
+                float e = 0.14;
+                return clamp((x * (a * x + b)) / (x * (c * x + d) + e), 0.0, 1.0);
+            }
+
+
+
+            void main() {
+                vec2 uv = VERTEXOUTPUT.frag_uv;
+                out_color = texture(u_color, uv);
+                
+                out_color *= u_exposure;
+
+                // pass through your desired tone mapper.
+                if (u_toneMappingMode == MODE_LINEAR) {
+                    return;
+                }
+                if (u_toneMappingMode == MODE_REINHARD) {
+                    out_color = vec4(reinhard_luminance(out_color.rgb), 1);
+                    return;
+                }
+                if (u_toneMappingMode == MODE_ACES) {
+                    out_color = vec4(acesFilmic(out_color.rgb), 1);
+                    return;
+                }
+            }
+            
+        )";
+        RES_ID tonemappingFrag = shr.CreateShader(ShaderConstants::ShaderType::FRAG, srcCode).GetResourceID();
+        RES_ID trisResID = shr.GetResIDFromAlias(ShaderConstants::C_ID_SCREENTRIANGLESHADER);
+
+        ShaderProgramHandle tonemapper = spr.CreateRenderShaderProgram({trisResID, tonemappingFrag});
+        toneMappingPrg = tonemapper->GetShaderProgramID();
+
+        toneMappingTypeLoc = glGetUniformLocation(toneMappingPrg, "u_toneMappingMode");
+        toneMappingExposureLoc = glGetUniformLocation(toneMappingPrg, "u_exposure");
+        toneMappingPassBuilt = true;
+    }
+
+    if (toneMappingPrg == 0) return;
+
+    _vp.Swap();
+    auto rtFrom = _vp.GetPongRenderTarget();
+    auto rtTo = _vp.GetPingRenderTarget();
+    GLuint col = rtFrom->GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
+
+
+    // bind uniforms.
+    glBindTextureUnit(0, col);
+    glProgramUniform1f(toneMappingPrg, toneMappingExposureLoc, 1.0);
+    glProgramUniform1ui(toneMappingPrg, toneMappingTypeLoc, 2);
+    rtTo->Bind();
+
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE);
+
+    glBindVertexArray(m_emptyVao.m_id);
+    glUseProgram(toneMappingPrg);
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
+    glBindVertexArray(0);
+
+    glDepthMask(GL_TRUE);
+    glEnable(GL_DEPTH_TEST);
+
+}
+
 void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
     
     // i'm getting tired of making
     static GLint gammaCorrectionPrg = 0;
-    static GLint gammaCorrectionValueLoc = -1;
-    if (!gammaCorrectionPrg) {
+    static GLint gammaCorrectionValueLoc = 0;
+    static bool gammaCorrectionPrgBuilt = false;
+    if (!gammaCorrectionPrgBuilt) {
         Core& c = Core::GetInstance();
 
         ShaderManager& shr = c.GetAssetManager().GetShaderManager();
@@ -704,17 +876,15 @@ void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
                 vec3 frag_viewPosition;
             } VERTEXOUTPUT;
 
-            layout (binding=0) uniform usampler2D u_objId;
-            layout (binding=1) uniform sampler2D u_color;
+            layout (binding = 0) uniform sampler2D u_color;
             uniform float u_gamma;
 
-            layout (location = 0) out uint out_objectId;
+
             layout (location = 1) out vec4 out_color;
 
             void main() {
                 vec2 uv = VERTEXOUTPUT.frag_uv;
                 vec4 col = texture(u_color, uv);
-                out_objectId = texture(u_objId, uv).r;
 
                 out_color = vec4(
                     pow(col.rgb, vec3(1.0 / u_gamma)),
@@ -731,19 +901,20 @@ void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
         // find location of uniform
         gammaCorrectionPrg = gammaCorrector->GetShaderProgramID();
         gammaCorrectionValueLoc = glGetUniformLocation(gammaCorrectionPrg, "u_gamma");
+        
+        gammaCorrectionPrgBuilt = true;
     }
+    if (gammaCorrectionPrg == 0) return;
 
     // ping to pong.
 
     _vp.Swap();
     auto rtFrom = _vp.GetPongRenderTarget();
     auto rtTo = _vp.GetPingRenderTarget();
-    GLuint col = rtFrom->GetColorAttachmentTextureID(C_RENDER_MATERIAL);
-    GLuint id = rtFrom->GetColorAttachmentTextureID(C_RENDER_OBJECTID);
+    GLuint col = rtFrom->GetColorAttachmentTextureID(ViewportConstants::C_RENDER_MATERIAL);
 
     // bind uniforms.
-    glBindTextureUnit(0, id);
-    glBindTextureUnit(1, col);
+    glBindTextureUnit(0, col);
     glProgramUniform1f(gammaCorrectionPrg, gammaCorrectionValueLoc, _vp.Gamma());
     rtTo->Bind();
 
@@ -753,6 +924,7 @@ void RenderSystem::GammaCorrectionPass(const Viewport& _vp) {
     glBindVertexArray(m_emptyVao.m_id);
     glUseProgram(gammaCorrectionPrg);
     glDrawArrays(GL_TRIANGLES, 0, 3);
+    glMemoryBarrier(GL_TEXTURE_FETCH_BARRIER_BIT);
     glBindVertexArray(0);
 
     glDepthMask(GL_TRUE);
@@ -938,26 +1110,6 @@ void RenderSystem::Render(const MeshRenderer& _mr) {
         GLsizei idxCount { static_cast<GLsizei>(submesh.GetIndexBufferElementCount()) };
         glDrawElements(GL_TRIANGLES, idxCount, GL_UNSIGNED_INT, 0);
     }
-}
-
-void RenderSystem::DebugRenderPass(const unsigned& textureId) {
-    glDisable(GL_DEPTH_TEST);
-    glUseProgram(m_planeShader);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D_ARRAY, textureId);
-    glUniform1i(glGetUniformLocation(m_planeShader, "u_texture"), 0);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-}
-
-void RenderSystem::Gamma(const float& _gamma) {
-    if (m_gamma == _gamma) {
-        return;
-    }
-    m_gamma = _gamma;
-}
-
-const float& RenderSystem::Gamma() const {
-    return m_gamma;
 }
 
 // ------------------------------------------------------------------------------------

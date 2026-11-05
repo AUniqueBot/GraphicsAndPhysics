@@ -3,6 +3,48 @@
 #include <arch/common/component.h>
 
 
+namespace CameraConstants {
+	enum class TonemappingModes : int {
+		LINEAR = 0,
+		REINHARD = 1,
+		ACES_FILMIC = 2
+	};
+
+
+	enum class RenderTargetLocations : int {
+		OBJECT_ID = 0,
+		COLOR = 1
+	};
+
+};
+
+
+struct CameraData {
+
+	// - generic metadata ----------------------------
+	glm::vec3 m_position;
+	glm::quat m_rotation;
+	glm::vec2 m_clipPlanes;
+
+	// - rendering metadata --------------------------
+	float m_exposure;
+	float m_aspectRatio;
+	
+	bool m_isOrthographic;
+	float m_orthographicSize;
+	float m_fov;
+	CameraConstants::TonemappingModes m_tonemapMode;
+
+
+	glm::mat4 ViewMatrix();
+	glm::mat4 InverseViewMatrix();
+
+
+};
+
+
+
+
 class Camera : public Component {
 private:
 
@@ -24,38 +66,49 @@ public:
 	static int ActiveCameraID();
 
 	// - clip plane distance --------------------
-	void SetClipPlaneDistance(glm::vec2);
-	void SetClipPlaneDistance(float, float);
-	void SetNearClipPlaneDistance(float _dist);
-	void SetFarClipPlaneDistance(float _dist);
+	void ClipPlanes(glm::vec2);
+	void ClipPlanes(float, float);
+	void NearClipPlane(float _dist);
+	void FarClipPlane(float _dist);
 
-	glm::vec2 GetClipPlaneDistance() const;
-	float GetNearClipPlaneDistance() const;
-	float GetFarClipPlaneDistance() const;
+	glm::vec2 ClipPlanes() const;
+	float NearClipPlane() const;
+	float FarClipPlane() const;
 
 	// - field of view --------------------------
-	void SetFieldOfViewVertical(float _fov);
-	void SetFieldOfViewHorizontal(float _fov);
+	void FieldOfViewVertical(float _fov);
+	void FieldOfViewHorizontal(float _fov);
 
-	float GetFieldOfViewVertical() const;
-	float GetFieldOfViewHorizontal() const;
+	float FieldOfViewVertical() const;
+	float FieldOfViewHorizontal() const;
 
 	// - aspect ratio ---------------------------
-	void SetAspectRatio(glm::vec2 _ratio);
-	void SetAspectRatio(float, float);
-	void SetAspectRatio(float); // pure ratio variant
-	void SetAspectRatioX(float _val);
-	void SetAspectRatioY(float _val);
+	void AspectRatio(glm::vec2 _ratio);
+	void AspectRatio(float, float);
+	void AspectRatio(float); // pure ratio variant
+	void AspectRatioX(float _val);
+	void AspectRatioY(float _val);
 
-	glm::vec2 GetAspectRatio() const;
+	glm::vec2 AspectRatio() const;
 
 	// - projection settings --------------------
-	void SetOrthogonalProjection(bool);
-	bool GetOrthogonalProjection() const;
+	void OrthogonalProjectionEnabled(bool);
+	bool OrthogonalProjectionEnabled() const;
 
 
 	// - projection matrix ----------------------
-	glm::mat4 GetProjectionMatrix() const { return m_projectionMatrix; }
+	glm::mat4 ProjectionMatrix() const { return m_projectionMatrix; }
+
+
+	// - rendering settings ---------------------
+	const float& Exposure() const;
+	void Exposure(float _value);
+
+	const CameraConstants::TonemappingModes& TonemapMode() const;
+	void TonemapMode(const CameraConstants::TonemappingModes& _mode);
+
+
+
 private:
 	void UpdateProjectionMatrix();
 private:
@@ -79,8 +132,11 @@ private:
 
 	bool m_componentDataDirty			{ true };
 
-
 	glm::mat4 m_projectionMatrix		{};
+
+
+	float m_exposure					{ 1.0 };
+	CameraConstants::TonemappingModes m_tonemapMode	{ CameraConstants::TonemappingModes::LINEAR };
 };
 
 

@@ -278,6 +278,15 @@ std::shared_ptr<const RenderTarget> Viewport::GetRenderTarget() const {
 	return m_pingpong == 1 ? m_renderTarget1 : m_renderTarget2;
 }
 
+std::shared_ptr<RenderTarget> Viewport::GetRenderTarget(int _idx) {
+	return _idx == 1 ? m_renderTarget1 : m_renderTarget2;
+}
+
+std::shared_ptr<const RenderTarget> Viewport::GetRenderTarget(int _idx) const {
+	return _idx == 1 ? m_renderTarget1 : m_renderTarget2;
+}
+
+
 std::shared_ptr<const RenderTarget> Viewport::GetPingRenderTarget() const {
 	return m_pingpong == 1 ? m_renderTarget1 : m_renderTarget2;
 }
@@ -311,6 +320,10 @@ void Viewport::Swap() const {
 
 int Viewport::CurrentSwapBuffer() const {
 	return m_pingpong;
+}
+
+void Viewport::CurrentSwapBuffer(int _swapBuffer) const {
+	m_pingpong = std::clamp(_swapBuffer, 1, 2);
 }
 
 

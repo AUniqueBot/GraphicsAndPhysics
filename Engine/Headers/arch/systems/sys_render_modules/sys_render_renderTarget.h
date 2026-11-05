@@ -14,9 +14,9 @@
 */
 
 
+namespace RenderTargetConstants {
 
-inline constexpr unsigned C_RENDER_OBJECTID	{ 0 };
-inline constexpr unsigned C_RENDER_MATERIAL	{ 1 }; // 1 or 2 depending if ping or pong has latest.
+}
 
 
 class RenderTarget	 {
@@ -45,7 +45,7 @@ public:
 	  
 
 	const ColorAttachment& GetColorAttachment(unsigned _index) const;
-	unsigned GetColorAttachmentTextureID(unsigned _index = C_RENDER_MATERIAL) const;
+	unsigned GetColorAttachmentTextureID(unsigned _index = 0) const;
 	unsigned GetDepthAttachmentTextureID() const;
 	std::vector<ColorAttachment>& GetColorAttachments() { return m_colorAttachments; }
 	const std::vector<ColorAttachment>& GetColorAttachments() const { return m_colorAttachments; }
